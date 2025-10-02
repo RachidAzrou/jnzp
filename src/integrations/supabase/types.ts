@@ -62,7 +62,9 @@ export type Database = {
       chat_messages: {
         Row: {
           attachment_name: string | null
+          attachment_type: string | null
           attachment_url: string | null
+          channel: Database["public"]["Enums"]["communication_channel"]
           created_at: string
           dossier_id: string
           id: string
@@ -70,10 +72,13 @@ export type Database = {
           sender_role: Database["public"]["Enums"]["app_role"]
           sender_user_id: string
           updated_at: string
+          whatsapp_message_id: string | null
         }
         Insert: {
           attachment_name?: string | null
+          attachment_type?: string | null
           attachment_url?: string | null
+          channel?: Database["public"]["Enums"]["communication_channel"]
           created_at?: string
           dossier_id: string
           id?: string
@@ -81,10 +86,13 @@ export type Database = {
           sender_role: Database["public"]["Enums"]["app_role"]
           sender_user_id: string
           updated_at?: string
+          whatsapp_message_id?: string | null
         }
         Update: {
           attachment_name?: string | null
+          attachment_type?: string | null
           attachment_url?: string | null
+          channel?: Database["public"]["Enums"]["communication_channel"]
           created_at?: string
           dossier_id?: string
           id?: string
@@ -92,6 +100,7 @@ export type Database = {
           sender_role?: Database["public"]["Enums"]["app_role"]
           sender_user_id?: string
           updated_at?: string
+          whatsapp_message_id?: string | null
         }
         Relationships: [
           {
@@ -265,6 +274,38 @@ export type Database = {
             columns: ["uploaded_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dossier_communication_preferences: {
+        Row: {
+          dossier_id: string
+          id: string
+          last_channel_used: Database["public"]["Enums"]["communication_channel"]
+          updated_at: string
+          whatsapp_phone: string | null
+        }
+        Insert: {
+          dossier_id: string
+          id?: string
+          last_channel_used: Database["public"]["Enums"]["communication_channel"]
+          updated_at?: string
+          whatsapp_phone?: string | null
+        }
+        Update: {
+          dossier_id?: string
+          id?: string
+          last_channel_used?: Database["public"]["Enums"]["communication_channel"]
+          updated_at?: string
+          whatsapp_phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dossier_communication_preferences_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: true
+            referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
         ]
@@ -1258,6 +1299,7 @@ export type Database = {
         | "wasplaats"
         | "mosque"
       channel: "EMAIL" | "SMS" | "PUSH"
+      communication_channel: "PORTAL" | "WHATSAPP"
       cool_cell_status: "FREE" | "RESERVED" | "OCCUPIED" | "OUT_OF_SERVICE"
       delivery_status: "PENDING" | "SENT" | "FAILED"
       doc_status: "IN_REVIEW" | "APPROVED" | "REJECTED"
@@ -1452,6 +1494,7 @@ export const Constants = {
         "mosque",
       ],
       channel: ["EMAIL", "SMS", "PUSH"],
+      communication_channel: ["PORTAL", "WHATSAPP"],
       cool_cell_status: ["FREE", "RESERVED", "OCCUPIED", "OUT_OF_SERVICE"],
       delivery_status: ["PENDING", "SENT", "FAILED"],
       doc_status: ["IN_REVIEW", "APPROVED", "REJECTED"],

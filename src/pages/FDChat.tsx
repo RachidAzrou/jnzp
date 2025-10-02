@@ -1,14 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { Send, Paperclip } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, Send, Paperclip } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { nl } from "date-fns/locale";
 
 interface Message {
   id: string;
@@ -31,7 +32,8 @@ interface DossierInfo {
   flow: string;
 }
 
-export default function FamilieChat() {
+export default function FDChat() {
+  const { dossierId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -39,9 +41,7 @@ export default function FamilieChat() {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchChatData = async () => {
@@ -51,12 +51,16 @@ export default function FamilieChat() {
         return;
       }
 
-      // Get dossier (assuming family has one active dossier)
+      if (!dossierId) {
+        navigate('/dashboard');
+        return;
+      }
+
+      // Get dossier
       const { data: dossierData } = await supabase
         .from('dossiers')
         .select('id, display_id, ref_number, deceased_name, status, flow')
-        .order('created_at', { ascending: false })
-        .limit(1)
+        .eq('id', dossierId)
         .maybeSingle();
 
       if (dossierData) {
@@ -68,7 +72,7 @@ export default function FamilieChat() {
     };
 
     fetchChatData();
-  }, [navigate]);
+  }, [navigate, dossierId]);
 
   const fetchMessages = async (dossierId: string) => {
     const { data: messagesData } = await supabase
@@ -85,7 +89,7 @@ export default function FamilieChat() {
     if (!dossier) return;
 
     const channel = supabase
-      .channel('chat_messages_channel')
+      .channel('fd_chat_messages_channel')
       .on(
         'postgres_changes',
         {
@@ -111,7 +115,7 @@ export default function FamilieChat() {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() && !file) return;
+    if (!newMessage.trim()) return;
     if (!dossier) return;
 
     setSending(true);
@@ -128,38 +132,14 @@ export default function FamilieChat() {
         .limit(1)
         .single();
 
-      let attachmentUrl = null;
-      let attachmentName = null;
-      let attachmentType = null;
+      // Get last channel preference
+      const { data: prefData } = await supabase
+        .from('dossier_communication_preferences')
+        .select('last_channel_used, whatsapp_phone')
+        .eq('dossier_id', dossier.id)
+        .maybeSingle();
 
-      // Upload file if present
-      if (file) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `${dossier.id}/chat/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('dossier-documents')
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('dossier-documents')
-          .getPublicUrl(filePath);
-
-        attachmentUrl = publicUrl;
-        attachmentName = file.name;
-        
-        // Determine attachment type
-        if (file.type.startsWith('image/')) {
-          attachmentType = 'image';
-        } else if (file.type === 'application/pdf' || file.type.includes('document')) {
-          attachmentType = 'document';
-        } else {
-          attachmentType = 'other';
-        }
-      }
+      const targetChannel = prefData?.last_channel_used || 'PORTAL';
 
       // Insert message
       const { error: insertError } = await supabase
@@ -167,34 +147,25 @@ export default function FamilieChat() {
         .insert({
           dossier_id: dossier.id,
           sender_user_id: session.user.id,
-          sender_role: roleData?.role || 'family',
-          channel: 'PORTAL' as any,
+          sender_role: roleData?.role || 'funeral_director',
+          channel: targetChannel as any,
           message: newMessage.trim(),
-          attachment_url: attachmentUrl,
-          attachment_name: attachmentName,
-          attachment_type: attachmentType,
         });
 
       if (insertError) throw insertError;
 
-      // Update last channel preference
-      await supabase
-        .from('dossier_communication_preferences')
-        .upsert({
-          dossier_id: dossier.id,
-          last_channel_used: 'PORTAL' as any,
-        }, {
-          onConflict: 'dossier_id'
-        });
+      // If target channel is WhatsApp, send via WhatsApp API
+      if (targetChannel === 'WHATSAPP' && prefData?.whatsapp_phone) {
+        // TODO: Call WhatsApp API to send message
+        console.log('TODO: Send WhatsApp message to', prefData.whatsapp_phone);
+      }
 
       // Reset form
       setNewMessage("");
-      setFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
 
       toast({
         title: "Bericht verzonden",
-        description: "Uw bericht is succesvol verzonden",
+        description: `Verzonden via ${targetChannel === 'WHATSAPP' ? 'WhatsApp' : 'Portal'}`,
       });
     } catch (error) {
       console.error('Error sending message:', error);
@@ -210,10 +181,12 @@ export default function FamilieChat() {
 
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString('nl-NL', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
+    return format(date, "HH:mm", { locale: nl });
+  };
+
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return format(date, "d MMM", { locale: nl });
   };
 
   const getRoleName = (role: string) => {
@@ -235,13 +208,23 @@ export default function FamilieChat() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/dashboard')}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Terug
+        </Button>
         <div>
-          <h1 className="text-3xl font-bold">Chat</h1>
+          <h1 className="text-3xl font-bold">
+            Chat — Dossier {dossier?.display_id || dossier?.ref_number}
+          </h1>
           <p className="text-muted-foreground mt-1">
-            {dossier ? `Dossier ${dossier.display_id || dossier.ref_number}` : 'Geen dossier'}
+            {dossier?.deceased_name || 'Nog in te vullen'}
           </p>
         </div>
       </div>
@@ -258,62 +241,76 @@ export default function FamilieChat() {
               {messages.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <p>Nog geen berichten</p>
-                  <p className="text-sm mt-2">Start een conversatie met de uitvaartondernemer</p>
+                  <p className="text-sm mt-2">Start een conversatie met de familie</p>
                 </div>
               ) : (
-                messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={cn(
-                      "flex flex-col gap-1 p-3 rounded-lg max-w-[80%]",
-                      msg.sender_role === 'family'
-                        ? "ml-auto bg-primary text-primary-foreground"
-                        : "bg-muted"
-                    )}
-                  >
-                    <div className="flex items-center justify-between gap-2 text-xs opacity-80">
-                      <span className="font-medium">{getRoleName(msg.sender_role)}</span>
-                      <span>{formatTime(msg.created_at)}</span>
-                    </div>
-                    <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
-                    {msg.attachment_url && (
-                      <a
-                        href={msg.attachment_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-xs underline mt-1"
+                messages.map((msg, index) => {
+                  const showDate = index === 0 || 
+                    formatDate(msg.created_at) !== formatDate(messages[index - 1].created_at);
+
+                  return (
+                    <div key={msg.id}>
+                      {showDate && (
+                        <div className="flex justify-center my-4">
+                          <span className="text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full">
+                            {formatDate(msg.created_at)}
+                          </span>
+                        </div>
+                      )}
+                      <div
+                        className={cn(
+                          "flex flex-col gap-1 p-3 rounded-lg max-w-[80%]",
+                          msg.sender_role === 'funeral_director'
+                            ? "ml-auto bg-primary text-primary-foreground"
+                            : "bg-muted"
+                        )}
                       >
-                        <Paperclip className="h-3 w-3" />
-                        {msg.attachment_name}
-                      </a>
-                    )}
-                  </div>
-                ))
+                        <div className="flex items-center justify-between gap-2 text-xs opacity-80">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{getRoleName(msg.sender_role)}</span>
+                            {msg.channel === 'WHATSAPP' && (
+                              <Badge className="bg-green-500 text-white text-[10px] h-4 px-1.5">
+                                WhatsApp
+                              </Badge>
+                            )}
+                            {msg.channel === 'PORTAL' && (
+                              <Badge className="bg-blue-500 text-white text-[10px] h-4 px-1.5">
+                                Portal
+                              </Badge>
+                            )}
+                          </div>
+                          <span>{formatTime(msg.created_at)}</span>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                        {msg.attachment_url && (
+                          <a
+                            href={msg.attachment_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-xs underline mt-1"
+                          >
+                            <Paperclip className="h-3 w-3" />
+                            {msg.attachment_name}
+                            {msg.attachment_type && (
+                              <span className="text-[10px] opacity-70">
+                                ({msg.attachment_type})
+                              </span>
+                            )}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
               )}
               <div ref={messagesEndRef} />
             </div>
 
             {/* Compose Box */}
             <div className="border-t pt-4 space-y-3">
-              {file && (
-                <div className="flex items-center gap-2 text-sm bg-muted p-2 rounded">
-                  <Paperclip className="h-4 w-4" />
-                  <span className="flex-1">{file.name}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setFile(null);
-                      if (fileInputRef.current) fileInputRef.current.value = "";
-                    }}
-                  >
-                    ✕
-                  </Button>
-                </div>
-              )}
               <div className="flex gap-2">
                 <Textarea
-                  placeholder="Typ uw bericht..."
+                  placeholder="Typ uw antwoord..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => {
@@ -326,24 +323,9 @@ export default function FamilieChat() {
                 />
               </div>
               <div className="flex gap-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  className="hidden"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={sending}
-                >
-                  <Paperclip className="h-4 w-4 mr-2" />
-                  Bijlage
-                </Button>
                 <Button
                   onClick={handleSendMessage}
-                  disabled={sending || (!newMessage.trim() && !file)}
+                  disabled={sending || !newMessage.trim()}
                   className="flex-1"
                 >
                   {sending ? (
@@ -357,10 +339,7 @@ export default function FamilieChat() {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                💡 Deel geen rijksregisternummer of medische informatie in de chat
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                📎 Bijlagen worden opgeslagen als chat-bijlage (niet als officieel document)
+                💡 Antwoord wordt automatisch verzonden via het laatst gebruikte kanaal van de familie
               </p>
             </div>
           </CardContent>

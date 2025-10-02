@@ -256,6 +256,54 @@ export default function FamilieDashboard() {
         </p>
       </div>
 
+      {/* Communication Channels */}
+      {dossier && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Communicatie</CardTitle>
+            <CardDescription>Kies hoe u met ons wilt communiceren</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Button
+                onClick={() => navigate('/familie/chat')}
+                variant="outline"
+                className="h-24 flex flex-col items-center justify-center gap-2"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+                    <span className="text-white text-xl">💬</span>
+                  </div>
+                  <span className="font-semibold text-lg">Portal Chat</span>
+                </div>
+                <span className="text-sm text-muted-foreground">Chat direct in het portal</span>
+              </Button>
+              
+              <Button
+                onClick={() => {
+                  const phoneNumber = "32470123456"; // Replace with actual WhatsApp Business number
+                  const message = encodeURIComponent(`Hallo, ik heb een vraag over dossier ${dossier.display_id || dossier.ref_number}`);
+                  window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+                }}
+                variant="outline"
+                className="h-24 flex flex-col items-center justify-center gap-2"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                    <span className="text-white text-xl">🟢</span>
+                  </div>
+                  <span className="font-semibold text-lg">WhatsApp JanAssist</span>
+                </div>
+                <span className="text-sm text-muted-foreground">Chat via WhatsApp</span>
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-4 text-center">
+              💡 U ontvangt altijd een melding bij nieuwe reacties, ongeacht het kanaal
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {dossier?.legal_hold && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />

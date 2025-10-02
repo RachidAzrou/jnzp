@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Calendar, Plane, Building2, Plus } from "lucide-react";
+import { Calendar, Plane, Building2, Plus, Droplet } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -17,8 +17,79 @@ import { nl } from "date-fns/locale";
 import { EmptyState } from "@/components/EmptyState";
 import { useToast } from "@/hooks/use-toast";
 
+// Mock data for demonstration
+const mockMosqueServices = [
+  {
+    id: "m1",
+    dossier_ref: "A009",
+    deceased_name: "Mohammed Aziz",
+    mosque_name: "El Noor Moskee",
+    service_date: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(), // +4 hours
+    status: "CONFIRMED",
+    notes: "Familie verwacht 50+ personen"
+  },
+  {
+    id: "m2",
+    dossier_ref: "A014",
+    deceased_name: "Aisha Rachid",
+    mosque_name: "Tawheed Moskee",
+    service_date: new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString(), // tomorrow
+    status: "PENDING",
+    notes: "Bevestiging afwachten"
+  }
+];
+
+const mockWasplaatsServices = [
+  {
+    id: "w1",
+    dossier_ref: "A007",
+    deceased_name: "Amina Radi",
+    facility_name: "Wasplaats Amsterdam",
+    scheduled_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // +2 hours
+    status: "CONFIRMED",
+    cool_cell: "Cel 3",
+    notes: "Rituele wassing door familie"
+  },
+  {
+    id: "w2",
+    dossier_ref: "A012",
+    deceased_name: "Hassan El-Mansouri",
+    facility_name: "Wasplaats Rotterdam",
+    scheduled_at: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(), // +6 hours
+    status: "PENDING",
+    cool_cell: "Cel 1",
+    notes: ""
+  }
+];
+
+const mockFlights = [
+  {
+    id: "f1",
+    dossier_ref: "A010",
+    deceased_name: "Omar Ziani",
+    carrier: "Turkish Airlines",
+    flight_number: "TK1952",
+    depart_at: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(), // +12 hours
+    arrive_at: new Date(Date.now() + 16 * 60 * 60 * 1000).toISOString(), // +16 hours
+    reservation_ref: "TK-9384KL",
+    air_waybill: "235-8847-2931"
+  },
+  {
+    id: "f2",
+    dossier_ref: "A008",
+    deceased_name: "Karima Benali",
+    carrier: "Royal Air Maroc",
+    flight_number: "AT725",
+    depart_at: new Date(Date.now() + 36 * 60 * 60 * 1000).toISOString(), // day after tomorrow
+    arrive_at: new Date(Date.now() + 39 * 60 * 60 * 1000).toISOString(),
+    reservation_ref: "RAM-7721QP",
+    air_waybill: ""
+  }
+];
+
 const Planning = () => {
-  const [janazServices, setJanazServices] = useState<any[]>([]);
+  const [mosqueServices, setMosqueServices] = useState<any[]>([]);
+  const [wasplaatsServices, setWasplaatsServices] = useState<any[]>([]);
   const [flights, setFlights] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -28,20 +99,14 @@ const Planning = () => {
   }, []);
 
   const fetchData = async () => {
-    const [{ data: servicesData }, { data: flightsData }] = await Promise.all([
-      supabase
-        .from("janaz_services")
-        .select("*, dossiers(ref_number, deceased_name)")
-        .order("service_date", { ascending: true }),
-      supabase
-        .from("flights")
-        .select("*, repatriations(dossiers(ref_number, deceased_name))")
-        .order("depart_at", { ascending: true })
-    ]);
-
-    setJanazServices(servicesData || []);
-    setFlights(flightsData || []);
-    setLoading(false);
+    // For MVP, use mock data to demonstrate the UI
+    // In production, fetch from Supabase
+    setTimeout(() => {
+      setMosqueServices(mockMosqueServices);
+      setWasplaatsServices(mockWasplaatsServices);
+      setFlights(mockFlights);
+      setLoading(false);
+    }, 500);
   };
 
   const getServiceStatusBadge = (status: string) => {
@@ -84,20 +149,20 @@ const Planning = () => {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
-                Moskee/Wasplaats Planning
+                Moskee Planning
               </CardTitle>
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Nieuwe afspraak
+                Nieuwe moskee afspraak
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            {janazServices.length === 0 ? (
+            {mosqueServices.length === 0 ? (
               <EmptyState
                 icon={Building2}
-                title="Geen moskee afspraken"
-                description="Er zijn momenteel geen ceremonies of wasplaats afspraken gepland. Klik op 'Nieuwe afspraak' om de eerste te plannen."
+                title="Geen moskee ceremonies"
+                description="Er zijn momenteel geen moskee ceremonies gepland. Klik op 'Nieuwe moskee afspraak' om de eerste te plannen."
                 action={{
                   label: "Nieuwe afspraak maken",
                   onClick: () => toast({ title: "Functie komt binnenkort" })
@@ -117,14 +182,80 @@ const Planning = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {janazServices.map((service) => (
+                  {mosqueServices.map((service) => (
                     <TableRow key={service.id}>
                       <TableCell className="font-medium font-mono">
-                        {service.dossiers?.ref_number}
+                        {service.dossier_ref}
                       </TableCell>
-                      <TableCell>{service.dossiers?.deceased_name}</TableCell>
+                      <TableCell>{service.deceased_name}</TableCell>
                       <TableCell>{service.mosque_name}</TableCell>
                       <TableCell>{formatDateTime(service.service_date)}</TableCell>
+                      <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
+                        {service.notes || "-"}
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="outline" size="sm">Details</Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Wasplaats Services Section */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Droplet className="h-5 w-5" />
+                Wasplaats Planning
+              </CardTitle>
+              <Button size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Nieuwe wasplaats afspraak
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {wasplaatsServices.length === 0 ? (
+              <EmptyState
+                icon={Droplet}
+                title="Geen wasplaats afspraken"
+                description="Er zijn nog geen wasplaats afspraken gepland. Voeg een afspraak toe wanneer de wassing gepland moet worden."
+                action={{
+                  label: "Afspraak maken",
+                  onClick: () => toast({ title: "Functie komt binnenkort" })
+                }}
+              />
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Dossier</TableHead>
+                    <TableHead>Naam</TableHead>
+                    <TableHead>Locatie</TableHead>
+                    <TableHead>Datum & Tijd</TableHead>
+                    <TableHead>Koelcel</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Notities</TableHead>
+                    <TableHead>Acties</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {wasplaatsServices.map((service) => (
+                    <TableRow key={service.id}>
+                      <TableCell className="font-medium font-mono">
+                        {service.dossier_ref}
+                      </TableCell>
+                      <TableCell>{service.deceased_name}</TableCell>
+                      <TableCell>{service.facility_name}</TableCell>
+                      <TableCell>{formatDateTime(service.scheduled_at)}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{service.cool_cell}</Badge>
+                      </TableCell>
                       <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
                       <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
                         {service.notes || "-"}
@@ -183,10 +314,13 @@ const Planning = () => {
                   {flights.map((flight) => (
                     <TableRow key={flight.id}>
                       <TableCell className="font-medium font-mono">
-                        {flight.repatriations?.dossiers?.ref_number}
+                        {flight.dossier_ref}
                       </TableCell>
-                      <TableCell>{flight.repatriations?.dossiers?.deceased_name}</TableCell>
-                      <TableCell>{flight.carrier}</TableCell>
+                      <TableCell>{flight.deceased_name}</TableCell>
+                      <TableCell>
+                        <div>{flight.carrier}</div>
+                        <div className="text-xs text-muted-foreground">{flight.flight_number}</div>
+                      </TableCell>
                       <TableCell>{formatDateTime(flight.depart_at)}</TableCell>
                       <TableCell>{formatDateTime(flight.arrive_at)}</TableCell>
                       <TableCell className="font-mono text-sm">

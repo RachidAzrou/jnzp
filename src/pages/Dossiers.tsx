@@ -221,10 +221,15 @@ const Dossiers = () => {
                       </div>
                     </TableCell>
                     <TableCell>{dossier.deceased_name}</TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusVariant(dossier.status)}>
-                        {dossier.status.replace(/_/g, " ")}
-                      </Badge>
+                     <TableCell>
+                      <div className="flex items-center gap-2">
+                        {dossier.status === "DOCS_PENDING" && !dossier.legal_hold && (
+                          <AlertCircle className="h-4 w-4 text-warning" />
+                        )}
+                        <Badge variant={getStatusVariant(dossier.status)}>
+                          {dossier.status.replace(/_/g, " ")}
+                        </Badge>
+                      </div>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(dossier.deceased_dob)}

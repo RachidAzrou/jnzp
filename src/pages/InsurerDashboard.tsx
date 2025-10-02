@@ -117,13 +117,22 @@ export default function InsurerDashboard() {
             <h1 className="text-3xl font-bold">Verzekeraar Dashboard</h1>
             <p className="text-muted-foreground">Overzicht van verzekerde dossiers</p>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => navigate("/rapporten")}
-          >
-            <FileBarChart className="mr-2 h-4 w-4" />
-            Rapporten
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigate("/insurer/facturen")}
+            >
+              <Receipt className="mr-2 h-4 w-4" />
+              Facturen
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate("/insurer/rapportage")}
+            >
+              <FileBarChart className="mr-2 h-4 w-4" />
+              Rapporten
+            </Button>
+          </div>
         </div>
 
         {/* Filters */}

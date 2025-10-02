@@ -73,11 +73,6 @@ const Dashboard = () => {
     return "Laag";
   };
 
-  const getTaskDeadline = (status: string) => {
-    if (["DOCS_PENDING", "FD_ASSIGNED"].includes(status)) return "vandaag";
-    if (["PLANNING"].includes(status)) return "+4u";
-    return "morgen";
-  };
 
   const getTaskAction = (status: string, dossierId: string) => {
     if (["DOCS_PENDING"].includes(status)) {
@@ -209,14 +204,13 @@ const Dashboard = () => {
                   <TableHead>Dossier</TableHead>
                   <TableHead>Taak</TableHead>
                   <TableHead>Urgentie</TableHead>
-                  <TableHead>Deadline</TableHead>
                   <TableHead>Actie</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {urgentTasks.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
                       Geen urgente taken
                     </TableCell>
                   </TableRow>
@@ -224,7 +218,6 @@ const Dashboard = () => {
                   urgentTasks.map((task) => {
                     const urgency = getTaskUrgency(task.status, task.legal_hold);
                     const taskDesc = getTaskDescription(task.status, task.legal_hold);
-                    const deadline = getTaskDeadline(task.status);
                     const action = getTaskAction(task.status, task.id);
 
                     return (
@@ -245,9 +238,6 @@ const Dashboard = () => {
                           >
                             {urgency}
                           </Badge>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {deadline}
                         </TableCell>
                         <TableCell>
                           <Button 

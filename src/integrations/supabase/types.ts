@@ -1108,6 +1108,7 @@ export type Database = {
         | "FAMILY"
         | "ADMIN"
         | "OTHER"
+        | "WASPLAATS"
       reservation_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
       service_status: "PENDING" | "CONFIRMED" | "COMPLETED" | "FAILED"
       wash_status:
@@ -1289,6 +1290,7 @@ export const Constants = {
         "FAMILY",
         "ADMIN",
         "OTHER",
+        "WASPLAATS",
       ],
       reservation_status: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],
       service_status: ["PENDING", "CONFIRMED", "COMPLETED", "FAILED"],

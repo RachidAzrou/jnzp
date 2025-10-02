@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Send, Paperclip, MessageCircle } from "lucide-react";
+import { Send, Paperclip } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import whatsappIcon from "@/assets/whatsapp-icon.svg";
 
 interface Message {
   id: string;
@@ -253,7 +254,7 @@ export default function FamilieChat() {
             window.open(`https://wa.me/YOUR_WHATSAPP_NUMBER?text=${message}`, '_blank');
           }}
         >
-          <MessageCircle className="h-4 w-4 mr-2" />
+          <img src={whatsappIcon} alt="WhatsApp" className="h-4 w-4 mr-2" />
           WhatsApp JanAssist
         </Button>
       </div>

@@ -2,19 +2,22 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
+import { CircularProgress } from "@/components/CircularProgress";
 import { useNavigate } from "react-router-dom";
 import { 
-  CheckCircle, 
-  Circle, 
+  CheckCircle2, 
   AlertTriangle, 
-  Upload, 
+  FileText, 
   MapPin, 
   Building2, 
   Home, 
   Plane, 
-  Bell 
+  Bell,
+  Calendar,
+  CheckCheck,
+  UserCheck,
+  Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -38,6 +41,7 @@ interface Task {
   action: string;
   route: string;
   completed: boolean;
+  icon: any;
 }
 
 export default function FamilieDashboard() {
@@ -140,7 +144,8 @@ export default function FamilieDashboard() {
           description: 'Uw contactgegevens invullen',
           action: 'Invullen',
           route: '/familie/identificatie',
-          completed: (familyContacts && familyContacts.length > 0) || false
+          completed: (familyContacts && familyContacts.length > 0) || false,
+          icon: UserCheck
         },
         {
           id: '2',
@@ -148,7 +153,8 @@ export default function FamilieDashboard() {
           description: 'Polisgegevens controleren',
           action: 'Invullen',
           route: '/familie/polis',
-          completed: (polisChecks && polisChecks.length > 0) || false
+          completed: (polisChecks && polisChecks.length > 0) || false,
+          icon: Shield
         },
         {
           id: '3',
@@ -156,7 +162,8 @@ export default function FamilieDashboard() {
           description: 'Overlijdensverklaring en ID uploaden',
           action: 'Uploaden',
           route: '/mijn-documenten',
-          completed: (documents && documents.length >= 2) || false
+          completed: (documents && documents.length >= 2) || false,
+          icon: FileText
         },
         {
           id: '4',
@@ -164,7 +171,8 @@ export default function FamilieDashboard() {
           description: 'Waar bevindt de overledene zich?',
           action: 'Invullen',
           route: '/familie/locatie',
-          completed: (medicalDocs && medicalDocs.length > 0) || false
+          completed: (medicalDocs && medicalDocs.length > 0) || false,
+          icon: MapPin
         },
         {
           id: '5',
@@ -172,7 +180,8 @@ export default function FamilieDashboard() {
           description: 'Kies een uitvaartondernemer',
           action: 'Kiezen',
           route: '/familie/uitvaartondernemer',
-          completed: hasFD
+          completed: hasFD,
+          icon: Building2
         },
         {
           id: '6',
@@ -180,7 +189,8 @@ export default function FamilieDashboard() {
           description: 'Maak uw keuze',
           action: 'Kiezen',
           route: '/familie/keuze',
-          completed: flowChosen
+          completed: flowChosen,
+          icon: flow === 'REP' ? Plane : Home
         },
         {
           id: '7',
@@ -192,7 +202,8 @@ export default function FamilieDashboard() {
             : 'Kies eerst lokaal of repatriëring',
           action: 'Invullen',
           route: flow === 'LOC' ? '/planning' : flow === 'REP' ? '/familie/repatriering' : '/familie/keuze',
-          completed: hasPreferences
+          completed: hasPreferences,
+          icon: Calendar
         },
         {
           id: '8',
@@ -200,7 +211,8 @@ export default function FamilieDashboard() {
           description: 'Wachten op voltooiing door uitvaartondernemer',
           action: 'Status',
           route: '#',
-          completed: isCompleted
+          completed: isCompleted,
+          icon: CheckCheck
         }
       ];
 
@@ -297,58 +309,83 @@ export default function FamilieDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Voortgang (8 stappen)</CardTitle>
+          <CardTitle>Voortgang</CardTitle>
           <CardDescription>
-            {completedTasks} van {totalTasks} stappen voltooid • {Math.round(progress)}%
+            {completedTasks} van {totalTasks} stappen voltooid
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-6">
-            <Progress value={progress} className="h-3" />
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              Bij elke afgeronde stap gaat het percentage omhoog
-            </p>
-          </div>
-          <div className="space-y-3">
-            {tasks.map((task, index) => (
-              <div
-                key={task.id}
-                className={cn(
-                  "flex items-center justify-between p-4 border rounded-lg transition-all",
-                  task.completed 
-                    ? "bg-success/5 border-success/20" 
-                    : "hover:bg-accent/50"
-                )}
-              >
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 flex-shrink-0">
-                    {task.completed ? (
-                      <CheckCircle className="h-5 w-5 text-success" />
-                    ) : (
-                      <span className="text-sm font-medium text-muted-foreground">{index + 1}</span>
+          <div className="grid lg:grid-cols-[1fr,auto] gap-8 items-start">
+            {/* Left: Timeline steps */}
+            <div className="space-y-0">
+              {tasks.map((task, index) => {
+                const Icon = task.icon;
+                const isLast = index === tasks.length - 1;
+                
+                return (
+                  <div key={task.id} className="relative flex gap-4 pb-8">
+                    {/* Timeline line */}
+                    {!isLast && (
+                      <div 
+                        className={cn(
+                          "absolute left-6 top-14 w-0.5 h-full -translate-x-1/2",
+                          task.completed ? "bg-primary" : "bg-muted"
+                        )}
+                      />
                     )}
+                    
+                    {/* Step circle with icon */}
+                    <div className="relative flex-shrink-0">
+                      <div
+                        className={cn(
+                          "w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all",
+                          task.completed
+                            ? "bg-primary border-primary text-primary-foreground"
+                            : "bg-background border-muted text-muted-foreground"
+                        )}
+                      >
+                        {task.completed ? (
+                          <CheckCircle2 className="h-6 w-6" />
+                        ) : (
+                          <Icon className="h-5 w-5" />
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Step content */}
+                    <div className="flex-1 pt-1">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className={cn(
+                            "font-semibold text-base mb-1",
+                            task.completed && "text-foreground"
+                          )}>
+                            Step {index + 1}: {task.title}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {task.description}
+                          </p>
+                        </div>
+                        <Button
+                          variant={task.completed ? "outline" : "default"}
+                          size="sm"
+                          onClick={() => task.route !== '#' && navigate(task.route)}
+                          disabled={task.route === '#'}
+                          className="flex-shrink-0"
+                        >
+                          {task.action}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className={cn(
-                      "font-medium",
-                      task.completed && "text-success"
-                    )}>
-                      {task.title}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{task.description}</p>
-                  </div>
-                </div>
-                <Button
-                  variant={task.completed ? "outline" : "default"}
-                  size="sm"
-                  onClick={() => task.route !== '#' && navigate(task.route)}
-                  disabled={task.route === '#'}
-                  className="flex-shrink-0"
-                >
-                  {task.completed ? "✓" : task.action}
-                </Button>
-              </div>
-            ))}
+                );
+              })}
+            </div>
+            
+            {/* Right: Circular progress */}
+            <div className="flex justify-center lg:justify-end">
+              <CircularProgress value={progress} size={240} strokeWidth={16} />
+            </div>
           </div>
         </CardContent>
       </Card>

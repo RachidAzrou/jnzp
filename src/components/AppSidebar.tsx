@@ -29,6 +29,7 @@ const menuItems: MenuItem[] = [
   { title: "Taken", url: "/taken", icon: CheckSquare, roles: ['admin', 'funeral_director'] },
   { title: "Documenten", url: "/documenten", icon: FileText, roles: ['admin', 'funeral_director'] },
   { title: "Planning", url: "/planning", icon: Calendar, roles: ['admin', 'funeral_director'] },
+  { title: "Facturatie", url: "/facturatie", icon: Receipt, roles: ['admin', 'funeral_director'] },
   
   { title: "Facturen", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
   { title: "Rapportage", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },

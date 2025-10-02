@@ -46,7 +46,7 @@ type InvoiceItem = {
 
 const statusColors: Record<string, string> = {
   DRAFT: "bg-muted text-muted-foreground",
-  RECEIVED: "bg-warning text-warning-foreground",
+  ISSUED: "bg-warning text-warning-foreground",
   NEEDS_INFO: "bg-blue-500 text-white",
   APPROVED: "bg-green-500 text-white",
   PAID: "bg-success text-success-foreground",
@@ -55,7 +55,7 @@ const statusColors: Record<string, string> = {
 
 const statusLabels: Record<string, string> = {
   DRAFT: "Concept",
-  RECEIVED: "Ontvangen",
+  ISSUED: "Ontvangen",
   NEEDS_INFO: "Info nodig",
   APPROVED: "Goedgekeurd",
   PAID: "Betaald",
@@ -291,7 +291,7 @@ export default function InsurerInvoices() {
 
   // Calculate KPIs
   const totalInvoices = invoices.length;
-  const pendingApproval = invoices.filter(i => i.status === "RECEIVED").length;
+  const pendingApproval = invoices.filter(i => i.status === "ISSUED").length;
   const paidInvoices = invoices.filter(i => i.status === "PAID").length;
   const totalAmount = invoices.reduce((sum, inv) => sum + Number(inv.total), 0);
   const paidAmount = invoices.filter(i => i.status === "PAID")
@@ -364,7 +364,7 @@ export default function InsurerInvoices() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Alle statussen</SelectItem>
-                <SelectItem value="RECEIVED">Ontvangen</SelectItem>
+                <SelectItem value="ISSUED">Ontvangen</SelectItem>
                 <SelectItem value="NEEDS_INFO">Info nodig</SelectItem>
                 <SelectItem value="APPROVED">Goedgekeurd</SelectItem>
                 <SelectItem value="PAID">Betaald</SelectItem>

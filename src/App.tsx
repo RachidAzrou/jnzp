@@ -92,6 +92,36 @@ const RoleProtectedRoute = ({
   return <>{children}</>;
 };
 
+const RoleBasedHome = () => {
+  const { role, loading } = useUserRole();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (role === 'wasplaats') {
+    return <Navigate to="/wasplaats" replace />;
+  }
+  if (role === 'mosque') {
+    return <Navigate to="/moskee" replace />;
+  }
+  if (role === 'insurer') {
+    return <Navigate to="/insurer" replace />;
+  }
+  if (role === 'family') {
+    return <Navigate to="/familie" replace />;
+  }
+  if (role === 'admin' || role === 'funeral_director') {
+    return <Dashboard />;
+  }
+
+  return <Navigate to="/auth" replace />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -111,11 +141,7 @@ const App = () => (
                       <TopBar />
                       <main className="flex-1 p-6">
                         <Routes>
-                          <Route path="/" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'insurer']}>
-                              <Dashboard />
-                            </RoleProtectedRoute>
-                          } />
+                          <Route path="/" element={<RoleBasedHome />} />
                           <Route path="/dossiers" element={
                             <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
                               <Dossiers />

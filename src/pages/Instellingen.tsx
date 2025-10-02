@@ -15,6 +15,12 @@ const Instellingen = () => {
     lastName: "",
     phone: ""
   });
+  const [organization, setOrganization] = useState({
+    name: "",
+    type: "",
+    contactEmail: "",
+    contactPhone: ""
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -27,19 +33,52 @@ const Instellingen = () => {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (session?.user) {
-      const { data } = await supabase
+      const { data: profileData } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", session.user.id)
         .single();
 
-      if (data) {
+      if (profileData) {
         setProfile({
-          email: data.email || "",
-          firstName: data.first_name || "",
-          lastName: data.last_name || "",
-          phone: data.phone || ""
+          email: profileData.email || "",
+          firstName: profileData.first_name || "",
+          lastName: profileData.last_name || "",
+          phone: profileData.phone || ""
         });
+      }
+
+      // Fetch organization info
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role, organization_id")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (roleData?.organization_id) {
+        const { data: orgData } = await supabase
+          .from("organizations")
+          .select("*")
+          .eq("id", roleData.organization_id)
+          .single();
+
+        if (orgData) {
+          const roleLabels: Record<string, string> = {
+            admin: 'Beheerder',
+            funeral_director: 'Uitvaartondernemer',
+            insurer: 'Verzekeraar',
+            wasplaats: 'Wasplaats',
+            mosque: 'Moskee',
+            family: 'Familie'
+          };
+
+          setOrganization({
+            name: orgData.name || "",
+            type: roleLabels[roleData.role] || roleData.role,
+            contactEmail: orgData.contact_email || "",
+            contactPhone: orgData.contact_phone || ""
+          });
+        }
       }
     }
     setLoading(false);
@@ -51,13 +90,33 @@ const Instellingen = () => {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (session?.user) {
+      const updates: any = {
+        first_name: profile.firstName,
+        last_name: profile.lastName,
+        phone: profile.phone
+      };
+
+      // Only update email if it's different from the current one
+      if (profile.email !== session.user.email) {
+        const { error: emailError } = await supabase.auth.updateUser({
+          email: profile.email
+        });
+
+        if (emailError) {
+          toast({
+            title: "Fout bij opslaan e-mail",
+            description: emailError.message,
+            variant: "destructive",
+          });
+          setSaving(false);
+          return;
+        }
+        updates.email = profile.email;
+      }
+
       const { error } = await supabase
         .from("profiles")
-        .update({
-          first_name: profile.firstName,
-          last_name: profile.lastName,
-          phone: profile.phone
-        })
+        .update(updates)
         .eq("id", session.user.id);
 
       if (error) {
@@ -128,12 +187,8 @@ const Instellingen = () => {
                 id="email"
                 type="email"
                 value={profile.email}
-                disabled
-                className="bg-muted"
+                onChange={(e) => setProfile({ ...profile, email: e.target.value })}
               />
-              <p className="text-xs text-muted-foreground">
-                E-mailadres kan niet gewijzigd worden
-              </p>
             </div>
 
             <div className="space-y-2">
@@ -167,13 +222,31 @@ const Instellingen = () => {
             <CardDescription>Uw organisatie informatie</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+            <div className="p-4 bg-muted/50 rounded-lg space-y-3">
               <div>
-                <p className="font-medium">Al-Baraka Uitvaartzorg</p>
-                <p className="text-sm text-muted-foreground">Uitvaartondernemer</p>
+                <p className="text-sm text-muted-foreground">Organisatie naam</p>
+                <p className="font-medium">{organization.name || "Niet beschikbaar"}</p>
               </div>
-              <Button variant="outline" size="sm">Wijzigen</Button>
+              <div>
+                <p className="text-sm text-muted-foreground">Type</p>
+                <p className="font-medium">{organization.type || "Niet beschikbaar"}</p>
+              </div>
+              {organization.contactEmail && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Contact e-mail</p>
+                  <p className="font-medium">{organization.contactEmail}</p>
+                </div>
+              )}
+              {organization.contactPhone && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Contact telefoon</p>
+                  <p className="font-medium">{organization.contactPhone}</p>
+                </div>
+              )}
             </div>
+            <p className="text-xs text-muted-foreground">
+              Organisatiegegevens kunnen niet worden gewijzigd. Neem contact op met de beheerder voor wijzigingen.
+            </p>
           </CardContent>
         </Card>
 

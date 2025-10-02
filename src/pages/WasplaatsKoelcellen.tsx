@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Ban, CheckCircle, Unlock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -256,34 +256,38 @@ export default function WasplaatsKoelcellen() {
                         {cell.status === "FREE" && (
                           <Button
                             size="sm"
-                            variant="outline"
+                            variant="ghost"
                             onClick={() => updateCellStatus(cell.id, "OUT_OF_SERVICE")}
+                            title="Zet Buiten Dienst"
                           >
-                            Zet Buiten Dienst
+                            <Ban className="h-4 w-4 text-destructive" />
                           </Button>
                         )}
                         {cell.status === "OUT_OF_SERVICE" && (
                           <Button
                             size="sm"
-                            variant="outline"
+                            variant="ghost"
                             onClick={() => updateCellStatus(cell.id, "FREE")}
+                            title="Zet Vrij"
                           >
-                            Zet Vrij
+                            <CheckCircle className="h-4 w-4 text-success" />
                           </Button>
                         )}
                         {cell.status === "OCCUPIED" && (
                           <Button
                             size="sm"
-                            variant="outline"
+                            variant="ghost"
                             onClick={() => updateCellStatus(cell.id, "FREE")}
+                            title="Markeer Released"
                           >
-                            Markeer Released
+                            <Unlock className="h-4 w-4 text-success" />
                           </Button>
                         )}
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => deleteCoolCell(cell.id)}
+                          title="Verwijderen"
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>

@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Plus, Ban } from "lucide-react";
+import { Calendar, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { format, startOfWeek, addDays } from "date-fns";
+import { format, addWeeks, subWeeks, addDays, subDays } from "date-fns";
 import { nl } from "date-fns/locale";
+import { WasplaatsWeekView } from "@/components/WasplaatsWeekView";
+import { WasplaatsDayView } from "@/components/WasplaatsDayView";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type CoolCell = {
   id: string;
@@ -18,6 +21,8 @@ type Reservation = {
   start_at: string;
   end_at: string;
   dossier_id: string;
+  cool_cell_id: string | null;
+  status: string;
 };
 
 type DayBlock = {
@@ -32,6 +37,8 @@ export default function WasplaatsDashboard() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [dayBlocks, setDayBlocks] = useState<DayBlock[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     fetchData();
@@ -66,13 +73,6 @@ export default function WasplaatsDashboard() {
     occupied: coolCells.filter((c) => c.status === "OCCUPIED").length,
     outOfService: coolCells.filter((c) => c.status === "OUT_OF_SERVICE").length,
   };
-
-  const getWeekDays = () => {
-    const start = startOfWeek(new Date(), { weekStartsOn: 1 });
-    return Array.from({ length: 7 }, (_, i) => addDays(start, i));
-  };
-
-  const weekDays = getWeekDays();
 
   if (loading) {
     return <div className="p-6">Laden...</div>;
@@ -137,62 +137,87 @@ export default function WasplaatsDashboard() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Agenda (Deze Week)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2">Dag</th>
-                  <th className="text-left p-2">Vrije Cellen</th>
-                  <th className="text-left p-2">Reserveringen</th>
-                  <th className="text-left p-2">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {weekDays.map((day) => {
-                  const dayStr = format(day, "yyyy-MM-dd");
-                  const dayReservations = reservations.filter(
-                    (r) => format(new Date(r.start_at), "yyyy-MM-dd") === dayStr
-                  );
-                  const isBlocked = dayBlocks.some((b) => b.date === dayStr);
+      <Tabs defaultValue="week" className="w-full">
+        <div className="flex items-center justify-between mb-4">
+          <TabsList>
+            <TabsTrigger value="week">Weekoverzicht</TabsTrigger>
+            <TabsTrigger value="day">Dag-detail</TabsTrigger>
+          </TabsList>
+        </div>
 
-                  return (
-                    <tr key={dayStr} className="border-b hover:bg-muted/50">
-                      <td className="p-2 font-medium">
-                        {format(day, "EEEE d MMM", { locale: nl })}
-                      </td>
-                      <td className="p-2">
-                        {isBlocked ? "0" : capacityStats.free}/{capacityStats.total}
-                      </td>
-                      <td className="p-2">
-                        {dayReservations.length > 0
-                          ? dayReservations
-                              .map((r) => `${format(new Date(r.start_at), "HH:mm")}-${format(new Date(r.end_at), "HH:mm")}`)
-                              .join(", ")
-                          : "-"}
-                      </td>
-                      <td className="p-2">
-                        {isBlocked ? (
-                          <span className="inline-flex items-center text-destructive">
-                            <Ban className="h-4 w-4 mr-1" />
-                            Geblokkeerd
-                          </span>
-                        ) : (
-                          <span className="text-success">Beschikbaar</span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        <TabsContent value="week" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">
+              Week van {format(currentWeek, "d MMMM yyyy", { locale: nl })}
+            </h2>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentWeek(subWeeks(currentWeek, 1))}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentWeek(new Date())}
+              >
+                Vandaag
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentWeek(addWeeks(currentWeek, 1))}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+          <WasplaatsWeekView
+            coolCells={coolCells}
+            reservations={reservations}
+            dayBlocks={dayBlocks}
+            currentWeek={currentWeek}
+          />
+        </TabsContent>
+
+        <TabsContent value="day" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">
+              {format(selectedDate, "EEEE d MMMM yyyy", { locale: nl })}
+            </h2>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedDate(subDays(selectedDate, 1))}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedDate(new Date())}
+              >
+                Vandaag
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          <WasplaatsDayView
+            coolCells={coolCells}
+            reservations={reservations}
+            selectedDate={selectedDate}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

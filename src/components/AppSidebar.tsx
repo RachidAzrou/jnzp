@@ -23,14 +23,16 @@ const menuItems: MenuItem[] = [
   { title: "Dashboard", url: "/", icon: Home, roles: ['admin', 'funeral_director', 'insurer'] },
   { title: "Dashboard", url: "/familie", icon: LayoutDashboard, roles: ['family'] },
   { title: "Dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
+  { title: "Aanvragen", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
   { title: "Dossiers", url: "/dossiers", icon: FolderOpen, roles: ['admin', 'funeral_director'] },
   { title: "Taken", url: "/taken", icon: CheckSquare, roles: ['admin', 'funeral_director'] },
   { title: "Documenten", url: "/documenten", icon: FileText, roles: ['admin', 'funeral_director'] },
   { title: "Planning", url: "/planning", icon: Calendar, roles: ['admin', 'funeral_director'] },
   { title: "Rapporten", url: "/rapporten", icon: BarChart3, roles: ['admin', 'funeral_director', 'insurer'] },
   { title: "Koelcellen", url: "/wasplaats/koelcellen", icon: FolderOpen, roles: ['wasplaats'] },
+  { title: "Beschikbaarheid", url: "/moskee/beschikbaarheid", icon: Calendar, roles: ['mosque'] },
   { title: "Mijn Documenten", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
-  { title: "Instellingen", url: "/instellingen", icon: Settings, roles: ['admin', 'funeral_director', 'family', 'insurer', 'wasplaats'] },
+  { title: "Instellingen", url: "/instellingen", icon: Settings, roles: ['admin', 'funeral_director', 'family', 'insurer', 'wasplaats', 'mosque'] },
 ];
 
 export function AppSidebar() {

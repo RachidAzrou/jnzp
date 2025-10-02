@@ -586,6 +586,139 @@ export type Database = {
           },
         ]
       }
+      mosque_availability: {
+        Row: {
+          afternoon_open: boolean
+          created_at: string
+          date: string
+          evening_open: boolean
+          id: string
+          morning_open: boolean
+          mosque_org_id: string
+          updated_at: string
+        }
+        Insert: {
+          afternoon_open?: boolean
+          created_at?: string
+          date: string
+          evening_open?: boolean
+          id?: string
+          morning_open?: boolean
+          mosque_org_id: string
+          updated_at?: string
+        }
+        Update: {
+          afternoon_open?: boolean
+          created_at?: string
+          date?: string
+          evening_open?: boolean
+          id?: string
+          morning_open?: boolean
+          mosque_org_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mosque_availability_mosque_org_id_fkey"
+            columns: ["mosque_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mosque_day_blocks: {
+        Row: {
+          created_at: string
+          created_by_user_id: string
+          date: string
+          id: string
+          mosque_org_id: string
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id: string
+          date: string
+          id?: string
+          mosque_org_id: string
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string
+          date?: string
+          id?: string
+          mosque_org_id?: string
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mosque_day_blocks_mosque_org_id_fkey"
+            columns: ["mosque_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mosque_services: {
+        Row: {
+          confirmed_slot: string | null
+          created_at: string
+          decline_reason: string | null
+          dossier_id: string
+          id: string
+          mosque_org_id: string
+          note: string | null
+          requested_at: string
+          requested_slot: string | null
+          status: Database["public"]["Enums"]["mosque_status"]
+          updated_at: string
+        }
+        Insert: {
+          confirmed_slot?: string | null
+          created_at?: string
+          decline_reason?: string | null
+          dossier_id: string
+          id?: string
+          mosque_org_id: string
+          note?: string | null
+          requested_at?: string
+          requested_slot?: string | null
+          status?: Database["public"]["Enums"]["mosque_status"]
+          updated_at?: string
+        }
+        Update: {
+          confirmed_slot?: string | null
+          created_at?: string
+          decline_reason?: string | null
+          dossier_id?: string
+          id?: string
+          mosque_org_id?: string
+          note?: string | null
+          requested_at?: string
+          requested_slot?: string | null
+          status?: Database["public"]["Enums"]["mosque_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mosque_services_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mosque_services_mosque_org_id_fkey"
+            columns: ["mosque_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string
@@ -967,6 +1100,7 @@ export type Database = {
         | "ARCHIVED"
       invoice_status: "DRAFT" | "ISSUED" | "PAID" | "CANCELLED"
       location_type: "HOME" | "HOSPITAL" | "OTHER"
+      mosque_status: "PENDING" | "CONFIRMED" | "DECLINED"
       org_type:
         | "FUNERAL_DIRECTOR"
         | "MOSQUE"
@@ -1147,6 +1281,7 @@ export const Constants = {
       ],
       invoice_status: ["DRAFT", "ISSUED", "PAID", "CANCELLED"],
       location_type: ["HOME", "HOSPITAL", "OTHER"],
+      mosque_status: ["PENDING", "CONFIRMED", "DECLINED"],
       org_type: [
         "FUNERAL_DIRECTOR",
         "MOSQUE",

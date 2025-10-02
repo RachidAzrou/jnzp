@@ -24,6 +24,9 @@ import FamilieLocatie from "./pages/FamilieLocatie";
 import WasplaatsDashboard from "./pages/WasplaatsDashboard";
 import WasplaatsKoelcellen from "./pages/WasplaatsKoelcellen";
 import WasplaatsReservaties from "./pages/WasplaatsReservaties";
+import MoskeeDashboard from "./pages/MoskeeDashboard";
+import MoskeeAanvraag from "./pages/MoskeeAanvraag";
+import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
@@ -173,6 +176,21 @@ const App = () => (
                           <Route path="/wasplaats/reservaties/nieuw" element={
                             <RoleProtectedRoute allowedRoles={['wasplaats']}>
                               <WasplaatsReservaties />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/moskee" element={
+                            <RoleProtectedRoute allowedRoles={['mosque']}>
+                              <MoskeeDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/moskee/aanvraag/:id" element={
+                            <RoleProtectedRoute allowedRoles={['mosque']}>
+                              <MoskeeAanvraag />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/moskee/beschikbaarheid" element={
+                            <RoleProtectedRoute allowedRoles={['mosque']}>
+                              <MoskeeBeschikbaarheid />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />

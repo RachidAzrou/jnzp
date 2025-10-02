@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-export type UserRole = 'admin' | 'funeral_director' | 'family' | 'insurer' | null;
+export type UserRole = 'admin' | 'funeral_director' | 'family' | 'insurer' | 'wasplaats' | null;
 
 export const useUserRole = () => {
   const [role, setRole] = useState<UserRole>(null);
@@ -60,6 +60,8 @@ export const getRoleDisplayName = (role: UserRole): string => {
       return 'Familie';
     case 'insurer':
       return 'Verzekeraar';
+    case 'wasplaats':
+      return 'Wasplaats';
     default:
       return 'Gebruiker';
   }

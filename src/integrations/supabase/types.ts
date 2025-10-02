@@ -59,6 +59,108 @@ export type Database = {
           },
         ]
       }
+      cool_cell_reservations: {
+        Row: {
+          cool_cell_id: string | null
+          created_at: string
+          created_by_user_id: string
+          dossier_id: string
+          end_at: string
+          facility_org_id: string
+          id: string
+          note: string | null
+          start_at: string
+          status: Database["public"]["Enums"]["reservation_status"]
+          updated_at: string
+        }
+        Insert: {
+          cool_cell_id?: string | null
+          created_at?: string
+          created_by_user_id: string
+          dossier_id: string
+          end_at: string
+          facility_org_id: string
+          id?: string
+          note?: string | null
+          start_at: string
+          status?: Database["public"]["Enums"]["reservation_status"]
+          updated_at?: string
+        }
+        Update: {
+          cool_cell_id?: string | null
+          created_at?: string
+          created_by_user_id?: string
+          dossier_id?: string
+          end_at?: string
+          facility_org_id?: string
+          id?: string
+          note?: string | null
+          start_at?: string
+          status?: Database["public"]["Enums"]["reservation_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cool_cell_reservations_cool_cell_id_fkey"
+            columns: ["cool_cell_id"]
+            isOneToOne: false
+            referencedRelation: "cool_cells"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cool_cell_reservations_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cool_cell_reservations_facility_org_id_fkey"
+            columns: ["facility_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cool_cells: {
+        Row: {
+          created_at: string
+          facility_org_id: string
+          id: string
+          label: string
+          out_of_service_note: string | null
+          status: Database["public"]["Enums"]["cool_cell_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          facility_org_id: string
+          id?: string
+          label: string
+          out_of_service_note?: string | null
+          status?: Database["public"]["Enums"]["cool_cell_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          facility_org_id?: string
+          id?: string
+          label?: string
+          out_of_service_note?: string | null
+          status?: Database["public"]["Enums"]["cool_cell_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cool_cells_facility_org_id_fkey"
+            columns: ["facility_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           doc_type: Database["public"]["Enums"]["doc_type"]
@@ -183,6 +285,41 @@ export type Database = {
           },
         ]
       }
+      facility_day_blocks: {
+        Row: {
+          created_at: string
+          created_by_user_id: string
+          date: string
+          facility_org_id: string
+          id: string
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id: string
+          date: string
+          facility_org_id: string
+          id?: string
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string
+          date?: string
+          facility_org_id?: string
+          id?: string
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_day_blocks_facility_org_id_fkey"
+            columns: ["facility_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_contacts: {
         Row: {
           created_at: string
@@ -261,6 +398,114 @@ export type Database = {
             columns: ["repatriation_id"]
             isOneToOne: false
             referencedRelation: "repatriations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_items: {
+        Row: {
+          amount: number
+          code: string
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          qty: number
+          unit_price: number
+        }
+        Insert: {
+          amount: number
+          code: string
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          qty: number
+          unit_price: number
+        }
+        Update: {
+          amount?: number
+          code?: string
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          qty?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          created_at: string
+          dossier_id: string
+          facility_org_id: string
+          fd_org_id: string
+          id: string
+          issued_at: string | null
+          paid_at: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          subtotal: number
+          total: number
+          updated_at: string
+          vat: number
+        }
+        Insert: {
+          created_at?: string
+          dossier_id: string
+          facility_org_id: string
+          fd_org_id: string
+          id?: string
+          issued_at?: string | null
+          paid_at?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          vat?: number
+        }
+        Update: {
+          created_at?: string
+          dossier_id?: string
+          facility_org_id?: string
+          fd_org_id?: string
+          id?: string
+          issued_at?: string | null
+          paid_at?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          vat?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_facility_org_id_fkey"
+            columns: ["facility_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_fd_org_id_fkey"
+            columns: ["fd_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -493,6 +738,48 @@ export type Database = {
         }
         Relationships: []
       }
+      qr_tags: {
+        Row: {
+          created_at: string
+          dossier_id: string
+          facility_org_id: string
+          id: string
+          printed_at: string | null
+          qr_code_data: string
+        }
+        Insert: {
+          created_at?: string
+          dossier_id: string
+          facility_org_id: string
+          id?: string
+          printed_at?: string | null
+          qr_code_data: string
+        }
+        Update: {
+          created_at?: string
+          dossier_id?: string
+          facility_org_id?: string
+          id?: string
+          printed_at?: string | null
+          qr_code_data?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qr_tags_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qr_tags_facility_org_id_fkey"
+            columns: ["facility_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       repatriations: {
         Row: {
           created_at: string
@@ -574,6 +861,64 @@ export type Database = {
           },
         ]
       }
+      wash_services: {
+        Row: {
+          cool_cell_id: string | null
+          created_at: string
+          dossier_id: string
+          facility_org_id: string
+          id: string
+          note: string | null
+          scheduled_at: string | null
+          status: Database["public"]["Enums"]["wash_status"]
+          updated_at: string
+        }
+        Insert: {
+          cool_cell_id?: string | null
+          created_at?: string
+          dossier_id: string
+          facility_org_id: string
+          id?: string
+          note?: string | null
+          scheduled_at?: string | null
+          status?: Database["public"]["Enums"]["wash_status"]
+          updated_at?: string
+        }
+        Update: {
+          cool_cell_id?: string | null
+          created_at?: string
+          dossier_id?: string
+          facility_org_id?: string
+          id?: string
+          note?: string | null
+          scheduled_at?: string | null
+          status?: Database["public"]["Enums"]["wash_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wash_services_cool_cell_id_fkey"
+            columns: ["cool_cell_id"]
+            isOneToOne: false
+            referencedRelation: "cool_cells"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wash_services_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wash_services_facility_org_id_fkey"
+            columns: ["facility_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -595,6 +940,7 @@ export type Database = {
         | "family"
         | "wasplaats"
       channel: "EMAIL" | "SMS" | "PUSH"
+      cool_cell_status: "FREE" | "RESERVED" | "OCCUPIED" | "OUT_OF_SERVICE"
       delivery_status: "PENDING" | "SENT" | "FAILED"
       doc_status: "IN_REVIEW" | "APPROVED" | "REJECTED"
       doc_type:
@@ -618,6 +964,7 @@ export type Database = {
         | "READY_FOR_TRANSPORT"
         | "IN_TRANSIT"
         | "ARCHIVED"
+      invoice_status: "DRAFT" | "ISSUED" | "PAID" | "CANCELLED"
       location_type: "HOME" | "HOSPITAL" | "OTHER"
       org_type:
         | "FUNERAL_DIRECTOR"
@@ -626,7 +973,15 @@ export type Database = {
         | "FAMILY"
         | "ADMIN"
         | "OTHER"
+      reservation_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
       service_status: "PENDING" | "CONFIRMED" | "COMPLETED" | "FAILED"
+      wash_status:
+        | "PENDING"
+        | "SCHEDULED"
+        | "ARRIVED"
+        | "WASHING"
+        | "WASHED"
+        | "RELEASED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -756,6 +1111,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "funeral_director", "insurer", "family", "wasplaats"],
       channel: ["EMAIL", "SMS", "PUSH"],
+      cool_cell_status: ["FREE", "RESERVED", "OCCUPIED", "OUT_OF_SERVICE"],
       delivery_status: ["PENDING", "SENT", "FAILED"],
       doc_status: ["IN_REVIEW", "APPROVED", "REJECTED"],
       doc_type: [
@@ -781,6 +1137,7 @@ export const Constants = {
         "IN_TRANSIT",
         "ARCHIVED",
       ],
+      invoice_status: ["DRAFT", "ISSUED", "PAID", "CANCELLED"],
       location_type: ["HOME", "HOSPITAL", "OTHER"],
       org_type: [
         "FUNERAL_DIRECTOR",
@@ -790,7 +1147,16 @@ export const Constants = {
         "ADMIN",
         "OTHER",
       ],
+      reservation_status: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],
       service_status: ["PENDING", "CONFIRMED", "COMPLETED", "FAILED"],
+      wash_status: [
+        "PENDING",
+        "SCHEDULED",
+        "ARRIVED",
+        "WASHING",
+        "WASHED",
+        "RELEASED",
+      ],
     },
   },
 } as const

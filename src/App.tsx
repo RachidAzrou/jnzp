@@ -21,6 +21,9 @@ import FamilieDashboard from "./pages/FamilieDashboard";
 import FamilieIdentificatie from "./pages/FamilieIdentificatie";
 import FamiliePolis from "./pages/FamiliePolis";
 import FamilieLocatie from "./pages/FamilieLocatie";
+import WasplaatsDashboard from "./pages/WasplaatsDashboard";
+import WasplaatsKoelcellen from "./pages/WasplaatsKoelcellen";
+import WasplaatsReservaties from "./pages/WasplaatsReservaties";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
@@ -155,6 +158,21 @@ const App = () => (
                           <Route path="/familie/locatie" element={
                             <RoleProtectedRoute allowedRoles={['family']}>
                               <FamilieLocatie />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/wasplaats" element={
+                            <RoleProtectedRoute allowedRoles={['wasplaats']}>
+                              <WasplaatsDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/wasplaats/koelcellen" element={
+                            <RoleProtectedRoute allowedRoles={['wasplaats']}>
+                              <WasplaatsKoelcellen />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/wasplaats/reservaties/nieuw" element={
+                            <RoleProtectedRoute allowedRoles={['wasplaats']}>
+                              <WasplaatsReservaties />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />

@@ -10,8 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, FileText, Search, Trash2, Save, Send } from "lucide-react";
+import { Plus, FileText, Search, Trash2, Save, Send, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { pdf } from '@react-pdf/renderer';
+import { InvoicePDF, InvoiceData } from "@/components/InvoicePDF";
+import { calculateInvoiceAmounts, validateInvoiceData } from "@/lib/invoiceCalculations";
 
 type Invoice = {
   id: string;
@@ -224,6 +227,107 @@ export default function FDFacturatie() {
     const vat = subtotal * 0.21;
     const total = subtotal + vat;
     return { subtotal, vat, total };
+  };
+
+  const generateInvoiceData = async (): Promise<InvoiceData | null> => {
+    if (!selectedDossier) return null;
+
+    const { data: dossier } = await supabase
+      .from("dossiers")
+      .select("*, insurer:organizations!dossiers_insurer_org_id_fkey(*)")
+      .eq("id", selectedDossier)
+      .single();
+
+    if (!dossier) return null;
+
+    const today = new Date().toISOString().split('T')[0];
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 14);
+
+    const invoiceData: InvoiceData = {
+      fd: {
+        name: "Al-Baraka Uitvaartzorg",
+        vat: "BE0123.456.789",
+        address: "Kerkstraat 12\n1000 Brussel\nBelgië",
+        contact: "info@al-baraka.be | +32 2 123 45 67",
+        iban: "BE12 3456 7890 1234",
+        bic: "ABCDBEBB",
+      },
+      insurer: {
+        name: dossier.insurer?.name || "",
+        address: dossier.insurer?.address || "",
+        contact: dossier.insurer?.contact_email || "",
+      },
+      invoice: {
+        number: `TEMP-${Date.now()}`,
+        date: today,
+        due_date: dueDate.toISOString().split('T')[0],
+        currency: "EUR",
+        payment_terms_days: 14,
+        notes: null,
+      },
+      dossier: {
+        display_id: dossier.display_id || "",
+        deceased_name: dossier.deceased_name,
+        flow_type: dossier.flow === "REP" ? "Repatriëring" : "Lokaal",
+        policy_ref: dossier.ref_number,
+      },
+      items: invoiceLines.map(line => ({
+        code: line.code,
+        description: line.description,
+        qty: line.qty,
+        unit: "stuk",
+        unit_price_ex_vat: line.unit_price / 1.21,
+        discount_pct: 0,
+        vat_pct: 21,
+      })),
+    };
+
+    return calculateInvoiceAmounts(invoiceData);
+  };
+
+  const handleDownloadPDF = async () => {
+    try {
+      const invoiceData = await generateInvoiceData();
+      if (!invoiceData) {
+        toast({
+          title: "Fout",
+          description: "Kon factuurgegevens niet ophalen",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const validation = validateInvoiceData(invoiceData);
+      if (!validation.valid) {
+        toast({
+          title: "Validatiefout",
+          description: validation.errors.join(", "),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const blob = await pdf(<InvoicePDF data={invoiceData} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `factuur-${invoiceData.invoice.number}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Succes",
+        description: "PDF gegenereerd en gedownload",
+      });
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast({
+        title: "Fout",
+        description: "Kon PDF niet genereren",
+        variant: "destructive",
+      });
+    }
   };
 
   const saveInvoice = async (asDraft: boolean) => {
@@ -650,6 +754,10 @@ export default function FDFacturatie() {
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowGenerator(false)}>
                 Annuleren
+              </Button>
+              <Button variant="outline" onClick={handleDownloadPDF}>
+                <Download className="h-4 w-4 mr-2" />
+                Download PDF
               </Button>
               <Button variant="outline" onClick={() => saveInvoice(true)}>
                 <Save className="h-4 w-4 mr-2" />

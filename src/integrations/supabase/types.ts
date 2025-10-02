@@ -976,6 +976,94 @@ export type Database = {
           },
         ]
       }
+      task_priority_audit: {
+        Row: {
+          actor_user_id: string
+          created_at: string
+          from_priority: Database["public"]["Enums"]["priority"]
+          id: string
+          source_after: Database["public"]["Enums"]["priority_source"]
+          source_before: Database["public"]["Enums"]["priority_source"]
+          task_id: string
+          to_priority: Database["public"]["Enums"]["priority"]
+        }
+        Insert: {
+          actor_user_id: string
+          created_at?: string
+          from_priority: Database["public"]["Enums"]["priority"]
+          id?: string
+          source_after: Database["public"]["Enums"]["priority_source"]
+          source_before: Database["public"]["Enums"]["priority_source"]
+          task_id: string
+          to_priority: Database["public"]["Enums"]["priority"]
+        }
+        Update: {
+          actor_user_id?: string
+          created_at?: string
+          from_priority?: Database["public"]["Enums"]["priority"]
+          id?: string
+          source_after?: Database["public"]["Enums"]["priority_source"]
+          source_before?: Database["public"]["Enums"]["priority_source"]
+          task_id?: string
+          to_priority?: Database["public"]["Enums"]["priority"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_priority_audit_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          created_at: string
+          dossier_id: string
+          id: string
+          priority: Database["public"]["Enums"]["priority"]
+          priority_set_at: string | null
+          priority_set_by_user_id: string | null
+          priority_source: Database["public"]["Enums"]["priority_source"]
+          status: Database["public"]["Enums"]["task_status"]
+          type: Database["public"]["Enums"]["task_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dossier_id: string
+          id?: string
+          priority?: Database["public"]["Enums"]["priority"]
+          priority_set_at?: string | null
+          priority_set_by_user_id?: string | null
+          priority_source?: Database["public"]["Enums"]["priority_source"]
+          status?: Database["public"]["Enums"]["task_status"]
+          type: Database["public"]["Enums"]["task_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dossier_id?: string
+          id?: string
+          priority?: Database["public"]["Enums"]["priority"]
+          priority_set_at?: string | null
+          priority_set_by_user_id?: string | null
+          priority_source?: Database["public"]["Enums"]["priority_source"]
+          status?: Database["public"]["Enums"]["task_status"]
+          type?: Database["public"]["Enums"]["task_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -1075,6 +1163,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_task_priority: {
+        Args: {
+          _dossier_id: string
+          _task_type: Database["public"]["Enums"]["task_type"]
+        }
+        Returns: Database["public"]["Enums"]["priority"]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1127,8 +1222,20 @@ export type Database = {
         | "ADMIN"
         | "OTHER"
         | "WASPLAATS"
+      priority: "HIGH" | "MEDIUM" | "LOW"
+      priority_source: "AUTO" | "MANUAL"
       reservation_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
       service_status: "PENDING" | "CONFIRMED" | "COMPLETED" | "FAILED"
+      task_status: "OPEN" | "IN_PROGRESS" | "DONE" | "CANCELLED"
+      task_type:
+        | "DOC_REUPLOAD_REQUEST"
+        | "MOSQUE_CONFIRM"
+        | "WASH_START"
+        | "FLIGHT_REGISTER"
+        | "INTAKE_COMPLETE"
+        | "LEGAL_HOLD_FOLLOW_UP"
+        | "TRANSPORT_PREPARE"
+        | "DOC_REVIEW"
       wash_status:
         | "PENDING"
         | "SCHEDULED"
@@ -1310,8 +1417,21 @@ export const Constants = {
         "OTHER",
         "WASPLAATS",
       ],
+      priority: ["HIGH", "MEDIUM", "LOW"],
+      priority_source: ["AUTO", "MANUAL"],
       reservation_status: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],
       service_status: ["PENDING", "CONFIRMED", "COMPLETED", "FAILED"],
+      task_status: ["OPEN", "IN_PROGRESS", "DONE", "CANCELLED"],
+      task_type: [
+        "DOC_REUPLOAD_REQUEST",
+        "MOSQUE_CONFIRM",
+        "WASH_START",
+        "FLIGHT_REGISTER",
+        "INTAKE_COMPLETE",
+        "LEGAL_HOLD_FOLLOW_UP",
+        "TRANSPORT_PREPARE",
+        "DOC_REVIEW",
+      ],
       wash_status: [
         "PENDING",
         "SCHEDULED",

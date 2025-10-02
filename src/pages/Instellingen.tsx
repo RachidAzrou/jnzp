@@ -88,7 +88,7 @@ const Instellingen = () => {
             address: orgData.address || "",
             city: orgData.city || "",
             postalCode: orgData.postal_code || "",
-            country: orgData.country || "",
+            country: orgData.country || "België",
             vatNumber: orgData.vat_number || "",
             registrationNumber: orgData.registration_number || ""
           });
@@ -144,6 +144,52 @@ const Instellingen = () => {
           title: "Profiel bijgewerkt",
           description: "Uw gegevens zijn succesvol opgeslagen.",
         });
+      }
+    }
+    
+    setSaving(false);
+  };
+
+  const handleSaveOrganization = async () => {
+    setSaving(true);
+    
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session?.user) {
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("organization_id")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (roleData?.organization_id) {
+        const { error } = await supabase
+          .from("organizations")
+          .update({
+            name: organization.name,
+            contact_email: organization.contactEmail,
+            contact_phone: organization.contactPhone,
+            address: organization.address,
+            city: organization.city,
+            postal_code: organization.postalCode,
+            country: organization.country,
+            vat_number: organization.vatNumber,
+            registration_number: organization.registrationNumber
+          })
+          .eq("id", roleData.organization_id);
+
+        if (error) {
+          toast({
+            title: "Fout bij opslaan",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Organisatie bijgewerkt",
+            description: "De organisatiegegevens zijn succesvol opgeslagen.",
+          });
+        }
       }
     }
     
@@ -231,66 +277,112 @@ const Instellingen = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building2 className="h-5 w-5" />
-              Organisatie
+              Organisatiegegevens
             </CardTitle>
-            <CardDescription>Uw organisatie informatie</CardDescription>
+            <CardDescription>Beheer uw organisatie informatie</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 bg-muted/50 rounded-lg space-y-3">
-              <div>
-                <p className="text-sm text-muted-foreground">Organisatie naam</p>
-                <p className="font-medium">{organization.name || "Niet beschikbaar"}</p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="orgName">Organisatie naam</Label>
+                <Input
+                  id="orgName"
+                  value={organization.name}
+                  onChange={(e) => setOrganization({ ...organization, name: e.target.value })}
+                />
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Type</p>
-                <p className="font-medium">{organization.type || "Niet beschikbaar"}</p>
+              <div className="space-y-2">
+                <Label htmlFor="orgType">Type</Label>
+                <Input
+                  id="orgType"
+                  value={organization.type}
+                  disabled
+                  className="bg-muted"
+                />
               </div>
-              {organization.contactEmail && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Contact e-mail</p>
-                  <p className="font-medium">{organization.contactEmail}</p>
-                </div>
-              )}
-              {organization.contactPhone && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Contact telefoon</p>
-                  <p className="font-medium">{organization.contactPhone}</p>
-                </div>
-              )}
-              {organization.address && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Adres</p>
-                  <p className="font-medium">{organization.address}</p>
-                </div>
-              )}
-              {(organization.postalCode || organization.city) && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Postcode & Stad</p>
-                  <p className="font-medium">{organization.postalCode} {organization.city}</p>
-                </div>
-              )}
-              {organization.country && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Land</p>
-                  <p className="font-medium">{organization.country}</p>
-                </div>
-              )}
-              {organization.vatNumber && (
-                <div>
-                  <p className="text-sm text-muted-foreground">BTW-nummer</p>
-                  <p className="font-medium">{organization.vatNumber}</p>
-                </div>
-              )}
-              {organization.registrationNumber && (
-                <div>
-                  <p className="text-sm text-muted-foreground">KVK-nummer</p>
-                  <p className="font-medium">{organization.registrationNumber}</p>
-                </div>
-              )}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Organisatiegegevens kunnen niet worden gewijzigd. Neem contact op met de beheerder voor wijzigingen.
-            </p>
+
+            <div className="space-y-2">
+              <Label htmlFor="orgAddress">Adres</Label>
+              <Input
+                id="orgAddress"
+                value={organization.address}
+                onChange={(e) => setOrganization({ ...organization, address: e.target.value })}
+                placeholder="Straat en huisnummer"
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="orgPostalCode">Postcode</Label>
+                <Input
+                  id="orgPostalCode"
+                  value={organization.postalCode}
+                  onChange={(e) => setOrganization({ ...organization, postalCode: e.target.value })}
+                  placeholder="1000"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="orgCity">Stad</Label>
+                <Input
+                  id="orgCity"
+                  value={organization.city}
+                  onChange={(e) => setOrganization({ ...organization, city: e.target.value })}
+                  placeholder="Brussel"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="orgCountry">Land</Label>
+              <Input
+                id="orgCountry"
+                value={organization.country}
+                onChange={(e) => setOrganization({ ...organization, country: e.target.value })}
+                placeholder="België"
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="orgEmail">E-mailadres</Label>
+                <Input
+                  id="orgEmail"
+                  type="email"
+                  value={organization.contactEmail}
+                  onChange={(e) => setOrganization({ ...organization, contactEmail: e.target.value })}
+                  placeholder="info@organisatie.be"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="orgPhone">Telefoonnummer</Label>
+                <Input
+                  id="orgPhone"
+                  type="tel"
+                  value={organization.contactPhone}
+                  onChange={(e) => setOrganization({ ...organization, contactPhone: e.target.value })}
+                  placeholder="+32 xxx xx xx xx"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="orgVat">BTW-nummer</Label>
+              <Input
+                id="orgVat"
+                value={organization.vatNumber}
+                onChange={(e) => setOrganization({ ...organization, vatNumber: e.target.value })}
+                placeholder="BE0123456789"
+              />
+            </div>
+
+            <Separator />
+
+            <div className="flex justify-end">
+              <Button onClick={handleSaveOrganization} disabled={saving}>
+                {saving ? "Opslaan..." : "Opslaan"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

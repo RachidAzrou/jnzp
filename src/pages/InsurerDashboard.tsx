@@ -265,6 +265,5 @@ export default function InsurerDashboard() {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
-}
+    );
+  }

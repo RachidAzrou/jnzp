@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -73,18 +73,9 @@ export default function InsurerDossierOverview() {
       <TopBar />
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/insurer")}
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold">Dossier {dossier.ref_number}</h1>
-              <p className="text-muted-foreground">{dossier.deceased_name}</p>
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold">Dossier {dossier.ref_number}</h1>
+            <p className="text-muted-foreground mt-1">Details van het dossier</p>
           </div>
           <Button
             variant="outline"

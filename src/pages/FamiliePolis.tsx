@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, CheckCircle, AlertTriangle } from "lucide-react";
+import { CheckCircle, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function FamiliePolis() {
@@ -83,14 +83,9 @@ export default function FamiliePolis() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate('/familie')}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Polischeck</h1>
-          <p className="text-muted-foreground mt-1">Controleer uw verzekeringsgegevens</p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold">Polis Controle</h1>
+        <p className="text-muted-foreground mt-1">Controleer de verzekeringspolis</p>
       </div>
 
       <Card>

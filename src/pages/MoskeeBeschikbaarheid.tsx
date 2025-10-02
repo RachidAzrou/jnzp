@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { format, startOfWeek, addDays } from "date-fns";
@@ -130,11 +129,9 @@ export default function MoskeeBeschikbaarheid() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/moskee")}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
+      <div>
         <h1 className="text-3xl font-bold">Beschikbaarheid</h1>
+        <p className="text-muted-foreground mt-1">Beheer de beschikbaarheid van de moskee</p>
       </div>
 
       <Card>

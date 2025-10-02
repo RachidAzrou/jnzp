@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, MapPin, Save } from "lucide-react";
+import { MapPin, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 type LocationType = 'HOME' | 'HOSPITAL' | 'OTHER';
@@ -80,14 +80,9 @@ export default function FamilieLocatie() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate('/familie')}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Locatie</h1>
-          <p className="text-muted-foreground mt-1">Waar bevindt de overledene zich?</p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold">Locatie Informatie</h1>
+        <p className="text-muted-foreground mt-1">Geef de locatie van de overledene op</p>
       </div>
 
       <Card>

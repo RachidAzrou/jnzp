@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function FamilieIdentificatie() {
@@ -80,14 +80,9 @@ export default function FamilieIdentificatie() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate('/familie')}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Identificatie</h1>
-          <p className="text-muted-foreground mt-1">Vul uw contactgegevens in</p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold">Identificatie Gegevens</h1>
+        <p className="text-muted-foreground mt-1">Vul de identificatiegegevens van de overledene in</p>
       </div>
 
       <Card>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, FileText, Download } from "lucide-react";
+import { Plus, FileText, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -399,11 +399,9 @@ export default function Facturatie() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/wasplaats")}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
+        <div>
           <h1 className="text-3xl font-bold">Facturatie</h1>
+          <p className="text-muted-foreground mt-1">Beheer facturen voor dossiers</p>
         </div>
 
         <Dialog open={isNewInvoiceOpen} onOpenChange={setIsNewInvoiceOpen}>

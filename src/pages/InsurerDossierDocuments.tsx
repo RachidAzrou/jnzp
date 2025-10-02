@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
@@ -148,18 +147,9 @@ export default function InsurerDossierDocuments() {
     <div className="min-h-screen bg-background">
       <TopBar />
       <div className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(`/insurer/dossier/${id}`)}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Dossier {dossier.ref_number} - Documenten</h1>
-            <p className="text-muted-foreground">Verzekeraar documentbeoordeling</p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold">Dossier {dossier.ref_number} - Documenten</h1>
+          <p className="text-muted-foreground mt-1">Bekijk en beoordeel documenten</p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">

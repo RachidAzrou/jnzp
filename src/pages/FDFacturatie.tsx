@@ -9,9 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { TopBar } from "@/components/TopBar";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, FileText, Download, Search, Trash2, Save, Send } from "lucide-react";
+import { Plus, FileText, Search, Trash2, Save, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 type Invoice = {
@@ -344,31 +343,26 @@ export default function FDFacturatie() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <TopBar />
-        <div className="p-6">Laden...</div>
-      </div>
+      <div className="p-6">Laden...</div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar />
-      <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Facturatie</h1>
-            <p className="text-muted-foreground mt-1">Beheer facturen voor verzekeraars</p>
-          </div>
-          <Button onClick={() => setShowGenerator(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nieuwe Factuur
-          </Button>
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Facturatie</h1>
+          <p className="text-muted-foreground mt-1">Beheer facturen voor verzekeraars</p>
         </div>
+        <Button onClick={() => setShowGenerator(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Nieuwe Factuur
+        </Button>
+      </div>
 
-        {/* Filters */}
-        <Card>
-          <CardHeader>
+      {/* Filters */}
+      <Card>
+        <CardHeader>
             <CardTitle>Filters</CardTitle>
           </CardHeader>
           <CardContent className="flex gap-4">
@@ -395,10 +389,10 @@ export default function FDFacturatie() {
               </SelectContent>
             </Select>
           </CardContent>
-        </Card>
+      </Card>
 
-        {/* Invoices Table */}
-        <Card>
+      {/* Invoices Table */}
+      <Card>
           <CardHeader>
             <CardTitle>Facturen Overzicht</CardTitle>
           </CardHeader>
@@ -448,10 +442,10 @@ export default function FDFacturatie() {
               </TableBody>
             </Table>
           </CardContent>
-        </Card>
+      </Card>
 
-        {/* Generator Dialog */}
-        <Dialog open={showGenerator} onOpenChange={setShowGenerator}>
+      {/* Generator Dialog */}
+      <Dialog open={showGenerator} onOpenChange={setShowGenerator}>
           <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Factuur Generator</DialogTitle>
@@ -668,7 +662,6 @@ export default function FDFacturatie() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
     </div>
   );
 }

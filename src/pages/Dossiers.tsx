@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,36 +10,116 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Filter } from "lucide-react";
+import { Search, Plus, Filter, AlertCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DossierDetailSheet } from "@/components/DossierDetailSheet";
+import { format } from "date-fns";
 
 const Dossiers = () => {
-  const dossiers = [
-    { id: "A12", naam: "El Mansouri, Fatima", status: "In behandeling", land: "Marokko", created: "2025-09-28", deadline: "2025-10-02", documenten: "3/5" },
-    { id: "A13", naam: "Yildirim, Mehmet", status: "Legal hold", land: "Turkije", created: "2025-09-27", deadline: "2025-10-01", documenten: "5/5" },
-    { id: "A11", naam: "Hassan, Ahmed", status: "Compleet", land: "Egypte", created: "2025-09-26", deadline: "2025-09-30", documenten: "5/5" },
-    { id: "A10", naam: "Al-Farsi, Khadija", status: "In behandeling", land: "Marokko", created: "2025-09-25", deadline: "2025-09-29", documenten: "4/5" },
-    { id: "A09", naam: "Özdemir, Ayşe", status: "Goedgekeurd", land: "Turkije", created: "2025-09-24", deadline: "2025-09-28", documenten: "5/5" },
-    { id: "A08", naam: "Ibrahim, Omar", status: "In behandeling", land: "Syrië", created: "2025-09-23", deadline: "2025-09-27", documenten: "2/5" },
-  ];
+  const [dossiers, setDossiers] = useState<any[]>([]);
+  const [filteredDossiers, setFilteredDossiers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedDossier, setSelectedDossier] = useState<any>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  useEffect(() => {
+    fetchDossiers();
+  }, []);
+
+  useEffect(() => {
+    filterDossiers();
+  }, [dossiers, searchQuery, statusFilter]);
+
+  const fetchDossiers = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("dossiers")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (data) {
+      setDossiers(data);
+    }
+    setLoading(false);
+  };
+
+  const filterDossiers = () => {
+    let filtered = [...dossiers];
+
+    // Search filter
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (d) =>
+          d.ref_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          d.deceased_name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Status filter
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((d) => d.status === statusFilter);
+    }
+
+    setFilteredDossiers(filtered);
+  };
 
   const getStatusVariant = (status: string) => {
-    switch (status) {
-      case "Compleet":
-      case "Goedgekeurd":
-        return "default";
-      case "Legal hold":
-        return "destructive";
-      default:
-        return "secondary";
+    const variants: Record<string, any> = {
+      CREATED: "secondary",
+      INTAKE_IN_PROGRESS: "default",
+      DOCS_PENDING: "secondary",
+      FD_ASSIGNED: "default",
+      DOCS_VERIFIED: "default",
+      APPROVED: "default",
+      LEGAL_HOLD: "destructive",
+      PLANNING: "default",
+      READY_FOR_TRANSPORT: "default",
+      IN_TRANSIT: "default",
+      ARCHIVED: "secondary",
+    };
+    return variants[status] || "secondary";
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "N/A";
+    try {
+      return format(new Date(dateString), "dd-MM-yyyy");
+    } catch {
+      return "N/A";
     }
   };
+
+  const handleViewDetails = (dossier: any) => {
+    setSelectedDossier(dossier);
+    setSheetOpen(true);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Dossiers</h1>
-          <p className="text-muted-foreground mt-1">Beheer alle repatriëringsdossiers</p>
+          <p className="text-muted-foreground mt-1">
+            {filteredDossiers.length} van {dossiers.length} dossiers
+          </p>
         </div>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
@@ -49,15 +129,36 @@ const Dossiers = () => {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="relative flex-1 w-full">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Zoek op naam, dossier nr, land..." className="pl-10" />
+              <Input
+                placeholder="Zoek op naam of dossiernummer..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filters
-            </Button>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Filter op status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Alle statussen</SelectItem>
+                <SelectItem value="CREATED">Created</SelectItem>
+                <SelectItem value="INTAKE_IN_PROGRESS">Intake in progress</SelectItem>
+                <SelectItem value="DOCS_PENDING">Docs pending</SelectItem>
+                <SelectItem value="FD_ASSIGNED">FD assigned</SelectItem>
+                <SelectItem value="DOCS_VERIFIED">Docs verified</SelectItem>
+                <SelectItem value="APPROVED">Approved</SelectItem>
+                <SelectItem value="LEGAL_HOLD">Legal hold</SelectItem>
+                <SelectItem value="PLANNING">Planning</SelectItem>
+                <SelectItem value="READY_FOR_TRANSPORT">Ready for transport</SelectItem>
+                <SelectItem value="IN_TRANSIT">In transit</SelectItem>
+                <SelectItem value="ARCHIVED">Archived</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardHeader>
         <CardContent>
@@ -67,43 +168,67 @@ const Dossiers = () => {
                 <TableHead>Dossier</TableHead>
                 <TableHead>Naam overledene</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Bestemmingsland</TableHead>
+                <TableHead>Geboortedatum</TableHead>
+                <TableHead>Overlijdensdatum</TableHead>
                 <TableHead>Aangemaakt</TableHead>
-                <TableHead>Deadline</TableHead>
-                <TableHead>Documenten</TableHead>
                 <TableHead>Acties</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {dossiers.map((dossier) => (
-                <TableRow key={dossier.id}>
-                  <TableCell className="font-medium">{dossier.id}</TableCell>
-                  <TableCell>{dossier.naam}</TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(dossier.status)}>
-                      {dossier.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{dossier.land}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{dossier.created}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{dossier.deadline}</TableCell>
-                  <TableCell>
-                    <span className={dossier.documenten === "5/5" ? "text-success font-medium" : "text-warning font-medium"}>
-                      {dossier.documenten}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">Details</Button>
-                      <Button variant="ghost" size="sm">Bewerken</Button>
-                    </div>
+              {filteredDossiers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    Geen dossiers gevonden
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                filteredDossiers.map((dossier) => (
+                  <TableRow key={dossier.id} className="cursor-pointer hover:bg-muted/50">
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        {dossier.ref_number}
+                        {dossier.legal_hold && (
+                          <AlertCircle className="h-4 w-4 text-destructive" />
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{dossier.deceased_name}</TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusVariant(dossier.status)}>
+                        {dossier.status.replace(/_/g, " ")}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {formatDate(dossier.deceased_dob)}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {formatDate(dossier.date_of_death)}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {formatDate(dossier.created_at)}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewDetails(dossier)}
+                      >
+                        Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      <DossierDetailSheet
+        dossier={selectedDossier}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
     </div>
   );
 };

@@ -16,14 +16,18 @@ import {
   Plane, 
   Bell 
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface DossierData {
   id: string;
   ref_number: string;
+  display_id: string | null;
   deceased_name: string;
   status: string;
   legal_hold: boolean;
+  flow: string;
+  assigned_fd_org_id: string | null;
   created_at: string;
 }
 
@@ -75,6 +79,13 @@ export default function FamilieDashboard() {
     };
 
     const checkTasksStatus = async (dossierId: string) => {
+      // Fetch dossier to check flow and FD assignment
+      const { data: dossierDetails } = await supabase
+        .from('dossiers')
+        .select('flow, assigned_fd_org_id, status')
+        .eq('id', dossierId)
+        .single();
+
       // Check which tasks are completed
       const { data: familyContacts } = await supabase
         .from('family_contacts')
@@ -99,11 +110,34 @@ export default function FamilieDashboard() {
         .eq('dossier_id', dossierId)
         .limit(1);
 
+      // Check planning preferences based on flow
+      const { data: mosqueServices } = await supabase
+        .from('mosque_services')
+        .select('*')
+        .eq('dossier_id', dossierId)
+        .limit(1);
+
+      const { data: repatriations } = await supabase
+        .from('repatriations')
+        .select('*')
+        .eq('dossier_id', dossierId)
+        .limit(1);
+
+      const flow = dossierDetails?.flow || 'UNSET';
+      const hasFD = !!dossierDetails?.assigned_fd_org_id;
+      const flowChosen = flow !== 'UNSET';
+      const hasPreferences = flow === 'LOC' 
+        ? (mosqueServices && mosqueServices.length > 0)
+        : flow === 'REP'
+        ? (repatriations && repatriations.length > 0)
+        : false;
+      const isCompleted = ['READY_FOR_TRANSPORT', 'COMPLETED'].includes(dossierDetails?.status || '');
+
       const tasksList: Task[] = [
         {
           id: '1',
           title: 'Identificatie',
-          description: 'Uw gegevens invullen',
+          description: 'Uw contactgegevens invullen',
           action: 'Invullen',
           route: '/familie/identificatie',
           completed: (familyContacts && familyContacts.length > 0) || false
@@ -119,7 +153,7 @@ export default function FamilieDashboard() {
         {
           id: '3',
           title: 'Documenten',
-          description: 'IIIC/IIID en ID uploaden',
+          description: 'Overlijdensverklaring en ID uploaden',
           action: 'Uploaden',
           route: '/mijn-documenten',
           completed: (documents && documents.length >= 2) || false
@@ -138,7 +172,7 @@ export default function FamilieDashboard() {
           description: 'Kies een uitvaartondernemer',
           action: 'Kiezen',
           route: '/familie/uitvaartondernemer',
-          completed: false
+          completed: hasFD
         },
         {
           id: '6',
@@ -146,7 +180,27 @@ export default function FamilieDashboard() {
           description: 'Maak uw keuze',
           action: 'Kiezen',
           route: '/familie/keuze',
-          completed: false
+          completed: flowChosen
+        },
+        {
+          id: '7',
+          title: 'Planning voorkeuren',
+          description: flow === 'LOC' 
+            ? 'Moskee en wasplaats voorkeuren'
+            : flow === 'REP'
+            ? 'Bestemming en reizigers'
+            : 'Kies eerst lokaal of repatriëring',
+          action: 'Invullen',
+          route: flow === 'LOC' ? '/planning' : flow === 'REP' ? '/familie/repatriering' : '/familie/keuze',
+          completed: hasPreferences
+        },
+        {
+          id: '8',
+          title: 'Afronding',
+          description: 'Wachten op voltooiing door uitvaartondernemer',
+          action: 'Status',
+          route: '#',
+          completed: isCompleted
         }
       ];
 
@@ -176,9 +230,9 @@ export default function FamilieDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold">Welkom bij JanazApp</h1>
         <p className="text-muted-foreground mt-1">
-          {dossier ? `Dossier ${dossier.ref_number}` : 'Welkom'}
+          {dossier ? `Dossier ${dossier.display_id || dossier.ref_number}` : 'Uw persoonlijke dashboard'}
         </p>
       </div>
 
@@ -199,18 +253,42 @@ export default function FamilieDashboard() {
             <CardTitle>Dossier Informatie</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Overledene</p>
-                <p className="font-medium">{dossier.deceased_name || 'n.n.b.'}</p>
+                <p className="font-medium">{dossier.deceased_name || 'Nog in te vullen'}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Dossier-ID</p>
-                <p className="font-medium">{dossier.ref_number}</p>
+                <p className="font-medium font-mono">{dossier.display_id || dossier.ref_number}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Status</p>
                 <Badge>{dossier.status.replace(/_/g, ' ')}</Badge>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Type</p>
+                <div className="flex items-center gap-1">
+                  {dossier.flow === 'REP' && (
+                    <>
+                      <Plane className="h-3 w-3" />
+                      <span className="font-medium">Repatriëring</span>
+                    </>
+                  )}
+                  {dossier.flow === 'LOC' && (
+                    <>
+                      <Home className="h-3 w-3" />
+                      <span className="font-medium">Lokaal</span>
+                    </>
+                  )}
+                  {dossier.flow === 'UNSET' && (
+                    <span className="text-muted-foreground">Nog te bepalen</span>
+                  )}
+                </div>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Aangemaakt</p>
+                <p className="font-medium">{new Date(dossier.created_at).toLocaleDateString('nl-NL')}</p>
               </div>
             </div>
           </CardContent>
@@ -219,28 +297,43 @@ export default function FamilieDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Voortgang</CardTitle>
+          <CardTitle>Voortgang (8 stappen)</CardTitle>
           <CardDescription>
-            {completedTasks} van {totalTasks} stappen voltooid
+            {completedTasks} van {totalTasks} stappen voltooid • {Math.round(progress)}%
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Progress value={progress} className="mb-6" />
+          <div className="mb-6">
+            <Progress value={progress} className="h-3" />
+            <p className="text-xs text-muted-foreground mt-2 text-center">
+              Bij elke afgeronde stap gaat het percentage omhoog
+            </p>
+          </div>
           <div className="space-y-3">
             {tasks.map((task, index) => (
               <div
                 key={task.id}
-                className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                className={cn(
+                  "flex items-center justify-between p-4 border rounded-lg transition-all",
+                  task.completed 
+                    ? "bg-success/5 border-success/20" 
+                    : "hover:bg-accent/50"
+                )}
               >
-                <div className="flex items-center gap-3">
-                  {task.completed ? (
-                    <CheckCircle className="h-5 w-5 text-success" />
-                  ) : (
-                    <Circle className="h-5 w-5 text-muted-foreground" />
-                  )}
-                  <div>
-                    <p className="font-medium">
-                      {index + 1}. {task.title}
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 flex-shrink-0">
+                    {task.completed ? (
+                      <CheckCircle className="h-5 w-5 text-success" />
+                    ) : (
+                      <span className="text-sm font-medium text-muted-foreground">{index + 1}</span>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className={cn(
+                      "font-medium",
+                      task.completed && "text-success"
+                    )}>
+                      {task.title}
                     </p>
                     <p className="text-sm text-muted-foreground">{task.description}</p>
                   </div>
@@ -248,9 +341,11 @@ export default function FamilieDashboard() {
                 <Button
                   variant={task.completed ? "outline" : "default"}
                   size="sm"
-                  onClick={() => navigate(task.route)}
+                  onClick={() => task.route !== '#' && navigate(task.route)}
+                  disabled={task.route === '#'}
+                  className="flex-shrink-0"
                 >
-                  {task.action}
+                  {task.completed ? "✓" : task.action}
                 </Button>
               </div>
             ))}

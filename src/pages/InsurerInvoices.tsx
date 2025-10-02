@@ -2,29 +2,17 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, CheckCircle, AlertCircle } from "lucide-react";
+import { FileText, Download, CheckCircle, AlertCircle, Search, Clock, Euro } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TopBar } from "@/components/TopBar";
+import { KPICard } from "@/components/KPICard";
 
 type Invoice = {
   id: string;
@@ -58,7 +46,7 @@ type InvoiceItem = {
 
 const statusColors: Record<string, string> = {
   DRAFT: "bg-muted text-muted-foreground",
-  ISSUED: "bg-warning text-warning-foreground",
+  RECEIVED: "bg-warning text-warning-foreground",
   NEEDS_INFO: "bg-blue-500 text-white",
   APPROVED: "bg-green-500 text-white",
   PAID: "bg-success text-success-foreground",
@@ -67,9 +55,9 @@ const statusColors: Record<string, string> = {
 
 const statusLabels: Record<string, string> = {
   DRAFT: "Concept",
-  ISSUED: "Te accorderen",
+  RECEIVED: "Ontvangen",
   NEEDS_INFO: "Info nodig",
-  APPROVED: "Geaccordeerd",
+  APPROVED: "Goedgekeurd",
   PAID: "Betaald",
   CANCELLED: "Geannuleerd",
 };
@@ -84,6 +72,8 @@ export default function InsurerInvoices() {
   const [needsInfoReason, setNeedsInfoReason] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
   const [paymentRef, setPaymentRef] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     fetchInvoices();
@@ -299,14 +289,89 @@ export default function InsurerInvoices() {
     );
   }
 
+  // Calculate KPIs
+  const totalInvoices = invoices.length;
+  const pendingApproval = invoices.filter(i => i.status === "RECEIVED").length;
+  const paidInvoices = invoices.filter(i => i.status === "PAID").length;
+  const totalAmount = invoices.reduce((sum, inv) => sum + Number(inv.total), 0);
+  const paidAmount = invoices.filter(i => i.status === "PAID")
+    .reduce((sum, inv) => sum + Number(inv.total), 0);
+  const outstandingAmount = totalAmount - paidAmount;
+
+  // Filter invoices
+  const filteredInvoices = invoices.filter(inv => {
+    const matchesSearch = 
+      inv.invoice_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      inv.dossiers?.ref_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      inv.dossiers?.deceased_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === "all" || inv.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <TopBar />
       <div className="p-6 space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Facturen</h1>
-          <p className="text-muted-foreground mt-1">Overzicht van ingediende facturen</p>
+          <p className="text-muted-foreground mt-1">Beheer ontvangen facturen van uitvaartondernemers</p>
         </div>
+
+        {/* KPIs */}
+        <div className="grid gap-4 md:grid-cols-4">
+          <KPICard
+            title="Totaal Facturen"
+            value={totalInvoices.toString()}
+            icon={FileText}
+          />
+          <KPICard
+            title="Te Accorderen"
+            value={pendingApproval.toString()}
+            icon={Clock}
+          />
+          <KPICard
+            title="Betaald"
+            value={`${paidInvoices} (${totalInvoices > 0 ? Math.round((paidInvoices / totalInvoices) * 100) : 0}%)`}
+            icon={CheckCircle}
+          />
+          <KPICard
+            title="Openstaand Bedrag"
+            value={`€${outstandingAmount.toFixed(2)}`}
+            icon={Euro}
+          />
+        </div>
+
+        {/* Filters */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Filters</CardTitle>
+          </CardHeader>
+          <CardContent className="flex gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Zoeken op dossier, factuurnummer, overledene..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Alle statussen</SelectItem>
+                <SelectItem value="RECEIVED">Ontvangen</SelectItem>
+                <SelectItem value="NEEDS_INFO">Info nodig</SelectItem>
+                <SelectItem value="APPROVED">Goedgekeurd</SelectItem>
+                <SelectItem value="PAID">Betaald</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
@@ -326,7 +391,7 @@ export default function InsurerInvoices() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {invoices.map((invoice) => (
+                {filteredInvoices.map((invoice) => (
                   <TableRow key={invoice.id}>
                     <TableCell className="font-mono">{invoice.invoice_number}</TableCell>
                     <TableCell>{invoice.dossiers.display_id}</TableCell>
@@ -352,10 +417,12 @@ export default function InsurerInvoices() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {invoices.length === 0 && (
+                {filteredInvoices.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center text-muted-foreground">
-                      Geen facturen gevonden
+                    <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                      {searchTerm || statusFilter !== "all" 
+                        ? "Geen facturen gevonden met deze filters" 
+                        : "Geen facturen gevonden"}
                     </TableCell>
                   </TableRow>
                 )}
@@ -445,7 +512,7 @@ export default function InsurerInvoices() {
                       </Badge>
                     </div>
 
-                    {selectedInvoice.status === "ISSUED" && (
+                    {selectedInvoice.status === "RECEIVED" && (
                       <div className="space-y-4">
                         <div className="flex gap-2">
                           <Button

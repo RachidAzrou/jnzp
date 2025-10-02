@@ -1,9 +1,50 @@
-import { Search, Bell, User } from "lucide-react";
+import { Search, Bell, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function TopBar() {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [userEmail, setUserEmail] = useState<string>("");
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+      }
+    });
+  }, []);
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Fout bij uitloggen",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Uitgelogd",
+        description: "U bent succesvol uitgelogd.",
+      });
+      navigate("/auth");
+    }
+  };
+
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card px-6">
       <SidebarTrigger />
@@ -27,13 +68,28 @@ export function TopBar() {
           </span>
         </Button>
         
-        <div className="flex items-center gap-2 rounded-md border px-3 py-2">
-          <User className="h-4 w-4" />
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">Al-Baraka</span>
-            <span className="text-xs text-muted-foreground">Uitvaartondernemer</span>
-          </div>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="flex items-center gap-2 rounded-md border px-3 py-2">
+              <User className="h-4 w-4" />
+              <div className="flex flex-col items-start">
+                <span className="text-sm font-medium">{userEmail || "Gebruiker"}</span>
+                <span className="text-xs text-muted-foreground">Uitvaartondernemer</span>
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Mijn Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate("/instellingen")}>
+              Instellingen
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+              <LogOut className="mr-2 h-4 w-4" />
+              Uitloggen
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

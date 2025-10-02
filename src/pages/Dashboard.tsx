@@ -1,6 +1,6 @@
 import { FolderOpen, AlertTriangle, FileX, Clock } from "lucide-react";
 import { KPICard } from "@/components/KPICard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -11,22 +11,51 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
 
 const Dashboard = () => {
-  const openTasks = [
-    { dossier: "A12", task: "Controle IIIC/ID", deadline: "vandaag", priority: "high" },
-    { dossier: "A13", task: "Parketvrijgave uploaden", deadline: "+2u", priority: "high" },
-    { dossier: "A09", task: "Laissez-passer nalopen", deadline: "morgen", priority: "medium" },
-    { dossier: "A15", task: "Moskee bevestiging", deadline: "+4u", priority: "medium" },
-    { dossier: "A08", task: "Vliegticket boeken", deadline: "morgen", priority: "low" },
-  ];
+  const [dossiers, setDossiers] = useState<any[]>([]);
+  const [auditEvents, setAuditEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const recentUpdates = [
-    { time: "10:42", dossier: "A12", event: "Document afgewezen (onleesbaar)", user: "J. Serrai" },
-    { time: "09:15", dossier: "A07", event: "Moskee bevestigd (El Noor 14:00)", user: "Systeem" },
-    { time: "08:50", dossier: "A10", event: "Vlucht geregistreerd SN1234", user: "M. Haddad" },
-    { time: "08:20", dossier: "A12", event: "Parketvrijgave ontvangen", user: "Systeem" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: dossiersData } = await supabase
+        .from("dossiers")
+        .select("*")
+        .order("created_at", { ascending: false });
+      
+      const { data: auditData } = await supabase
+        .from("audit_events")
+        .select("*, dossiers(ref_number)")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      setDossiers(dossiersData || []);
+      setAuditEvents(auditData || []);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
+  const activeDossiers = dossiers.filter(d => 
+    !['ARCHIVED', 'IN_TRANSIT'].includes(d.status)
+  ).length;
+
+  const legalHold = dossiers.filter(d => d.legal_hold).length;
+
+  const formatEventTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  if (loading) {
+    return <div className="flex items-center justify-center p-12">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -38,13 +67,13 @@ const Dashboard = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Lopende dossiers"
-          value={12}
+          value={activeDossiers}
           icon={FolderOpen}
           trend={{ value: "+2 deze week", positive: true }}
         />
         <KPICard
           title="Legal hold"
-          value={1}
+          value={legalHold}
           icon={AlertTriangle}
         />
         <KPICard
@@ -64,26 +93,27 @@ const Dashboard = () => {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Open taken</CardTitle>
+            <CardTitle>Actieve dossiers</CardTitle>
+            <CardDescription>Dossiers die aandacht vereisen</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Dossier</TableHead>
-                  <TableHead>Taak</TableHead>
-                  <TableHead>Deadline</TableHead>
+                  <TableHead>Naam</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Actie</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {openTasks.map((task, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell className="font-medium">{task.dossier}</TableCell>
-                    <TableCell>{task.task}</TableCell>
+                {dossiers.slice(0, 5).map((dossier) => (
+                  <TableRow key={dossier.id}>
+                    <TableCell className="font-medium">{dossier.ref_number}</TableCell>
+                    <TableCell>{dossier.deceased_name}</TableCell>
                     <TableCell>
-                      <Badge variant={task.priority === "high" ? "destructive" : "secondary"}>
-                        {task.deadline}
+                      <Badge variant={dossier.legal_hold ? "destructive" : "default"}>
+                        {dossier.status.replace(/_/g, ' ')}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -99,6 +129,7 @@ const Dashboard = () => {
         <Card>
           <CardHeader>
             <CardTitle>Recent bijgewerkt</CardTitle>
+            <CardDescription>Laatste activiteiten in het systeem</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -107,16 +138,18 @@ const Dashboard = () => {
                   <TableHead className="w-16">Tijd</TableHead>
                   <TableHead className="w-20">Dossier</TableHead>
                   <TableHead>Event</TableHead>
-                  <TableHead>Door</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentUpdates.map((update, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell className="text-xs text-muted-foreground">{update.time}</TableCell>
-                    <TableCell className="font-medium">{update.dossier}</TableCell>
-                    <TableCell className="text-sm">{update.event}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{update.user}</TableCell>
+                {auditEvents.map((event) => (
+                  <TableRow key={event.id}>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {formatEventTime(event.created_at)}
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {event.dossiers?.ref_number || 'N/A'}
+                    </TableCell>
+                    <TableCell className="text-sm">{event.description}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

@@ -1,4 +1,4 @@
-import { FolderOpen, AlertTriangle, FileX, Clock } from "lucide-react";
+import { FolderOpen, AlertTriangle, FileX, Clock, Plane, MapPin } from "lucide-react";
 import { KPICard } from "@/components/KPICard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ const Dashboard = () => {
       
       const { data: auditData } = await supabase
         .from("audit_events")
-        .select("*, dossiers(ref_number)")
+        .select("*, dossiers(display_id, ref_number)")
         .order("created_at", { ascending: false })
         .limit(5);
 
@@ -49,6 +49,9 @@ const Dashboard = () => {
   ).length;
 
   const legalHold = dossiers.filter(d => d.legal_hold).length;
+  
+  const repatriationDossiers = dossiers.filter(d => d.flow === 'REP').length;
+  const localDossiers = dossiers.filter(d => d.flow === 'LOC').length;
 
   const getTaskDescription = (status: string, legalHold: boolean) => {
     if (legalHold) return "Parketvrijgave afwachten / uploaden";
@@ -115,7 +118,7 @@ const Dashboard = () => {
         <p className="text-muted-foreground mt-1">Overzicht van uw actieve dossiers en taken</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <div onClick={() => navigate('/dossiers')} className="cursor-pointer transition-all hover:shadow-lg">
           <KPICard
             title="Lopende dossiers"
@@ -140,6 +143,22 @@ const Dashboard = () => {
             trend={{ value: "Naar documenten", positive: true }}
           />
         </div>
+        <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:shadow-lg">
+          <KPICard
+            title="Repatriëring"
+            value={repatriationDossiers}
+            icon={Plane}
+            trend={{ value: "Filter op REP", positive: true }}
+          />
+        </div>
+        <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:shadow-lg">
+          <KPICard
+            title="Lokaal"
+            value={localDossiers}
+            icon={MapPin}
+            trend={{ value: "Filter op LOC", positive: true }}
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -154,6 +173,7 @@ const Dashboard = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Dossier</TableHead>
+                  <TableHead>Flow</TableHead>
                   <TableHead>Naam</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Update</TableHead>
@@ -164,7 +184,24 @@ const Dashboard = () => {
                 {dossiers.slice(0, 5).map((dossier) => (
                   <TableRow key={dossier.id}>
                     <TableCell className="font-medium font-mono text-sm">
-                      {dossier.ref_number}
+                      {dossier.display_id || dossier.ref_number}
+                    </TableCell>
+                    <TableCell>
+                      {dossier.flow === "REP" && (
+                        <Badge variant="outline" className="gap-1">
+                          <Plane className="h-3 w-3" />
+                          REP
+                        </Badge>
+                      )}
+                      {dossier.flow === "LOC" && (
+                        <Badge variant="outline" className="gap-1">
+                          <MapPin className="h-3 w-3" />
+                          LOC
+                        </Badge>
+                      )}
+                      {dossier.flow === "UNSET" && (
+                        <Badge variant="secondary">-</Badge>
+                      )}
                     </TableCell>
                     <TableCell>{dossier.deceased_name}</TableCell>
                     <TableCell>
@@ -223,7 +260,7 @@ const Dashboard = () => {
                     return (
                       <TableRow key={task.id}>
                         <TableCell className="font-medium font-mono text-sm">
-                          {task.ref_number}
+                          {task.display_id || task.ref_number}
                         </TableCell>
                         <TableCell className="text-sm">
                           {taskDesc}
@@ -289,7 +326,7 @@ const Dashboard = () => {
                       {formatEventTime(event.created_at)}
                     </TableCell>
                     <TableCell className="font-medium font-mono text-sm">
-                      {event.dossiers?.ref_number || 'N/A'}
+                      {event.dossiers?.display_id || event.dossiers?.ref_number || 'N/A'}
                     </TableCell>
                     <TableCell className="text-sm">{event.description}</TableCell>
                   </TableRow>

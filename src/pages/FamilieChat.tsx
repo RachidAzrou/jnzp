@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip, Upload } from "lucide-react";
+import { Send, Paperclip } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -214,21 +214,11 @@ export default function FamilieChat() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/familie')}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Terug
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Chat</h1>
-            <p className="text-muted-foreground mt-1">
-              {dossier ? `Dossier ${dossier.display_id || dossier.ref_number}` : 'Geen dossier'}
-            </p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold">Chat</h1>
+          <p className="text-muted-foreground mt-1">
+            {dossier ? `Dossier ${dossier.display_id || dossier.ref_number}` : 'Geen dossier'}
+          </p>
         </div>
       </div>
 

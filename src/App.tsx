@@ -14,7 +14,7 @@ import Dossiers from "./pages/Dossiers";
 import Taken from "./pages/Taken";
 import Documenten from "./pages/Documenten";
 import Planning from "./pages/Planning";
-import Rapporten from "./pages/Rapporten";
+
 import Instellingen from "./pages/Instellingen";
 import MijnDocumenten from "./pages/MijnDocumenten";
 import FamilieDashboard from "./pages/FamilieDashboard";
@@ -161,11 +161,6 @@ const App = () => (
                           <Route path="/planning" element={
                             <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
                               <Planning />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/rapporten" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'insurer']}>
-                              <Rapporten />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/mijn-documenten" element={

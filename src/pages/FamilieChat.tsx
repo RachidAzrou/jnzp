@@ -246,7 +246,8 @@ export default function FamilieChat() {
           </p>
         </div>
         <Button
-          variant="outline"
+          size="lg"
+          className="bg-[#25D366] hover:bg-[#20BD5A] text-white border-0 shadow-lg"
           onClick={() => {
             const message = dossier 
               ? encodeURIComponent(`Hallo, ik heb een vraag over dossier ${dossier.display_id || dossier.ref_number}`)
@@ -254,7 +255,7 @@ export default function FamilieChat() {
             window.open(`https://wa.me/YOUR_WHATSAPP_NUMBER?text=${message}`, '_blank');
           }}
         >
-          <img src={whatsappIcon} alt="WhatsApp" className="h-4 w-4 mr-2" />
+          <img src={whatsappIcon} alt="WhatsApp" className="h-5 w-5 mr-2" />
           Praat met onze JanAssist
         </Button>
       </div>

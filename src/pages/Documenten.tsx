@@ -10,12 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Download, Eye, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Search, Download, Eye, CheckCircle, XCircle, Clock, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { DocumentUploadDialog } from "@/components/DocumentUploadDialog";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { EmptyState } from "@/components/EmptyState";
 
 const Documenten = () => {
   const [documents, setDocuments] = useState<any[]>([]);
@@ -214,8 +215,24 @@ const Documenten = () => {
             <TableBody>
               {filteredDocs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    Geen documenten gevonden
+                  <TableCell colSpan={6}>
+                    <EmptyState
+                      icon={FileText}
+                      title={documents.length === 0 ? "Nog geen documenten" : "Geen resultaten"}
+                      description={
+                        documents.length === 0
+                          ? "Upload documenten voor uw dossiers om te starten met de verificatie workflow."
+                          : "Geen documenten gevonden met de huidige zoekopdracht. Probeer andere zoektermen."
+                      }
+                      action={
+                        documents.length === 0
+                          ? {
+                              label: "Eerste document uploaden",
+                              onClick: () => {} // Dialog wordt geopend via de button bovenaan
+                            }
+                          : undefined
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               ) : (

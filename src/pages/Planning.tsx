@@ -14,11 +14,14 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
+import { EmptyState } from "@/components/EmptyState";
+import { useToast } from "@/hooks/use-toast";
 
 const Planning = () => {
   const [janazServices, setJanazServices] = useState<any[]>([]);
   const [flights, setFlights] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchData();
@@ -91,9 +94,15 @@ const Planning = () => {
           </CardHeader>
           <CardContent>
             {janazServices.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                Geen moskee afspraken gepland
-              </div>
+              <EmptyState
+                icon={Building2}
+                title="Geen moskee afspraken"
+                description="Er zijn momenteel geen ceremonies of wasplaats afspraken gepland. Klik op 'Nieuwe afspraak' om de eerste te plannen."
+                action={{
+                  label: "Nieuwe afspraak maken",
+                  onClick: () => toast({ title: "Functie komt binnenkort" })
+                }}
+              />
             ) : (
               <Table>
                 <TableHeader>
@@ -147,9 +156,15 @@ const Planning = () => {
           </CardHeader>
           <CardContent>
             {flights.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                Geen vluchten gepland
-              </div>
+              <EmptyState
+                icon={Plane}
+                title="Geen vluchten gepland"
+                description="Er zijn nog geen vluchten geregistreerd voor repatriëringen. Voeg een vlucht toe wanneer de planning gereed is."
+                action={{
+                  label: "Vlucht registreren",
+                  onClick: () => toast({ title: "Functie komt binnenkort" })
+                }}
+              />
             ) : (
               <Table>
                 <TableHeader>

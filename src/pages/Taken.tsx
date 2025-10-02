@@ -2,10 +2,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { CheckCircle2, Clock, AlertCircle, ClipboardList } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { EmptyState } from "@/components/EmptyState";
 
 interface Task {
   id: string;
@@ -155,35 +156,67 @@ const Taken = () => {
         </TabsList>
 
         <TabsContent value="all" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
+          {tasks.length === 0 ? (
+            <EmptyState
+              icon={ClipboardList}
+              title="Geen taken"
+              description="Er zijn momenteel geen taken beschikbaar. Taken worden automatisch aangemaakt op basis van uw dossiers."
+            />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {tasks.map((task) => (
+                <TaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="open" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {openTasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
+          {openTasks.length === 0 ? (
+            <EmptyState
+              icon={AlertCircle}
+              title="Geen open taken"
+              description="Uitstekend werk! Er zijn momenteel geen openstaande taken."
+            />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {openTasks.map((task) => (
+                <TaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="inprogress" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {inProgressTasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
+          {inProgressTasks.length === 0 ? (
+            <EmptyState
+              icon={Clock}
+              title="Geen taken in behandeling"
+              description="Er zijn geen taken die momenteel in behandeling zijn."
+            />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {inProgressTasks.map((task) => (
+                <TaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="completed" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {completedTasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
+          {completedTasks.length === 0 ? (
+            <EmptyState
+              icon={CheckCircle2}
+              title="Geen voltooide taken"
+              description="Zodra taken worden afgerond, verschijnen ze hier."
+            />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {completedTasks.map((task) => (
+                <TaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

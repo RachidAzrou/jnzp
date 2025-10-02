@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Filter, AlertCircle } from "lucide-react";
+import { Search, Plus, Filter, AlertCircle, FolderOpen } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select";
 import { DossierDetailSheet } from "@/components/DossierDetailSheet";
 import { format } from "date-fns";
+import { EmptyState } from "@/components/EmptyState";
+import { useToast } from "@/hooks/use-toast";
 
 const Dossiers = () => {
   const [dossiers, setDossiers] = useState<any[]>([]);
@@ -31,6 +33,7 @@ const Dossiers = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedDossier, setSelectedDossier] = useState<any>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchDossiers();
@@ -177,8 +180,24 @@ const Dossiers = () => {
             <TableBody>
               {filteredDossiers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    Geen dossiers gevonden
+                  <TableCell colSpan={7}>
+                    <EmptyState
+                      icon={FolderOpen}
+                      title={dossiers.length === 0 ? "Nog geen dossiers" : "Geen resultaten"}
+                      description={
+                        dossiers.length === 0
+                          ? "Start met het aanmaken van uw eerste repatriëringsdossier."
+                          : "Geen dossiers gevonden met de huidige filters. Probeer andere zoektermen."
+                      }
+                      action={
+                        dossiers.length === 0
+                          ? {
+                              label: "Nieuw dossier aanmaken",
+                              onClick: () => toast({ title: "Functie komt binnenkort" })
+                            }
+                          : undefined
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               ) : (

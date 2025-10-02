@@ -33,6 +33,7 @@ import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
 import InsurerDashboard from "./pages/InsurerDashboard";
 import InsurerDossierOverview from "./pages/InsurerDossierOverview";
 import InsurerDossierDocuments from "./pages/InsurerDossierDocuments";
+import InsurerInvoices from "./pages/InsurerInvoices";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
@@ -243,6 +244,11 @@ const App = () => (
                           <Route path="/insurer/dossier/:id/documenten" element={
                             <RoleProtectedRoute allowedRoles={['insurer']}>
                               <InsurerDossierDocuments />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/insurer/facturen" element={
+                            <RoleProtectedRoute allowedRoles={['insurer']}>
+                              <InsurerInvoices />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/chat/:dossierId" element={

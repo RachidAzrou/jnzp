@@ -59,6 +59,56 @@ export type Database = {
           },
         ]
       }
+      catalog_items: {
+        Row: {
+          code: string
+          created_at: string
+          default_price: number
+          default_vat_rate: number
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          type: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          default_price: number
+          default_vat_rate?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          type: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          default_price?: number
+          default_vat_rate?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          type?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           attachment_name: string | null
@@ -493,6 +543,44 @@ export type Database = {
           },
         ]
       }
+      invoice_actions: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          invoice_id: string
+          metadata: Json | null
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          invoice_id: string
+          metadata?: Json | null
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          invoice_id?: string
+          metadata?: Json | null
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_actions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_items: {
         Row: {
           amount: number
@@ -541,8 +629,12 @@ export type Database = {
           facility_org_id: string
           fd_org_id: string
           id: string
+          insurer_notes: string | null
+          invoice_number: string | null
           issued_at: string | null
+          needs_info_reason: string | null
           paid_at: string | null
+          payment_reference: string | null
           status: Database["public"]["Enums"]["invoice_status"]
           subtotal: number
           total: number
@@ -555,8 +647,12 @@ export type Database = {
           facility_org_id: string
           fd_org_id: string
           id?: string
+          insurer_notes?: string | null
+          invoice_number?: string | null
           issued_at?: string | null
+          needs_info_reason?: string | null
           paid_at?: string | null
+          payment_reference?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           subtotal?: number
           total?: number
@@ -569,8 +665,12 @@ export type Database = {
           facility_org_id?: string
           fd_org_id?: string
           id?: string
+          insurer_notes?: string | null
+          invoice_number?: string | null
           issued_at?: string | null
+          needs_info_reason?: string | null
           paid_at?: string | null
+          payment_reference?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           subtotal?: number
           total?: number
@@ -1325,7 +1425,13 @@ export type Database = {
         | "READY_FOR_TRANSPORT"
         | "IN_TRANSIT"
         | "ARCHIVED"
-      invoice_status: "DRAFT" | "ISSUED" | "PAID" | "CANCELLED"
+      invoice_status:
+        | "DRAFT"
+        | "ISSUED"
+        | "PAID"
+        | "CANCELLED"
+        | "NEEDS_INFO"
+        | "APPROVED"
       location_type: "HOME" | "HOSPITAL" | "OTHER"
       mosque_status: "PENDING" | "CONFIRMED" | "DECLINED"
       org_type:
@@ -1522,7 +1628,14 @@ export const Constants = {
         "IN_TRANSIT",
         "ARCHIVED",
       ],
-      invoice_status: ["DRAFT", "ISSUED", "PAID", "CANCELLED"],
+      invoice_status: [
+        "DRAFT",
+        "ISSUED",
+        "PAID",
+        "CANCELLED",
+        "NEEDS_INFO",
+        "APPROVED",
+      ],
       location_type: ["HOME", "HOSPITAL", "OTHER"],
       mosque_status: ["PENDING", "CONFIRMED", "DECLINED"],
       org_type: [

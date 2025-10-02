@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { FileText } from "lucide-react";
+import { FileText, Receipt } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -25,7 +25,8 @@ export default function InsurerDossierOverview() {
           documents(id, doc_type, status, uploaded_at, file_name),
           mosque_services(status, confirmed_slot, mosque_org_id, organizations!mosque_services_mosque_org_id_fkey(name)),
           wash_services(status, scheduled_at),
-          repatriations(*, flights(*))
+          repatriations(*, flights(*)),
+          invoices(id, invoice_number, status, total, created_at)
         `)
         .eq("id", id)
         .single();
@@ -77,18 +78,28 @@ export default function InsurerDossierOverview() {
             <h1 className="text-3xl font-bold">Dossier {dossier.ref_number}</h1>
             <p className="text-muted-foreground mt-1">Details van het dossier</p>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => navigate(`/insurer/dossier/${id}/documenten`)}
-          >
-            <FileText className="mr-2 h-4 w-4" />
-            Documenten
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigate(`/insurer/dossier/${id}/documenten`)}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Documenten
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate("/insurer/facturen")}
+            >
+              <Receipt className="mr-2 h-4 w-4" />
+              Facturen
+            </Button>
+          </div>
         </div>
 
         <Tabs defaultValue="overzicht">
           <TabsList>
             <TabsTrigger value="overzicht">Overzicht</TabsTrigger>
+            <TabsTrigger value="facturen">Facturen</TabsTrigger>
             <TabsTrigger value="notities">Notities</TabsTrigger>
           </TabsList>
 
@@ -236,6 +247,47 @@ export default function InsurerDossierOverview() {
                     <p className="text-muted-foreground text-sm">Geen updates beschikbaar</p>
                   )}
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="facturen">
+            <Card>
+              <CardHeader>
+                <CardTitle>Facturen</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {dossier.invoices && dossier.invoices.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Factuurnummer</TableHead>
+                        <TableHead>Datum</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Bedrag</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {dossier.invoices.map((invoice) => (
+                        <TableRow key={invoice.id}>
+                          <TableCell className="font-mono">{invoice.invoice_number}</TableCell>
+                          <TableCell>{new Date(invoice.created_at).toLocaleDateString("nl-NL")}</TableCell>
+                          <TableCell>
+                            <Badge>
+                              {invoice.status === "ISSUED" ? "Te accorderen" :
+                               invoice.status === "APPROVED" ? "Geaccordeerd" :
+                               invoice.status === "PAID" ? "Betaald" :
+                               invoice.status === "NEEDS_INFO" ? "Info nodig" : invoice.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>€{Number(invoice.total).toFixed(2)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <p className="text-muted-foreground">Geen facturen beschikbaar</p>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

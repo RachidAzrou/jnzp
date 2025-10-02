@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, Download } from "lucide-react";
+import { Plus, FileText, Download, Search, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -32,9 +32,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Invoice = {
   id: string;
+  invoice_number: string;
   dossier_id: string;
   status: string;
   subtotal: number;
@@ -45,6 +47,7 @@ type Invoice = {
   dossiers: {
     ref_number: string;
     deceased_name: string;
+    insurer_org_id: string | null;
   };
 };
 
@@ -63,9 +66,21 @@ type Dossier = {
   deceased_name: string;
 };
 
+type CatalogItem = {
+  id: string;
+  code: string;
+  name: string;
+  type: string;
+  unit: string;
+  default_price: number;
+  default_vat_rate: number;
+};
+
 const statusColors: Record<string, string> = {
   DRAFT: "bg-muted text-muted-foreground",
   ISSUED: "bg-warning text-warning-foreground",
+  NEEDS_INFO: "bg-blue-500 text-white",
+  APPROVED: "bg-green-500 text-white",
   PAID: "bg-success text-success-foreground",
   CANCELLED: "bg-destructive text-destructive-foreground",
 };
@@ -73,6 +88,8 @@ const statusColors: Record<string, string> = {
 const statusLabels: Record<string, string> = {
   DRAFT: "Concept",
   ISSUED: "Uitgegeven",
+  NEEDS_INFO: "Info nodig",
+  APPROVED: "Geaccordeerd",
   PAID: "Betaald",
   CANCELLED: "Geannuleerd",
 };
@@ -82,12 +99,14 @@ export default function Facturatie() {
   const { toast } = useToast();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [dossiers, setDossiers] = useState<Dossier[]>([]);
+  const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([]);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [invoiceItems, setInvoiceItems] = useState<InvoiceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isNewInvoiceOpen, setIsNewInvoiceOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedDossierId, setSelectedDossierId] = useState("");
+  const [catalogSearch, setCatalogSearch] = useState("");
   const [newItem, setNewItem] = useState({
     code: "",
     description: "",
@@ -100,6 +119,7 @@ export default function Facturatie() {
   useEffect(() => {
     fetchInvoices();
     fetchDossiers();
+    fetchCatalogItems();
   }, []);
 
   const fetchInvoices = async () => {
@@ -110,7 +130,8 @@ export default function Facturatie() {
           *,
           dossiers (
             ref_number,
-            deceased_name
+            deceased_name,
+            insurer_org_id
           )
         `)
         .order("created_at", { ascending: false });
@@ -126,6 +147,33 @@ export default function Facturatie() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCatalogItems = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: userRole } = await supabase
+        .from("user_roles")
+        .select("organization_id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (!userRole?.organization_id) return;
+
+      const { data, error } = await supabase
+        .from("catalog_items")
+        .select("*")
+        .eq("organization_id", userRole.organization_id)
+        .eq("is_active", true)
+        .order("code");
+
+      if (error) throw error;
+      if (data) setCatalogItems(data);
+    } catch (error) {
+      console.error("Error fetching catalog items:", error);
     }
   };
 
@@ -218,6 +266,41 @@ export default function Facturatie() {
     }
   };
 
+  const addCatalogItemToInvoice = async (catalogItem: CatalogItem, invoiceId: string) => {
+    try {
+      const amount = catalogItem.default_price;
+
+      const { error } = await supabase
+        .from("invoice_items")
+        .insert({
+          invoice_id: invoiceId,
+          code: catalogItem.code,
+          description: catalogItem.name,
+          qty: 1,
+          unit_price: catalogItem.default_price,
+          amount: amount,
+        });
+
+      if (error) throw error;
+
+      await recalculateInvoice(invoiceId);
+
+      toast({
+        title: "Succes",
+        description: "Item toegevoegd aan factuur",
+      });
+
+      fetchInvoiceItems(invoiceId);
+    } catch (error) {
+      console.error("Error adding catalog item:", error);
+      toast({
+        title: "Fout",
+        description: "Kon item niet toevoegen",
+        variant: "destructive",
+      });
+    }
+  };
+
   const addInvoiceItem = async (invoiceId: string) => {
     if (!newItem.code || !newItem.description) {
       toast({
@@ -244,7 +327,6 @@ export default function Facturatie() {
 
       if (error) throw error;
 
-      // Recalculate totals
       await recalculateInvoice(invoiceId);
 
       toast({
@@ -493,153 +575,225 @@ export default function Facturatie() {
       </Card>
 
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              Factuur - {selectedInvoice?.dossiers.ref_number}
+              Factuur {selectedInvoice?.invoice_number} - {selectedInvoice?.dossiers.ref_number}
             </DialogTitle>
           </DialogHeader>
 
           {selectedInvoice && (
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Factuurlijnen</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {selectedInvoice.status === "DRAFT" && (
-                    <div className="grid grid-cols-5 gap-2">
-                      <Input
-                        placeholder="Code"
-                        value={newItem.code}
-                        onChange={(e) => setNewItem({ ...newItem, code: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Omschrijving"
-                        value={newItem.description}
-                        onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                      />
-                      <Input
-                        type="number"
-                        placeholder="Qty"
-                        value={newItem.qty}
-                        onChange={(e) => setNewItem({ ...newItem, qty: Number(e.target.value) })}
-                      />
-                      <Input
-                        type="number"
-                        step="0.01"
-                        placeholder="Prijs"
-                        value={newItem.unit_price}
-                        onChange={(e) => setNewItem({ ...newItem, unit_price: Number(e.target.value) })}
-                      />
-                      <Button onClick={() => addInvoiceItem(selectedInvoice.id)}>
-                        Toevoegen
-                      </Button>
-                    </div>
-                  )}
+              <Tabs defaultValue="items" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="items">Factuurlijnen</TabsTrigger>
+                  <TabsTrigger value="catalog" disabled={selectedInvoice.status !== "DRAFT"}>
+                    Catalogus
+                  </TabsTrigger>
+                </TabsList>
 
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Code</TableHead>
-                        <TableHead>Omschrijving</TableHead>
-                        <TableHead>Qty</TableHead>
-                        <TableHead>Prijs</TableHead>
-                        <TableHead>Bedrag</TableHead>
-                        {selectedInvoice.status === "DRAFT" && <TableHead>Actie</TableHead>}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {invoiceItems.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>{item.code}</TableCell>
-                          <TableCell>{item.description}</TableCell>
-                          <TableCell>{item.qty}</TableCell>
-                          <TableCell>€{Number(item.unit_price).toFixed(2)}</TableCell>
-                          <TableCell>€{Number(item.amount).toFixed(2)}</TableCell>
-                          {selectedInvoice.status === "DRAFT" && (
-                            <TableCell>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => deleteInvoiceItem(item.id, selectedInvoice.id)}
-                              >
-                                Verwijder
-                              </Button>
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                <TabsContent value="catalog" className="space-y-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Package className="h-5 w-5" />
+                        Catalogus
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Search className="h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Zoek op code of naam..."
+                          value={catalogSearch}
+                          onChange={(e) => setCatalogSearch(e.target.value)}
+                        />
+                      </div>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Code</TableHead>
+                            <TableHead>Naam</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Prijs</TableHead>
+                            <TableHead>Actie</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {catalogItems
+                            .filter(item => 
+                              catalogSearch === "" ||
+                              item.code.toLowerCase().includes(catalogSearch.toLowerCase()) ||
+                              item.name.toLowerCase().includes(catalogSearch.toLowerCase())
+                            )
+                            .map((item) => (
+                              <TableRow key={item.id}>
+                                <TableCell className="font-mono">{item.code}</TableCell>
+                                <TableCell>{item.name}</TableCell>
+                                <TableCell>
+                                  <Badge variant={item.type === 'SERVICE' ? 'default' : 'secondary'}>
+                                    {item.type === 'SERVICE' ? 'Dienst' : 'Goed'}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>€{Number(item.default_price).toFixed(2)}</TableCell>
+                                <TableCell>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => addCatalogItemToInvoice(item, selectedInvoice.id)}
+                                  >
+                                    <Plus className="h-4 w-4 mr-1" />
+                                    Toevoegen
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
 
-                  <div className="border-t pt-4 space-y-2">
-                    <div className="flex justify-between">
-                      <span>Subtotaal:</span>
-                      <span>€{Number(selectedInvoice.subtotal).toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>BTW (21%):</span>
-                      <span>€{Number(selectedInvoice.vat).toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between font-bold text-lg">
-                      <span>Totaal:</span>
-                      <span>€{Number(selectedInvoice.total).toFixed(2)}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Status & Acties</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span>Huidige status:</span>
-                    <Badge className={statusColors[selectedInvoice.status]}>
-                      {statusLabels[selectedInvoice.status]}
-                    </Badge>
-                  </div>
-
-                  <div className="flex gap-2">
-                    {selectedInvoice.status === "DRAFT" && (
-                      <Button onClick={() => updateInvoiceStatus(selectedInvoice.id, "ISSUED")}>
-                        Uitgeven
-                      </Button>
-                    )}
-                    {selectedInvoice.status === "ISSUED" && (
-                      <>
-                        <div className="flex gap-2 items-end">
-                          <div className="space-y-2">
-                            <Label>Betaaldatum</Label>
-                            <Input
-                              type="date"
-                              value={paymentDate}
-                              onChange={(e) => setPaymentDate(e.target.value)}
-                            />
-                          </div>
-                          <Button onClick={() => markAsPaid(selectedInvoice.id)}>
-                            Markeer als Betaald
+                <TabsContent value="items" className="space-y-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Factuurlijnen</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {selectedInvoice.status === "DRAFT" && (
+                        <div className="grid grid-cols-5 gap-2">
+                          <Input
+                            placeholder="Code"
+                            value={newItem.code}
+                            onChange={(e) => setNewItem({ ...newItem, code: e.target.value })}
+                          />
+                          <Input
+                            placeholder="Omschrijving"
+                            value={newItem.description}
+                            onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                          />
+                          <Input
+                            type="number"
+                            placeholder="Qty"
+                            value={newItem.qty}
+                            onChange={(e) => setNewItem({ ...newItem, qty: Number(e.target.value) })}
+                          />
+                          <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="Prijs"
+                            value={newItem.unit_price}
+                            onChange={(e) => setNewItem({ ...newItem, unit_price: Number(e.target.value) })}
+                          />
+                          <Button onClick={() => addInvoiceItem(selectedInvoice.id)}>
+                            Toevoegen
                           </Button>
                         </div>
-                      </>
-                    )}
-                    {(selectedInvoice.status === "DRAFT" || selectedInvoice.status === "ISSUED") && (
-                      <Button
-                        variant="destructive"
-                        onClick={() => updateInvoiceStatus(selectedInvoice.id, "CANCELLED")}
-                      >
-                        Annuleren
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
+                      )}
+
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Code</TableHead>
+                            <TableHead>Omschrijving</TableHead>
+                            <TableHead>Qty</TableHead>
+                            <TableHead>Prijs</TableHead>
+                            <TableHead>Bedrag</TableHead>
+                            {selectedInvoice.status === "DRAFT" && <TableHead>Actie</TableHead>}
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {invoiceItems.map((item) => (
+                            <TableRow key={item.id}>
+                              <TableCell className="font-mono">{item.code}</TableCell>
+                              <TableCell>{item.description}</TableCell>
+                              <TableCell>{item.qty}</TableCell>
+                              <TableCell>€{Number(item.unit_price).toFixed(2)}</TableCell>
+                              <TableCell>€{Number(item.amount).toFixed(2)}</TableCell>
+                              {selectedInvoice.status === "DRAFT" && (
+                                <TableCell>
+                                   <Button
+                                     size="sm"
+                                     variant="ghost"
+                                     onClick={() => deleteInvoiceItem(item.id, selectedInvoice.id)}
+                                   >
+                                     Verwijder
+                                   </Button>
+                                 </TableCell>
+                               )}
+                             </TableRow>
+                           ))}
+                         </TableBody>
+                       </Table>
+
+                       <div className="border-t pt-4 space-y-2">
+                         <div className="flex justify-between">
+                           <span>Subtotaal:</span>
+                           <span>€{Number(selectedInvoice.subtotal).toFixed(2)}</span>
+                         </div>
+                         <div className="flex justify-between">
+                           <span>BTW (21%):</span>
+                           <span>€{Number(selectedInvoice.vat).toFixed(2)}</span>
+                         </div>
+                         <div className="flex justify-between font-bold text-lg">
+                           <span>Totaal:</span>
+                           <span>€{Number(selectedInvoice.total).toFixed(2)}</span>
+                         </div>
+                       </div>
+                     </CardContent>
+                   </Card>
+
+                   <Card>
+                     <CardHeader>
+                       <CardTitle>Status & Acties</CardTitle>
+                     </CardHeader>
+                     <CardContent className="space-y-4">
+                       <div className="flex items-center gap-2">
+                         <span>Huidige status:</span>
+                         <Badge className={statusColors[selectedInvoice.status]}>
+                           {statusLabels[selectedInvoice.status]}
+                         </Badge>
+                       </div>
+
+                       <div className="flex gap-2">
+                         {selectedInvoice.status === "DRAFT" && (
+                           <Button onClick={() => updateInvoiceStatus(selectedInvoice.id, "ISSUED")}>
+                             Uitgeven
+                           </Button>
+                         )}
+                         {selectedInvoice.status === "ISSUED" && (
+                           <>
+                             <div className="flex gap-2 items-end">
+                               <div className="space-y-2">
+                                 <Label>Betaaldatum</Label>
+                                 <Input
+                                   type="date"
+                                   value={paymentDate}
+                                   onChange={(e) => setPaymentDate(e.target.value)}
+                                 />
+                               </div>
+                               <Button onClick={() => markAsPaid(selectedInvoice.id)}>
+                                 Markeer als Betaald
+                               </Button>
+                             </div>
+                           </>
+                         )}
+                         {(selectedInvoice.status === "DRAFT" || selectedInvoice.status === "ISSUED") && (
+                           <Button
+                             variant="destructive"
+                             onClick={() => updateInvoiceStatus(selectedInvoice.id, "CANCELLED")}
+                           >
+                             Annuleren
+                           </Button>
+                         )}
+                       </div>
+                     </CardContent>
+                   </Card>
+                 </TabsContent>
+               </Tabs>
+             </div>
+           )}
+         </DialogContent>
+       </Dialog>
+     </div>
+   );
+ }

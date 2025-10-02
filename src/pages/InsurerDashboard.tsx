@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, FileBarChart, FolderOpen, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Search, FileBarChart, FolderOpen, CheckCircle, XCircle, Clock, Receipt } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { KPICard } from "@/components/KPICard";
 import { Database } from "@/integrations/supabase/types";

@@ -24,6 +24,7 @@ import FamilieLocatie from "./pages/FamilieLocatie";
 import WasplaatsDashboard from "./pages/WasplaatsDashboard";
 import WasplaatsKoelcellen from "./pages/WasplaatsKoelcellen";
 import WasplaatsReservaties from "./pages/WasplaatsReservaties";
+import Facturatie from "./pages/Facturatie";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
 import MoskeeAanvraag from "./pages/MoskeeAanvraag";
 import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
@@ -205,6 +206,11 @@ const App = () => (
                           <Route path="/wasplaats/reservaties/nieuw" element={
                             <RoleProtectedRoute allowedRoles={['wasplaats']}>
                               <WasplaatsReservaties />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/wasplaats/facturatie" element={
+                            <RoleProtectedRoute allowedRoles={['wasplaats']}>
+                              <Facturatie />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/moskee" element={

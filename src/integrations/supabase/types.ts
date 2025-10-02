@@ -775,31 +775,49 @@ export type Database = {
       }
       organizations: {
         Row: {
+          address: string | null
+          city: string | null
           contact_email: string | null
           contact_phone: string | null
+          country: string | null
           created_at: string
           id: string
           name: string
+          postal_code: string | null
+          registration_number: string | null
           type: Database["public"]["Enums"]["org_type"]
           updated_at: string
+          vat_number: string | null
         }
         Insert: {
+          address?: string | null
+          city?: string | null
           contact_email?: string | null
           contact_phone?: string | null
+          country?: string | null
           created_at?: string
           id?: string
           name: string
+          postal_code?: string | null
+          registration_number?: string | null
           type: Database["public"]["Enums"]["org_type"]
           updated_at?: string
+          vat_number?: string | null
         }
         Update: {
+          address?: string | null
+          city?: string | null
           contact_email?: string | null
           contact_phone?: string | null
+          country?: string | null
           created_at?: string
           id?: string
           name?: string
+          postal_code?: string | null
+          registration_number?: string | null
           type?: Database["public"]["Enums"]["org_type"]
           updated_at?: string
+          vat_number?: string | null
         }
         Relationships: []
       }

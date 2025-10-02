@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { User, Building2, Bell } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const Instellingen = () => {
   const [profile, setProfile] = useState({
@@ -19,11 +20,18 @@ const Instellingen = () => {
     name: "",
     type: "",
     contactEmail: "",
-    contactPhone: ""
+    contactPhone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "",
+    vatNumber: "",
+    registrationNumber: ""
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { role } = useUserRole();
 
   useEffect(() => {
     fetchProfile();
@@ -76,7 +84,13 @@ const Instellingen = () => {
             name: orgData.name || "",
             type: roleLabels[roleData.role] || roleData.role,
             contactEmail: orgData.contact_email || "",
-            contactPhone: orgData.contact_phone || ""
+            contactPhone: orgData.contact_phone || "",
+            address: orgData.address || "",
+            city: orgData.city || "",
+            postalCode: orgData.postal_code || "",
+            country: orgData.country || "",
+            vatNumber: orgData.vat_number || "",
+            registrationNumber: orgData.registration_number || ""
           });
         }
       }
@@ -243,6 +257,36 @@ const Instellingen = () => {
                   <p className="font-medium">{organization.contactPhone}</p>
                 </div>
               )}
+              {organization.address && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Adres</p>
+                  <p className="font-medium">{organization.address}</p>
+                </div>
+              )}
+              {(organization.postalCode || organization.city) && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Postcode & Stad</p>
+                  <p className="font-medium">{organization.postalCode} {organization.city}</p>
+                </div>
+              )}
+              {organization.country && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Land</p>
+                  <p className="font-medium">{organization.country}</p>
+                </div>
+              )}
+              {organization.vatNumber && (
+                <div>
+                  <p className="text-sm text-muted-foreground">BTW-nummer</p>
+                  <p className="font-medium">{organization.vatNumber}</p>
+                </div>
+              )}
+              {organization.registrationNumber && (
+                <div>
+                  <p className="text-sm text-muted-foreground">KVK-nummer</p>
+                  <p className="font-medium">{organization.registrationNumber}</p>
+                </div>
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               Organisatiegegevens kunnen niet worden gewijzigd. Neem contact op met de beheerder voor wijzigingen.
@@ -270,17 +314,21 @@ const Instellingen = () => {
               <Button variant="outline" size="sm">Ingeschakeld</Button>
             </div>
 
-            <Separator />
+            {role !== 'wasplaats' && (
+              <>
+                <Separator />
 
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Document goedkeuringen</p>
-                <p className="text-sm text-muted-foreground">
-                  Notificaties bij document reviews
-                </p>
-              </div>
-              <Button variant="outline" size="sm">Ingeschakeld</Button>
-            </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Document goedkeuringen</p>
+                    <p className="text-sm text-muted-foreground">
+                      Notificaties bij document reviews
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm">Ingeschakeld</Button>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

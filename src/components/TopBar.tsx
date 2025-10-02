@@ -15,10 +15,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useUserRole, getRoleDisplayName } from "@/hooks/useUserRole";
+
 export function TopBar() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [userEmail, setUserEmail] = useState<string>("");
+  const { role } = useUserRole();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -74,7 +77,7 @@ export function TopBar() {
               <User className="h-4 w-4" />
               <div className="flex flex-col items-start">
                 <span className="text-sm font-medium">{userEmail || "Gebruiker"}</span>
-                <span className="text-xs text-muted-foreground">Uitvaartondernemer</span>
+                <span className="text-xs text-muted-foreground">{getRoleDisplayName(role)}</span>
               </div>
             </Button>
           </DropdownMenuTrigger>

@@ -16,8 +16,10 @@ import Documenten from "./pages/Documenten";
 import Planning from "./pages/Planning";
 import Rapporten from "./pages/Rapporten";
 import Instellingen from "./pages/Instellingen";
+import MijnDocumenten from "./pages/MijnDocumenten";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import { useUserRole, UserRole } from "./hooks/useUserRole";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +55,30 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const RoleProtectedRoute = ({ 
+  children, 
+  allowedRoles 
+}: { 
+  children: React.ReactNode;
+  allowedRoles: UserRole[];
+}) => {
+  const { role, loading } = useUserRole();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!role || !allowedRoles.includes(role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -72,12 +98,41 @@ const App = () => (
                       <TopBar />
                       <main className="flex-1 p-6">
                         <Routes>
-                          <Route path="/" element={<Dashboard />} />
-                          <Route path="/dossiers" element={<Dossiers />} />
-                          <Route path="/taken" element={<Taken />} />
-                          <Route path="/documenten" element={<Documenten />} />
-                          <Route path="/planning" element={<Planning />} />
-                          <Route path="/rapporten" element={<Rapporten />} />
+                          <Route path="/" element={
+                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'insurer']}>
+                              <Dashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/dossiers" element={
+                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                              <Dossiers />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/taken" element={
+                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                              <Taken />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/documenten" element={
+                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'family']}>
+                              <Documenten />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/planning" element={
+                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                              <Planning />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/rapporten" element={
+                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'insurer']}>
+                              <Rapporten />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/mijn-documenten" element={
+                            <RoleProtectedRoute allowedRoles={['family']}>
+                              <MijnDocumenten />
+                            </RoleProtectedRoute>
+                          } />
                           <Route path="/instellingen" element={<Instellingen />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>

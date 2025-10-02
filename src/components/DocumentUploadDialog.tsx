@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,17 +22,46 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface DocumentUploadDialogProps {
-  dossiers: any[];
+  dossiers?: any[];
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   onUploadComplete: () => void;
 }
 
-export function DocumentUploadDialog({ dossiers, onUploadComplete }: DocumentUploadDialogProps) {
-  const [open, setOpen] = useState(false);
+export function DocumentUploadDialog({ 
+  dossiers, 
+  open: controlledOpen, 
+  onOpenChange, 
+  onUploadComplete 
+}: DocumentUploadDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = onOpenChange || setInternalOpen;
   const [uploading, setUploading] = useState(false);
   const [selectedDossier, setSelectedDossier] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
+
+  // Fetch dossiers if not provided
+  const [fetchedDossiers, setFetchedDossiers] = useState<any[]>([]);
+  const [loadingDossiers, setLoadingDossiers] = useState(!dossiers);
+
+  useEffect(() => {
+    if (!dossiers) {
+      const fetchDossiers = async () => {
+        const { data } = await supabase
+          .from('dossiers')
+          .select('id, ref_number, deceased_name')
+          .order('created_at', { ascending: false });
+        setFetchedDossiers(data || []);
+        setLoadingDossiers(false);
+      };
+      fetchDossiers();
+    }
+  }, [dossiers]);
+
+  const availableDossiers = dossiers || fetchedDossiers;
 
   const handleUpload = async () => {
     if (!file || !selectedDossier || !selectedType) {
@@ -96,12 +125,14 @@ export function DocumentUploadDialog({ dossiers, onUploadComplete }: DocumentUpl
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Upload className="mr-2 h-4 w-4" />
-          Document uploaden
-        </Button>
-      </DialogTrigger>
+      {controlledOpen === undefined && (
+        <DialogTrigger asChild>
+          <Button>
+            <Upload className="mr-2 h-4 w-4" />
+            Document uploaden
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Document uploaden</DialogTitle>
@@ -117,11 +148,17 @@ export function DocumentUploadDialog({ dossiers, onUploadComplete }: DocumentUpl
                 <SelectValue placeholder="Selecteer dossier" />
               </SelectTrigger>
               <SelectContent>
-                {dossiers.map((d) => (
-                  <SelectItem key={d.id} value={d.id}>
-                    {d.ref_number} - {d.deceased_name}
-                  </SelectItem>
-                ))}
+                {loadingDossiers ? (
+                  <SelectItem value="loading" disabled>Laden...</SelectItem>
+                ) : availableDossiers.length === 0 ? (
+                  <SelectItem value="none" disabled>Geen dossiers beschikbaar</SelectItem>
+                ) : (
+                  availableDossiers.map((d) => (
+                    <SelectItem key={d.id} value={d.id}>
+                      {d.ref_number} - {d.deceased_name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>

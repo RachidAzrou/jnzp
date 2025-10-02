@@ -21,14 +21,18 @@ export const useUserRole = () => {
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
-          .eq('user_id', session.user.id)
-          .single();
+          .eq('user_id', session.user.id);
 
         if (error) {
           console.error('Error fetching user role:', error);
           setRole(null);
+        } else if (data && data.length > 0) {
+          // If user has multiple roles, prioritize non-family roles
+          const roles = data.map(d => d.role as UserRole);
+          const primaryRole = roles.find(r => r !== 'family') || roles[0];
+          setRole(primaryRole);
         } else {
-          setRole(data?.role as UserRole);
+          setRole(null);
         }
       } catch (error) {
         console.error('Error in fetchUserRole:', error);

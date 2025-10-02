@@ -939,6 +939,7 @@ export type Database = {
         | "insurer"
         | "family"
         | "wasplaats"
+        | "mosque"
       channel: "EMAIL" | "SMS" | "PUSH"
       cool_cell_status: "FREE" | "RESERVED" | "OCCUPIED" | "OUT_OF_SERVICE"
       delivery_status: "PENDING" | "SENT" | "FAILED"
@@ -1109,7 +1110,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "funeral_director", "insurer", "family", "wasplaats"],
+      app_role: [
+        "admin",
+        "funeral_director",
+        "insurer",
+        "family",
+        "wasplaats",
+        "mosque",
+      ],
       channel: ["EMAIL", "SMS", "PUSH"],
       cool_cell_status: ["FREE", "RESERVED", "OCCUPIED", "OUT_OF_SERVICE"],
       delivery_status: ["PENDING", "SENT", "FAILED"],

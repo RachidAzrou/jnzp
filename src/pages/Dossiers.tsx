@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Filter, AlertCircle, FolderOpen } from "lucide-react";
+import { Search, Plus, Filter, AlertCircle, FolderOpen, Plane, MapPin } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSearchParams } from "react-router-dom";
@@ -26,6 +26,7 @@ const Dossiers = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "all");
+  const [flowFilter, setFlowFilter] = useState<string>(searchParams.get("flow") || "all");
   const [selectedDossier, setSelectedDossier] = useState<any>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const { toast } = useToast();
@@ -36,7 +37,7 @@ const Dossiers = () => {
 
   useEffect(() => {
     filterDossiers();
-  }, [dossiers, searchQuery, statusFilter]);
+  }, [dossiers, searchQuery, statusFilter, flowFilter]);
 
   const fetchDossiers = async () => {
     setLoading(true);
@@ -54,10 +55,11 @@ const Dossiers = () => {
   const filterDossiers = () => {
     let filtered = [...dossiers];
 
-    // Search filter
+    // Search filter - check both display_id and ref_number
     if (searchQuery) {
       filtered = filtered.filter(
         (d) =>
+          (d.display_id && d.display_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
           d.ref_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
           d.deceased_name.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -66,6 +68,11 @@ const Dossiers = () => {
     // Status filter
     if (statusFilter !== "all") {
       filtered = filtered.filter((d) => d.status === statusFilter);
+    }
+
+    // Flow filter
+    if (flowFilter !== "all") {
+      filtered = filtered.filter((d) => d.flow === flowFilter);
     }
 
     setFilteredDossiers(filtered);
@@ -127,17 +134,49 @@ const Dossiers = () => {
 
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="relative flex-1 w-full">
+          <div className="flex flex-col gap-4">
+            {/* Search */}
+            <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Zoek op naam of dossiernummer..."
+                placeholder="Zoek op ID (REP-/LOC-) of naam..."
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex gap-2">
+            
+            {/* Flow Filter */}
+            <div className="flex gap-2 items-center">
+              <span className="text-sm font-medium text-muted-foreground">Flow:</span>
+              <Button
+                variant={flowFilter === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setFlowFilter("all")}
+              >
+                Alle
+              </Button>
+              <Button
+                variant={flowFilter === "REP" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setFlowFilter("REP")}
+              >
+                <Plane className="h-4 w-4 mr-1" />
+                Repatriëring
+              </Button>
+              <Button
+                variant={flowFilter === "LOC" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setFlowFilter("LOC")}
+              >
+                <MapPin className="h-4 w-4 mr-1" />
+                Lokaal
+              </Button>
+            </div>
+
+            {/* Status Filter */}
+            <div className="flex gap-2 items-center flex-wrap">
+              <span className="text-sm font-medium text-muted-foreground">Status:</span>
               <Button
                 variant={statusFilter === "all" ? "default" : "outline"}
                 size="sm"
@@ -175,6 +214,7 @@ const Dossiers = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Dossier</TableHead>
+                <TableHead>Flow</TableHead>
                 <TableHead>Naam overledene</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Geboortedatum</TableHead>
@@ -186,7 +226,7 @@ const Dossiers = () => {
             <TableBody>
               {filteredDossiers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={8}>
                     <EmptyState
                       icon={FolderOpen}
                       title={dossiers.length === 0 ? "Nog geen dossiers" : "Geen resultaten"}
@@ -211,7 +251,7 @@ const Dossiers = () => {
                   <TableRow key={dossier.id} className="cursor-pointer hover:bg-muted/50">
                      <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono">{dossier.ref_number}</span>
+                        <span className="font-mono">{dossier.display_id || dossier.ref_number}</span>
                         {dossier.legal_hold && (
                           <Badge variant="destructive" className="gap-1">
                             <AlertCircle className="h-3 w-3" />
@@ -219,6 +259,23 @@ const Dossiers = () => {
                           </Badge>
                         )}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      {dossier.flow === "REP" && (
+                        <Badge variant="outline" className="gap-1">
+                          <Plane className="h-3 w-3" />
+                          Repatriëring
+                        </Badge>
+                      )}
+                      {dossier.flow === "LOC" && (
+                        <Badge variant="outline" className="gap-1">
+                          <MapPin className="h-3 w-3" />
+                          Lokaal
+                        </Badge>
+                      )}
+                      {dossier.flow === "UNSET" && (
+                        <Badge variant="secondary">Niet gekozen</Badge>
+                      )}
                     </TableCell>
                     <TableCell>{dossier.deceased_name}</TableCell>
                      <TableCell>

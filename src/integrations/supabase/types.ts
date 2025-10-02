@@ -232,6 +232,8 @@ export type Database = {
           date_of_death: string | null
           deceased_dob: string | null
           deceased_name: string
+          display_id: string | null
+          flow: Database["public"]["Enums"]["dossier_flow"]
           id: string
           insurer_org_id: string | null
           legal_hold: boolean
@@ -246,6 +248,8 @@ export type Database = {
           date_of_death?: string | null
           deceased_dob?: string | null
           deceased_name: string
+          display_id?: string | null
+          flow?: Database["public"]["Enums"]["dossier_flow"]
           id?: string
           insurer_org_id?: string | null
           legal_hold?: boolean
@@ -260,6 +264,8 @@ export type Database = {
           date_of_death?: string | null
           deceased_dob?: string | null
           deceased_name?: string
+          display_id?: string | null
+          flow?: Database["public"]["Enums"]["dossier_flow"]
           id?: string
           insurer_org_id?: string | null
           legal_hold?: boolean
@@ -1199,6 +1205,7 @@ export type Database = {
         | "CONSULAR_LASSEZ_PASSER"
         | "SEALING_CERTIFICATE"
         | "OTHER"
+      dossier_flow: "REP" | "LOC" | "UNSET"
       dossier_status:
         | "CREATED"
         | "INTAKE_IN_PROGRESS"
@@ -1392,6 +1399,7 @@ export const Constants = {
         "SEALING_CERTIFICATE",
         "OTHER",
       ],
+      dossier_flow: ["REP", "LOC", "UNSET"],
       dossier_status: [
         "CREATED",
         "INTAKE_IN_PROGRESS",

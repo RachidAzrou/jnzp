@@ -9,7 +9,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Search, FileBarChart, FolderOpen, CheckCircle, XCircle, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { TopBar } from "@/components/TopBar";
 import { KPICard } from "@/components/KPICard";
 import { Database } from "@/integrations/supabase/types";
 
@@ -112,10 +111,8 @@ export default function InsurerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar />
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex justify-between items-center">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold">Verzekeraar Dashboard</h1>
             <p className="text-muted-foreground">Overzicht van verzekerde dossiers</p>

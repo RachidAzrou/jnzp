@@ -17,6 +17,10 @@ import Planning from "./pages/Planning";
 import Rapporten from "./pages/Rapporten";
 import Instellingen from "./pages/Instellingen";
 import MijnDocumenten from "./pages/MijnDocumenten";
+import FamilieDashboard from "./pages/FamilieDashboard";
+import FamilieIdentificatie from "./pages/FamilieIdentificatie";
+import FamiliePolis from "./pages/FamiliePolis";
+import FamilieLocatie from "./pages/FamilieLocatie";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
@@ -131,6 +135,26 @@ const App = () => (
                           <Route path="/mijn-documenten" element={
                             <RoleProtectedRoute allowedRoles={['family']}>
                               <MijnDocumenten />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/familie" element={
+                            <RoleProtectedRoute allowedRoles={['family']}>
+                              <FamilieDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/familie/identificatie" element={
+                            <RoleProtectedRoute allowedRoles={['family']}>
+                              <FamilieIdentificatie />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/familie/polis" element={
+                            <RoleProtectedRoute allowedRoles={['family']}>
+                              <FamiliePolis />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/familie/locatie" element={
+                            <RoleProtectedRoute allowedRoles={['family']}>
+                              <FamilieLocatie />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />

@@ -588,7 +588,12 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "funeral_director" | "insurer" | "family"
+      app_role:
+        | "admin"
+        | "funeral_director"
+        | "insurer"
+        | "family"
+        | "wasplaats"
       channel: "EMAIL" | "SMS" | "PUSH"
       delivery_status: "PENDING" | "SENT" | "FAILED"
       doc_status: "IN_REVIEW" | "APPROVED" | "REJECTED"
@@ -749,7 +754,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "funeral_director", "insurer", "family"],
+      app_role: ["admin", "funeral_director", "insurer", "family", "wasplaats"],
       channel: ["EMAIL", "SMS", "PUSH"],
       delivery_status: ["PENDING", "SENT", "FAILED"],
       doc_status: ["IN_REVIEW", "APPROVED", "REJECTED"],

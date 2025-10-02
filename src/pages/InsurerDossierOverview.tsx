@@ -1,32 +1,40 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Receipt } from "lucide-react";
+import { FileText, Receipt, Shield, RefreshCw, AlertCircle } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 export default function InsurerDossierOverview() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [overrideReason, setOverrideReason] = useState("");
 
-  const { data: dossier, isLoading } = useQuery({
+  const { data: dossier, isLoading, refetch } = useQuery({
     queryKey: ["insurer-dossier", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("dossiers")
         .select(`
           *,
-          organizations:assigned_fd_org_id(name),
+          fd_org:organizations!assigned_fd_org_id(name),
           polis_checks(*),
+          claims(*),
           documents(id, doc_type, status, uploaded_at, file_name),
-          mosque_services(status, confirmed_slot, mosque_org_id, organizations!mosque_services_mosque_org_id_fkey(name)),
+          mosque_services(status, confirmed_slot, mosque_org_id, mosque_org:organizations!mosque_services_mosque_org_id_fkey(name)),
           wash_services(status, scheduled_at),
           repatriations(*, flights(*)),
-          invoices(id, invoice_number, status, total, created_at)
+          invoices(id, invoice_number, status, total, created_at),
+          dossier_events(id, event_type, event_description, created_at, metadata)
         `)
         .eq("id", id)
         .single();
@@ -35,6 +43,114 @@ export default function InsurerDossierOverview() {
       return data;
     },
   });
+
+  const handleOverrideClaim = async (newStatus: 'MANUAL_APPROVED' | 'MANUAL_REJECTED') => {
+    if (!overrideReason.trim()) {
+      toast({
+        title: "Fout",
+        description: "Reden is verplicht voor override",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const claim = dossier?.claims;
+      if (!claim) throw new Error("No claim found");
+
+      const { error: updateError } = await supabase
+        .from("claims")
+        .update({
+          status: newStatus,
+          source: 'MANUAL',
+          override_reason: overrideReason,
+        })
+        .eq("id", claim.id);
+
+      if (updateError) throw updateError;
+
+      // Log action
+      await supabase.from("claim_actions").insert({
+        claim_id: claim.id,
+        user_id: user.id,
+        action: newStatus === 'MANUAL_APPROVED' ? 'OVERRIDE_APPROVED' : 'OVERRIDE_REJECTED',
+        reason: overrideReason,
+        from_status: claim.status,
+        to_status: newStatus,
+      });
+
+      // Create event
+      await supabase.from("dossier_events").insert({
+        dossier_id: id,
+        event_type: "CLAIM_OVERRIDE",
+        event_description: `Claim ${newStatus === 'MANUAL_APPROVED' ? 'goedgekeurd' : 'afgewezen'} (manual override)`,
+        metadata: { reason: overrideReason },
+        created_by: user.id,
+      });
+
+      toast({
+        title: "Succes",
+        description: "Claim status bijgewerkt",
+      });
+
+      setOverrideReason("");
+      refetch();
+    } catch (error) {
+      console.error("Error overriding claim:", error);
+      toast({
+        title: "Fout",
+        description: "Kon claim niet bijwerken",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleResetToAPI = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const claim = dossier?.claims;
+      if (!claim) throw new Error("No claim found");
+
+      const { error: updateError } = await supabase
+        .from("claims")
+        .update({
+          status: 'API_PENDING',
+          source: 'API',
+          override_reason: null,
+        })
+        .eq("id", claim.id);
+
+      if (updateError) throw updateError;
+
+      // Log action
+      await supabase.from("claim_actions").insert({
+        claim_id: claim.id,
+        user_id: user.id,
+        action: 'RESET_TO_API',
+        from_status: claim.status,
+        to_status: 'API_PENDING',
+      });
+
+      toast({
+        title: "Succes",
+        description: "Claim gereset naar API",
+      });
+
+      refetch();
+    } catch (error) {
+      console.error("Error resetting claim:", error);
+      toast({
+        title: "Fout",
+        description: "Kon claim niet resetten",
+        variant: "destructive",
+      });
+    }
+  };
 
   const getDocumentStatusBadge = (status: string) => {
     switch (status) {
@@ -99,41 +215,40 @@ export default function InsurerDossierOverview() {
         <Tabs defaultValue="overzicht">
           <TabsList>
             <TabsTrigger value="overzicht">Overzicht</TabsTrigger>
+            <TabsTrigger value="claim">Claim Status</TabsTrigger>
             <TabsTrigger value="facturen">Facturen</TabsTrigger>
-            <TabsTrigger value="notities">Notities</TabsTrigger>
+            <TabsTrigger value="tijdlijn">Tijdlijn</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overzicht" className="space-y-6">
-            {/* Polis Information */}
+            {/* Basis info */}
             <Card>
               <CardHeader>
-                <CardTitle>Polis</CardTitle>
+                <CardTitle>Basis Informatie</CardTitle>
               </CardHeader>
-              <CardContent>
-                {dossier.polis_checks && dossier.polis_checks.length > 0 ? (
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Status:</span>
-                      <span className="font-medium">
-                        {dossier.polis_checks[0].is_covered ? "Actief" : "Niet gevonden"}
-                      </span>
-                    </div>
-                    {dossier.polis_checks[0].num_travelers && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Meereizigers gedekt:</span>
-                        <span className="font-medium">{dossier.polis_checks[0].num_travelers}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Bron:</span>
-                      <span className="font-medium">
-                        mock (laatste check: {new Date(dossier.polis_checks[0].checked_at).toLocaleString("nl-NL")})
-                      </span>
-                    </div>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-muted-foreground">Overledene:</span>
+                    <p className="font-medium">{dossier.deceased_name}</p>
                   </div>
-                ) : (
-                  <p className="text-muted-foreground">Geen polisgegevens beschikbaar</p>
-                )}
+                  <div>
+                    <span className="text-muted-foreground">Flow:</span>
+                    <p className="font-medium">
+                      <Badge>{dossier.flow === 'REP' ? 'Repatriëring' : dossier.flow === 'LOC' ? 'Lokaal' : 'Onbekend'}</Badge>
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Uitvaartondernemer:</span>
+                    <p className="font-medium">{dossier.fd_org?.name || '-'}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Status:</span>
+                    <p className="font-medium">
+                      <Badge>{dossier.status}</Badge>
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -183,7 +298,7 @@ export default function InsurerDossierOverview() {
                   <span className="font-medium">
                     {dossier.mosque_services?.[0] ? (
                       dossier.mosque_services[0].status === "CONFIRMED" ? (
-                        `CONFIRMED: ${dossier.mosque_services[0].organizations?.name}, ${new Date(dossier.mosque_services[0].confirmed_slot!).toLocaleString("nl-NL")}`
+                        `CONFIRMED: ${dossier.mosque_services[0].mosque_org?.name}, ${new Date(dossier.mosque_services[0].confirmed_slot!).toLocaleString("nl-NL")}`
                       ) : (
                         dossier.mosque_services[0].status
                       )
@@ -251,6 +366,150 @@ export default function InsurerDossierOverview() {
             </Card>
           </TabsContent>
 
+          <TabsContent value="claim">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Claim Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {dossier.claims ? (
+                  <>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-muted-foreground">Polisnummer:</span>
+                          <p className="font-medium font-mono">{dossier.claims.policy_number}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Status:</span>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge className={
+                              dossier.claims.status === 'API_APPROVED' || dossier.claims.status === 'MANUAL_APPROVED'
+                                ? 'bg-success text-success-foreground'
+                                : dossier.claims.status === 'API_REJECTED' || dossier.claims.status === 'MANUAL_REJECTED'
+                                ? 'bg-destructive text-destructive-foreground'
+                                : 'bg-muted text-muted-foreground'
+                            }>
+                              {dossier.claims.status.replace('_', ' ')}
+                            </Badge>
+                            {dossier.claims.source === 'MANUAL' && (
+                              <Badge variant="outline" className="border-warning text-warning">
+                                OVERRIDE ACTIEF
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {dossier.claims.override_reason && (
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                            <div>
+                              <p className="font-medium text-blue-900 dark:text-blue-100">Override Reden</p>
+                              <p className="text-sm text-blue-800 dark:text-blue-200 mt-1">
+                                {dossier.claims.override_reason}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-4 border-t pt-4">
+                      <h4 className="font-medium">Acties</h4>
+                      
+                      {dossier.claims.source === 'MANUAL' ? (
+                        <Button
+                          variant="outline"
+                          onClick={handleResetToAPI}
+                          className="w-full"
+                        >
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                          Reset naar API
+                        </Button>
+                      ) : (
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="override-reason">Reden voor override (verplicht)</Label>
+                            <Textarea
+                              id="override-reason"
+                              placeholder="Leg uit waarom je de claim handmatig goedkeurt of afwijst..."
+                              value={overrideReason}
+                              onChange={(e) => setOverrideReason(e.target.value)}
+                              rows={3}
+                              className="mt-2"
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              className="flex-1 bg-success hover:bg-success/90"
+                              onClick={() => handleOverrideClaim('MANUAL_APPROVED')}
+                              disabled={!overrideReason.trim()}
+                            >
+                              Goedkeuren (Override)
+                            </Button>
+                            <Button
+                              className="flex-1"
+                              variant="destructive"
+                              onClick={() => handleOverrideClaim('MANUAL_REJECTED')}
+                              disabled={!overrideReason.trim()}
+                            >
+                              Afwijzen (Override)
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-muted-foreground">Geen claim informatie beschikbaar</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="tijdlijn">
+            <Card>
+              <CardHeader>
+                <CardTitle>Tijdlijn (read-only)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {dossier.dossier_events && dossier.dossier_events.length > 0 ? (
+                  <div className="space-y-3">
+                    {dossier.dossier_events
+                      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                      .map((event) => (
+                        <div key={event.id} className="flex gap-4 border-l-2 border-primary/20 pl-4 py-2">
+                          <div className="flex-shrink-0 text-sm text-muted-foreground w-32">
+                            {new Date(event.created_at).toLocaleString("nl-NL", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm">{event.event_description}</p>
+                            {event.metadata && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {JSON.stringify(event.metadata)}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">Geen gebeurtenissen beschikbaar</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="facturen">
             <Card>
               <CardHeader>
@@ -288,17 +547,6 @@ export default function InsurerDossierOverview() {
                 ) : (
                   <p className="text-muted-foreground">Geen facturen beschikbaar</p>
                 )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="notities">
-            <Card>
-              <CardHeader>
-                <CardTitle>Notities</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Notities functionaliteit komt binnenkort</p>
               </CardContent>
             </Card>
           </TabsContent>

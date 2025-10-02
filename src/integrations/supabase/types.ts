@@ -162,6 +162,104 @@ export type Database = {
           },
         ]
       }
+      claim_actions: {
+        Row: {
+          action: string
+          claim_id: string
+          created_at: string
+          from_status: Database["public"]["Enums"]["claim_status"] | null
+          id: string
+          metadata: Json | null
+          reason: string | null
+          to_status: Database["public"]["Enums"]["claim_status"] | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          claim_id: string
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["claim_status"] | null
+          id?: string
+          metadata?: Json | null
+          reason?: string | null
+          to_status?: Database["public"]["Enums"]["claim_status"] | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          claim_id?: string
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["claim_status"] | null
+          id?: string
+          metadata?: Json | null
+          reason?: string | null
+          to_status?: Database["public"]["Enums"]["claim_status"] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_actions_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      claims: {
+        Row: {
+          api_response: Json | null
+          created_at: string
+          dossier_id: string
+          id: string
+          insurer_org_id: string
+          override_reason: string | null
+          policy_number: string
+          source: Database["public"]["Enums"]["claim_source"]
+          status: Database["public"]["Enums"]["claim_status"]
+          updated_at: string
+        }
+        Insert: {
+          api_response?: Json | null
+          created_at?: string
+          dossier_id: string
+          id?: string
+          insurer_org_id: string
+          override_reason?: string | null
+          policy_number: string
+          source?: Database["public"]["Enums"]["claim_source"]
+          status?: Database["public"]["Enums"]["claim_status"]
+          updated_at?: string
+        }
+        Update: {
+          api_response?: Json | null
+          created_at?: string
+          dossier_id?: string
+          id?: string
+          insurer_org_id?: string
+          override_reason?: string | null
+          policy_number?: string
+          source?: Database["public"]["Enums"]["claim_source"]
+          status?: Database["public"]["Enums"]["claim_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claims_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: true
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "claims_insurer_org_id_fkey"
+            columns: ["insurer_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cool_cell_reservations: {
         Row: {
           cool_cell_id: string | null
@@ -355,6 +453,44 @@ export type Database = {
             foreignKeyName: "dossier_communication_preferences_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: true
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dossier_events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          dossier_id: string
+          event_description: string
+          event_type: string
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          dossier_id: string
+          event_description: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          dossier_id?: string
+          event_description?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dossier_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
@@ -1399,6 +1535,13 @@ export type Database = {
         | "wasplaats"
         | "mosque"
       channel: "EMAIL" | "SMS" | "PUSH"
+      claim_source: "API" | "MANUAL"
+      claim_status:
+        | "API_PENDING"
+        | "API_APPROVED"
+        | "API_REJECTED"
+        | "MANUAL_APPROVED"
+        | "MANUAL_REJECTED"
       communication_channel: "PORTAL" | "WHATSAPP"
       cool_cell_status: "FREE" | "RESERVED" | "OCCUPIED" | "OUT_OF_SERVICE"
       delivery_status: "PENDING" | "SENT" | "FAILED"
@@ -1600,6 +1743,14 @@ export const Constants = {
         "mosque",
       ],
       channel: ["EMAIL", "SMS", "PUSH"],
+      claim_source: ["API", "MANUAL"],
+      claim_status: [
+        "API_PENDING",
+        "API_APPROVED",
+        "API_REJECTED",
+        "MANUAL_APPROVED",
+        "MANUAL_REJECTED",
+      ],
       communication_channel: ["PORTAL", "WHATSAPP"],
       cool_cell_status: ["FREE", "RESERVED", "OCCUPIED", "OUT_OF_SERVICE"],
       delivery_status: ["PENDING", "SENT", "FAILED"],

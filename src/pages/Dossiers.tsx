@@ -13,24 +13,19 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Plus, Filter, AlertCircle, FolderOpen } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useSearchParams } from "react-router-dom";
 import { DossierDetailSheet } from "@/components/DossierDetailSheet";
 import { format } from "date-fns";
 import { EmptyState } from "@/components/EmptyState";
 import { useToast } from "@/hooks/use-toast";
 
 const Dossiers = () => {
+  const [searchParams] = useSearchParams();
   const [dossiers, setDossiers] = useState<any[]>([]);
   const [filteredDossiers, setFilteredDossiers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "all");
   const [selectedDossier, setSelectedDossier] = useState<any>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const { toast } = useToast();
@@ -142,26 +137,37 @@ const Dossiers = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-[200px]">
-                <Filter className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Filter op status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle statussen</SelectItem>
-                <SelectItem value="CREATED">Created</SelectItem>
-                <SelectItem value="INTAKE_IN_PROGRESS">Intake in progress</SelectItem>
-                <SelectItem value="DOCS_PENDING">Docs pending</SelectItem>
-                <SelectItem value="FD_ASSIGNED">FD assigned</SelectItem>
-                <SelectItem value="DOCS_VERIFIED">Docs verified</SelectItem>
-                <SelectItem value="APPROVED">Approved</SelectItem>
-                <SelectItem value="LEGAL_HOLD">Legal hold</SelectItem>
-                <SelectItem value="PLANNING">Planning</SelectItem>
-                <SelectItem value="READY_FOR_TRANSPORT">Ready for transport</SelectItem>
-                <SelectItem value="IN_TRANSIT">In transit</SelectItem>
-                <SelectItem value="ARCHIVED">Archived</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <Button
+                variant={statusFilter === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter("all")}
+              >
+                Alle
+              </Button>
+              <Button
+                variant={statusFilter === "DOCS_PENDING" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter("DOCS_PENDING")}
+              >
+                Docs Pending
+              </Button>
+              <Button
+                variant={statusFilter === "LEGAL_HOLD" ? "destructive" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter("LEGAL_HOLD")}
+              >
+                <AlertCircle className="h-4 w-4 mr-1" />
+                Legal Hold
+              </Button>
+              <Button
+                variant={statusFilter === "PLANNING" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter("PLANNING")}
+              >
+                Planning
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -203,11 +209,14 @@ const Dossiers = () => {
               ) : (
                 filteredDossiers.map((dossier) => (
                   <TableRow key={dossier.id} className="cursor-pointer hover:bg-muted/50">
-                    <TableCell className="font-medium">
+                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        {dossier.ref_number}
+                        <span className="font-mono">{dossier.ref_number}</span>
                         {dossier.legal_hold && (
-                          <AlertCircle className="h-4 w-4 text-destructive" />
+                          <Badge variant="destructive" className="gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            Legal Hold
+                          </Badge>
                         )}
                       </div>
                     </TableCell>
@@ -226,13 +235,13 @@ const Dossiers = () => {
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(dossier.created_at)}
                     </TableCell>
-                    <TableCell>
+                     <TableCell>
                       <Button
-                        variant="outline"
+                        variant="default"
                         size="sm"
                         onClick={() => handleViewDetails(dossier)}
                       >
-                        Details
+                        Open Dossier
                       </Button>
                     </TableCell>
                   </TableRow>

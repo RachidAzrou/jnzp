@@ -10,20 +10,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Download, Eye, CheckCircle, XCircle, Clock, FileText } from "lucide-react";
+import { Search, Download, Eye, CheckCircle, XCircle, Clock, FileText, Filter } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useSearchParams } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { DocumentUploadDialog } from "@/components/DocumentUploadDialog";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { EmptyState } from "@/components/EmptyState";
 
 const Documenten = () => {
+  const [searchParams] = useSearchParams();
   const [documents, setDocuments] = useState<any[]>([]);
   const [dossiers, setDossiers] = useState<any[]>([]);
   const [filteredDocs, setFilteredDocs] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("filter") === "missing" ? "missing" : "all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
   const [loading, setLoading] = useState(true);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [selectedDocForReject, setSelectedDocForReject] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -32,7 +49,7 @@ const Documenten = () => {
 
   useEffect(() => {
     filterDocuments();
-  }, [documents, searchQuery]);
+  }, [documents, searchQuery, statusFilter, typeFilter]);
 
   const fetchData = async () => {
     const [{ data: docsData }, { data: dossiersData }] = await Promise.all([
@@ -57,6 +74,18 @@ const Documenten = () => {
           doc.file_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           doc.dossiers?.ref_number.toLowerCase().includes(searchQuery.toLowerCase())
       );
+    }
+
+    // Status filter
+    if (statusFilter === "missing") {
+      filtered = filtered.filter(doc => ["IN_REVIEW", "REJECTED"].includes(doc.status));
+    } else if (statusFilter !== "all") {
+      filtered = filtered.filter(doc => doc.status === statusFilter);
+    }
+
+    // Type filter
+    if (typeFilter !== "all") {
+      filtered = filtered.filter(doc => doc.doc_type === typeFilter);
     }
     
     setFilteredDocs(filtered);
@@ -92,15 +121,32 @@ const Documenten = () => {
     }
   };
 
-  const handleReject = async (docId: string) => {
+  const openRejectDialog = (docId: string) => {
+    setSelectedDocForReject(docId);
+    setRejectionReason("");
+    setRejectDialogOpen(true);
+  };
+
+  const handleReject = async () => {
+    if (!selectedDocForReject) return;
+    
+    if (!rejectionReason.trim()) {
+      toast({
+        title: "Afwijsreden verplicht",
+        description: "Geef een reden op voor het afwijzen van dit document.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase
       .from("documents")
       .update({ 
         status: "REJECTED", 
         reviewed_at: new Date().toISOString(),
-        rejection_reason: "Document niet conform"
+        rejection_reason: rejectionReason
       })
-      .eq("id", docId);
+      .eq("id", selectedDocForReject);
 
     if (error) {
       toast({
@@ -110,6 +156,9 @@ const Documenten = () => {
       });
     } else {
       toast({ title: "Document afgewezen" });
+      setRejectDialogOpen(false);
+      setSelectedDocForReject(null);
+      setRejectionReason("");
       fetchData();
     }
   };
@@ -186,17 +235,98 @@ const Documenten = () => {
         </Card>
       </div>
 
+      {statusFilter === "missing" && (
+        <Card className="bg-warning/10 border-warning">
+          <CardContent className="pt-4">
+            <p className="text-sm">
+              <strong>Filter actief:</strong> Ontbrekende documenten ({filteredDocs.length})
+              <Button variant="link" size="sm" onClick={() => setStatusFilter("all")} className="ml-2">
+                Filter wissen
+              </Button>
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Zoek op naam of dossier..."
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Zoek op naam of dossier..."
+                  className="pl-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Status:</span>
+              </div>
+              <Button
+                variant={statusFilter === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter("all")}
+              >
+                Alle
+              </Button>
+              <Button
+                variant={statusFilter === "IN_REVIEW" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter("IN_REVIEW")}
+              >
+                In behandeling
+              </Button>
+              <Button
+                variant={statusFilter === "APPROVED" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter("APPROVED")}
+              >
+                Goedgekeurd
+              </Button>
+              <Button
+                variant={statusFilter === "REJECTED" ? "destructive" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter("REJECTED")}
+              >
+                Afgewezen
+              </Button>
+              <div className="border-l mx-2" />
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Type:</span>
+              </div>
+              <Button
+                variant={typeFilter === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTypeFilter("all")}
+              >
+                Alle types
+              </Button>
+              <Button
+                variant={typeFilter === "DEATH_CERT" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTypeFilter("DEATH_CERT")}
+              >
+                Overlijdensakte
+              </Button>
+              <Button
+                variant={typeFilter === "PASSPORT" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTypeFilter("PASSPORT")}
+              >
+                Paspoort
+              </Button>
+              <Button
+                variant={typeFilter === "MEDICAL_CERT" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTypeFilter("MEDICAL_CERT")}
+              >
+                Medisch attest
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -276,7 +406,7 @@ const Documenten = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleReject(doc.id)}
+                              onClick={() => openRejectDialog(doc.id)}
                             >
                               <XCircle className="h-4 w-4 mr-1" />
                               Afwijzen
@@ -295,6 +425,38 @@ const Documenten = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Rejection Dialog */}
+      <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Document afwijzen</DialogTitle>
+            <DialogDescription>
+              Geef een reden op waarom dit document wordt afgewezen. Dit is verplicht.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="rejection-reason">Afwijsreden *</Label>
+              <Textarea
+                id="rejection-reason"
+                placeholder="Bijv. Document is onleesbaar, verkeerde type document, etc..."
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
+              Annuleren
+            </Button>
+            <Button variant="destructive" onClick={handleReject}>
+              Document afwijzen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

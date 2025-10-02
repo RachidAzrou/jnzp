@@ -64,30 +64,30 @@ const Dashboard = () => {
         <p className="text-muted-foreground mt-1">Overzicht van uw actieve dossiers en taken</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <KPICard
-          title="Lopende dossiers"
-          value={activeDossiers}
-          icon={FolderOpen}
-          trend={{ value: "+2 deze week", positive: true }}
-        />
-        <KPICard
-          title="Legal hold"
-          value={legalHold}
-          icon={AlertTriangle}
-        />
-        <KPICard
-          title="Ontbrekende documenten"
-          value={5}
-          icon={FileX}
-          trend={{ value: "-3 sinds gisteren", positive: true }}
-        />
-        <KPICard
-          title="Gem. doorlooptijd"
-          value="28u"
-          icon={Clock}
-          trend={{ value: "-4u vs vorige week", positive: true }}
-        />
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div onClick={() => window.location.href = '/dossiers'} className="cursor-pointer transition-all hover:shadow-lg">
+          <KPICard
+            title="Lopende dossiers"
+            value={activeDossiers}
+            icon={FolderOpen}
+            trend={{ value: "+2 deze week", positive: true }}
+          />
+        </div>
+        <div onClick={() => window.location.href = '/dossiers?status=LEGAL_HOLD'} className="cursor-pointer transition-all hover:shadow-lg">
+          <KPICard
+            title="Legal hold"
+            value={legalHold}
+            icon={AlertTriangle}
+          />
+        </div>
+        <div onClick={() => window.location.href = '/documenten?filter=missing'} className="cursor-pointer transition-all hover:shadow-lg">
+          <KPICard
+            title="Ontbrekende documenten"
+            value={5}
+            icon={FileX}
+            trend={{ value: "Klik om te bekijken", positive: true }}
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">

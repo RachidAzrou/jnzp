@@ -54,7 +54,7 @@ const Taken = () => {
   };
 
   const getTaskDescription = (dossierStatus: string, legalHold: boolean) => {
-    if (legalHold) return "Legal hold oplossen";
+    if (legalHold) return "Parketvrijgave afwachten / uploaden";
     
     const descriptions: Record<string, string> = {
       CREATED: "Intake starten",
@@ -147,78 +147,74 @@ const Taken = () => {
         <p className="text-muted-foreground mt-1">Overzicht van alle openstaande en voltooide taken</p>
       </div>
 
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList>
-          <TabsTrigger value="all">Alle taken ({tasks.length})</TabsTrigger>
-          <TabsTrigger value="open">Open ({openTasks.length})</TabsTrigger>
-          <TabsTrigger value="inprogress">In behandeling ({inProgressTasks.length})</TabsTrigger>
-          <TabsTrigger value="completed">Voltooid ({completedTasks.length})</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="mt-6">
-          {tasks.length === 0 ? (
-            <EmptyState
-              icon={ClipboardList}
-              title="Geen taken"
-              description="Er zijn momenteel geen taken beschikbaar. Taken worden automatisch aangemaakt op basis van uw dossiers."
-            />
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {tasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
+      {/* Kanban Board Layout */}
+      <div className="grid gap-6 md:grid-cols-3">
+        {/* Open Column */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-destructive" />
+              <h3 className="font-semibold">Te doen</h3>
             </div>
-          )}
-        </TabsContent>
+            <Badge variant="secondary">{openTasks.length}</Badge>
+          </div>
+          <div className="space-y-3">
+            {openTasks.length === 0 ? (
+              <Card className="border-dashed">
+                <CardContent className="pt-6 text-center text-sm text-muted-foreground">
+                  Geen openstaande taken
+                </CardContent>
+              </Card>
+            ) : (
+              openTasks.map((task) => <TaskCard key={task.id} task={task} />)
+            )}
+          </div>
+        </div>
 
-        <TabsContent value="open" className="mt-6">
-          {openTasks.length === 0 ? (
-            <EmptyState
-              icon={AlertCircle}
-              title="Geen open taken"
-              description="Uitstekend werk! Er zijn momenteel geen openstaande taken."
-            />
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {openTasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
+        {/* In Progress Column */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-warning" />
+              <h3 className="font-semibold">In behandeling</h3>
             </div>
-          )}
-        </TabsContent>
+            <Badge variant="secondary">{inProgressTasks.length}</Badge>
+          </div>
+          <div className="space-y-3">
+            {inProgressTasks.length === 0 ? (
+              <Card className="border-dashed">
+                <CardContent className="pt-6 text-center text-sm text-muted-foreground">
+                  Geen taken in behandeling
+                </CardContent>
+              </Card>
+            ) : (
+              inProgressTasks.map((task) => <TaskCard key={task.id} task={task} />)
+            )}
+          </div>
+        </div>
 
-        <TabsContent value="inprogress" className="mt-6">
-          {inProgressTasks.length === 0 ? (
-            <EmptyState
-              icon={Clock}
-              title="Geen taken in behandeling"
-              description="Er zijn geen taken die momenteel in behandeling zijn."
-            />
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {inProgressTasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
+        {/* Completed Column */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-success" />
+              <h3 className="font-semibold">Voltooid</h3>
             </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="completed" className="mt-6">
-          {completedTasks.length === 0 ? (
-            <EmptyState
-              icon={CheckCircle2}
-              title="Geen voltooide taken"
-              description="Zodra taken worden afgerond, verschijnen ze hier."
-            />
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {completedTasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+            <Badge variant="secondary">{completedTasks.length}</Badge>
+          </div>
+          <div className="space-y-3">
+            {completedTasks.length === 0 ? (
+              <Card className="border-dashed">
+                <CardContent className="pt-6 text-center text-sm text-muted-foreground">
+                  Geen voltooide taken
+                </CardContent>
+              </Card>
+            ) : (
+              completedTasks.map((task) => <TaskCard key={task.id} task={task} />)
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -255,7 +255,7 @@ export default function FamilieChat() {
           }}
         >
           <img src={whatsappIcon} alt="WhatsApp" className="h-4 w-4 mr-2" />
-          WhatsApp JanAssist
+          Praat met onze JanAssist
         </Button>
       </div>
 

@@ -3,17 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
 
 type MosqueService = {
   id: string;
   dossier_id: string;
   requested_at: string;
-  requested_slot: string | null;
+  requested_date: string | null;
+  prayer: string | null;
   status: string;
   dossiers: {
     ref_number: string;
@@ -22,22 +24,34 @@ type MosqueService = {
 };
 
 const statusColors: Record<string, string> = {
-  PENDING: "bg-warning text-warning-foreground",
-  CONFIRMED: "bg-success text-success-foreground",
-  DECLINED: "bg-destructive text-destructive-foreground",
+  OPEN: "bg-blue-500 text-white",
+  CONFIRMED: "bg-green-500 text-white",
+  DECLINED: "bg-red-500 text-white",
+  PROPOSED: "bg-amber-500 text-white",
 };
 
 const statusLabels: Record<string, string> = {
-  PENDING: "Openstaand",
+  OPEN: "Open",
   CONFIRMED: "Bevestigd",
-  DECLINED: "Afgewezen",
+  DECLINED: "Niet mogelijk",
+  PROPOSED: "Voorstel gedaan",
+};
+
+const prayerLabels: Record<string, string> = {
+  FAJR: "Fajr",
+  DHUHR: "Dhuhr",
+  ASR: "Asr",
+  MAGHRIB: "Maghrib",
+  ISHA: "Isha",
+  JUMUAH: "Jumu'ah",
 };
 
 export default function MoskeeDashboard() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [services, setServices] = useState<MosqueService[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("PENDING");
+  const [statusFilter, setStatusFilter] = useState("OPEN");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,7 +66,7 @@ export default function MoskeeDashboard() {
         .order("requested_at", { ascending: false });
 
       if (statusFilter) {
-        query = query.eq("status", statusFilter as "PENDING" | "CONFIRMED" | "DECLINED");
+        query = query.eq("status", statusFilter as any);
       }
 
       const { data, error } = await query;
@@ -63,6 +77,33 @@ export default function MoskeeDashboard() {
       console.error("Error fetching services:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleQuickConfirm = async (serviceId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    try {
+      const { error } = await supabase
+        .from("mosque_services")
+        .update({ status: "CONFIRMED" })
+        .eq("id", serviceId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Bevestigd",
+        description: "Aanvraag is bevestigd",
+      });
+
+      fetchServices();
+    } catch (error) {
+      console.error("Error confirming service:", error);
+      toast({
+        title: "Fout",
+        description: "Kon aanvraag niet bevestigen",
+        variant: "destructive",
+      });
     }
   };
 
@@ -108,9 +149,10 @@ export default function MoskeeDashboard() {
               className="px-3 py-2 border rounded-md bg-background"
             >
               <option value="">Alle</option>
-              <option value="PENDING">Openstaand</option>
+              <option value="OPEN">Open</option>
               <option value="CONFIRMED">Bevestigd</option>
-              <option value="DECLINED">Afgewezen</option>
+              <option value="DECLINED">Niet mogelijk</option>
+              <option value="PROPOSED">Voorstel gedaan</option>
             </select>
           </div>
         </CardHeader>
@@ -122,9 +164,10 @@ export default function MoskeeDashboard() {
                   <th className="text-left p-3">Ontvangen</th>
                   <th className="text-left p-3">Dossier</th>
                   <th className="text-left p-3">Overledene</th>
-                  <th className="text-left p-3">Voorgesteld</th>
+                  <th className="text-left p-3">Gevraagd</th>
+                  <th className="text-left p-3">Type</th>
                   <th className="text-left p-3">Status</th>
-                  <th className="text-left p-3">Actie</th>
+                  <th className="text-right p-3">Acties</th>
                 </tr>
               </thead>
               <tbody>
@@ -136,11 +179,14 @@ export default function MoskeeDashboard() {
                     <td className="p-3 font-medium">{service.dossiers.ref_number}</td>
                     <td className="p-3">{service.dossiers.deceased_name}</td>
                     <td className="p-3">
-                      {service.requested_slot
-                        ? format(new Date(service.requested_slot), "EEE dd MMM HH:mm", {
-                            locale: nl,
-                          })
-                        : "ASAP"}
+                      {service.requested_date && service.prayer
+                        ? `${format(new Date(service.requested_date), "EEE dd MMM", { locale: nl })} • ${prayerLabels[service.prayer] || service.prayer}`
+                        : "—"}
+                    </td>
+                    <td className="p-3">
+                      <Badge variant="outline" className="text-xs">
+                        Informeel
+                      </Badge>
                     </td>
                     <td className="p-3">
                       <Badge className={statusColors[service.status]}>
@@ -148,13 +194,25 @@ export default function MoskeeDashboard() {
                       </Badge>
                     </td>
                     <td className="p-3">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => navigate(`/moskee/aanvraag/${service.id}`)}
-                      >
-                        Openen
-                      </Button>
+                      <div className="flex justify-end gap-2">
+                        {service.status === "OPEN" && (
+                          <Button
+                            size="sm"
+                            onClick={(e) => handleQuickConfirm(service.id, e)}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <Check className="h-4 w-4 mr-1" />
+                            Bevestigen
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/moskee/aanvraag/${service.id}`)}
+                        >
+                          Details
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}

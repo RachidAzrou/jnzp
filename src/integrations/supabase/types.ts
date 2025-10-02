@@ -638,32 +638,41 @@ export type Database = {
       }
       mosque_availability: {
         Row: {
-          afternoon_open: boolean
+          asr: boolean
           created_at: string
           date: string
-          evening_open: boolean
+          dhuhr: boolean
+          fajr: boolean
           id: string
-          morning_open: boolean
+          isha: boolean
+          jumuah: boolean | null
+          maghrib: boolean
           mosque_org_id: string
           updated_at: string
         }
         Insert: {
-          afternoon_open?: boolean
+          asr?: boolean
           created_at?: string
           date: string
-          evening_open?: boolean
+          dhuhr?: boolean
+          fajr?: boolean
           id?: string
-          morning_open?: boolean
+          isha?: boolean
+          jumuah?: boolean | null
+          maghrib?: boolean
           mosque_org_id: string
           updated_at?: string
         }
         Update: {
-          afternoon_open?: boolean
+          asr?: boolean
           created_at?: string
           date?: string
-          evening_open?: boolean
+          dhuhr?: boolean
+          fajr?: boolean
           id?: string
-          morning_open?: boolean
+          isha?: boolean
+          jumuah?: boolean | null
+          maghrib?: boolean
           mosque_org_id?: string
           updated_at?: string
         }
@@ -721,7 +730,11 @@ export type Database = {
           id: string
           mosque_org_id: string
           note: string | null
+          prayer: Database["public"]["Enums"]["prayer_type"] | null
+          proposed_date: string | null
+          proposed_prayer: Database["public"]["Enums"]["prayer_type"] | null
           requested_at: string
+          requested_date: string | null
           requested_slot: string | null
           status: Database["public"]["Enums"]["mosque_status"]
           updated_at: string
@@ -734,7 +747,11 @@ export type Database = {
           id?: string
           mosque_org_id: string
           note?: string | null
+          prayer?: Database["public"]["Enums"]["prayer_type"] | null
+          proposed_date?: string | null
+          proposed_prayer?: Database["public"]["Enums"]["prayer_type"] | null
           requested_at?: string
+          requested_date?: string | null
           requested_slot?: string | null
           status?: Database["public"]["Enums"]["mosque_status"]
           updated_at?: string
@@ -747,7 +764,11 @@ export type Database = {
           id?: string
           mosque_org_id?: string
           note?: string | null
+          prayer?: Database["public"]["Enums"]["prayer_type"] | null
+          proposed_date?: string | null
+          proposed_prayer?: Database["public"]["Enums"]["prayer_type"] | null
           requested_at?: string
+          requested_date?: string | null
           requested_slot?: string | null
           status?: Database["public"]["Enums"]["mosque_status"]
           updated_at?: string
@@ -1273,6 +1294,7 @@ export type Database = {
         | "ADMIN"
         | "OTHER"
         | "WASPLAATS"
+      prayer_type: "FAJR" | "DHUHR" | "ASR" | "MAGHRIB" | "ISHA" | "JUMUAH"
       priority: "HIGH" | "MEDIUM" | "LOW"
       priority_source: "AUTO" | "MANUAL"
       reservation_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
@@ -1469,6 +1491,7 @@ export const Constants = {
         "OTHER",
         "WASPLAATS",
       ],
+      prayer_type: ["FAJR", "DHUHR", "ASR", "MAGHRIB", "ISHA", "JUMUAH"],
       priority: ["HIGH", "MEDIUM", "LOW"],
       priority_source: ["AUTO", "MANUAL"],
       reservation_status: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],

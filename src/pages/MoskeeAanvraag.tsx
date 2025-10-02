@@ -3,28 +3,44 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Check, X, RefreshCw } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type MosqueServiceDetails = {
   id: string;
   dossier_id: string;
-  requested_slot: string | null;
+  requested_date: string | null;
+  prayer: string | null;
   status: string;
   note: string | null;
+  decline_reason: string | null;
   dossiers: {
     ref_number: string;
+    display_id: string | null;
     deceased_name: string;
+    date_of_death: string | null;
     legal_hold: boolean;
   };
+};
+
+const prayerLabels: Record<string, string> = {
+  FAJR: "Fajr",
+  DHUHR: "Dhuhr",
+  ASR: "Asr",
+  MAGHRIB: "Maghrib",
+  ISHA: "Isha",
+  JUMUAH: "Jumu'ah",
 };
 
 export default function MoskeeAanvraag() {
@@ -33,13 +49,10 @@ export default function MoskeeAanvraag() {
   const { toast } = useToast();
   const [service, setService] = useState<MosqueServiceDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const [confirmedDate, setConfirmedDate] = useState<Date>();
-  const [confirmedTime, setConfirmedTime] = useState("");
-  const [confirmNote, setConfirmNote] = useState("");
   const [declineReason, setDeclineReason] = useState("");
-  const [proposalDate, setProposalDate] = useState<Date>();
-  const [proposalTime, setProposalTime] = useState("");
-  const [proposalNote, setProposalNote] = useState("");
+  const [proposedPrayer, setProposedPrayer] = useState<string>("");
+  const [showDeclineForm, setShowDeclineForm] = useState(false);
+  const [showProposalForm, setShowProposalForm] = useState(false);
 
   useEffect(() => {
     if (id) fetchService();
@@ -49,7 +62,7 @@ export default function MoskeeAanvraag() {
     try {
       const { data, error } = await supabase
         .from("mosque_services")
-        .select("*, dossiers(ref_number, deceased_name, legal_hold)")
+        .select("*, dossiers(ref_number, display_id, deceased_name, date_of_death, legal_hold)")
         .eq("id", id)
         .single();
 
@@ -68,33 +81,16 @@ export default function MoskeeAanvraag() {
   };
 
   const handleConfirm = async () => {
-    if (!confirmedDate || !confirmedTime) {
-      toast({
-        title: "Fout",
-        description: "Datum en tijd zijn verplicht",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
-      const [hours, minutes] = confirmedTime.split(":");
-      const confirmedSlot = new Date(confirmedDate);
-      confirmedSlot.setHours(parseInt(hours), parseInt(minutes));
-
       const { error } = await supabase
         .from("mosque_services")
-        .update({
-          status: "CONFIRMED",
-          confirmed_slot: confirmedSlot.toISOString(),
-          note: confirmNote || null,
-        })
+        .update({ status: "CONFIRMED" })
         .eq("id", id);
 
       if (error) throw error;
 
       toast({
-        title: "Bevestigd",
+        title: "✅ Bevestigd",
         description: "Aanvraag is bevestigd",
       });
 
@@ -110,10 +106,10 @@ export default function MoskeeAanvraag() {
   };
 
   const handleDecline = async () => {
-    if (!declineReason || declineReason.length < 8) {
+    if (!declineReason || declineReason.trim().length < 8) {
       toast({
         title: "Fout",
-        description: "Reden is verplicht (min. 8 tekens)",
+        description: "Reden is verplicht (minimaal 8 tekens)",
         variant: "destructive",
       });
       return;
@@ -124,15 +120,15 @@ export default function MoskeeAanvraag() {
         .from("mosque_services")
         .update({
           status: "DECLINED",
-          decline_reason: declineReason,
+          decline_reason: declineReason.trim(),
         })
         .eq("id", id);
 
       if (error) throw error;
 
       toast({
-        title: "Afgewezen",
-        description: "Aanvraag is afgewezen",
+        title: "❌ Niet mogelijk",
+        description: "Aanvraag is afgewezen met reden",
       });
 
       navigate("/moskee");
@@ -147,33 +143,30 @@ export default function MoskeeAanvraag() {
   };
 
   const handleProposal = async () => {
-    if (!proposalDate || !proposalTime) {
+    if (!proposedPrayer) {
       toast({
         title: "Fout",
-        description: "Datum en tijd zijn verplicht",
+        description: "Selecteer een alternatief gebed",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      const [hours, minutes] = proposalTime.split(":");
-      const proposedSlot = new Date(proposalDate);
-      proposedSlot.setHours(parseInt(hours), parseInt(minutes));
-
       const { error } = await supabase
         .from("mosque_services")
         .update({
-          requested_slot: proposedSlot.toISOString(),
-          note: `Voorstel: ${proposalNote || "Alternatief tijdstip"}`,
+          status: "PROPOSED" as any,
+          proposed_prayer: proposedPrayer as any,
+          proposed_date: service?.requested_date || new Date().toISOString().split('T')[0],
         })
         .eq("id", id);
 
       if (error) throw error;
 
       toast({
-        title: "Voorstel verzonden",
-        description: "Alternatief tijdstip is voorgesteld",
+        title: "🔄 Voorstel verzonden",
+        description: `Alternatief gebed voorgesteld: ${prayerLabels[proposedPrayer]}`,
       });
 
       navigate("/moskee");
@@ -187,6 +180,17 @@ export default function MoskeeAanvraag() {
     }
   };
 
+  const getNextAvailablePrayer = () => {
+    const currentPrayer = service?.prayer;
+    const prayers = ["FAJR", "DHUHR", "ASR", "MAGHRIB", "ISHA"];
+    const currentIndex = currentPrayer ? prayers.indexOf(currentPrayer) : -1;
+    
+    if (currentIndex >= 0 && currentIndex < prayers.length - 1) {
+      return prayers[currentIndex + 1];
+    }
+    return "DHUHR"; // Default fallback
+  };
+
   if (loading) {
     return <div className="p-6">Laden...</div>;
   }
@@ -197,199 +201,221 @@ export default function MoskeeAanvraag() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Aanvraag — Dossier {service.dossiers.ref_number}</h1>
-        <p className="text-muted-foreground mt-1">Beheer inkomende aanvragen voor janazah diensten</p>
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="sm" onClick={() => navigate("/moskee")}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Terug
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold">
+            Aanvraag — Dossier {service.dossiers.display_id || service.dossiers.ref_number}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Janāza-gebed (informeren/plannen)
+          </p>
+        </div>
       </div>
 
+      {/* Context Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Verzoek</CardTitle>
+            <CardTitle>Overledene & Context</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
-              <p className="text-sm text-muted-foreground">Type</p>
-              <p className="font-medium">Janāza-gebed</p>
+              <p className="text-sm text-muted-foreground">Naam</p>
+              <p className="font-medium">{service.dossiers.deceased_name || "—"}</p>
+            </div>
+            {service.dossiers.date_of_death && (
+              <div>
+                <p className="text-sm text-muted-foreground">Overlijdensdatum</p>
+                <p className="font-medium">
+                  {format(new Date(service.dossiers.date_of_death), "d MMMM yyyy", { locale: nl })}
+                </p>
+              </div>
+            )}
+            <div>
+              <p className="text-sm text-muted-foreground">Dossier-ID</p>
+              <p className="font-medium font-mono">
+                {service.dossiers.display_id || service.dossiers.ref_number}
+              </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Voorgesteld door FD</p>
+              <p className="text-sm text-muted-foreground">Type</p>
+              <Badge variant="outline">Janāza-gebed (informeren/plannen)</Badge>
+            </div>
+            {service.dossiers.legal_hold && (
+              <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
+                <p className="text-sm font-medium text-red-700 dark:text-red-300">
+                  ⚠️ Legal Hold
+                </p>
+                <p className="text-xs text-red-600 dark:text-red-400">
+                  Dossier onder legal hold
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Gevraagd</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div>
+              <p className="text-sm text-muted-foreground">Dag</p>
               <p className="font-medium">
-                {service.requested_slot
-                  ? format(new Date(service.requested_slot), "EEEE d MMMM HH:mm", { locale: nl })
-                  : "ASAP"}
+                {service.requested_date
+                  ? format(new Date(service.requested_date), "EEEE d MMMM", { locale: nl })
+                  : "—"}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Gebed</p>
+              <p className="font-medium">
+                {service.prayer ? prayerLabels[service.prayer] : "—"}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Status</p>
-              <p className="font-medium">{service.status}</p>
-            </div>
-            {service.dossiers.legal_hold && (
-              <div className="p-3 bg-destructive/10 border border-destructive rounded-md">
-                <p className="text-sm font-medium text-destructive">⚠️ Legal Hold</p>
-                <p className="text-xs text-destructive/80">Dossier onder legal hold</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Dossier & Contact</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-sm text-muted-foreground">Dossier</p>
-              <p className="font-medium">{service.dossiers.ref_number}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Overledene</p>
-              <p className="font-medium">{service.dossiers.deceased_name}</p>
+              <Badge>
+                {service.status === "OPEN"
+                  ? "Open"
+                  : service.status === "CONFIRMED"
+                  ? "Bevestigd"
+                  : service.status === "DECLINED"
+                  ? "Niet mogelijk"
+                  : service.status}
+              </Badge>
             </div>
             {service.note && (
               <div>
-                <p className="text-sm text-muted-foreground">Notitie FD</p>
-                <p className="font-medium">{service.note}</p>
+                <p className="text-sm text-muted-foreground">Notitie</p>
+                <p className="text-sm">{service.note}</p>
               </div>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {service.status === "PENDING" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Bevestigen</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Datum</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !confirmedDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {confirmedDate ? format(confirmedDate, "PPP", { locale: nl }) : "Kies datum"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={confirmedDate}
-                      onSelect={setConfirmedDate}
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="space-y-2">
-                <Label>Tijd</Label>
-                <Input
-                  type="time"
-                  value={confirmedTime}
-                  onChange={(e) => setConfirmedTime(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Opmerking (optioneel)</Label>
-                <Textarea
-                  value={confirmNote}
-                  onChange={(e) => setConfirmNote(e.target.value)}
-                  placeholder="Extra informatie"
-                />
-              </div>
-              <Button onClick={handleConfirm} className="w-full">
+      {/* Action Buttons */}
+      {service.status === "OPEN" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Acties</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={handleConfirm} size="lg" className="bg-green-600 hover:bg-green-700">
+                <Check className="h-5 w-5 mr-2" />
                 Bevestigen
               </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Afwijzen</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Reden (verplicht, min. 8 tekens)</Label>
-                <Textarea
-                  value={declineReason}
-                  onChange={(e) => setDeclineReason(e.target.value)}
-                  placeholder="Waarom kan deze aanvraag niet worden geaccepteerd?"
-                  rows={4}
-                />
-              </div>
               <Button
-                onClick={handleDecline}
+                onClick={() => setShowDeclineForm(!showDeclineForm)}
                 variant="destructive"
-                className="w-full"
-                disabled={declineReason.length < 8}
+                size="lg"
               >
-                Afwijzen
+                <X className="h-5 w-5 mr-2" />
+                Niet mogelijk
               </Button>
-            </CardContent>
-          </Card>
+              <Button
+                onClick={() => setShowProposalForm(!showProposalForm)}
+                variant="outline"
+                size="lg"
+              >
+                <RefreshCw className="h-5 w-5 mr-2" />
+                Ander gebed voorstellen
+              </Button>
+            </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Voorstel Doen</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Alternatief Datum</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !proposalDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {proposalDate ? format(proposalDate, "PPP", { locale: nl }) : "Kies datum"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={proposalDate}
-                      onSelect={setProposalDate}
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
+            {/* Decline Form */}
+            {showDeclineForm && (
+              <Card className="border-red-200 dark:border-red-800">
+                <CardHeader>
+                  <CardTitle className="text-red-700 dark:text-red-300">
+                    Niet mogelijk (reden verplicht)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                      Reden (minimaal 8 tekens)
+                    </label>
+                    <Textarea
+                      value={declineReason}
+                      onChange={(e) => setDeclineReason(e.target.value)}
+                      placeholder="Bijvoorbeeld: Overmacht (brandalarm), Sluiting i.v.m. Eid-gebed, Geen imam beschikbaar..."
+                      rows={4}
+                      className="resize-none"
                     />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="space-y-2">
-                <Label>Tijd</Label>
-                <Input
-                  type="time"
-                  value={proposalTime}
-                  onChange={(e) => setProposalTime(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Opmerking (optioneel)</Label>
-                <Textarea
-                  value={proposalNote}
-                  onChange={(e) => setProposalNote(e.target.value)}
-                  placeholder="Toelichting bij voorstel"
-                />
-              </div>
-              <Button onClick={handleProposal} variant="outline" className="w-full">
-                Opslaan Voorstel
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+                    <p className="text-xs text-muted-foreground">
+                      {declineReason.length}/8 tekens minimaal
+                    </p>
+                  </div>
+                  <div className="p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md">
+                    <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                      💡 Systeemvoorstel
+                    </p>
+                    <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+                      Eerstvolgende open gebed: {prayerLabels[getNextAvailablePrayer()]}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleDecline}
+                    variant="destructive"
+                    className="w-full"
+                    disabled={declineReason.trim().length < 8}
+                  >
+                    Bevestig afwijzing met reden
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Proposal Form */}
+            {showProposalForm && (
+              <Card className="border-amber-200 dark:border-amber-800">
+                <CardHeader>
+                  <CardTitle className="text-amber-700 dark:text-amber-300">
+                    Ander gebed voorstellen
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Alternatief gebed</label>
+                    <Select value={proposedPrayer} onValueChange={setProposedPrayer}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecteer een gebed" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="FAJR">Fajr</SelectItem>
+                        <SelectItem value="DHUHR">Dhuhr</SelectItem>
+                        <SelectItem value="ASR">Asr</SelectItem>
+                        <SelectItem value="MAGHRIB">Maghrib</SelectItem>
+                        <SelectItem value="ISHA">Isha</SelectItem>
+                        <SelectItem value="JUMUAH">Jumu'ah (vrijdag)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={handleProposal} variant="outline" className="w-full">
+                    Stuur voorstel
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </CardContent>
+        </Card>
       )}
+
+      {/* Info */}
+      <div className="p-4 bg-muted rounded-md text-sm text-muted-foreground">
+        <p>
+          💡 <strong>Hint:</strong> Aanvragen zijn informeel — bevestigen is standaard. Alleen weigeren
+          bij overmacht (met reden). Het systeem stelt automatisch een alternatief voor.
+        </p>
+      </div>
     </div>
   );
 }

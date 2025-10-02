@@ -7,51 +7,89 @@ import { useToast } from "@/hooks/use-toast";
 import { format, startOfWeek, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { X } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type DayAvailability = {
   date: string;
-  morning_open: boolean;
-  afternoon_open: boolean;
-  evening_open: boolean;
+  fajr: boolean;
+  dhuhr: boolean;
+  asr: boolean;
+  maghrib: boolean;
+  isha: boolean;
+  jumuah: boolean | null;
+};
+
+type DayBlock = {
+  id: string;
+  date: string;
+  reason: string;
 };
 
 export default function MoskeeBeschikbaarheid() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [availability, setAvailability] = useState<Record<string, DayAvailability>>({});
+  const [dayBlocks, setDayBlocks] = useState<DayBlock[]>([]);
   const [loading, setLoading] = useState(true);
+  const [blockDate, setBlockDate] = useState<string>("");
+  const [blockReason, setBlockReason] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
-    fetchAvailability();
+    fetchData();
   }, []);
 
-  const fetchAvailability = async () => {
+  const fetchData = async () => {
     try {
       const start = startOfWeek(new Date(), { weekStartsOn: 1 });
       const weekDates = Array.from({ length: 7 }, (_, i) => format(addDays(start, i), "yyyy-MM-dd"));
 
-      const { data, error } = await supabase
+      // Fetch availability
+      const { data: availData, error: availError } = await supabase
         .from("mosque_availability")
         .select("*")
         .in("date", weekDates);
 
-      if (error) throw error;
+      if (availError) throw availError;
+
+      // Fetch day blocks
+      const { data: blocksData, error: blocksError } = await supabase
+        .from("mosque_day_blocks")
+        .select("*")
+        .in("date", weekDates);
+
+      if (blocksError) throw blocksError;
 
       const availMap: Record<string, DayAvailability> = {};
       weekDates.forEach((date) => {
-        const existing = data?.find((a) => a.date === date);
+        const existing = availData?.find((a) => a.date === date);
+        const dayOfWeek = new Date(date).getDay();
+        const isFriday = dayOfWeek === 5;
+
         availMap[date] = existing || {
           date,
-          morning_open: true,
-          afternoon_open: true,
-          evening_open: true,
+          fajr: true,
+          dhuhr: true,
+          asr: true,
+          maghrib: true,
+          isha: true,
+          jumuah: isFriday ? true : null,
         };
       });
 
       setAvailability(availMap);
+      setDayBlocks(blocksData || []);
     } catch (error) {
-      console.error("Error fetching availability:", error);
+      console.error("Error fetching data:", error);
       toast({
         title: "Fout",
         description: "Kon beschikbaarheid niet laden",
@@ -62,12 +100,15 @@ export default function MoskeeBeschikbaarheid() {
     }
   };
 
-  const toggleSlot = (date: string, slot: "morning_open" | "afternoon_open" | "evening_open") => {
+  const togglePrayer = (
+    date: string,
+    prayer: "fajr" | "dhuhr" | "asr" | "maghrib" | "isha" | "jumuah"
+  ) => {
     setAvailability((prev) => ({
       ...prev,
       [date]: {
         ...prev[date],
-        [slot]: !prev[date][slot],
+        [prayer]: !prev[date][prayer],
       },
     }));
   };
@@ -80,22 +121,26 @@ export default function MoskeeBeschikbaarheid() {
       }
 
       // Get mosque org
-      const { data: orgData } = await supabase
-        .from("organizations")
-        .select("id")
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("organization_id")
+        .eq("user_id", sessionData.session.user.id)
         .limit(1)
-        .single();
+        .maybeSingle();
 
-      if (!orgData) {
+      if (!roleData?.organization_id) {
         throw new Error("Geen moskee organisatie gevonden");
       }
 
       const updates = Object.values(availability).map((day) => ({
-        mosque_org_id: orgData.id,
+        mosque_org_id: roleData.organization_id,
         date: day.date,
-        morning_open: day.morning_open,
-        afternoon_open: day.afternoon_open,
-        evening_open: day.evening_open,
+        fajr: day.fajr,
+        dhuhr: day.dhuhr,
+        asr: day.asr,
+        maghrib: day.maghrib,
+        isha: day.isha,
+        jumuah: day.jumuah,
       }));
 
       const { error } = await supabase
@@ -118,9 +163,90 @@ export default function MoskeeBeschikbaarheid() {
     }
   };
 
+  const handleBlockDay = async () => {
+    if (!blockDate || !blockReason || blockReason.trim().length < 8) {
+      toast({
+        title: "Fout",
+        description: "Datum en reden (min. 8 tekens) zijn verplicht",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session?.user.id) {
+        throw new Error("Niet ingelogd");
+      }
+
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("organization_id")
+        .eq("user_id", sessionData.session.user.id)
+        .limit(1)
+        .maybeSingle();
+
+      if (!roleData?.organization_id) {
+        throw new Error("Geen moskee organisatie gevonden");
+      }
+
+      const { error } = await supabase.from("mosque_day_blocks").insert({
+        mosque_org_id: roleData.organization_id,
+        date: blockDate,
+        reason: blockReason.trim(),
+        created_by_user_id: sessionData.session.user.id,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Dag geblokkeerd",
+        description: `${format(new Date(blockDate), "d MMMM", { locale: nl })} is geblokkeerd`,
+      });
+
+      setBlockDate("");
+      setBlockReason("");
+      setDialogOpen(false);
+      fetchData();
+    } catch (error: any) {
+      console.error("Error blocking day:", error);
+      toast({
+        title: "Fout",
+        description: error.message || "Kon dag niet blokkeren",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUnblockDay = async (blockId: string) => {
+    try {
+      const { error } = await supabase.from("mosque_day_blocks").delete().eq("id", blockId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Blokkade verwijderd",
+        description: "Dag is weer beschikbaar",
+      });
+
+      fetchData();
+    } catch (error: any) {
+      console.error("Error unblocking day:", error);
+      toast({
+        title: "Fout",
+        description: error.message || "Kon blokkade niet verwijderen",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getWeekDays = () => {
     const start = startOfWeek(new Date(), { weekStartsOn: 1 });
     return Array.from({ length: 7 }, (_, i) => addDays(start, i));
+  };
+
+  const isDateBlocked = (date: string) => {
+    return dayBlocks.find((block) => block.date === date);
   };
 
   if (loading) {
@@ -130,8 +256,10 @@ export default function MoskeeBeschikbaarheid() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Beschikbaarheid</h1>
-        <p className="text-muted-foreground mt-1">Beheer de beschikbaarheid van de moskee</p>
+        <h1 className="text-3xl font-bold">Beschikbaarheid per gebed</h1>
+        <p className="text-muted-foreground mt-1">
+          Beheer de beschikbaarheid van de moskee per gebedstijd
+        </p>
       </div>
 
       <Card>
@@ -147,43 +275,141 @@ export default function MoskeeBeschikbaarheid() {
               <thead>
                 <tr className="border-b">
                   <th className="text-left p-3">Dag</th>
-                  <th className="text-center p-3">Ochtend</th>
-                  <th className="text-center p-3">Middag</th>
-                  <th className="text-center p-3">Avond</th>
+                  <th className="text-center p-3">Fajr</th>
+                  <th className="text-center p-3">Dhuhr</th>
+                  <th className="text-center p-3">Asr</th>
+                  <th className="text-center p-3">Maghrib</th>
+                  <th className="text-center p-3">Isha</th>
+                  <th className="text-center p-3">Jumu'ah</th>
+                  <th className="text-center p-3">Overmacht</th>
                 </tr>
               </thead>
               <tbody>
                 {getWeekDays().map((day) => {
                   const dateStr = format(day, "yyyy-MM-dd");
                   const dayAvail = availability[dateStr];
+                  const blocked = isDateBlocked(dateStr);
+                  const isFriday = day.getDay() === 5;
 
                   return (
                     <tr key={dateStr} className="border-b hover:bg-muted/50">
                       <td className="p-3 font-medium">
-                        {format(day, "EEEE d MMM", { locale: nl })}
+                        {format(day, "EEE d MMM", { locale: nl })}
                       </td>
                       <td className="p-3">
                         <div className="flex items-center justify-center">
                           <Switch
-                            checked={dayAvail?.morning_open}
-                            onCheckedChange={() => toggleSlot(dateStr, "morning_open")}
+                            checked={dayAvail?.fajr}
+                            onCheckedChange={() => togglePrayer(dateStr, "fajr")}
+                            disabled={!!blocked}
                           />
                         </div>
                       </td>
                       <td className="p-3">
                         <div className="flex items-center justify-center">
                           <Switch
-                            checked={dayAvail?.afternoon_open}
-                            onCheckedChange={() => toggleSlot(dateStr, "afternoon_open")}
+                            checked={dayAvail?.dhuhr}
+                            onCheckedChange={() => togglePrayer(dateStr, "dhuhr")}
+                            disabled={!!blocked}
                           />
                         </div>
                       </td>
                       <td className="p-3">
                         <div className="flex items-center justify-center">
                           <Switch
-                            checked={dayAvail?.evening_open}
-                            onCheckedChange={() => toggleSlot(dateStr, "evening_open")}
+                            checked={dayAvail?.asr}
+                            onCheckedChange={() => togglePrayer(dateStr, "asr")}
+                            disabled={!!blocked}
                           />
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <div className="flex items-center justify-center">
+                          <Switch
+                            checked={dayAvail?.maghrib}
+                            onCheckedChange={() => togglePrayer(dateStr, "maghrib")}
+                            disabled={!!blocked}
+                          />
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <div className="flex items-center justify-center">
+                          <Switch
+                            checked={dayAvail?.isha}
+                            onCheckedChange={() => togglePrayer(dateStr, "isha")}
+                            disabled={!!blocked}
+                          />
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <div className="flex items-center justify-center">
+                          {isFriday && dayAvail?.jumuah !== null ? (
+                            <Switch
+                              checked={dayAvail?.jumuah || false}
+                              onCheckedChange={() => togglePrayer(dateStr, "jumuah")}
+                              disabled={!!blocked}
+                            />
+                          ) : (
+                            <span className="text-muted-foreground text-xs">—</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <div className="flex items-center justify-center gap-2">
+                          {blocked ? (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleUnblockDay(blocked.id)}
+                              title={`Reden: ${blocked.reason}`}
+                            >
+                              <X className="h-4 w-4 text-red-500" />
+                            </Button>
+                          ) : (
+                            <Dialog open={dialogOpen && blockDate === dateStr} onOpenChange={(open) => {
+                              setDialogOpen(open);
+                              if (open) setBlockDate(dateStr);
+                            }}>
+                              <DialogTrigger asChild>
+                                <Button size="sm" variant="outline">
+                                  Blokkeren
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Dag blokkeren (overmacht)</DialogTitle>
+                                  <DialogDescription>
+                                    Blokkeer deze dag voor alle gebeden. Reden is verplicht.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div>
+                                    <p className="text-sm font-medium mb-2">
+                                      Dag: {format(day, "EEEE d MMMM", { locale: nl })}
+                                    </p>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="text-sm font-medium">
+                                      Reden (min. 8 tekens)
+                                    </label>
+                                    <Textarea
+                                      value={blockReason}
+                                      onChange={(e) => setBlockReason(e.target.value)}
+                                      placeholder="Bijvoorbeeld: Overmacht (brandalarm), Sluiting Eid-gebed, Renovatie..."
+                                      rows={3}
+                                    />
+                                  </div>
+                                  <Button
+                                    onClick={handleBlockDay}
+                                    className="w-full"
+                                    disabled={blockReason.trim().length < 8}
+                                  >
+                                    Bevestig blokkade
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -192,11 +418,31 @@ export default function MoskeeBeschikbaarheid() {
               </tbody>
             </table>
           </div>
-          <div className="mt-4 p-4 bg-muted rounded-md">
-            <p className="text-sm text-muted-foreground">
-              <strong>Uitleg:</strong> Schakel dagdelen uit om aan te geven dat de moskee niet beschikbaar is.
-              Blokkeer een hele dag via de "Dag blokkeren" functie.
-            </p>
+
+          <div className="mt-6 space-y-3">
+            <div className="p-4 bg-muted rounded-md">
+              <p className="text-sm text-muted-foreground">
+                <strong>Uitleg:</strong> Vink aan bij welke gebeden janāza kan plaatsvinden. "Dag
+                blokkeren" = overmacht (reden wordt gevraagd). Geblokkeerde dagen tonen alle gebeden
+                als niet beschikbaar.
+              </p>
+            </div>
+
+            {dayBlocks.length > 0 && (
+              <div className="p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
+                <p className="text-sm font-medium text-red-700 dark:text-red-300 mb-2">
+                  🚫 Geblokkeerde dagen deze week:
+                </p>
+                <ul className="space-y-1">
+                  {dayBlocks.map((block) => (
+                    <li key={block.id} className="text-sm text-red-600 dark:text-red-400">
+                      • {format(new Date(block.date), "EEEE d MMMM", { locale: nl })}:{" "}
+                      {block.reason}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

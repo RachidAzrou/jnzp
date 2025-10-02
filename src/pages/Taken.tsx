@@ -118,7 +118,7 @@ const Taken = () => {
       // Calculate auto priority
       const { data: autoPriority, error: calcError } = await supabase
         .rpc("calculate_task_priority", {
-          _task_type: currentTask.type,
+          _task_type: currentTask.type as any,
           _dossier_id: currentTask.dossier_id,
         });
 

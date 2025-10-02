@@ -84,12 +84,34 @@ export default function MoskeeDashboard() {
     e.stopPropagation();
     
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Not authenticated");
+
+      // Get service details for audit
+      const service = services.find(s => s.id === serviceId);
+
       const { error } = await supabase
         .from("mosque_services")
         .update({ status: "CONFIRMED" })
         .eq("id", serviceId);
 
       if (error) throw error;
+
+      // Audit log
+      if (service) {
+        await supabase.from("audit_events").insert({
+          event_type: "mosque.confirm",
+          user_id: session.user.id,
+          dossier_id: service.dossier_id,
+          description: `Moskee bevestigde janāza-gebed (snelbevestiging) voor ${service.dossiers.deceased_name}`,
+          metadata: {
+            mosque_service_id: serviceId,
+            prayer: service.prayer,
+            requested_date: service.requested_date,
+            quick_confirm: true,
+          },
+        });
+      }
 
       toast({
         title: "Bevestigd",

@@ -50,6 +50,7 @@ export default function FamilieDashboard() {
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [updates, setUpdates] = useState<any[]>([]);
+  const [mosqueService, setMosqueService] = useState<any>(null);
 
   useEffect(() => {
     const fetchDossierData = async () => {
@@ -119,7 +120,14 @@ export default function FamilieDashboard() {
         .from('mosque_services')
         .select('*')
         .eq('dossier_id', dossierId)
-        .limit(1);
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      // Store mosque service for display
+      if (mosqueServices) {
+        setMosqueService(mosqueServices);
+      }
 
       const { data: repatriations } = await supabase
         .from('repatriations')
@@ -131,9 +139,9 @@ export default function FamilieDashboard() {
       const hasFD = !!dossierDetails?.assigned_fd_org_id;
       const flowChosen = flow !== 'UNSET';
       const hasPreferences = flow === 'LOC' 
-        ? (mosqueServices && mosqueServices.length > 0)
+        ? !!mosqueServices
         : flow === 'REP'
-        ? (repatriations && repatriations.length > 0)
+        ? !!repatriations
         : false;
       const isCompleted = ['READY_FOR_TRANSPORT', 'COMPLETED'].includes(dossierDetails?.status || '');
 
@@ -389,6 +397,112 @@ export default function FamilieDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Mosque Service Status - Read Only */}
+      {mosqueService && dossier?.flow === 'LOC' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Janāza-gebed status</CardTitle>
+            <CardDescription>Status van uw moskee aanvraag (alleen-lezen)</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <p className="text-muted-foreground">Gevraagd gebed</p>
+                <p className="font-medium">
+                  {mosqueService.prayer 
+                    ? {
+                        FAJR: 'Fajr',
+                        DHUHR: 'Dhuhr',
+                        ASR: 'Asr',
+                        MAGHRIB: 'Maghrib',
+                        ISHA: 'Isha',
+                        JUMUAH: "Jumu'ah"
+                      }[mosqueService.prayer]
+                    : '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Datum</p>
+                <p className="font-medium">
+                  {mosqueService.requested_date 
+                    ? new Date(mosqueService.requested_date).toLocaleDateString('nl-NL', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long'
+                      })
+                    : '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Status</p>
+                <Badge className={
+                  mosqueService.status === 'CONFIRMED'
+                    ? 'bg-green-500'
+                    : mosqueService.status === 'DECLINED'
+                    ? 'bg-red-500'
+                    : mosqueService.status === 'PROPOSED'
+                    ? 'bg-amber-500'
+                    : 'bg-blue-500'
+                }>
+                  {mosqueService.status === 'CONFIRMED'
+                    ? '✅ Bevestigd'
+                    : mosqueService.status === 'DECLINED'
+                    ? '❌ Niet mogelijk'
+                    : mosqueService.status === 'PROPOSED'
+                    ? '🔄 Alternatief voorgesteld'
+                    : '⏳ Open'}
+                </Badge>
+              </div>
+            </div>
+
+            {mosqueService.decline_reason && (
+              <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
+                <p className="text-sm font-medium text-red-700 dark:text-red-300">
+                  Reden niet mogelijk
+                </p>
+                <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                  {mosqueService.decline_reason}
+                </p>
+              </div>
+            )}
+
+            {mosqueService.status === 'PROPOSED' && mosqueService.proposed_prayer && (
+              <div className="p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md">
+                <p className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                  Alternatief voorgesteld
+                </p>
+                <p className="text-sm text-amber-600 dark:text-amber-400 mt-1">
+                  {mosqueService.proposed_prayer 
+                    ? {
+                        FAJR: 'Fajr',
+                        DHUHR: 'Dhuhr',
+                        ASR: 'Asr',
+                        MAGHRIB: 'Maghrib',
+                        ISHA: 'Isha',
+                        JUMUAH: "Jumu'ah"
+                      }[mosqueService.proposed_prayer]
+                    : '—'}
+                  {mosqueService.proposed_date && ` op ${new Date(mosqueService.proposed_date).toLocaleDateString('nl-NL')}`}
+                </p>
+              </div>
+            )}
+
+            {mosqueService.note && (
+              <div>
+                <p className="text-sm text-muted-foreground">Notitie</p>
+                <p className="text-sm">{mosqueService.note}</p>
+              </div>
+            )}
+
+            <div className="pt-2">
+              <p className="text-xs text-muted-foreground">
+                💡 Voor vragen kunt u contact opnemen met uw uitvaartondernemer
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

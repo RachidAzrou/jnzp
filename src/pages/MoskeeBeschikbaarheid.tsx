@@ -149,6 +149,17 @@ export default function MoskeeBeschikbaarheid() {
 
       if (error) throw error;
 
+      // Audit log
+      await supabase.from("audit_events").insert({
+        event_type: "mosque.availability.update",
+        user_id: sessionData.session.user.id,
+        description: "Moskee beschikbaarheid bijgewerkt",
+        metadata: {
+          updates: updates.length,
+          dates: updates.map(u => u.date),
+        },
+      });
+
       toast({
         title: "Opgeslagen",
         description: "Beschikbaarheid is bijgewerkt",
@@ -198,6 +209,17 @@ export default function MoskeeBeschikbaarheid() {
       });
 
       if (error) throw error;
+
+      // Audit log
+      await supabase.from("audit_events").insert({
+        event_type: "mosque.dayclosure.create",
+        user_id: sessionData.session.user.id,
+        description: `Moskee dag geblokkeerd: ${format(new Date(blockDate), "d MMMM", { locale: nl })}`,
+        metadata: {
+          date: blockDate,
+          reason: blockReason.trim(),
+        },
+      });
 
       toast({
         title: "Dag geblokkeerd",

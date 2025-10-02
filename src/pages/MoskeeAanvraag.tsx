@@ -82,12 +82,28 @@ export default function MoskeeAanvraag() {
 
   const handleConfirm = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Not authenticated");
+
       const { error } = await supabase
         .from("mosque_services")
         .update({ status: "CONFIRMED" })
         .eq("id", id);
 
       if (error) throw error;
+
+      // Audit log
+      await supabase.from("audit_events").insert({
+        event_type: "mosque.confirm",
+        user_id: session.user.id,
+        dossier_id: service?.dossier_id,
+        description: `Moskee bevestigde janāza-gebed voor ${service?.dossiers.deceased_name}`,
+        metadata: {
+          mosque_service_id: id,
+          prayer: service?.prayer,
+          requested_date: service?.requested_date,
+        },
+      });
 
       toast({
         title: "✅ Bevestigd",
@@ -116,6 +132,9 @@ export default function MoskeeAanvraag() {
     }
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Not authenticated");
+
       const { error } = await supabase
         .from("mosque_services")
         .update({
@@ -125,6 +144,20 @@ export default function MoskeeAanvraag() {
         .eq("id", id);
 
       if (error) throw error;
+
+      // Audit log
+      await supabase.from("audit_events").insert({
+        event_type: "mosque.decline",
+        user_id: session.user.id,
+        dossier_id: service?.dossier_id,
+        description: `Moskee wees janāza-gebed af voor ${service?.dossiers.deceased_name}`,
+        metadata: {
+          mosque_service_id: id,
+          decline_reason: declineReason.trim(),
+          prayer: service?.prayer,
+          requested_date: service?.requested_date,
+        },
+      });
 
       toast({
         title: "❌ Niet mogelijk",
@@ -153,6 +186,9 @@ export default function MoskeeAanvraag() {
     }
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Not authenticated");
+
       const { error } = await supabase
         .from("mosque_services")
         .update({
@@ -163,6 +199,20 @@ export default function MoskeeAanvraag() {
         .eq("id", id);
 
       if (error) throw error;
+
+      // Audit log
+      await supabase.from("audit_events").insert({
+        event_type: "mosque.propose",
+        user_id: session.user.id,
+        dossier_id: service?.dossier_id,
+        description: `Moskee stelde alternatief gebed voor aan ${service?.dossiers.deceased_name}`,
+        metadata: {
+          mosque_service_id: id,
+          original_prayer: service?.prayer,
+          proposed_prayer: proposedPrayer,
+          requested_date: service?.requested_date,
+        },
+      });
 
       toast({
         title: "🔄 Voorstel verzonden",

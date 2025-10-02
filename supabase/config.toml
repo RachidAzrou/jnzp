@@ -1,1 +1,4 @@
 project_id = "yupqrawkrpyfrdzxssdk"
+
+[functions.reset-demo-passwords]
+verify_jwt = false

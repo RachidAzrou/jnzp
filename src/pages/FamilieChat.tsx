@@ -55,7 +55,7 @@ export default function FamilieChat() {
         .select('id, display_id, ref_number, deceased_name, status, flow')
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (dossierData) {
         setDossier(dossierData);
@@ -218,7 +218,7 @@ export default function FamilieChat() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/familie/dashboard')}
+            onClick={() => navigate('/familie')}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Terug

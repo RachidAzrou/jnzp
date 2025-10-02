@@ -244,18 +244,18 @@ export default function FamilieChat() {
             {dossier ? `Dossier ${dossier.display_id || dossier.ref_number}` : 'Geen dossier'}
           </p>
         </div>
-        {dossier && (
-          <Button
-            variant="outline"
-            onClick={() => {
-              const message = encodeURIComponent(`Hallo, ik heb een vraag over dossier ${dossier.display_id || dossier.ref_number}`);
-              window.open(`https://wa.me/YOUR_WHATSAPP_NUMBER?text=${message}`, '_blank');
-            }}
-          >
-            <MessageCircle className="h-4 w-4 mr-2" />
-            WhatsApp JanAssist
-          </Button>
-        )}
+        <Button
+          variant="outline"
+          onClick={() => {
+            const message = dossier 
+              ? encodeURIComponent(`Hallo, ik heb een vraag over dossier ${dossier.display_id || dossier.ref_number}`)
+              : encodeURIComponent(`Hallo, ik heb een vraag over mijn dossier`);
+            window.open(`https://wa.me/YOUR_WHATSAPP_NUMBER?text=${message}`, '_blank');
+          }}
+        >
+          <MessageCircle className="h-4 w-4 mr-2" />
+          WhatsApp JanAssist
+        </Button>
       </div>
 
       <div className="grid lg:grid-cols-[1fr,300px] gap-6">

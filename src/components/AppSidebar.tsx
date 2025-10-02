@@ -20,7 +20,8 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
-  { title: "Dashboard", url: "/", icon: Home, roles: ['admin', 'funeral_director', 'insurer'] },
+  { title: "Dashboard", url: "/", icon: Home, roles: ['admin', 'funeral_director'] },
+  { title: "Dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },
   { title: "Dashboard", url: "/familie", icon: LayoutDashboard, roles: ['family'] },
   { title: "Dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
   { title: "Aanvragen", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },

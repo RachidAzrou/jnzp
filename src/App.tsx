@@ -27,6 +27,9 @@ import WasplaatsReservaties from "./pages/WasplaatsReservaties";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
 import MoskeeAanvraag from "./pages/MoskeeAanvraag";
 import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
+import InsurerDashboard from "./pages/InsurerDashboard";
+import InsurerDossierOverview from "./pages/InsurerDossierOverview";
+import InsurerDossierDocuments from "./pages/InsurerDossierDocuments";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
@@ -191,6 +194,21 @@ const App = () => (
                           <Route path="/moskee/beschikbaarheid" element={
                             <RoleProtectedRoute allowedRoles={['mosque']}>
                               <MoskeeBeschikbaarheid />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/insurer" element={
+                            <RoleProtectedRoute allowedRoles={['insurer']}>
+                              <InsurerDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/insurer/dossier/:id" element={
+                            <RoleProtectedRoute allowedRoles={['insurer']}>
+                              <InsurerDossierOverview />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/insurer/dossier/:id/documenten" element={
+                            <RoleProtectedRoute allowedRoles={['insurer']}>
+                              <InsurerDossierDocuments />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />

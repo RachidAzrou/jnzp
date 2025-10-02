@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TopBar } from "@/components/TopBar";
 import { BarChart3, Download, TrendingUp, Clock, Euro } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -160,18 +159,13 @@ Achterstallig (>30d),${stats?.invoices.overdue}`;
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <TopBar />
-        <div className="p-6">Laden...</div>
-      </div>
+      <div className="p-6">Laden...</div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar />
-      <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Rapportage</h1>
             <p className="text-muted-foreground mt-1">Overzicht van claims, facturen en doorlooptijden</p>
@@ -338,8 +332,7 @@ Achterstallig (>30d),${stats?.invoices.overdue}`;
                 </TableBody>
               </Table>
             </CardContent>
-          </Card>
-        </div>
+        </Card>
       </div>
     </div>
   );

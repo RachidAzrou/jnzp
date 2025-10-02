@@ -11,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { TopBar } from "@/components/TopBar";
 import { KPICard } from "@/components/KPICard";
 
 type Invoice = {
@@ -282,10 +281,7 @@ export default function InsurerInvoices() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <TopBar />
-        <div className="p-6">Laden...</div>
-      </div>
+      <div className="p-6">Laden...</div>
     );
   }
 
@@ -311,16 +307,14 @@ export default function InsurerInvoices() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar />
-      <div className="p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Facturen</h1>
-          <p className="text-muted-foreground mt-1">Beheer ontvangen facturen van uitvaartondernemers</p>
-        </div>
+    <div className="p-6 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Facturen</h1>
+        <p className="text-muted-foreground mt-1">Beheer ontvangen facturen van uitvaartondernemers</p>
+      </div>
 
-        {/* KPIs */}
-        <div className="grid gap-4 md:grid-cols-4">
+      {/* KPIs */}
+      <div className="grid gap-4 md:grid-cols-4">
           <KPICard
             title="Totaal Facturen"
             value={totalInvoices.toString()}
@@ -341,10 +335,10 @@ export default function InsurerInvoices() {
             value={`€${outstandingAmount.toFixed(2)}`}
             icon={Euro}
           />
-        </div>
+      </div>
 
-        {/* Filters */}
-        <Card>
+      {/* Filters */}
+      <Card>
           <CardHeader>
             <CardTitle>Filters</CardTitle>
           </CardHeader>
@@ -371,9 +365,10 @@ export default function InsurerInvoices() {
               </SelectContent>
             </Select>
           </CardContent>
-        </Card>
+      </Card>
 
-        <Card>
+      {/* Invoices Table */}
+      <Card>
           <CardHeader>
             <CardTitle>Facturen Overzicht</CardTitle>
           </CardHeader>
@@ -431,6 +426,7 @@ export default function InsurerInvoices() {
           </CardContent>
         </Card>
 
+        {/* Invoice Detail Dialog */}
         <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -592,7 +588,6 @@ export default function InsurerInvoices() {
             )}
           </DialogContent>
         </Dialog>
-      </div>
     </div>
   );
 }

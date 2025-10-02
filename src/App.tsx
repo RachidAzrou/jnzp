@@ -21,6 +21,7 @@ import FamilieDashboard from "./pages/FamilieDashboard";
 import FamilieIdentificatie from "./pages/FamilieIdentificatie";
 import FamiliePolis from "./pages/FamiliePolis";
 import FamilieLocatie from "./pages/FamilieLocatie";
+import FamilieChat from "./pages/FamilieChat";
 import WasplaatsDashboard from "./pages/WasplaatsDashboard";
 import WasplaatsKoelcellen from "./pages/WasplaatsKoelcellen";
 import WasplaatsReservaties from "./pages/WasplaatsReservaties";
@@ -186,6 +187,11 @@ const App = () => (
                           <Route path="/familie/locatie" element={
                             <RoleProtectedRoute allowedRoles={['family']}>
                               <FamilieLocatie />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/familie/chat" element={
+                            <RoleProtectedRoute allowedRoles={['family']}>
+                              <FamilieChat />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/wasplaats" element={

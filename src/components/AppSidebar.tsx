@@ -1,4 +1,4 @@
-import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt } from "lucide-react";
+import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -34,6 +34,7 @@ const menuItems: MenuItem[] = [
   { title: "Facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
   { title: "Beschikbaarheid", url: "/moskee/beschikbaarheid", icon: Calendar, roles: ['mosque'] },
   { title: "Mijn Documenten", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
+  { title: "Chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
   { title: "Instellingen", url: "/instellingen", icon: Settings, roles: ['admin', 'funeral_director', 'family', 'insurer', 'wasplaats', 'mosque'] },
 ];
 

@@ -59,6 +59,50 @@ export type Database = {
           },
         ]
       }
+      chat_messages: {
+        Row: {
+          attachment_name: string | null
+          attachment_url: string | null
+          created_at: string
+          dossier_id: string
+          id: string
+          message: string
+          sender_role: Database["public"]["Enums"]["app_role"]
+          sender_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          created_at?: string
+          dossier_id: string
+          id?: string
+          message: string
+          sender_role: Database["public"]["Enums"]["app_role"]
+          sender_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          created_at?: string
+          dossier_id?: string
+          id?: string
+          message?: string
+          sender_role?: Database["public"]["Enums"]["app_role"]
+          sender_user_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cool_cell_reservations: {
         Row: {
           cool_cell_id: string | null

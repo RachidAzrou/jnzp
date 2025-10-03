@@ -46,16 +46,16 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
       console.log("User Email:", userEmail);
       console.log("Code entered:", code);
       console.log("Is recovery mode:", isRecoveryMode);
-      // Get user's 2FA settings using the provided userId
-      const { data: settings, error: settingsError } = await supabase
-        .from("user_2fa_settings")
-        .select("totp_secret, recovery_codes")
-        .eq("user_id", userId)
-        .maybeSingle();
-      
-      console.log("2FA settings fetched:", settings, "Error:", settingsError);
 
-      if (!settings || settingsError) {
+      // Get user's 2FA settings using the SECURITY DEFINER function
+      const { data: settingsData, error: settingsError } = await supabase
+        .rpc('get_2fa_settings_for_verification', {
+          p_user_id: userId
+        });
+      
+      console.log("2FA settings fetched:", settingsData, "Error:", settingsError);
+
+      if (settingsError || !settingsData || settingsData.length === 0) {
         toast({
           title: "Fout",
           description: "2FA instellingen niet gevonden.",
@@ -64,6 +64,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
         setVerifying(false);
         return;
       }
+
+      const settings = settingsData[0];
 
       let isValid = false;
 
@@ -74,14 +76,11 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
         console.log("Recovery code valid:", isValid);
         
         if (isValid) {
-          // Remove used recovery code
-          const updatedCodes = settings.recovery_codes.filter(
-            (c: string) => c !== code.toUpperCase()
-          );
-          await supabase
-            .from("user_2fa_settings")
-            .update({ recovery_codes: updatedCodes })
-            .eq("user_id", userId);
+          // Remove used recovery code using SECURITY DEFINER function
+          await supabase.rpc('update_2fa_verification', {
+            p_user_id: userId,
+            p_recovery_code: code.toUpperCase()
+          });
         }
       } else {
         console.log("Verifying TOTP code...");
@@ -118,12 +117,12 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
         return;
       }
 
-      // Update last verified timestamp
+      // Update last verified timestamp using SECURITY DEFINER function
       console.log("Updating last verified timestamp...");
-      await supabase
-        .from("user_2fa_settings")
-        .update({ last_verified_at: new Date().toISOString() })
-        .eq("user_id", userId);
+      await supabase.rpc('update_2fa_verification', {
+        p_user_id: userId,
+        p_recovery_code: null
+      });
 
       toast({
         title: "Verificatie succesvol",

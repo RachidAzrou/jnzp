@@ -1895,6 +1895,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_2fa_settings_for_verification: {
+        Args: { p_user_id: string }
+        Returns: {
+          recovery_codes: string[]
+          totp_enabled: boolean
+          totp_secret: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1915,6 +1923,10 @@ export type Database = {
           p_target_type: string
         }
         Returns: string
+      }
+      update_2fa_verification: {
+        Args: { p_recovery_code?: string; p_user_id: string }
+        Returns: undefined
       }
       user_requires_2fa: {
         Args: { user_id: string }

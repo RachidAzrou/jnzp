@@ -326,7 +326,7 @@ const Register = () => {
                     <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
                       ✓
                     </div>
-                    <span className="text-[10px] font-medium">Stap 1) Kies Rol</span>
+                    <span className="text-[10px] font-medium">Kies Rol</span>
                   </div>
                   <div className="w-6 h-0.5 bg-primary"></div>
                   <div className="flex items-center gap-1.5">
@@ -338,7 +338,7 @@ const Register = () => {
                       {detailsSubStep === "contact" ? "✓" : "2"}
                     </div>
                     <span className={`text-[10px] ${detailsSubStep === "organization" ? "font-medium" : "font-medium"}`}>
-                      Stap 2) Organisatie
+                      Organisatie
                     </span>
                   </div>
                   <div className={`w-6 h-0.5 ${detailsSubStep === "contact" ? "bg-primary" : "bg-muted"}`}></div>
@@ -351,7 +351,7 @@ const Register = () => {
                       3
                     </div>
                     <span className={`text-[10px] ${detailsSubStep === "contact" ? "font-medium" : "text-muted-foreground"}`}>
-                      Stap 3) Contact
+                      Contact
                     </span>
                   </div>
                 </div>

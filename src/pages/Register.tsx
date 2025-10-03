@@ -12,7 +12,7 @@ import { LuHandshake } from "react-icons/lu";
 import { RiHandHeartLine } from "react-icons/ri";
 import { IoBusiness } from "react-icons/io5";
 import { Users } from "lucide-react";
-import logoAuth from "@/assets/logo-vertical-new.png";
+import logoAuth from "@/assets/logo-icon-new.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
@@ -210,7 +210,7 @@ const Register = () => {
             <img 
               src={logoAuth} 
               alt="JanazApp Logo" 
-              className="h-24 w-24 object-contain animate-fade-in"
+              className="h-16 w-16 object-contain animate-fade-in"
             />
           </div>
           <div className="space-y-1">

@@ -600,12 +600,11 @@ const Auth = () => {
 
   // Show 2FA verification if required
   if (show2FAVerification) {
+    console.log("Rendering 2FA verification screen");
+    console.log("Pending session:", pendingSession);
+    
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
-        
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
         <TwoFactorVerification 
           onVerified={handle2FAVerified}
           onCancel={handle2FACancel}

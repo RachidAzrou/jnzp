@@ -144,8 +144,10 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
     }
   };
 
+  console.log("TwoFactorVerification render - userId:", userId, "email:", userEmail);
+
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto relative z-10">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
           <Shield className="h-12 w-12 text-primary" />

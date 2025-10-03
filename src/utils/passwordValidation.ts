@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { checkPasswordBreach } from './breachedPasswordCheck';
 
 export interface PasswordValidationResult {
   valid: boolean;
@@ -26,6 +27,15 @@ export const validatePassword = async (password: string): Promise<PasswordValida
     return {
       valid: false,
       error: 'Wachtwoord moet minimaal 3 van de volgende bevatten: hoofdletter, kleine letter, cijfer, speciaal teken'
+    };
+  }
+
+  // Check breached passwords BEFORE server validation
+  const breachResult = await checkPasswordBreach(password);
+  if (breachResult.breached) {
+    return {
+      valid: false,
+      error: breachResult.warning || 'Dit wachtwoord is gelekt in een datalek. Kies een ander wachtwoord.'
     };
   }
 

@@ -1599,8 +1599,10 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          nis_encrypted: string | null
           phone: string | null
           phone_verified: boolean | null
+          ssn_encrypted: string | null
           status: Database["public"]["Enums"]["user_status"] | null
           two_fa_enabled: boolean | null
           updated_at: string
@@ -1611,8 +1613,10 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          nis_encrypted?: string | null
           phone?: string | null
           phone_verified?: boolean | null
+          ssn_encrypted?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
           two_fa_enabled?: boolean | null
           updated_at?: string
@@ -1623,8 +1627,10 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          nis_encrypted?: string | null
           phone?: string | null
           phone_verified?: boolean | null
+          ssn_encrypted?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
           two_fa_enabled?: boolean | null
           updated_at?: string
@@ -2076,7 +2082,66 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      audit_log_view: {
+        Row: {
+          actor_role: string | null
+          created_at: string | null
+          description: string | null
+          dossier_id: string | null
+          event_type: string | null
+          id: string | null
+          metadata: Json | null
+          payload_diff: Json | null
+          reason: string | null
+          target_id: string | null
+          target_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          actor_role?: string | null
+          created_at?: string | null
+          description?: string | null
+          dossier_id?: string | null
+          event_type?: string | null
+          id?: string | null
+          metadata?: Json | null
+          payload_diff?: Json | null
+          reason?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          actor_role?: string | null
+          created_at?: string | null
+          description?: string | null
+          dossier_id?: string | null
+          event_type?: string | null
+          id?: string | null
+          metadata?: Json | null
+          payload_diff?: Json | null
+          reason?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       calculate_device_risk: {
@@ -2139,6 +2204,14 @@ export type Database = {
         Args: { p_ip?: string; p_user_agent?: string; p_user_id: string }
         Returns: string
       }
+      decrypt_field: {
+        Args: { p_encrypted: string; p_key?: string }
+        Returns: string
+      }
+      encrypt_field: {
+        Args: { p_data: string; p_key?: string }
+        Returns: string
+      }
       generate_invitation_code: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -2146,6 +2219,10 @@ export type Database = {
       get_2fa_settings_with_nonce: {
         Args: { p_nonce: string }
         Returns: Json
+      }
+      get_decrypted_nis: {
+        Args: { p_profile_id: string }
+        Returns: string
       }
       get_ip_prefix: {
         Args: { p_ip: string }
@@ -2183,6 +2260,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      set_encrypted_nis: {
+        Args: { p_nis: string; p_profile_id: string }
+        Returns: undefined
       }
       update_2fa_verification: {
         Args: { p_recovery_code?: string; p_user_id: string }

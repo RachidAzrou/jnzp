@@ -183,12 +183,8 @@ export function WasplaatsDayView({
                 <span className="text-xs">Vrij</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-yellow-100 border border-yellow-300" />
-                <span className="text-xs">In afwachting</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-blue-100 border border-blue-300" />
-                <span className="text-xs">Bevestigd</span>
+                <div className="w-4 h-4 rounded bg-orange-100 border border-orange-300" />
+                <span className="text-xs">Gereserveerd</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded bg-red-100 border border-red-300" />

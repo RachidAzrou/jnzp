@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { TbAuth2Fa } from "react-icons/tb";
 import * as OTPAuth from "otpauth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -150,7 +151,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
     <Card className="w-full max-w-md mx-auto relative z-10">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
-          <Shield className="h-12 w-12 text-primary" />
+          <TbAuth2Fa className="h-12 w-12 text-primary" />
         </div>
         <CardTitle>Tweefactorauthenticatie</CardTitle>
         <CardDescription>

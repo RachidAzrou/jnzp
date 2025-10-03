@@ -181,7 +181,7 @@ const Dashboard = () => {
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Actieve dossiers */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
             <CardTitle>Actieve dossiers</CardTitle>
             <CardDescription>Dossiers die aandacht vereisen</CardDescription>
           </CardHeader>
@@ -252,7 +252,7 @@ const Dashboard = () => {
 
         {/* Mijn openstaande taken */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
             <CardTitle>Mijn openstaande taken</CardTitle>
             <CardDescription>Taken (vandaag + urgent)</CardDescription>
           </CardHeader>
@@ -324,7 +324,7 @@ const Dashboard = () => {
 
       {/* Recent bijgewerkt */}
       <Card>
-        <CardHeader>
+        <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
           <CardTitle>Recent bijgewerkt</CardTitle>
           <CardDescription>Laatste activiteiten in het systeem</CardDescription>
         </CardHeader>

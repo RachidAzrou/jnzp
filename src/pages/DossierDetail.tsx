@@ -270,7 +270,7 @@ const DossierDetail = () => {
           <div className="grid gap-4 md:grid-cols-2">
             {/* Overledene */}
             <Card>
-              <CardHeader>
+              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   Overledene
@@ -394,7 +394,7 @@ const DossierDetail = () => {
         {/* Documents Tab */}
         <TabsContent value="documents" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
               <div className="flex items-center justify-between">
                 <CardTitle>Documenten</CardTitle>
                 <Button>

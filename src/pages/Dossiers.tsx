@@ -147,7 +147,7 @@ const Dossiers = () => {
       </div>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
           <div className="flex flex-col gap-4">
             {/* Search */}
             <div className="relative w-full">

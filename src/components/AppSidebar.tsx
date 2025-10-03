@@ -109,16 +109,17 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       end
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 px-4 py-3 mx-3 rounded-lg transition-all duration-200 ${
-                          isActive
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm border-l-2 border-sidebar-primary"
-                            : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:translate-x-0.5"
-                        }`
-                      }
                     >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      <span className="text-sm">{t(item.titleKey)}</span>
+                      {({ isActive }) => (
+                        <div className={`flex items-center gap-3 px-4 py-2.5 mx-3 rounded-xl transition-all duration-300 group ${
+                          isActive
+                            ? "bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20"
+                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60 hover:shadow-md"
+                        }`}>
+                          <item.icon className={`h-[18px] w-[18px] flex-shrink-0 transition-transform duration-300 ${isActive ? '' : 'group-hover:scale-110'}`} />
+                          <span className="text-sm font-medium">{t(item.titleKey)}</span>
+                        </div>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

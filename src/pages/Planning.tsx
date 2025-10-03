@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Calendar, Plane, Plus, Search } from "lucide-react";
+import { Calendar, Plane, Plus, Search, SlidersHorizontal } from "lucide-react";
 import { MdOutlineShower } from "react-icons/md";
 import { PiMosque } from "react-icons/pi";
 import { useState, useEffect } from "react";
@@ -19,6 +19,7 @@ import { nl } from "date-fns/locale";
 import { EmptyState } from "@/components/EmptyState";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "react-i18next";
 
 // Mock data for demonstration
 const mockMosqueServices = [
@@ -91,12 +92,14 @@ const mockFlights = [
 ];
 
 const Planning = () => {
+  const { t } = useTranslation();
   const [mosqueServices, setMosqueServices] = useState<any[]>([]);
   const [wasplaatsServices, setWasplaatsServices] = useState<any[]>([]);
   const [flights, setFlights] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchDossier, setSearchDossier] = useState("");
   const [searchName, setSearchName] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -162,37 +165,27 @@ const Planning = () => {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-3 sm:p-0">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold">Planning</h1>
-        <p className="text-sm sm:text-base text-muted-foreground mt-1">Overzicht van moskee ceremonies en vluchten</p>
+    <div className="min-h-screen bg-background p-6">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold">Planning</h1>
       </div>
 
       {/* Filter Section */}
-      <Card>
-        <CardContent className="pt-4 sm:pt-6">
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Zoek op dossier nummer..."
-                  value={searchDossier}
-                  onChange={(e) => setSearchDossier(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-            </div>
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Zoek op naam overledene..."
-                  value={searchName}
-                  onChange={(e) => setSearchName(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
+      <Card className="border-0 shadow-sm mb-6">
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Zoek op dossier nummer of naam..."
+                value={searchDossier}
+                onChange={(e) => {
+                  setSearchDossier(e.target.value);
+                  setSearchName(e.target.value);
+                }}
+                className="pl-10 bg-background"
+              />
             </div>
             {(searchDossier || searchName) && (
               <Button 
@@ -201,9 +194,8 @@ const Planning = () => {
                   setSearchDossier("");
                   setSearchName("");
                 }}
-                className="w-full sm:w-auto"
               >
-                Reset filters
+                Reset
               </Button>
             )}
           </div>
@@ -212,38 +204,29 @@ const Planning = () => {
 
       <div className="grid gap-6">
         {/* Mosque Services Section */}
-        <Card>
-          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <PiMosque className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                  </div>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <PiMosque className="h-5 w-5 text-muted-foreground" />
                   Moskee Planning
                 </CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">Geplande ceremonies in moskeeën</p>
               </div>
-              <Button size="sm" className="w-full sm:w-auto">
+              <Button size="sm" variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">Nieuwe moskee afspraak</span>
-                <span className="sm:hidden">Nieuwe afspraak</span>
+                Nieuwe afspraak
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="pt-8">
+          <CardContent>
             {filteredMosqueServices.length === 0 ? (
-              <EmptyState
-                icon={PiMosque}
-                title="Geen moskee ceremonies"
-                description="Er zijn momenteel geen moskee ceremonies gepland. Klik op 'Nieuwe moskee afspraak' om de eerste te plannen."
-                action={{
-                  label: "Nieuwe afspraak maken",
-                  onClick: () => toast({ title: "Functie komt binnenkort" })
-                }}
-              />
+              <div className="text-center py-8">
+                <p className="text-sm text-muted-foreground">Geen moskee ceremonies gepland</p>
+              </div>
             ) : (
-              <Table>
+              <div className="hidden md:block">
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Dossier</TableHead>
@@ -257,60 +240,53 @@ const Planning = () => {
                 </TableHeader>
                 <TableBody>
                   {filteredMosqueServices.map((service) => (
-                    <TableRow key={service.id}>
-                      <TableCell className="font-medium font-mono">
+                    <TableRow key={service.id} className="hover:bg-muted/30">
+                      <TableCell className="font-medium font-mono text-sm">
                         {service.dossier_ref}
                       </TableCell>
-                      <TableCell>{service.deceased_name}</TableCell>
-                      <TableCell>{service.mosque_name}</TableCell>
-                      <TableCell>{formatDateTime(service.service_date)}</TableCell>
+                      <TableCell className="text-sm">{service.deceased_name}</TableCell>
+                      <TableCell className="text-sm">{service.mosque_name}</TableCell>
+                      <TableCell className="text-sm">{formatDateTime(service.service_date)}</TableCell>
                       <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
                       <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
                         {service.notes || "-"}
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">Details</Button>
+                        <Button variant="outline" size="sm">{t("common.view")}</Button>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+            </div>
             )}
           </CardContent>
         </Card>
 
         {/* Mortuarium Services Section */}
-        <Card>
-          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <MdOutlineShower className="h-5 w-5 text-primary" />
-                  </div>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <MdOutlineShower className="h-5 w-5 text-muted-foreground" />
                   Mortuarium Planning
                 </CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">Geplande rituele wassingen</p>
               </div>
-              <Button size="sm">
+              <Button size="sm" variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
-                Nieuwe mortuarium afspraak
+                Nieuwe afspraak
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="pt-8">
+          <CardContent>
             {filteredWasplaatsServices.length === 0 ? (
-              <EmptyState
-                icon={MdOutlineShower}
-                title="Geen mortuarium afspraken"
-                description="Er zijn nog geen mortuarium afspraken gepland. Voeg een afspraak toe wanneer de wassing gepland moet worden."
-                action={{
-                  label: "Afspraak maken",
-                  onClick: () => toast({ title: "Functie komt binnenkort" })
-                }}
-              />
+              <div className="text-center py-8">
+                <p className="text-sm text-muted-foreground">Geen mortuarium afspraken gepland</p>
+              </div>
             ) : (
-              <Table>
+              <div className="hidden md:block">
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Dossier</TableHead>
@@ -325,63 +301,56 @@ const Planning = () => {
                 </TableHeader>
                 <TableBody>
                   {filteredWasplaatsServices.map((service) => (
-                    <TableRow key={service.id}>
-                      <TableCell className="font-medium font-mono">
+                    <TableRow key={service.id} className="hover:bg-muted/30">
+                      <TableCell className="font-medium font-mono text-sm">
                         {service.dossier_ref}
                       </TableCell>
-                      <TableCell>{service.deceased_name}</TableCell>
-                      <TableCell>{service.facility_name}</TableCell>
-                      <TableCell>{formatDateTime(service.scheduled_at)}</TableCell>
+                      <TableCell className="text-sm">{service.deceased_name}</TableCell>
+                      <TableCell className="text-sm">{service.facility_name}</TableCell>
+                      <TableCell className="text-sm">{formatDateTime(service.scheduled_at)}</TableCell>
                       <TableCell>
-                        <Badge variant="outline">{service.cool_cell}</Badge>
+                        <Badge variant="outline" className="text-xs">{service.cool_cell}</Badge>
                       </TableCell>
                       <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
                       <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
                         {service.notes || "-"}
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">Details</Button>
+                        <Button variant="outline" size="sm">{t("common.view")}</Button>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+            </div>
             )}
           </CardContent>
         </Card>
 
         {/* Flights Section */}
-        <Card>
-          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Plane className="h-5 w-5 text-primary" />
-                  </div>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Plane className="h-5 w-5 text-muted-foreground" />
                   Vlucht Planning
                 </CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">Geplande repatriëringsvluchten</p>
               </div>
-              <Button size="sm">
+              <Button size="sm" variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
                 Nieuwe vlucht
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="pt-8">
+          <CardContent>
             {filteredFlights.length === 0 ? (
-              <EmptyState
-                icon={Plane}
-                title="Geen vluchten gepland"
-                description="Er zijn nog geen vluchten geregistreerd voor repatriëringen. Voeg een vlucht toe wanneer de planning gereed is."
-                action={{
-                  label: "Vlucht registreren",
-                  onClick: () => toast({ title: "Functie komt binnenkort" })
-                }}
-              />
+              <div className="text-center py-8">
+                <p className="text-sm text-muted-foreground">Geen vluchten gepland</p>
+              </div>
             ) : (
-              <Table>
+              <div className="hidden md:block">
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Dossier</TableHead>
@@ -396,30 +365,31 @@ const Planning = () => {
                 </TableHeader>
                 <TableBody>
                   {filteredFlights.map((flight) => (
-                    <TableRow key={flight.id}>
-                      <TableCell className="font-medium font-mono">
+                    <TableRow key={flight.id} className="hover:bg-muted/30">
+                      <TableCell className="font-medium font-mono text-sm">
                         {flight.dossier_ref}
                       </TableCell>
-                      <TableCell>{flight.deceased_name}</TableCell>
+                      <TableCell className="text-sm">{flight.deceased_name}</TableCell>
                       <TableCell>
-                        <div>{flight.carrier}</div>
+                        <div className="text-sm">{flight.carrier}</div>
                         <div className="text-xs text-muted-foreground">{flight.flight_number}</div>
                       </TableCell>
-                      <TableCell>{formatDateTime(flight.depart_at)}</TableCell>
-                      <TableCell>{formatDateTime(flight.arrive_at)}</TableCell>
-                      <TableCell className="font-mono text-sm">
+                      <TableCell className="text-sm">{formatDateTime(flight.depart_at)}</TableCell>
+                      <TableCell className="text-sm">{formatDateTime(flight.arrive_at)}</TableCell>
+                      <TableCell className="font-mono text-xs">
                         {flight.reservation_ref}
                       </TableCell>
-                      <TableCell className="font-mono text-sm">
+                      <TableCell className="font-mono text-xs">
                         {flight.air_waybill || "-"}
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">Details</Button>
+                        <Button variant="outline" size="sm">{t("common.view")}</Button>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+            </div>
             )}
           </CardContent>
         </Card>

@@ -90,17 +90,19 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar className="border-r">
+    <Sidebar className="border-r border-sidebar-border">
       <SidebarContent>
         <div className="px-6 py-6 border-b border-sidebar-border">
           <img src={logoHorizontal} alt="JanazApp" className="h-8 brightness-0 invert" />
-          <p className="text-xs text-sidebar-foreground/70 mt-2">{rolePortalName}</p>
+          <p className="text-xs text-sidebar-foreground/70 mt-2 font-medium">{rolePortalName}</p>
         </div>
         
-        <SidebarGroup className="mt-4">
-          <SidebarGroupLabel className="px-6 text-sidebar-foreground/60 text-xs uppercase tracking-wider">Navigatie</SidebarGroupLabel>
+        <SidebarGroup className="mt-6">
+          <SidebarGroupLabel className="px-6 text-sidebar-foreground/60 text-xs uppercase tracking-wider font-semibold mb-2">
+            Navigatie
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {filteredMenuItems.map((item) => (
                 <SidebarMenuItem key={item.titleKey}>
                   <SidebarMenuButton asChild>
@@ -108,15 +110,15 @@ export function AppSidebar() {
                       to={item.url}
                       end
                       className={({ isActive }) =>
-                        `flex items-center gap-3 px-4 py-2.5 mx-3 rounded-lg transition-all duration-200 ${
+                        `flex items-center gap-3 px-4 py-3 mx-3 rounded-lg transition-all duration-200 ${
                           isActive
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium shadow-sm"
-                            : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm border-l-2 border-sidebar-primary"
+                            : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:translate-x-0.5"
                         }`
                       }
                     >
-                      <item.icon className="h-4 w-4" />
-                      <span>{t(item.titleKey)}</span>
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      <span className="text-sm">{t(item.titleKey)}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -126,7 +128,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="border-t border-sidebar-border p-4">
+      <SidebarFooter className="border-t border-sidebar-border p-4 bg-sidebar-background/50">
         <LanguageSwitcher />
       </SidebarFooter>
     </Sidebar>

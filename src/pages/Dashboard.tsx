@@ -110,20 +110,25 @@ const Dashboard = () => {
   ).slice(0, 4);
 
   if (loading) {
-    return <div className="flex items-center justify-center p-12">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>;
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">{t("dashboard.title")}</h1>
-        <p className="text-muted-foreground mt-1">{t("dashboard.overview")}</p>
+    <div className="space-y-8 p-6 max-w-[1600px] mx-auto">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">{t("dashboard.title")}</h1>
+        <p className="text-muted-foreground text-base">{t("dashboard.overview")}</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <div onClick={() => navigate('/dossiers')} className="cursor-pointer transition-all hover:shadow-lg">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-5">
+        <div onClick={() => navigate('/dossiers')} className="cursor-pointer transition-all hover:scale-105">
           <KPICard
             title={t("dashboard.runningDossiers")}
             value={activeDossiers}
@@ -131,7 +136,7 @@ const Dashboard = () => {
             trend={{ value: t("dashboard.clickToOpen"), positive: true }}
           />
         </div>
-        <div onClick={() => navigate('/dossiers?status=LEGAL_HOLD')} className="cursor-pointer transition-all hover:shadow-lg">
+        <div onClick={() => navigate('/dossiers?status=LEGAL_HOLD')} className="cursor-pointer transition-all hover:scale-105">
           <KPICard
             title={t("dashboard.legalHold")}
             value={legalHold}
@@ -139,7 +144,7 @@ const Dashboard = () => {
             trend={{ value: t("dashboard.showDossiers"), positive: false }}
           />
         </div>
-        <div onClick={() => navigate('/documenten?filter=missing')} className="cursor-pointer transition-all hover:shadow-lg">
+        <div onClick={() => navigate('/documenten?filter=missing')} className="cursor-pointer transition-all hover:scale-105">
           <KPICard
             title={t("dashboard.missingDocuments")}
             value={5}
@@ -147,7 +152,7 @@ const Dashboard = () => {
             trend={{ value: t("dashboard.toDocuments"), positive: true }}
           />
         </div>
-        <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:shadow-lg">
+        <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:scale-105">
           <KPICard
             title={t("dashboard.repatriation")}
             value={repatriationDossiers}
@@ -155,7 +160,7 @@ const Dashboard = () => {
             trend={{ value: t("dashboard.filterOnRep"), positive: true }}
           />
         </div>
-        <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:shadow-lg">
+        <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:scale-105">
           <KPICard
             title={t("dashboard.local")}
             value={localDossiers}
@@ -165,21 +170,21 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Actieve dossiers */}
-        <Card>
-          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
+        <Card className="shadow-md border-border/50">
+          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent pb-4">
             <div>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-3 text-lg">
                 <div className="p-2 rounded-lg bg-primary/10">
-                  <FolderOpen className="h-4 w-4 text-primary" />
+                  <FolderOpen className="h-5 w-5 text-primary" />
                 </div>
                 {t("dashboard.activeDossiers")}
               </CardTitle>
-              <CardDescription className="mt-1">{t("dashboard.dossiersRequiringAttention")}</CardDescription>
+              <CardDescription className="mt-2 text-sm">{t("dashboard.dossiersRequiringAttention")}</CardDescription>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -233,6 +238,7 @@ const Dashboard = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => navigate(`/dossiers/${dossier.id}`)}
+                        className="hover:bg-primary hover:text-primary-foreground transition-colors"
                       >
                         {t("dossiers.open")}
                       </Button>
@@ -245,19 +251,19 @@ const Dashboard = () => {
         </Card>
 
         {/* Mijn openstaande taken */}
-        <Card>
-          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
+        <Card className="shadow-md border-border/50">
+          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent pb-4">
             <div>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-3 text-lg">
                 <div className="p-2 rounded-lg bg-primary/10">
-                  <CheckSquare className="h-4 w-4 text-primary" />
+                  <CheckSquare className="h-5 w-5 text-primary" />
                 </div>
                 {t("dashboard.myOpenTasks")}
               </CardTitle>
-              <CardDescription className="mt-1">{t("dashboard.tasksToday")}</CardDescription>
+              <CardDescription className="mt-2 text-sm">{t("dashboard.tasksToday")}</CardDescription>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -307,6 +313,7 @@ const Dashboard = () => {
                             variant="outline" 
                             size="sm"
                             onClick={action}
+                            className="hover:bg-primary hover:text-primary-foreground transition-colors"
                           >
                             {task.status === "DOCS_PENDING" ? t("tasks.toDocuments") :
                              task.status === "PLANNING" ? t("tasks.toPlanning") :
@@ -324,19 +331,19 @@ const Dashboard = () => {
       </div>
 
       {/* Recent bijgewerkt */}
-      <Card>
-        <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
+      <Card className="shadow-md border-border/50">
+        <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent pb-4">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-3 text-lg">
               <div className="p-2 rounded-lg bg-primary/10">
-                <Clock className="h-4 w-4 text-primary" />
+                <Clock className="h-5 w-5 text-primary" />
               </div>
               {t("dashboard.recentlyUpdated")}
             </CardTitle>
-            <CardDescription className="mt-1">{t("dashboard.lastActivities")}</CardDescription>
+            <CardDescription className="mt-2 text-sm">{t("dashboard.lastActivities")}</CardDescription>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <Table>
             <TableHeader>
               <TableRow>

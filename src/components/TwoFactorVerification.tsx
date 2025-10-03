@@ -11,9 +11,11 @@ import { useToast } from "@/hooks/use-toast";
 interface TwoFactorVerificationProps {
   onVerified: () => void;
   onCancel: () => void;
+  userId: string;
+  userEmail: string;
 }
 
-export const TwoFactorVerification = ({ onVerified, onCancel }: TwoFactorVerificationProps) => {
+export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail }: TwoFactorVerificationProps) => {
   const [code, setCode] = useState("");
   const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -38,24 +40,16 @@ export const TwoFactorVerification = ({ onVerified, onCancel }: TwoFactorVerific
     setVerifying(true);
 
     try {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      console.log("User fetched:", user?.id, "Error:", userError);
-      
-      if (!user || userError) {
-        toast({
-          title: "Fout",
-          description: "Geen gebruiker gevonden.",
-          variant: "destructive",
-        });
-        setVerifying(false);
-        return;
-      }
-
-      // Get user's 2FA settings
+      console.log("=== 2FA Verification Start ===");
+      console.log("User ID:", userId);
+      console.log("User Email:", userEmail);
+      console.log("Code entered:", code);
+      console.log("Is recovery mode:", isRecoveryMode);
+      // Get user's 2FA settings using the provided userId
       const { data: settings, error: settingsError } = await supabase
         .from("user_2fa_settings")
         .select("totp_secret, recovery_codes")
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .maybeSingle();
       
       console.log("2FA settings fetched:", settings, "Error:", settingsError);
@@ -86,7 +80,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel }: TwoFactorVerific
           await supabase
             .from("user_2fa_settings")
             .update({ recovery_codes: updatedCodes })
-            .eq("user_id", user.id);
+            .eq("user_id", userId);
         }
       } else {
         console.log("Verifying TOTP code...");
@@ -128,7 +122,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel }: TwoFactorVerific
       await supabase
         .from("user_2fa_settings")
         .update({ last_verified_at: new Date().toISOString() })
-        .eq("user_id", user.id);
+        .eq("user_id", userId);
 
       toast({
         title: "Verificatie succesvol",

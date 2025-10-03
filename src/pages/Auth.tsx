@@ -145,10 +145,17 @@ const Auth = () => {
             .maybeSingle();
 
           if (settings?.totp_enabled) {
-            // Store session and show 2FA verification
-            setPendingSession(data.session);
+            // Store session data for 2FA verification
+            setPendingSession({
+              userId: data.user.id,
+              email: data.user.email,
+            });
             setShow2FAVerification(true);
             setLoading(false);
+            
+            // CRITICAL: Sign out immediately to prevent bypass
+            // User will be re-authenticated after 2FA verification
+            await supabase.auth.signOut();
             return;
           }
         }
@@ -171,24 +178,51 @@ const Auth = () => {
     }
   };
 
-  const handle2FAVerified = () => {
-    setShow2FAVerification(false);
-    setPendingSession(null);
+  const handle2FAVerified = async () => {
+    console.log("2FA verified, logging in with stored credentials...");
     
-    toast({
-      title: "Welkom terug!",
-      description: "U bent succesvol ingelogd.",
-    });
+    // Re-authenticate the user after successful 2FA
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        toast({
+          title: "Inloggen mislukt",
+          description: "Er is een fout opgetreden na 2FA verificatie.",
+          variant: "destructive",
+        });
+        setShow2FAVerification(false);
+        setPendingSession(null);
+        return;
+      }
+      
+      setShow2FAVerification(false);
+      setPendingSession(null);
+      
+      toast({
+        title: "Welkom terug!",
+        description: "U bent succesvol ingelogd.",
+      });
 
-    navigate("/");
+      navigate("/");
+    } catch (error: any) {
+      toast({
+        title: "Fout",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const handle2FACancel = async () => {
+    console.log("2FA cancelled");
     setShow2FAVerification(false);
     setPendingSession(null);
-    
-    // Sign out the pending session
-    await supabase.auth.signOut();
+    setEmail("");
+    setPassword("");
   };
 
   const handleFamilySignup = async (e: React.FormEvent) => {
@@ -575,6 +609,8 @@ const Auth = () => {
         <TwoFactorVerification 
           onVerified={handle2FAVerified}
           onCancel={handle2FACancel}
+          userId={pendingSession?.userId || ""}
+          userEmail={pendingSession?.email || ""}
         />
       </div>
     );

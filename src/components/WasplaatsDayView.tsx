@@ -2,11 +2,8 @@ import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+import { useState } from "react";
+import { CoolCellReservationSheet } from "./CoolCellReservationSheet";
 
 type CoolCell = {
   id: string;
@@ -47,7 +44,7 @@ const getStatusColor = (status: string) => {
     case "PENDING":
       return "bg-warning/80 border-warning text-warning-foreground";
     case "CONFIRMED":
-      return "bg-primary/80 border-primary text-primary-foreground";
+      return "bg-success/80 border-success text-success-foreground";
     case "OCCUPIED":
       return "bg-destructive/80 border-destructive text-destructive-foreground";
     default:
@@ -60,10 +57,18 @@ export function WasplaatsDayView({
   reservations,
   selectedDate,
 }: DayViewProps) {
+  const [selectedReservationId, setSelectedReservationId] = useState<string | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
   const dayStr = format(selectedDate, "yyyy-MM-dd");
   const dayReservations = reservations.filter(
     (r) => format(new Date(r.start_at), "yyyy-MM-dd") === dayStr
   );
+
+  const handleReservationClick = (reservationId: string) => {
+    setSelectedReservationId(reservationId);
+    setIsSheetOpen(true);
+  };
 
   return (
     <Card>
@@ -101,14 +106,7 @@ export function WasplaatsDayView({
                 return (
                   <div key={cell.id} className="flex items-center">
                     <div className="w-32 flex-shrink-0 font-medium pr-4">
-                      <div className="flex items-center gap-2">
-                        <span>{cell.label}</span>
-                        {isOutOfService && (
-                          <Badge variant="destructive" className="text-xs">
-                            Onderhoud
-                          </Badge>
-                        )}
-                      </div>
+                      <span>{cell.label}</span>
                     </div>
                     <div className="flex-1 relative h-12 bg-muted/30 rounded border">
                       {/* Hour grid lines */}
@@ -130,39 +128,18 @@ export function WasplaatsDayView({
                           const style = getReservationStyle(start, end);
 
                           return (
-                            <HoverCard key={res.id}>
-                              <HoverCardTrigger asChild>
-                                <div
-                                  className={`absolute top-1 bottom-1 rounded px-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 border ${getStatusColor(
-                                    res.status
-                                  )}`}
-                                  style={style}
-                                >
-                                  <span className="text-xs font-medium truncate">
-                                    {format(start, "HH:mm")} - {format(end, "HH:mm")}
-                                  </span>
-                                </div>
-                              </HoverCardTrigger>
-                              <HoverCardContent className="w-auto">
-                                <div className="space-y-1 text-sm">
-                                  <p className="font-medium">
-                                    Dossier: {res.dossier_id.slice(0, 8)}
-                                  </p>
-                                  <p className="text-muted-foreground">
-                                    {format(start, "HH:mm")} - {format(end, "HH:mm")}
-                                  </p>
-                                  <p>
-                                    <Badge variant="outline" className="text-xs">
-                                      {res.status === "PENDING"
-                                        ? "In afwachting"
-                                        : res.status === "CONFIRMED"
-                                        ? "Bevestigd"
-                                        : "Bezet"}
-                                    </Badge>
-                                  </p>
-                                </div>
-                              </HoverCardContent>
-                            </HoverCard>
+                            <div
+                              key={res.id}
+                              className={`absolute top-1 bottom-1 rounded px-2 flex items-center justify-center cursor-pointer transition-all hover:scale-105 border ${getStatusColor(
+                                res.status
+                              )}`}
+                              style={style}
+                              onClick={() => handleReservationClick(res.id)}
+                            >
+                              <span className="text-xs font-medium truncate">
+                                {format(start, "HH:mm")} - {format(end, "HH:mm")}
+                              </span>
+                            </div>
                           );
                         })}
 
@@ -196,7 +173,7 @@ export function WasplaatsDayView({
                 <span className="text-xs">In afwachting</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-primary/80 border border-primary" />
+                <div className="w-4 h-4 rounded bg-success/80 border border-success" />
                 <span className="text-xs">Bevestigd</span>
               </div>
               <div className="flex items-center gap-2">
@@ -211,6 +188,11 @@ export function WasplaatsDayView({
           </div>
         </div>
       </CardContent>
+      <CoolCellReservationSheet
+        reservationId={selectedReservationId}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+      />
     </Card>
   );
 }

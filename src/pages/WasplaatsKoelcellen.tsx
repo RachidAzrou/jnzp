@@ -46,6 +46,8 @@ export default function WasplaatsKoelcellen() {
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newCellLabel, setNewCellLabel] = useState("");
+  const [bulkCount, setBulkCount] = useState("1");
+  const [bulkPrefix, setBulkPrefix] = useState("");
 
   useEffect(() => {
     fetchCoolCells();
@@ -98,7 +100,27 @@ export default function WasplaatsKoelcellen() {
   };
 
   const addCoolCell = async () => {
-    if (!newCellLabel.trim()) {
+    const count = parseInt(bulkCount) || 1;
+    
+    if (count < 1 || count > 50) {
+      toast({
+        title: "Fout",
+        description: "Aantal moet tussen 1 en 50 zijn",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!bulkPrefix.trim() && count > 1) {
+      toast({
+        title: "Fout",
+        description: "Voer een prefix in voor bulk toevoegen",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (count === 1 && !newCellLabel.trim() && !bulkPrefix.trim()) {
       toast({
         title: "Fout",
         description: "Voer een label in",
@@ -120,29 +142,45 @@ export default function WasplaatsKoelcellen() {
 
       if (!userRole?.organization_id) throw new Error("Geen organisatie gevonden");
 
-      const { error } = await supabase
-        .from("cool_cells")
-        .insert({
-          label: newCellLabel.trim(),
+      const cellsToInsert = [];
+      
+      if (count === 1) {
+        cellsToInsert.push({
+          label: newCellLabel.trim() || bulkPrefix.trim(),
           facility_org_id: userRole.organization_id,
           status: "FREE",
         });
+      } else {
+        for (let i = 1; i <= count; i++) {
+          cellsToInsert.push({
+            label: `${bulkPrefix.trim()} ${i}`,
+            facility_org_id: userRole.organization_id,
+            status: "FREE",
+          });
+        }
+      }
+
+      const { error } = await supabase
+        .from("cool_cells")
+        .insert(cellsToInsert);
 
       if (error) throw error;
 
       toast({
         title: "Succes",
-        description: "Koelcel toegevoegd",
+        description: count === 1 ? "Koelcel toegevoegd" : `${count} koelcellen toegevoegd`,
       });
 
       setNewCellLabel("");
+      setBulkPrefix("");
+      setBulkCount("1");
       setIsAddDialogOpen(false);
       fetchCoolCells();
     } catch (error) {
       console.error("Error adding cool cell:", error);
       toast({
         title: "Fout",
-        description: "Kon koelcel niet toevoegen",
+        description: "Kon koelcel(len) niet toevoegen",
         variant: "destructive",
       });
     }
@@ -196,27 +234,65 @@ export default function WasplaatsKoelcellen() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Nieuwe Koelcel</DialogTitle>
+              <DialogTitle>Nieuwe Koelcel(len)</DialogTitle>
               <DialogDescription>
-                Voeg een nieuwe koelcel toe aan uw wasplaats.
+                Voeg één of meerdere koelcellen toe aan uw wasplaats.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="label">Label / Nummer</Label>
+                <Label htmlFor="count">Aantal koelcellen</Label>
                 <Input
-                  id="label"
-                  placeholder="Bijv. Cel 1, A1, etc."
-                  value={newCellLabel}
-                  onChange={(e) => setNewCellLabel(e.target.value)}
+                  id="count"
+                  type="number"
+                  min="1"
+                  max="50"
+                  placeholder="1"
+                  value={bulkCount}
+                  onChange={(e) => setBulkCount(e.target.value)}
                 />
+                <p className="text-xs text-muted-foreground">
+                  Voer aantal in (1-50)
+                </p>
               </div>
+              
+              {parseInt(bulkCount) > 1 ? (
+                <div className="space-y-2">
+                  <Label htmlFor="prefix">Prefix</Label>
+                  <Input
+                    id="prefix"
+                    placeholder="bijv. Cel, A, B"
+                    value={bulkPrefix}
+                    onChange={(e) => setBulkPrefix(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Labels worden: {bulkPrefix || "Prefix"} 1, {bulkPrefix || "Prefix"} 2, etc.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label htmlFor="label">Label / Nummer</Label>
+                  <Input
+                    id="label"
+                    placeholder="Bijv. Cel 1, A1, etc."
+                    value={newCellLabel}
+                    onChange={(e) => setNewCellLabel(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+              <Button variant="outline" onClick={() => {
+                setIsAddDialogOpen(false);
+                setNewCellLabel("");
+                setBulkPrefix("");
+                setBulkCount("1");
+              }}>
                 Annuleren
               </Button>
-              <Button onClick={addCoolCell}>Toevoegen</Button>
+              <Button onClick={addCoolCell}>
+                {parseInt(bulkCount) > 1 ? `${bulkCount} Koelcellen Toevoegen` : "Toevoegen"}
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -250,41 +326,45 @@ export default function WasplaatsKoelcellen() {
                       {cell.out_of_service_note || "-"}
                     </td>
                     <td className="p-3">
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
                         <Button
                           size="sm"
-                          variant="ghost"
+                          variant="outline"
                           onClick={() => updateCellStatus(cell.id, "FREE")}
-                          title="Vrijgeven"
                           disabled={cell.status === "FREE"}
+                          className="gap-1"
                         >
-                          <CheckCircle2 className={`h-4 w-4 ${cell.status === "FREE" ? "text-muted" : "text-success"}`} />
+                          <CheckCircle2 className="h-4 w-4" />
+                          <span className="text-xs">Vrij</span>
                         </Button>
                         <Button
                           size="sm"
-                          variant="ghost"
+                          variant="outline"
                           onClick={() => updateCellStatus(cell.id, "OCCUPIED")}
-                          title="Markeer als Bezet"
                           disabled={cell.status === "OCCUPIED"}
+                          className="gap-1"
                         >
-                          <Unlock className={`h-4 w-4 ${cell.status === "OCCUPIED" ? "text-muted" : "text-primary"}`} />
+                          <Unlock className="h-4 w-4" />
+                          <span className="text-xs">Bezet</span>
                         </Button>
                         <Button
                           size="sm"
-                          variant="ghost"
+                          variant="outline"
                           onClick={() => updateCellStatus(cell.id, "OUT_OF_SERVICE")}
-                          title="Zet Buiten Dienst"
                           disabled={cell.status === "OUT_OF_SERVICE"}
+                          className="gap-1"
                         >
-                          <XCircle className={`h-4 w-4 ${cell.status === "OUT_OF_SERVICE" ? "text-muted" : "text-destructive"}`} />
+                          <XCircle className="h-4 w-4" />
+                          <span className="text-xs">Buiten Dienst</span>
                         </Button>
                         <Button
                           size="sm"
-                          variant="ghost"
+                          variant="outline"
                           onClick={() => deleteCoolCell(cell.id)}
-                          title="Verwijderen"
+                          className="gap-1 text-destructive hover:text-destructive"
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          <Trash2 className="h-4 w-4" />
+                          <span className="text-xs">Verwijder</span>
                         </Button>
                       </div>
                     </td>

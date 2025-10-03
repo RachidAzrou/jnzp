@@ -3,6 +3,8 @@ import { nl } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Ban } from "lucide-react";
+import { useState } from "react";
+import { CoolCellReservationSheet } from "./CoolCellReservationSheet";
 import {
   HoverCard,
   HoverCardContent,
@@ -39,15 +41,15 @@ type WeekViewProps = {
 const getStatusColor = (status: string) => {
   switch (status) {
     case "FREE":
-      return "bg-success/20 hover:bg-success/30 border-success";
+      return "bg-success/20 hover:bg-success/30 border-success cursor-default";
     case "RESERVED":
-      return "bg-warning/20 hover:bg-warning/30 border-warning";
+      return "bg-warning/20 hover:bg-warning/30 border-warning cursor-pointer";
     case "OCCUPIED":
-      return "bg-primary/20 hover:bg-primary/30 border-primary";
+      return "bg-destructive/20 hover:bg-destructive/30 border-destructive cursor-pointer";
     case "OUT_OF_SERVICE":
-      return "bg-destructive/20 hover:bg-destructive/30 border-destructive";
+      return "bg-destructive/40 hover:bg-destructive/50 border-destructive cursor-default";
     default:
-      return "bg-muted hover:bg-muted/80";
+      return "bg-muted hover:bg-muted/80 cursor-default";
   }
 };
 
@@ -72,9 +74,17 @@ export function WasplaatsWeekView({
   dayBlocks,
   currentWeek,
 }: WeekViewProps) {
+  const [selectedReservationId, setSelectedReservationId] = useState<string | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
   const weekDays = Array.from({ length: 7 }, (_, i) =>
     addDays(startOfWeek(currentWeek, { weekStartsOn: 1 }), i)
   );
+
+  const handleReservationClick = (reservationId: string) => {
+    setSelectedReservationId(reservationId);
+    setIsSheetOpen(true);
+  };
 
   const getCellStatusForDay = (cellId: string, day: Date) => {
     const dayStr = format(day, "yyyy-MM-dd");
@@ -166,6 +176,11 @@ export function WasplaatsWeekView({
                         className={`border p-2 transition-colors ${getStatusColor(
                           status
                         )}`}
+                        onClick={() => {
+                          if (dayReservations.length > 0) {
+                            handleReservationClick(dayReservations[0].id);
+                          }
+                        }}
                       >
                         {status === "BLOCKED" ? (
                           <div className="text-center">
@@ -174,38 +189,16 @@ export function WasplaatsWeekView({
                             </Badge>
                           </div>
                         ) : dayReservations.length > 0 ? (
-                          <HoverCard>
-                            <HoverCardTrigger className="w-full cursor-pointer">
-                              <div className="text-center">
-                                <Badge variant="outline" className="text-xs">
-                                  {dayReservations.length}x
-                                </Badge>
-                                <p className="text-xs mt-1">
-                                  {format(new Date(dayReservations[0].start_at), "HH:mm")}
-                                  -
-                                  {format(new Date(dayReservations[0].end_at), "HH:mm")}
-                                </p>
-                              </div>
-                            </HoverCardTrigger>
-                            <HoverCardContent className="w-auto">
-                              <div className="space-y-2">
-                                {dayReservations.map((res) => (
-                                  <div
-                                    key={res.id}
-                                    className="text-xs border-b pb-2 last:border-b-0"
-                                  >
-                                    <p className="font-medium">
-                                      Dossier: {res.dossier_id.slice(0, 8)}
-                                    </p>
-                                    <p className="text-muted-foreground">
-                                      {format(new Date(res.start_at), "HH:mm")} -{" "}
-                                      {format(new Date(res.end_at), "HH:mm")}
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                            </HoverCardContent>
-                          </HoverCard>
+                          <div className="text-center">
+                            <Badge variant="outline" className="text-xs">
+                              {dayReservations.length}x
+                            </Badge>
+                            <p className="text-xs mt-1">
+                              {format(new Date(dayReservations[0].start_at), "HH:mm")}
+                              -
+                              {format(new Date(dayReservations[0].end_at), "HH:mm")}
+                            </p>
+                          </div>
                         ) : (
                           <div className="text-center">
                             <Badge variant="outline" className="text-xs">
@@ -222,6 +215,11 @@ export function WasplaatsWeekView({
           </table>
         </div>
       </CardContent>
+      <CoolCellReservationSheet
+        reservationId={selectedReservationId}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+      />
     </Card>
   );
 }

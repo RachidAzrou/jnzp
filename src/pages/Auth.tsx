@@ -611,44 +611,91 @@ const Auth = () => {
 
             <TabsContent value="signup">
               {registrationStep === "role" ? (
-                <div className="space-y-6 pt-4">
-                  <div className="text-center space-y-2">
-                    <h3 className="font-semibold text-lg">Kies uw rol</h3>
+                <div className="space-y-6 pt-6">
+                  {/* Progress Indicator */}
+                  <div className="flex items-center justify-center gap-2 mb-8">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                        1
+                      </div>
+                      <span className="text-sm font-medium">Kies rol</span>
+                    </div>
+                    <div className="w-12 h-0.5 bg-muted"></div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-medium">
+                        2
+                      </div>
+                      <span className="text-sm text-muted-foreground">Gegevens</span>
+                    </div>
+                  </div>
+
+                  <div className="text-center space-y-2 mb-6">
+                    <h3 className="font-semibold text-xl">Welke rol beschrijft u het best?</h3>
                     <p className="text-sm text-muted-foreground">
-                      Selecteer de optie die het best bij u past
+                      Kies de optie die bij uw situatie past
                     </p>
                   </div>
 
-                  <RadioGroup value={selectedRole || ""} onValueChange={(value) => setSelectedRole(value as UserRole)}>
-                    <div className="space-y-3">
-                      {(["family", "funeral_director", "mosque", "wasplaats", "insurer"] as UserRole[]).map((role) => (
-                        <Label
-                          key={role}
-                          htmlFor={role}
-                          className="flex items-center space-x-4 border-2 rounded-xl p-5 cursor-pointer hover:border-primary hover:bg-primary/5 transition-all duration-200 group"
-                        >
-                          <RadioGroupItem value={role} id={role} className="mt-0.5" />
-                          <div className="flex items-center space-x-4 flex-1">
-                            <div className="text-primary group-hover:scale-110 transition-transform">
-                              {getRoleIcon(role)}
-                            </div>
-                            <span className="font-medium text-base">{getRoleLabel(role)}</span>
+                  <div className="grid gap-3">
+                    {(["family", "funeral_director", "mosque", "wasplaats", "insurer"] as UserRole[]).map((role) => (
+                      <button
+                        key={role}
+                        type="button"
+                        onClick={() => setSelectedRole(role)}
+                        className={`relative flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-200 text-left group hover:border-primary hover:shadow-lg ${
+                          selectedRole === role 
+                            ? 'border-primary bg-primary/5 shadow-md' 
+                            : 'border-border hover:bg-accent/50'
+                        }`}
+                      >
+                        <div className={`p-3 rounded-lg transition-colors ${
+                          selectedRole === role 
+                            ? 'bg-primary/10 text-primary' 
+                            : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
+                        }`}>
+                          {getRoleIcon(role)}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium text-base">{getRoleLabel(role)}</div>
+                        </div>
+                        {selectedRole === role && (
+                          <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                            <svg className="w-4 h-4 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
                           </div>
-                        </Label>
-                      ))}
-                    </div>
-                  </RadioGroup>
+                        )}
+                      </button>
+                    ))}
+                  </div>
 
                   <Button
                     onClick={() => selectedRole && setRegistrationStep("details")}
                     disabled={!selectedRole}
-                    className="w-full h-11"
+                    className="w-full h-12 mt-6 text-base"
                   >
-                    Volgende
+                    Doorgaan naar gegevens
                   </Button>
                 </div>
               ) : (
                 <div className="space-y-5 pt-4">
+                  {/* Progress Indicator */}
+                  <div className="flex items-center justify-center gap-2 mb-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                        ✓
+                      </div>
+                      <span className="text-sm font-medium">Rol</span>
+                    </div>
+                    <div className="w-12 h-0.5 bg-primary"></div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                        2
+                      </div>
+                      <span className="text-sm font-medium">Gegevens</span>
+                    </div>
+                  </div>
+
                   <Button
                     variant="ghost"
                     size="sm"
@@ -656,17 +703,21 @@ const Auth = () => {
                       setRegistrationStep("role");
                       setSelectedRole(null);
                     }}
-                    className="mb-2"
+                    className="mb-4"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Terug
+                    Wijzig rol
                   </Button>
 
                   <div className="text-center pb-4">
-                    <h3 className="font-semibold text-lg flex items-center justify-center gap-2">
-                      {selectedRole && getRoleIcon(selectedRole)}
-                      {selectedRole && getRoleLabel(selectedRole)}
-                    </h3>
+                    <div className="inline-flex items-center gap-3 px-4 py-2 rounded-lg bg-primary/10">
+                      <div className="text-primary">
+                        {selectedRole && getRoleIcon(selectedRole)}
+                      </div>
+                      <span className="font-medium">
+                        {selectedRole && getRoleLabel(selectedRole)}
+                      </span>
+                    </div>
                   </div>
 
                   {selectedRole === "family" ? (
@@ -679,6 +730,7 @@ const Auth = () => {
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             required
+                            className="h-11"
                           />
                         </div>
                         <div className="space-y-2">
@@ -688,6 +740,7 @@ const Auth = () => {
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             required
+                            className="h-11"
                           />
                         </div>
                       </div>
@@ -699,6 +752,7 @@ const Auth = () => {
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           required
+                          className="h-11"
                         />
                       </div>
                       <div className="space-y-2">
@@ -709,6 +763,7 @@ const Auth = () => {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
+                          className="h-11"
                         />
                       </div>
                       <div className="space-y-2">
@@ -719,69 +774,85 @@ const Auth = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
+                          minLength={12}
+                          className="h-11"
                         />
+                        <p className="text-xs text-muted-foreground">Minimaal 12 tekens</p>
                       </div>
-                      <Button type="submit" className="w-full" disabled={loading}>
+                      <Button type="submit" className="w-full h-12 mt-6" disabled={loading}>
                         {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        Registreren
+                        Maak account aan
                       </Button>
                     </form>
                   ) : (
-                    <form onSubmit={handleProfessionalSignup} className="space-y-4">
-                      <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
-                        <h4 className="font-medium text-sm">Organisatiegegevens</h4>
-                        <div className="space-y-2">
-                          <Label htmlFor="org-name">Organisatienaam</Label>
-                          <Input
-                            id="org-name"
-                            value={orgName}
-                            onChange={(e) => setOrgName(e.target.value)}
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="org-registration">Ondernemingsnummer</Label>
-                          <Input
-                            id="org-registration"
-                            value={orgRegistrationNumber}
-                            onChange={(e) => setOrgRegistrationNumber(e.target.value)}
-                            placeholder="Bv. 0123.456.789"
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="org-address">Adres</Label>
-                          <Input
-                            id="org-address"
-                            value={orgAddress}
-                            onChange={(e) => setOrgAddress(e.target.value)}
-                            required
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
+                    <form onSubmit={handleProfessionalSignup} className="space-y-5">
+                      <div className="space-y-4 p-5 bg-muted/30 rounded-xl border">
+                        <h4 className="font-semibold text-sm flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                          Organisatiegegevens
+                        </h4>
+                        <div className="space-y-3">
                           <div className="space-y-2">
-                            <Label htmlFor="org-city">Stad</Label>
+                            <Label htmlFor="org-name">Organisatienaam</Label>
                             <Input
-                              id="org-city"
-                              value={orgCity}
-                              onChange={(e) => setOrgCity(e.target.value)}
+                              id="org-name"
+                              value={orgName}
+                              onChange={(e) => setOrgName(e.target.value)}
                               required
+                              className="h-11"
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="org-postal">Postcode</Label>
+                            <Label htmlFor="org-registration">Ondernemingsnummer</Label>
                             <Input
-                              id="org-postal"
-                              value={orgPostalCode}
-                              onChange={(e) => setOrgPostalCode(e.target.value)}
+                              id="org-registration"
+                              value={orgRegistrationNumber}
+                              onChange={(e) => setOrgRegistrationNumber(e.target.value)}
+                              placeholder="Bv. 0123.456.789"
                               required
+                              className="h-11"
                             />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="org-address">Adres</Label>
+                            <Input
+                              id="org-address"
+                              value={orgAddress}
+                              onChange={(e) => setOrgAddress(e.target.value)}
+                              required
+                              className="h-11"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <Label htmlFor="org-city">Stad</Label>
+                              <Input
+                                id="org-city"
+                                value={orgCity}
+                                onChange={(e) => setOrgCity(e.target.value)}
+                                required
+                                className="h-11"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="org-postal">Postcode</Label>
+                              <Input
+                                id="org-postal"
+                                value={orgPostalCode}
+                                onChange={(e) => setOrgPostalCode(e.target.value)}
+                                required
+                                className="h-11"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
 
                       <div className="space-y-4">
-                        <h4 className="font-medium text-sm">Contactpersoon</h4>
+                        <h4 className="font-semibold text-sm flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                          Contactpersoon
+                        </h4>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="contact-first">Voornaam</Label>
@@ -790,6 +861,7 @@ const Auth = () => {
                               value={firstName}
                               onChange={(e) => setFirstName(e.target.value)}
                               required
+                              className="h-11"
                             />
                           </div>
                           <div className="space-y-2">
@@ -799,6 +871,7 @@ const Auth = () => {
                               value={lastName}
                               onChange={(e) => setLastName(e.target.value)}
                               required
+                              className="h-11"
                             />
                           </div>
                         </div>
@@ -810,6 +883,7 @@ const Auth = () => {
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             required
+                            className="h-11"
                           />
                         </div>
                         <div className="space-y-2">
@@ -820,6 +894,7 @@ const Auth = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            className="h-11"
                           />
                         </div>
                         <div className="space-y-2">
@@ -830,18 +905,23 @@ const Auth = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            minLength={12}
+                            className="h-11"
                           />
+                          <p className="text-xs text-muted-foreground">Minimaal 12 tekens</p>
                         </div>
                       </div>
 
-                      <Button type="submit" className="w-full" disabled={loading}>
+                      <Button type="submit" className="w-full h-12 mt-6" disabled={loading}>
                         {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        Aanvraag indienen
+                        Dien aanvraag in
                       </Button>
 
-                      <p className="text-xs text-muted-foreground text-center">
-                        Uw aanvraag wordt beoordeeld door een administrator. U ontvangt bericht zodra uw account is goedgekeurd.
-                      </p>
+                      <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-900">
+                        <p className="text-xs text-blue-900 dark:text-blue-100 text-center leading-relaxed">
+                          Uw aanvraag wordt beoordeeld door een administrator. U ontvangt bericht zodra uw account is goedgekeurd.
+                        </p>
+                      </div>
                     </form>
                   )}
                 </div>

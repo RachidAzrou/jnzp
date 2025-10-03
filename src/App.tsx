@@ -46,6 +46,8 @@ import TeamManagement from "./pages/TeamManagement";
 import Auth from "./pages/Auth";
 import Register from "./pages/Register";
 import QRScan from "./pages/QRScan";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
 
@@ -153,6 +155,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/register" element={<Register />} />
           <Route path="/qr-scan/:token" element={<QRScan />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
           <Route
             path="/*"
             element={

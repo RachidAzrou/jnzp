@@ -407,6 +407,36 @@ export type Database = {
           },
         ]
       }
+      data_retention_policies: {
+        Row: {
+          created_at: string
+          data_type: string
+          description: string | null
+          id: string
+          is_active: boolean
+          retention_period_days: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_type: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          retention_period_days: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_type?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          retention_period_days?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           doc_type: Database["public"]["Enums"]["doc_type"]
@@ -753,6 +783,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      gdpr_requests: {
+        Row: {
+          expires_at: string | null
+          export_url: string | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          processed_at: string | null
+          processed_by: string | null
+          rejection_reason: string | null
+          request_type: string
+          requested_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          expires_at?: string | null
+          export_url?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          rejection_reason?: string | null
+          request_type: string
+          requested_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          expires_at?: string | null
+          export_url?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          rejection_reason?: string | null
+          request_type?: string
+          requested_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       integration_refs: {
         Row: {
@@ -2251,6 +2326,10 @@ export type Database = {
         Args: { p_code: string; p_user_id: string }
         Returns: Json
       }
+      apply_retention_policies: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       calculate_device_risk: {
         Args: {
           p_current_ip: string
@@ -2347,6 +2426,10 @@ export type Database = {
         Args: { p_ip: string }
         Returns: unknown
       }
+      get_user_data_export: {
+        Args: { p_user_id: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2379,6 +2462,14 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      request_data_deletion: {
+        Args: { p_reason?: string }
+        Returns: Json
+      }
+      request_data_export: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       revoke_qr_token: {
         Args: { p_reason: string; p_token_id: string }

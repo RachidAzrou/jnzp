@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { User, Building2, Bell, Shield } from "lucide-react";
 import { useUserRole } from "@/hooks/useUserRole";
 import { TwoFactorSetup } from "@/components/TwoFactorSetup";
+import { GDPRRequestPanel } from "@/components/GDPRRequestPanel";
+import { Link } from "react-router-dom";
 
 const Instellingen = () => {
   const [searchParams] = useSearchParams();
@@ -458,6 +460,31 @@ const Instellingen = () => {
                 </div>
               </>
             )}
+          </CardContent>
+        </Card>
+
+        {/* GDPR & Privacy */}
+        <GDPRRequestPanel />
+
+        {/* Legal Documents */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Juridische Documenten</CardTitle>
+            <CardDescription>
+              Lees onze privacy policy en algemene voorwaarden
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Link to="/privacy" target="_blank">
+              <Button variant="outline" className="w-full justify-start">
+                Privacy Beleid
+              </Button>
+            </Link>
+            <Link to="/terms" target="_blank">
+              <Button variant="outline" className="w-full justify-start">
+                Algemene Voorwaarden
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

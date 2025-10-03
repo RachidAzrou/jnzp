@@ -1,22 +1,13 @@
-import { FolderOpen, AlertTriangle, FileX, Clock, Plane, MapPin, CheckSquare } from "lucide-react";
-import { KPICard } from "@/components/KPICard";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Plane, MapPin, FileText } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
 import { nl, fr, enUS } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -33,8 +24,8 @@ const Dashboard = () => {
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    return t(`status.${status}`) || status.replace(/_/g, " ");
+  const getCurrentDate = () => {
+    return format(new Date(), "EEEE, MMM yyyy", { locale: getDateLocale() });
   };
 
   useEffect(() => {
@@ -61,53 +52,31 @@ const Dashboard = () => {
   const activeDossiers = dossiers.filter(d => 
     !['ARCHIVED', 'IN_TRANSIT'].includes(d.status)
   ).length;
-
-  const legalHold = dossiers.filter(d => d.legal_hold).length;
   
   const repatriationDossiers = dossiers.filter(d => d.flow === 'REP').length;
   const localDossiers = dossiers.filter(d => d.flow === 'LOC').length;
 
-  const getTaskDescription = (status: string, legalHold: boolean) => {
-    if (legalHold) return t("tasks.awaitParkingRelease");
-    const taskKey = `tasks.${status.toLowerCase().replace(/_/g, '')}`;
-    return t(taskKey, { defaultValue: t("tasks.performTask") });
+  // Prepare pie chart data
+  const pieData = [
+    { name: 'Total', value: activeDossiers, color: 'hsl(var(--muted))' },
+    { name: 'Assigned', value: Math.floor(activeDossiers * 0.35), color: 'hsl(var(--primary))' }
+  ];
+
+  // Prepare bar chart data (mock data for weekly completed files)
+  const barData = [
+    { name: '01 Nov', value: 5 },
+    { name: '02 Nov', value: 9 },
+    { name: '03 Nov', value: 8 },
+    { name: '04 Nov', value: 6 },
+    { name: '05 Nov', value: 10 },
+    { name: '06 Nov', value: 8 },
+    { name: '07 Nov', value: 11 },
+    { name: '08 Nov', value: 9 },
+  ];
+
+  const formatEventDate = (timestamp: string) => {
+    return format(new Date(timestamp), "dd/MM/yy", { locale: getDateLocale() });
   };
-
-  const getTaskUrgency = (status: string, legalHold: boolean) => {
-    if (legalHold) return t("status.high");
-    if (["DOCS_PENDING", "FD_ASSIGNED"].includes(status)) return t("status.high");
-    if (["PLANNING", "READY_FOR_TRANSPORT"].includes(status)) return t("status.normal");
-    return t("status.low");
-  };
-
-
-  const getTaskAction = (status: string, dossierId: string) => {
-    if (["DOCS_PENDING"].includes(status)) {
-      return () => navigate(`/documenten?filter=missing`);
-    }
-    if (["PLANNING"].includes(status)) {
-      return () => navigate(`/planning`);
-    }
-    return () => navigate(`/dossiers`);
-  };
-
-  const formatEventTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' });
-  };
-
-  const formatRelativeTime = (timestamp: string) => {
-    try {
-      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: getDateLocale() });
-    } catch {
-      return formatEventTime(timestamp);
-    }
-  };
-
-  // Get urgent/today tasks (legal hold + docs pending + planning)
-  const urgentTasks = dossiers.filter(d => 
-    d.legal_hold || ["DOCS_PENDING", "FD_ASSIGNED", "PLANNING"].includes(d.status)
-  ).slice(0, 4);
 
   if (loading) {
     return (
@@ -121,350 +90,154 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="space-y-8 p-8 max-w-[1600px] mx-auto">
-        <div className="space-y-3">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+    <div className="min-h-screen bg-background">
+      <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
+        {/* Welcome Header */}
+        <div className="space-y-1">
+          <p className="text-sm text-muted-foreground">{getCurrentDate()}</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold">
             {t("dashboard.title")}
           </h1>
-          <p className="text-muted-foreground text-lg">{t("dashboard.overview")}</p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 auto-rows-fr">
-          <div onClick={() => navigate('/dossiers')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
-            <KPICard
-              title={t("dashboard.runningDossiers")}
-              value={activeDossiers}
-              icon={FolderOpen}
-            />
-          </div>
-          <div onClick={() => navigate('/dossiers?status=LEGAL_HOLD')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
-            <KPICard
-              title={t("dashboard.legalHold")}
-              value={legalHold}
-              icon={AlertTriangle}
-            />
-          </div>
-          <div onClick={() => navigate('/documenten?filter=missing')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
-            <KPICard
-              title={t("dashboard.missingDocuments")}
-              value={5}
-              icon={FileX}
-            />
-          </div>
-          <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
-            <KPICard
-              title={t("dashboard.repatriation")}
-              value={repatriationDossiers}
-              icon={Plane}
-            />
-          </div>
-          <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
-            <KPICard
-              title={t("dashboard.local")}
-              value={localDossiers}
-              icon={MapPin}
-            />
-          </div>
-        </div>
-
+        {/* Charts Section */}
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-          {/* Actieve dossiers */}
-          <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-4 sm:pb-5">
-              <div>
-                <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl font-semibold">
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-primary/15 shadow-sm">
-                    <FolderOpen className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                  </div>
-                  <span className="truncate">{t("dashboard.activeDossiers")}</span>
-                </CardTitle>
-                <CardDescription className="mt-2 sm:mt-2.5 text-sm sm:text-base">{t("dashboard.dossiersRequiringAttention")}</CardDescription>
-              </div>
+          {/* Files Overview - Pie Chart */}
+          <Card className="border-border/40">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-base font-medium">
+                Files Overview
+              </CardTitle>
+              <button className="text-xs text-muted-foreground hover:text-foreground">
+                01 Nov - 30 Nov
+              </button>
             </CardHeader>
-            <CardContent className="pt-8">
-              {/* Mobile card view */}
-              <div className="md:hidden space-y-4">
-                {dossiers.slice(0, 5).map((dossier) => (
-                  <div key={dossier.id} className="p-4 border rounded-lg bg-muted/30 space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-mono text-sm font-medium">{dossier.display_id || dossier.ref_number}</p>
-                        <p className="text-base font-semibold mt-1 truncate">{dossier.deceased_name}</p>
-                      </div>
-                      {dossier.flow !== "UNSET" && (
-                        <Badge variant="outline" className="gap-1 flex-shrink-0">
-                          {dossier.flow === "REP" ? <Plane className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
-                          {dossier.flow}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge 
-                        variant={dossier.legal_hold ? "destructive" : "default"}
-                        className={`text-xs ${!dossier.legal_hold ? "bg-primary/10 text-primary border-primary/20" : ""}`}
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-center gap-8">
+                <div className="relative">
+                  <ResponsiveContainer width={200} height={200}>
+                    <PieChart>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
                       >
-                        {getStatusLabel(dossier.status)}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {formatRelativeTime(dossier.updated_at)}
+                        {pieData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="space-y-4">
+                  <div className="cursor-pointer" onClick={() => navigate('/dossiers')}>
+                    <p className="text-3xl font-bold">{activeDossiers}</p>
+                    <p className="text-sm text-muted-foreground">Total files</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-sm bg-primary"></div>
+                    <div>
+                      <p className="text-xl font-semibold">{pieData[1].value}</p>
+                      <p className="text-sm text-muted-foreground">Assigned files</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Completed Files - Bar Chart */}
+          <Card className="border-border/40">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-base font-medium">
+                Completed Files
+              </CardTitle>
+              <button className="text-xs text-muted-foreground hover:text-foreground">
+                01 Nov - 30 Nov
+              </button>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="mb-4 flex gap-4 text-xs border-b">
+                <button className="pb-2 border-b-2 border-foreground font-medium">This week</button>
+                <button className="pb-2 text-muted-foreground hover:text-foreground">This month</button>
+                <button className="pb-2 text-muted-foreground hover:text-foreground">Today</button>
+              </div>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={barData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* My Recent Completed Files */}
+        <Card className="border-border/40">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base font-medium">
+              My Recent Completed Files
+            </CardTitle>
+            <Button 
+              onClick={() => navigate('/dossiers')}
+              size="sm"
+              className="bg-primary hover:bg-primary/90"
+            >
+              Manage All Tasks
+            </Button>
+          </CardHeader>
+          <CardContent className="pt-2">
+            <div className="space-y-2">
+              {dossiers.slice(0, 5).map((dossier, index) => (
+                <div
+                  key={dossier.id}
+                  className={`flex items-center justify-between p-4 rounded-lg ${
+                    index % 2 === 0 ? 'bg-muted/30' : 'bg-transparent'
+                  }`}
+                >
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <FileText className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <span className="font-mono text-sm font-medium whitespace-nowrap">
+                        {dossier.display_id || dossier.ref_number}
+                      </span>
+                      <span className="text-sm truncate">
+                        {dossier.deceased_name}
+                      </span>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
+                        date: {formatEventDate(dossier.updated_at)}
                       </span>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigate(`/dossiers/${dossier.id}`)}
-                      className="w-full hover:bg-primary hover:text-primary-foreground"
-                    >
-                      {t("dossiers.open")}
-                    </Button>
                   </div>
-                ))}
-              </div>
-
-              {/* Desktop table view */}
-              <div className="hidden md:block overflow-x-auto -mx-8 px-8">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.dossier")}</TableHead>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.flow")}</TableHead>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.name")}</TableHead>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.status")}</TableHead>
-                    <TableHead className="whitespace-nowrap hidden lg:table-cell">{t("dossiers.update")}</TableHead>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.action")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {dossiers.slice(0, 5).map((dossier) => (
-                    <TableRow key={dossier.id}>
-                      <TableCell className="font-medium font-mono text-sm whitespace-nowrap">
-                        {dossier.display_id || dossier.ref_number}
-                      </TableCell>
-                      <TableCell>
-                        {dossier.flow === "REP" && (
-                          <Badge variant="outline" className="gap-1 whitespace-nowrap">
-                            <Plane className="h-3 w-3" />
-                            REP
-                          </Badge>
-                        )}
-                        {dossier.flow === "LOC" && (
-                          <Badge variant="outline" className="gap-1 whitespace-nowrap">
-                            <MapPin className="h-3 w-3" />
-                            LOC
-                          </Badge>
-                        )}
-                        {dossier.flow === "UNSET" && (
-                          <Badge variant="secondary">-</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="max-w-[200px] truncate">{dossier.deceased_name}</TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant={dossier.legal_hold ? "destructive" : "default"}
-                          className={`min-w-[120px] justify-center ${
-                            !dossier.legal_hold ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
-                          }`}
-                        >
-                          <span className="truncate">{getStatusLabel(dossier.status)}</span>
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground hidden lg:table-cell whitespace-nowrap">
-                        {formatRelativeTime(dossier.updated_at)}
-                      </TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => navigate(`/dossiers/${dossier.id}`)}
-                          className="hover:bg-primary hover:text-primary-foreground transition-colors whitespace-nowrap"
-                        >
-                          {t("dossiers.open")}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              </div>
-          </CardContent>
-        </Card>
-
-          {/* Mijn openstaande taken */}
-          <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-4 sm:pb-5">
-              <div>
-                <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl font-semibold">
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-primary/15 shadow-sm">
-                    <CheckSquare className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                  </div>
-                  <span className="truncate">{t("dashboard.myOpenTasks")}</span>
-                </CardTitle>
-                <CardDescription className="mt-2 sm:mt-2.5 text-sm sm:text-base">{t("dashboard.tasksToday")}</CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-8">
-              {/* Mobile card view */}
-              <div className="md:hidden space-y-4">
-                {urgentTasks.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8 text-sm">
-                    {t("dashboard.noUrgentTasks")}
-                  </p>
-                ) : (
-                  urgentTasks.map((task) => {
-                    const urgency = getTaskUrgency(task.status, task.legal_hold);
-                    const taskDesc = getTaskDescription(task.status, task.legal_hold);
-                    const action = getTaskAction(task.status, task.id);
-
-                    return (
-                      <div key={task.id} className="p-4 border rounded-lg bg-muted/30 space-y-3">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-mono text-sm font-medium">{task.display_id || task.ref_number}</p>
-                            <p className="text-sm text-muted-foreground mt-1">{taskDesc}</p>
-                          </div>
-                          <Badge 
-                            variant={
-                              urgency === "Hoog" ? "destructive" : 
-                              urgency === "Normaal" ? "default" : 
-                              "secondary"
-                            }
-                            className={`text-xs flex-shrink-0 ${
-                              urgency !== "Hoog" ? "bg-primary/10 text-primary border-primary/20" : ""
-                            }`}
-                          >
-                            {urgency}
-                          </Badge>
-                        </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={action}
-                          className="w-full hover:bg-primary hover:text-primary-foreground"
-                        >
-                          {task.status === "DOCS_PENDING" ? t("tasks.toDocuments") :
-                           task.status === "PLANNING" ? t("tasks.toPlanning") :
-                           t("tasks.openDossier")}
-                        </Button>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-
-              {/* Desktop table view */}
-              <div className="hidden md:block overflow-x-auto -mx-8 px-8">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.dossier")}</TableHead>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.task")}</TableHead>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.urgency")}</TableHead>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.action")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {urgentTasks.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                        {t("dashboard.noUrgentTasks")}
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    urgentTasks.map((task) => {
-                      const urgency = getTaskUrgency(task.status, task.legal_hold);
-                      const taskDesc = getTaskDescription(task.status, task.legal_hold);
-                      const action = getTaskAction(task.status, task.id);
-
-                      return (
-                        <TableRow key={task.id}>
-                          <TableCell className="font-medium font-mono text-sm whitespace-nowrap">
-                            {task.display_id || task.ref_number}
-                          </TableCell>
-                          <TableCell className="text-sm max-w-[200px] truncate">
-                            {taskDesc}
-                          </TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant={
-                                urgency === "Hoog" ? "destructive" : 
-                                urgency === "Normaal" ? "default" : 
-                                "secondary"
-                              }
-                              className={`min-w-[120px] justify-center ${
-                                urgency !== "Hoog" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
-                              }`}
-                            >
-                              <span className="truncate">{urgency}</span>
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={action}
-                              className="hover:bg-primary hover:text-primary-foreground transition-colors whitespace-nowrap"
-                            >
-                              {task.status === "DOCS_PENDING" ? t("tasks.toDocuments") :
-                               task.status === "PLANNING" ? t("tasks.toPlanning") :
-                               t("tasks.openDossier")}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
-                  )}
-                </TableBody>
-              </Table>
-              </div>
-          </CardContent>
-        </Card>
-      </div>
-
-        {/* Recent bijgewerkt */}
-        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-4 sm:pb-5">
-            <div>
-              <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl font-semibold">
-                <div className="p-2 sm:p-2.5 rounded-xl bg-primary/15 shadow-sm">
-                  <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/dossiers/${dossier.id}`)}
+                    className="ml-4"
+                  >
+                    View
+                  </Button>
                 </div>
-                <span className="truncate">{t("dashboard.recentlyUpdated")}</span>
-              </CardTitle>
-              <CardDescription className="mt-2 sm:mt-2.5 text-sm sm:text-base">{t("dashboard.lastActivities")}</CardDescription>
+              ))}
             </div>
-          </CardHeader>
-          <CardContent className="pt-8">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-20">{t("dossiers.time")}</TableHead>
-                <TableHead className="w-24">{t("dossiers.dossier")}</TableHead>
-                <TableHead>{t("dossiers.event")}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {auditEvents.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                    {t("dashboard.noRecentActivities")}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                auditEvents.map((event) => (
-                  <TableRow key={event.id} className="cursor-pointer hover:bg-muted/50">
-                    <TableCell className="text-xs text-muted-foreground">
-                      {formatEventTime(event.created_at)}
-                    </TableCell>
-                    <TableCell className="font-medium font-mono text-sm">
-                      {event.dossiers?.display_id || event.dossiers?.ref_number || 'N/A'}
-                    </TableCell>
-                    <TableCell className="text-sm">{event.description}</TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
           </CardContent>
         </Card>
       </div>

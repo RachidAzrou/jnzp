@@ -23,6 +23,7 @@ type Reservation = {
   end_at: string;
   dossier_id: string;
   cool_cell_id: string | null;
+  status: string;
 };
 
 type DayBlock = {
@@ -41,13 +42,15 @@ type WeekViewProps = {
 const getStatusColor = (status: string) => {
   switch (status) {
     case "FREE":
-      return "bg-success/20 hover:bg-success/30 border-success cursor-default";
-    case "RESERVED":
-      return "bg-warning/20 hover:bg-warning/30 border-warning cursor-pointer";
+      return "bg-success/30 hover:bg-success/40 border-success/50 cursor-default";
+    case "PENDING":
+      return "bg-warning/30 hover:bg-warning/40 border-warning/50 cursor-pointer";
+    case "CONFIRMED":
+      return "bg-blue-500/30 hover:bg-blue-500/40 border-blue-500/50 cursor-pointer";
     case "OCCUPIED":
-      return "bg-destructive/20 hover:bg-destructive/30 border-destructive cursor-pointer";
+      return "bg-destructive/30 hover:bg-destructive/40 border-destructive/50 cursor-pointer";
     case "OUT_OF_SERVICE":
-      return "bg-destructive/40 hover:bg-destructive/50 border-destructive cursor-default";
+      return "bg-destructive/50 hover:bg-destructive/60 border-destructive/70 cursor-default";
     default:
       return "bg-muted hover:bg-muted/80 cursor-default";
   }
@@ -57,8 +60,10 @@ const getStatusLabel = (status: string) => {
   switch (status) {
     case "FREE":
       return "Vrij";
-    case "RESERVED":
-      return "Gereserveerd";
+    case "PENDING":
+      return "In afwachting";
+    case "CONFIRMED":
+      return "Bevestigd";
     case "OCCUPIED":
       return "Bezet";
     case "OUT_OF_SERVICE":
@@ -90,13 +95,13 @@ export function WasplaatsWeekView({
     const dayStr = format(day, "yyyy-MM-dd");
     const cell = coolCells.find((c) => c.id === cellId);
     
-    if (!cell) return { status: "FREE", reservations: [] };
+    if (!cell) return { status: "FREE", reservations: [], reservation: null };
     
     const isBlocked = dayBlocks.some((b) => b.date === dayStr);
-    if (isBlocked) return { status: "BLOCKED", reservations: [] };
+    if (isBlocked) return { status: "BLOCKED", reservations: [], reservation: null };
     
     if (cell.status === "OUT_OF_SERVICE") {
-      return { status: "OUT_OF_SERVICE", reservations: [] };
+      return { status: "OUT_OF_SERVICE", reservations: [], reservation: null };
     }
 
     const dayReservations = reservations.filter(
@@ -106,10 +111,16 @@ export function WasplaatsWeekView({
     );
 
     if (dayReservations.length > 0) {
-      return { status: "RESERVED", reservations: dayReservations };
+      // Use the status from the reservation itself
+      const firstReservation = dayReservations[0];
+      return { 
+        status: firstReservation.status, 
+        reservations: dayReservations,
+        reservation: firstReservation 
+      };
     }
 
-    return { status: cell.status, reservations: [] };
+    return { status: "FREE", reservations: [], reservation: null };
   };
 
   return (
@@ -167,7 +178,7 @@ export function WasplaatsWeekView({
                   <td className="border p-2 font-medium">{cell.label}</td>
                   {weekDays.map((day) => {
                     const dayStr = format(day, "yyyy-MM-dd");
-                    const { status, reservations: dayReservations } =
+                    const { status, reservations: dayReservations, reservation } =
                       getCellStatusForDay(cell.id, day);
 
                     return (
@@ -177,8 +188,8 @@ export function WasplaatsWeekView({
                           status
                         )}`}
                         onClick={() => {
-                          if (dayReservations.length > 0) {
-                            handleReservationClick(dayReservations[0].id);
+                          if (reservation) {
+                            handleReservationClick(reservation.id);
                           }
                         }}
                       >
@@ -188,15 +199,15 @@ export function WasplaatsWeekView({
                               Geblokkeerd
                             </Badge>
                           </div>
-                        ) : dayReservations.length > 0 ? (
+                        ) : reservation ? (
                           <div className="text-center">
                             <Badge variant="outline" className="text-xs">
-                              {dayReservations.length}x
+                              {getStatusLabel(status)}
                             </Badge>
                             <p className="text-xs mt-1">
-                              {format(new Date(dayReservations[0].start_at), "HH:mm")}
+                              {format(new Date(reservation.start_at), "HH:mm")}
                               -
-                              {format(new Date(dayReservations[0].end_at), "HH:mm")}
+                              {format(new Date(reservation.end_at), "HH:mm")}
                             </p>
                           </div>
                         ) : (

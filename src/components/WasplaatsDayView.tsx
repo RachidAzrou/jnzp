@@ -44,7 +44,7 @@ const getStatusColor = (status: string) => {
     case "PENDING":
       return "bg-warning/80 border-warning text-warning-foreground";
     case "CONFIRMED":
-      return "bg-success/80 border-success text-success-foreground";
+      return "bg-blue-500/80 border-blue-500 text-white";
     case "OCCUPIED":
       return "bg-destructive/80 border-destructive text-destructive-foreground";
     default:
@@ -169,11 +169,15 @@ export function WasplaatsDayView({
             {/* Legend */}
             <div className="mt-6 flex gap-4 justify-center flex-wrap">
               <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded bg-success/30 border border-success/50" />
+                <span className="text-xs">Vrij</span>
+              </div>
+              <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded bg-warning/80 border border-warning" />
                 <span className="text-xs">In afwachting</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-success/80 border border-success" />
+                <div className="w-4 h-4 rounded bg-blue-500/80 border border-blue-500" />
                 <span className="text-xs">Bevestigd</span>
               </div>
               <div className="flex items-center gap-2">
@@ -181,8 +185,8 @@ export function WasplaatsDayView({
                 <span className="text-xs">Bezet</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-muted/30 border" />
-                <span className="text-xs">Vrij</span>
+                <div className="w-4 h-4 rounded bg-destructive/50 border border-destructive/70" />
+                <span className="text-xs">Buiten dienst</span>
               </div>
             </div>
           </div>

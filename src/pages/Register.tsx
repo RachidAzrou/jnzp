@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { MdOutlineMosque } from "react-icons/md";
+import { PiMosque } from "react-icons/pi";
 import { LuHandshake } from "react-icons/lu";
 import { RiHandHeartLine } from "react-icons/ri";
 import { IoBusiness } from "react-icons/io5";
@@ -182,7 +182,7 @@ const Register = () => {
     switch (role) {
       case "family": return <Users className="h-5 w-5" />;
       case "funeral_director": return <LuHandshake className="h-5 w-5" />;
-      case "mosque": return <MdOutlineMosque className="h-5 w-5" />;
+      case "mosque": return <PiMosque className="h-5 w-5" />;
       case "wasplaats": return <RiHandHeartLine className="h-5 w-5" />;
       case "insurer": return <IoBusiness className="h-5 w-5" />;
     }

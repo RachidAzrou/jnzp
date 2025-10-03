@@ -10,7 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Calendar, Plane, Plus, Search } from "lucide-react";
-import { MdOutlineShower, MdOutlineMosque } from "react-icons/md";
+import { MdOutlineShower } from "react-icons/md";
+import { PiMosque } from "react-icons/pi";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -217,7 +218,7 @@ const Planning = () => {
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                   <div className="p-2 rounded-lg bg-primary/10">
-                    <MdOutlineMosque className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                    <PiMosque className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                   </div>
                   Moskee Planning
                 </CardTitle>
@@ -233,7 +234,7 @@ const Planning = () => {
           <CardContent>
             {filteredMosqueServices.length === 0 ? (
               <EmptyState
-                icon={MdOutlineMosque}
+                icon={PiMosque}
                 title="Geen moskee ceremonies"
                 description="Er zijn momenteel geen moskee ceremonies gepland. Klik op 'Nieuwe moskee afspraak' om de eerste te plannen."
                 action={{

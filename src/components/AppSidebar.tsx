@@ -1,5 +1,5 @@
 import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity } from "lucide-react";
-import { MdOutlineMosque } from "react-icons/md";
+import { PiMosque } from "react-icons/pi";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -49,7 +49,7 @@ const menuItems: MenuItem[] = [
   
   // Mosque
   { title: "Aanvragen", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
-  { title: "Beschikbaarheid", url: "/moskee/beschikbaarheid", icon: MdOutlineMosque, roles: ['mosque'] },
+  { title: "Beschikbaarheid", url: "/moskee/beschikbaarheid", icon: PiMosque, roles: ['mosque'] },
   
   // Family
   { title: "Dashboard", url: "/familie", icon: LayoutDashboard, roles: ['family'] },

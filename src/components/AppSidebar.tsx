@@ -1,4 +1,4 @@
-import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity } from "lucide-react";
+import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, UserPlus } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { NavLink } from "react-router-dom";
 import {
@@ -25,9 +25,13 @@ const menuItems: MenuItem[] = [
   // Platform Admin
   { title: "Admin Dashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin', 'org_admin', 'reviewer', 'support'] },
   { title: "Directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin', 'org_admin'] },
+  { title: "Organisaties", url: "/admin/organizations", icon: Building2, roles: ['platform_admin', 'admin'] },
   { title: "Gebruikers", url: "/admin/users", icon: Users, roles: ['platform_admin', 'org_admin'] },
   { title: "Integraties", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
   { title: "Audit Log", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'support'] },
+  
+  // Org Admin
+  { title: "Team Beheer", url: "/team", icon: UserPlus, roles: ['org_admin', 'admin', 'platform_admin'] },
   
   // FD & Admin
   { title: "Dashboard", url: "/", icon: Home, roles: ['admin', 'funeral_director'] },

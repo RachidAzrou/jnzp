@@ -40,6 +40,8 @@ import InsurerInvoices from "./pages/InsurerInvoices";
 import InsurerRapportage from "./pages/InsurerRapportage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminDirectory from "./pages/AdminDirectory";
+import AdminOrganizations from "./pages/AdminOrganizations";
+import TeamManagement from "./pages/TeamManagement";
 import Auth from "./pages/Auth";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
@@ -292,6 +294,11 @@ const App = () => (
                               <AdminDirectory />
                             </RoleProtectedRoute>
                           } />
+                          <Route path="/admin/organizations" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminOrganizations />
+                            </RoleProtectedRoute>
+                          } />
                           <Route path="/admin/dossiers" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
                               <Dossiers />
@@ -318,6 +325,11 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />
+                          <Route path="/team" element={
+                            <RoleProtectedRoute allowedRoles={['org_admin', 'admin', 'platform_admin']}>
+                              <TeamManagement />
+                            </RoleProtectedRoute>
+                          } />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </main>

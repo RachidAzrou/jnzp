@@ -13,6 +13,8 @@ import { SimpleCaptcha } from "@/components/SimpleCaptcha";
 import { validatePassword, getPasswordRequirements } from "@/utils/passwordValidation";
 import { checkRateLimit, getLoginDelay, formatRetryAfter } from "@/utils/rateLimit";
 import { checkDeviceTrust } from "@/utils/deviceTrust";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import logoAuth from "@/assets/logo-vertical-new.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
@@ -22,6 +24,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -770,6 +773,9 @@ const Auth = () => {
       
       <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/95 shadow-2xl border-border/50">
         <CardHeader className="text-center space-y-6 pb-8">
+          <div className="flex justify-end mb-2">
+            <LanguageSwitcher />
+          </div>
           <div className="flex justify-center">
             <img 
               src={logoAuth} 
@@ -778,6 +784,7 @@ const Auth = () => {
             />
           </div>
           <div className="space-y-2">
+            <CardTitle className="text-3xl font-bold">{t("auth.welcome")}</CardTitle>
             <CardDescription className="text-base">
               Centraal platform voor uitvaartzorg
             </CardDescription>
@@ -787,7 +794,7 @@ const Auth = () => {
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="login-email" className="text-sm font-medium">
-                E-mailadres
+                {t("auth.email")}
               </Label>
               <Input
                 id="login-email"
@@ -801,7 +808,7 @@ const Auth = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="login-password" className="text-sm font-medium">
-                Wachtwoord
+                {t("auth.password")}
               </Label>
               <Input
                 id="login-password"
@@ -820,10 +827,10 @@ const Auth = () => {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Bezig met inloggen...
+                  {t("auth.loggingIn")}
                 </>
               ) : (
-                "Inloggen"
+                t("auth.signIn")
               )}
             </Button>
 
@@ -834,7 +841,7 @@ const Auth = () => {
                 className="w-full text-sm text-primary"
                 onClick={() => setShowResetDialog(true)}
               >
-                Wachtwoord vergeten?
+                {t("auth.forgotPassword")}
               </Button>
               
               <div className="relative">
@@ -842,7 +849,7 @@ const Auth = () => {
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">Of</span>
+                  <span className="bg-card px-2 text-muted-foreground">{t("auth.or")}</span>
                 </div>
             </div>
 
@@ -865,7 +872,7 @@ const Auth = () => {
                 className="w-full"
                 onClick={() => navigate("/register")}
               >
-                Registreer hier
+                {t("auth.noAccount")} {t("auth.signUp")}
               </Button>
             </div>
           </form>
@@ -876,14 +883,14 @@ const Auth = () => {
       <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Wachtwoord herstellen</DialogTitle>
+            <DialogTitle>{t("auth.forgotPassword")}</DialogTitle>
             <DialogDescription>
               Voer uw e-mailadres in. Als dit e-mailadres bij ons bekend is, ontvangt u een herstel-link.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handlePasswordReset} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="reset-email">E-mailadres</Label>
+              <Label htmlFor="reset-email">{t("auth.email")}</Label>
               <Input
                 id="reset-email"
                 type="email"
@@ -903,13 +910,13 @@ const Auth = () => {
                   setResetEmail("");
                 }}
               >
-                Annuleren
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={resetLoading}>
                 {resetLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Bezig...
+                    {t("common.loading")}
                   </>
                 ) : (
                   "Verstuur reset-link"

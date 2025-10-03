@@ -1,0 +1,86 @@
+{
+  "auth": {
+    "welcome": "Bienvenue sur JanazApp",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "forgotPassword": "Mot de passe oublié?",
+    "noAccount": "Pas encore de compte?",
+    "hasAccount": "Vous avez déjà un compte?",
+    "signIn": "Se connecter",
+    "signUp": "Créer un compte",
+    "or": "ou",
+    "continueWithGoogle": "Continuer avec Google",
+    "loggingIn": "Connexion en cours...",
+    "creatingAccount": "Création du compte...",
+    "passwordRequirements": "Exigences du mot de passe",
+    "minLength": "Au moins 12 caractères",
+    "uppercase": "Au moins 1 majuscule",
+    "lowercase": "Au moins 1 minuscule",
+    "number": "Au moins 1 chiffre",
+    "special": "Au moins 1 caractère spécial"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour",
+    "activeDossiers": "Dossiers Actifs",
+    "openTasks": "Tâches Ouvertes",
+    "recentActivity": "Activité Récente"
+  },
+  "dossiers": {
+    "title": "Dossiers",
+    "newDossier": "Nouveau Dossier",
+    "displayId": "ID Dossier",
+    "deceasedName": "Nom du Défunt",
+    "status": "Statut",
+    "flow": "Flux",
+    "createdAt": "Créé le",
+    "actions": "Actions",
+    "view": "Voir",
+    "edit": "Modifier"
+  },
+  "status": {
+    "CREATED": "Créé",
+    "INTAKE_PENDING": "Admission en Cours",
+    "INTAKE_COMPLETE": "Admission Complète",
+    "PLANNED": "Planifié",
+    "IN_PROGRESS": "En Cours",
+    "COMPLETED": "Terminé",
+    "ARCHIVED": "Archivé"
+  },
+  "flow": {
+    "LOC": "Local",
+    "REP": "Rapatriement",
+    "UNSET": "Non Défini"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "success": "Succès",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "dossiers": "Dossiers",
+    "planning": "Planification",
+    "documents": "Documents",
+    "invoices": "Facturation",
+    "settings": "Paramètres",
+    "team": "Équipe",
+    "logout": "Se déconnecter"
+  }
+}

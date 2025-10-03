@@ -1,0 +1,86 @@
+{
+  "auth": {
+    "welcome": "Welcome to JanazApp",
+    "login": "Login",
+    "register": "Register",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account yet?",
+    "hasAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "loggingIn": "Logging in...",
+    "creatingAccount": "Creating account...",
+    "passwordRequirements": "Password requirements",
+    "minLength": "At least 12 characters",
+    "uppercase": "At least 1 uppercase letter",
+    "lowercase": "At least 1 lowercase letter",
+    "number": "At least 1 number",
+    "special": "At least 1 special character"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "activeDossiers": "Active Dossiers",
+    "openTasks": "Open Tasks",
+    "recentActivity": "Recent Activity"
+  },
+  "dossiers": {
+    "title": "Dossiers",
+    "newDossier": "New Dossier",
+    "displayId": "Dossier ID",
+    "deceasedName": "Deceased Name",
+    "status": "Status",
+    "flow": "Flow",
+    "createdAt": "Created at",
+    "actions": "Actions",
+    "view": "View",
+    "edit": "Edit"
+  },
+  "status": {
+    "CREATED": "Created",
+    "INTAKE_PENDING": "Intake Pending",
+    "INTAKE_COMPLETE": "Intake Complete",
+    "PLANNED": "Planned",
+    "IN_PROGRESS": "In Progress",
+    "COMPLETED": "Completed",
+    "ARCHIVED": "Archived"
+  },
+  "flow": {
+    "LOC": "Local",
+    "REP": "Repatriation",
+    "UNSET": "Not Set"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "dossiers": "Dossiers",
+    "planning": "Planning",
+    "documents": "Documents",
+    "invoices": "Invoicing",
+    "settings": "Settings",
+    "team": "Team",
+    "logout": "Logout"
+  }
+}

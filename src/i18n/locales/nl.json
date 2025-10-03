@@ -1,0 +1,86 @@
+{
+  "auth": {
+    "welcome": "Welkom bij JanazApp",
+    "login": "Inloggen",
+    "register": "Registreren",
+    "email": "E-mailadres",
+    "password": "Wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "firstName": "Voornaam",
+    "lastName": "Achternaam",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "noAccount": "Nog geen account?",
+    "hasAccount": "Heeft u al een account?",
+    "signIn": "Aanmelden",
+    "signUp": "Account aanmaken",
+    "or": "of",
+    "continueWithGoogle": "Doorgaan met Google",
+    "loggingIn": "Inloggen...",
+    "creatingAccount": "Account aanmaken...",
+    "passwordRequirements": "Wachtwoordvereisten",
+    "minLength": "Minimaal 12 tekens",
+    "uppercase": "Minimaal 1 hoofdletter",
+    "lowercase": "Minimaal 1 kleine letter",
+    "number": "Minimaal 1 cijfer",
+    "special": "Minimaal 1 speciaal teken"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welkom terug",
+    "activeDossiers": "Actieve Dossiers",
+    "openTasks": "Openstaande Taken",
+    "recentActivity": "Recente Activiteit"
+  },
+  "dossiers": {
+    "title": "Dossiers",
+    "newDossier": "Nieuw Dossier",
+    "displayId": "Dossier ID",
+    "deceasedName": "Naam Overledene",
+    "status": "Status",
+    "flow": "Flow",
+    "createdAt": "Aangemaakt op",
+    "actions": "Acties",
+    "view": "Bekijken",
+    "edit": "Bewerken"
+  },
+  "status": {
+    "CREATED": "Aangemaakt",
+    "INTAKE_PENDING": "Intake Lopend",
+    "INTAKE_COMPLETE": "Intake Compleet",
+    "PLANNED": "Gepland",
+    "IN_PROGRESS": "In Behandeling",
+    "COMPLETED": "Voltooid",
+    "ARCHIVED": "Gearchiveerd"
+  },
+  "flow": {
+    "LOC": "Lokaal",
+    "REP": "Repatriëring",
+    "UNSET": "Niet Ingesteld"
+  },
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "close": "Sluiten",
+    "confirm": "Bevestigen",
+    "search": "Zoeken",
+    "filter": "Filteren",
+    "export": "Exporteren",
+    "loading": "Laden...",
+    "error": "Er is een fout opgetreden",
+    "success": "Succesvol",
+    "yes": "Ja",
+    "no": "Nee"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "dossiers": "Dossiers",
+    "planning": "Planning",
+    "documents": "Documenten",
+    "invoices": "Facturatie",
+    "settings": "Instellingen",
+    "team": "Team",
+    "logout": "Uitloggen"
+  }
+}

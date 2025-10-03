@@ -45,6 +45,7 @@ import AdminOrganizations from "./pages/AdminOrganizations";
 import TeamManagement from "./pages/TeamManagement";
 import Auth from "./pages/Auth";
 import Register from "./pages/Register";
+import QRScan from "./pages/QRScan";
 import NotFound from "./pages/NotFound";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
 
@@ -151,6 +152,7 @@ const App = () => (
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/qr-scan/:token" element={<QRScan />} />
           <Route
             path="/*"
             element={

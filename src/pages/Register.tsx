@@ -13,12 +13,14 @@ import { RiHandHeartLine } from "react-icons/ri";
 import { IoBusiness } from "react-icons/io5";
 import { Users } from "lucide-react";
 import logoAuth from "@/assets/logo-icon-new.png";
+import { useTranslation } from "react-i18next";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
 type DetailsSubStep = "organization" | "contact";
 
 const Register = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
@@ -56,8 +58,8 @@ const Register = () => {
             const result = data as any;
             if (result.success) {
               toast({
-                title: 'Uitnodiging geaccepteerd',
-                description: 'U bent toegevoegd aan de organisatie',
+                title: t('register.invitationAccepted'),
+                description: t('register.invitationAcceptedDescription'),
               });
               navigate('/');
             }
@@ -105,14 +107,14 @@ const Register = () => {
       }
 
       toast({
-        title: "Account aangemaakt",
-        description: "Controleer uw e-mail voor verificatie. U kunt daarna inloggen.",
+        title: t('auth.accountCreated'),
+        description: t('auth.checkEmail'),
       });
 
       navigate("/auth");
     } catch (error: any) {
       toast({
-        title: "Registratie mislukt",
+        title: t('register.registrationFailed'),
         description: error.message,
         variant: "destructive",
       });
@@ -183,14 +185,14 @@ const Register = () => {
       }
 
       toast({
-        title: "Aanvraag ingediend",
-        description: "Uw aanvraag wordt beoordeeld door een administrator. U ontvangt bericht zodra uw account is goedgekeurd.",
+        title: t('register.requestSubmitted'),
+        description: t('register.requestSubmittedDescription'),
       });
 
       navigate("/auth");
     } catch (error: any) {
       toast({
-        title: "Registratie mislukt",
+        title: t('register.registrationFailed'),
         description: error.message,
         variant: "destructive",
       });
@@ -211,11 +213,11 @@ const Register = () => {
 
   const getRoleLabel = (role: UserRole) => {
     switch (role) {
-      case "family": return "Familie/Nabestaande";
-      case "funeral_director": return "Uitvaartondernemer";
-      case "mosque": return "Moskee";
-      case "wasplaats": return "Mortuarium";
-      case "insurer": return "Verzekeraar";
+      case "family": return t('roles.family');
+      case "funeral_director": return t('roles.funeral_director');
+      case "mosque": return t('roles.mosque');
+      case "wasplaats": return t('roles.wasplaats');
+      case "insurer": return t('roles.insurer');
     }
   };
 
@@ -235,9 +237,9 @@ const Register = () => {
             />
           </div>
           <div className="space-y-1">
-            <CardTitle className="text-xl">Registreren bij JanazApp</CardTitle>
+            <CardTitle className="text-xl">{t('register.title')}</CardTitle>
             <CardDescription>
-              Maak een account aan om aan de slag te gaan
+              {t('register.subtitle')}
             </CardDescription>
           </div>
         </CardHeader>
@@ -251,21 +253,21 @@ const Register = () => {
                   <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
                     1
                   </div>
-                  <span className="text-xs font-medium">Kies rol</span>
+                  <span className="text-xs font-medium">{t('register.stepRole')}</span>
                 </div>
                 <div className="w-8 h-0.5 bg-muted"></div>
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-medium">
                     2
                   </div>
-                  <span className="text-xs text-muted-foreground">Gegevens</span>
+                  <span className="text-xs text-muted-foreground">{t('register.stepDetails')}</span>
                 </div>
               </div>
 
               <div className="text-center space-y-1 mb-4">
-                <h3 className="font-semibold text-lg">Welke rol beschrijft u het best?</h3>
+                <h3 className="font-semibold text-lg">{t('register.chooseRole')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Kies de optie die bij uw situatie past
+                  {t('register.chooseRoleSubtitle')}
                 </p>
               </div>
 
@@ -308,14 +310,14 @@ const Register = () => {
                   onClick={() => navigate("/auth")}
                   className="flex-1 h-11"
                 >
-                  Terug
+                  {t('register.back')}
                 </Button>
                 <Button
                   onClick={() => selectedRole && setRegistrationStep("details")}
                   disabled={!selectedRole}
                   className="flex-1 h-11"
                 >
-                  Doorgaan
+                  {t('register.continue')}
                 </Button>
               </div>
             </div>
@@ -328,14 +330,14 @@ const Register = () => {
                     <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
                       ✓
                     </div>
-                    <span className="text-xs font-medium">Rol</span>
+                    <span className="text-xs font-medium">{t('register.stepRole')}</span>
                   </div>
                   <div className="w-8 h-0.5 bg-primary"></div>
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
                       2
                     </div>
-                    <span className="text-xs font-medium">Gegevens</span>
+                    <span className="text-xs font-medium">{t('register.stepDetails')}</span>
                   </div>
                 </div>
               )}
@@ -347,7 +349,7 @@ const Register = () => {
                     <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
                       ✓
                     </div>
-                    <span className="text-[10px] font-medium">Kies Rol</span>
+                    <span className="text-[10px] font-medium">{t('register.stepRole')}</span>
                   </div>
                   <div className="w-6 h-0.5 bg-primary"></div>
                   <div className="flex items-center gap-1.5">
@@ -359,7 +361,7 @@ const Register = () => {
                       {detailsSubStep === "contact" ? "✓" : "2"}
                     </div>
                     <span className={`text-[10px] ${detailsSubStep === "organization" ? "font-medium" : "font-medium"}`}>
-                      Organisatie
+                      {t('register.stepOrganization')}
                     </span>
                   </div>
                   <div className={`w-6 h-0.5 ${detailsSubStep === "contact" ? "bg-primary" : "bg-muted"}`}></div>
@@ -372,7 +374,7 @@ const Register = () => {
                       3
                     </div>
                     <span className={`text-[10px] ${detailsSubStep === "contact" ? "font-medium" : "text-muted-foreground"}`}>
-                      Contact
+                      {t('register.stepContact')}
                     </span>
                   </div>
                 </div>
@@ -382,7 +384,7 @@ const Register = () => {
                 <form onSubmit={handleFamilySignup} className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
-                      <Label htmlFor="first-name" className="text-sm">Voornaam</Label>
+                      <Label htmlFor="first-name" className="text-sm">{t('auth.firstName')}</Label>
                       <Input
                         id="first-name"
                         value={firstName}
@@ -392,7 +394,7 @@ const Register = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="last-name" className="text-sm">Achternaam</Label>
+                      <Label htmlFor="last-name" className="text-sm">{t('auth.lastName')}</Label>
                       <Input
                         id="last-name"
                         value={lastName}
@@ -403,7 +405,7 @@ const Register = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-sm">Telefoonnummer</Label>
+                    <Label htmlFor="phone" className="text-sm">{t('register.phoneNumber')}</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -414,7 +416,7 @@ const Register = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm">E-mailadres</Label>
+                    <Label htmlFor="email" className="text-sm">{t('auth.email')}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -425,7 +427,7 @@ const Register = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm">Wachtwoord</Label>
+                    <Label htmlFor="password" className="text-sm">{t('auth.password')}</Label>
                     <Input
                       id="password"
                       type="password"
@@ -435,11 +437,11 @@ const Register = () => {
                       minLength={12}
                       className="h-10"
                     />
-                    <p className="text-xs text-muted-foreground">Minimaal 12 tekens</p>
+                    <p className="text-xs text-muted-foreground">{t('auth.minLength')}</p>
                   </div>
                   <Button type="submit" className="w-full h-10 mt-4" disabled={loading}>
                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    Maak account aan
+                    {t('register.createAccount')}
                   </Button>
                 </form>
               ) : detailsSubStep === "organization" ? (
@@ -455,7 +457,7 @@ const Register = () => {
                     className="mb-2"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Wijzig rol
+                    {t('register.changeRole')}
                   </Button>
 
                   <div className="text-center pb-3">
@@ -472,11 +474,11 @@ const Register = () => {
                   <div className="space-y-3 p-4 bg-muted/30 rounded-lg border">
                     <h4 className="font-semibold text-sm flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                      Organisatiegegevens
+                      {t('register.organizationDetails')}
                     </h4>
                     <div className="space-y-2.5">
                       <div className="space-y-1.5">
-                        <Label htmlFor="org-name" className="text-sm">Organisatienaam</Label>
+                        <Label htmlFor="org-name" className="text-sm">{t('register.organizationName')}</Label>
                         <Input
                           id="org-name"
                           value={orgName}
@@ -486,18 +488,18 @@ const Register = () => {
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="org-registration" className="text-sm">Ondernemingsnummer</Label>
+                        <Label htmlFor="org-registration" className="text-sm">{t('register.registrationNumber')}</Label>
                         <Input
                           id="org-registration"
                           value={orgRegistrationNumber}
                           onChange={(e) => setOrgRegistrationNumber(e.target.value)}
-                          placeholder="Bv. 0123.456.789"
+                          placeholder={t('register.registrationNumberPlaceholder')}
                           required
                           className="h-10"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="org-address" className="text-sm">Adres</Label>
+                        <Label htmlFor="org-address" className="text-sm">{t('register.address')}</Label>
                         <Input
                           id="org-address"
                           value={orgAddress}
@@ -508,7 +510,7 @@ const Register = () => {
                       </div>
                       <div className="grid grid-cols-2 gap-2.5">
                         <div className="space-y-1.5">
-                          <Label htmlFor="org-city" className="text-sm">Stad</Label>
+                          <Label htmlFor="org-city" className="text-sm">{t('register.city')}</Label>
                           <Input
                             id="org-city"
                             value={orgCity}
@@ -518,7 +520,7 @@ const Register = () => {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <Label htmlFor="org-postal" className="text-sm">Postcode</Label>
+                          <Label htmlFor="org-postal" className="text-sm">{t('register.postalCode')}</Label>
                           <Input
                             id="org-postal"
                             value={orgPostalCode}
@@ -536,7 +538,7 @@ const Register = () => {
                     disabled={!orgName || !orgRegistrationNumber || !orgAddress || !orgCity || !orgPostalCode}
                     className="w-full h-10 mt-4"
                   >
-                    Volgende stap
+                    {t('register.nextStep')}
                   </Button>
                 </div>
               ) : (
@@ -549,7 +551,7 @@ const Register = () => {
                     className="mb-2"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Terug naar organisatie
+                    {t('register.backToOrganization')}
                   </Button>
 
                   <div className="text-center pb-3">
@@ -566,11 +568,11 @@ const Register = () => {
                   <div className="space-y-2.5">
                     <h4 className="font-semibold text-sm flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                      Contactpersoon
+                      {t('register.contactPerson')}
                     </h4>
                     <div className="grid grid-cols-2 gap-2.5">
                       <div className="space-y-1.5">
-                        <Label htmlFor="contact-first" className="text-sm">Voornaam</Label>
+                        <Label htmlFor="contact-first" className="text-sm">{t('auth.firstName')}</Label>
                         <Input
                           id="contact-first"
                           value={firstName}
@@ -580,7 +582,7 @@ const Register = () => {
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="contact-last" className="text-sm">Achternaam</Label>
+                        <Label htmlFor="contact-last" className="text-sm">{t('auth.lastName')}</Label>
                         <Input
                           id="contact-last"
                           value={lastName}
@@ -591,7 +593,7 @@ const Register = () => {
                       </div>
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="contact-phone" className="text-sm">Telefoon</Label>
+                      <Label htmlFor="contact-phone" className="text-sm">{t('register.phone')}</Label>
                       <Input
                         id="contact-phone"
                         type="tel"
@@ -602,7 +604,7 @@ const Register = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="contact-email" className="text-sm">E-mail</Label>
+                      <Label htmlFor="contact-email" className="text-sm">{t('auth.email')}</Label>
                       <Input
                         id="contact-email"
                         type="email"
@@ -613,7 +615,7 @@ const Register = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="contact-password" className="text-sm">Wachtwoord</Label>
+                      <Label htmlFor="contact-password" className="text-sm">{t('auth.password')}</Label>
                       <Input
                         id="contact-password"
                         type="password"
@@ -623,13 +625,13 @@ const Register = () => {
                         minLength={12}
                         className="h-10"
                       />
-                      <p className="text-xs text-muted-foreground">Minimaal 12 tekens</p>
+                      <p className="text-xs text-muted-foreground">{t('auth.minLength')}</p>
                     </div>
                   </div>
 
                   <Button type="submit" className="w-full h-10 mt-4" disabled={loading}>
                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    Dien aanvraag in
+                    {t('register.submitRequest')}
                   </Button>
                 </form>
               )}

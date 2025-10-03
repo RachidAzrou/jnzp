@@ -130,8 +130,8 @@ const Dashboard = () => {
           <p className="text-muted-foreground text-lg">{t("dashboard.overview")}</p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
-          <div onClick={() => navigate('/dossiers')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 auto-rows-fr">
+          <div onClick={() => navigate('/dossiers')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
             <KPICard
               title={t("dashboard.runningDossiers")}
               value={activeDossiers}
@@ -139,7 +139,7 @@ const Dashboard = () => {
               trend={{ value: t("dashboard.clickToOpen"), positive: true }}
             />
           </div>
-          <div onClick={() => navigate('/dossiers?status=LEGAL_HOLD')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+          <div onClick={() => navigate('/dossiers?status=LEGAL_HOLD')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
             <KPICard
               title={t("dashboard.legalHold")}
               value={legalHold}
@@ -147,7 +147,7 @@ const Dashboard = () => {
               trend={{ value: t("dashboard.showDossiers"), positive: false }}
             />
           </div>
-          <div onClick={() => navigate('/documenten?filter=missing')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+          <div onClick={() => navigate('/documenten?filter=missing')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
             <KPICard
               title={t("dashboard.missingDocuments")}
               value={5}
@@ -155,7 +155,7 @@ const Dashboard = () => {
               trend={{ value: t("dashboard.toDocuments"), positive: true }}
             />
           </div>
-          <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+          <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
             <KPICard
               title={t("dashboard.repatriation")}
               value={repatriationDossiers}
@@ -163,7 +163,7 @@ const Dashboard = () => {
               trend={{ value: t("dashboard.filterOnRep"), positive: true }}
             />
           </div>
-          <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+          <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
             <KPICard
               title={t("dashboard.local")}
               value={localDossiers}

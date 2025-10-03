@@ -13,8 +13,8 @@ interface KPICardProps {
 
 export function KPICard({ title, value, icon: Icon, trend }: KPICardProps) {
   return (
-    <Card className="shadow-md border-border/50 hover:shadow-lg transition-shadow overflow-hidden">
-      <CardContent className="pt-8">
+    <Card className="shadow-md border-border/50 hover:shadow-lg transition-shadow overflow-hidden h-full flex flex-col">
+      <CardContent className="pt-8 flex-1 flex items-center">
         <div className="flex items-center justify-between gap-6">
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-muted-foreground truncate mb-2">{title}</p>

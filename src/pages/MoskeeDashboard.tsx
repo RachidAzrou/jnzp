@@ -183,8 +183,8 @@ export default function MoskeeDashboard() {
               <option value="PROPOSED">Voorstel gedaan</option>
             </select>
           </div>
-        </CardHeader>
-        <CardContent>
+          </CardHeader>
+          <CardContent className="pt-8">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>

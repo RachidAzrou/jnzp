@@ -169,8 +169,8 @@ export default function AdminDashboard() {
           <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
             <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
             <CardTitle>Recente Events</CardTitle>
-          </CardHeader>
-          <CardContent>
+            </CardHeader>
+            <CardContent className="pt-8">
             <div className="space-y-2">
               {alerts.length > 0 ? (
                 alerts.map((alert, idx) => (
@@ -189,8 +189,8 @@ export default function AdminDashboard() {
         <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
           <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
             <CardTitle>Snelkoppelingen</CardTitle>
-          </CardHeader>
-          <CardContent>
+            </CardHeader>
+            <CardContent className="pt-8">
             <div className="grid grid-cols-2 gap-2">
               <Button 
                 variant="outline" 

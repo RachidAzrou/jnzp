@@ -266,7 +266,7 @@ export default function FamilieDashboard() {
             <CardTitle>Communicatie</CardTitle>
             <CardDescription>Kies hoe u met ons wilt communiceren</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button
                 onClick={() => navigate('/familie/chat')}
@@ -323,7 +323,7 @@ export default function FamilieDashboard() {
           <CardHeader>
             <CardTitle>Dossier Informatie</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-8">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Overledene</p>
@@ -559,8 +559,8 @@ export default function FamilieDashboard() {
           <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
           <CardTitle>Updates</CardTitle>
           <CardDescription>Laatste berichten en meldingen</CardDescription>
-        </CardHeader>
-        <CardContent>
+          </CardHeader>
+          <CardContent className="pt-8">
           {updates.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
               Geen updates beschikbaar

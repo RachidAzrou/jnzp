@@ -231,7 +231,7 @@ const Planning = () => {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-8">
             {filteredMosqueServices.length === 0 ? (
               <EmptyState
                 icon={PiMosque}
@@ -298,7 +298,7 @@ const Planning = () => {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-8">
             {filteredWasplaatsServices.length === 0 ? (
               <EmptyState
                 icon={MdOutlineShower}
@@ -369,7 +369,7 @@ const Planning = () => {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-8">
             {filteredFlights.length === 0 ? (
               <EmptyState
                 icon={Plane}

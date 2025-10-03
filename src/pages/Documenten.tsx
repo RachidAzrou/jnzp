@@ -165,7 +165,7 @@ const Documenten = () => {
 
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-8">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Totaal</p>
@@ -177,7 +177,7 @@ const Documenten = () => {
         </Card>
 
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-8">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Goedgekeurd</p>
@@ -189,7 +189,7 @@ const Documenten = () => {
         </Card>
 
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-8">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">In behandeling</p>
@@ -201,7 +201,7 @@ const Documenten = () => {
         </Card>
 
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-8">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Afgewezen</p>
@@ -284,7 +284,7 @@ const Documenten = () => {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-8">
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
                   {selectedDocs.size > 0 && `${selectedDocs.size} geselecteerd`}

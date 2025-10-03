@@ -209,7 +209,7 @@ export default function InsurerDashboard() {
           <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
             <CardTitle className="text-xl font-semibold">Dossiers</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-8">
             {isLoading ? (
               <div className="text-center py-8 text-muted-foreground">Laden...</div>
             ) : filteredDossiers.length === 0 ? (

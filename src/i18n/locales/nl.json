@@ -286,18 +286,18 @@
     "filter": "Filteren",
     "export": "Exporteren",
     "loading": "Laden...",
-    "error": "Er is een fout opgetreden",
-    "success": "Succesvol",
-    "yes": "Ja",
-    "no": "Nee",
-    "docs": "Docs",
-    "comingSoon": "Functie komt binnenkort",
-    "selected": "geselecteerd",
-    "download": "Downloaden",
-    "upload": "Uploaden",
-    "verified": "Geverifieerd",
-    "pending": "In behandeling",
-    "view": "Bekijken"
+    "view": "Bekijken",
+    "noResults": "Geen resultaten"
+  },
+  "tasks": {
+    "title": "Takenbeheer",
+    "assignedFiles": "Toegewezen bestanden",
+    "inProgressFiles": "Bestanden in behandeling",
+    "completedFiles": "Voltooide bestanden",
+    "searchPlaceholder": "zoeken",
+    "noAssignedTasks": "Geen openstaande taken",
+    "noInProgressTasks": "Geen taken in behandeling",
+    "noCompletedTasks": "Geen voltooide taken"
   },
   "navigation": {
     "dashboard": "Dashboard",

@@ -276,18 +276,18 @@
     "filter": "Filtrer",
     "export": "Exporter",
     "loading": "Chargement...",
-    "error": "Une erreur s'est produite",
-    "success": "Succès",
-    "yes": "Oui",
-    "no": "Non",
-    "docs": "Docs",
-    "comingSoon": "Fonction à venir",
-    "selected": "sélectionné",
-    "download": "Télécharger",
-    "upload": "Télécharger",
-    "verified": "Vérifié",
-    "pending": "En cours",
-    "view": "Voir"
+    "view": "Voir",
+    "noResults": "Aucun résultat"
+  },
+  "tasks": {
+    "title": "Gestion des tâches",
+    "assignedFiles": "Fichiers assignés",
+    "inProgressFiles": "Fichiers en cours",
+    "completedFiles": "Fichiers terminés",
+    "searchPlaceholder": "rechercher",
+    "noAssignedTasks": "Aucune tâche en attente",
+    "noInProgressTasks": "Aucune tâche en cours",
+    "noCompletedTasks": "Aucune tâche terminée"
   },
   "navigation": {
     "dashboard": "Tableau de bord",

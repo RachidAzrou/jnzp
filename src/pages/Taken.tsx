@@ -8,6 +8,7 @@ import { AlertCircle, Clock, CheckCircle2, RotateCcw, Search } from "lucide-reac
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -36,6 +37,7 @@ interface Task {
 }
 
 const Taken = () => {
+  const { t } = useTranslation();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchOpen, setSearchOpen] = useState("");
@@ -220,7 +222,7 @@ const Taken = () => {
 
           <div className="flex items-center justify-between gap-2 pt-2">
             <Button variant="outline" size="sm" className="h-8 text-xs">
-              View
+              {t("common.view")}
             </Button>
           </div>
         </div>
@@ -259,23 +261,23 @@ const Taken = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Tasks Management</h1>
+        <h1 className="text-2xl font-semibold">{t("tasks.title")}</h1>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-8">
-          <p className="text-muted-foreground">Laden...</p>
+          <p className="text-muted-foreground">{t("common.loading")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Open Column */}
           <div className="space-y-4">
             <div>
-              <h2 className="text-lg font-medium mb-4">Assigned files</h2>
+              <h2 className="text-lg font-medium mb-4">{t("tasks.assignedFiles")}</h2>
               <div className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="search"
+                  placeholder={t("tasks.searchPlaceholder")}
                   value={searchOpen}
                   onChange={(e) => setSearchOpen(e.target.value)}
                   className="pl-9 bg-background"
@@ -285,7 +287,7 @@ const Taken = () => {
             <div className="border rounded-lg p-4 bg-card min-h-[500px]">
               {openTasks.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Geen openstaande taken
+                  {t("tasks.noAssignedTasks")}
                 </p>
               ) : (
                 openTasks.map((task) => (
@@ -303,11 +305,11 @@ const Taken = () => {
           {/* In Progress Column */}
           <div className="space-y-4">
             <div>
-              <h2 className="text-lg font-medium mb-4">In Progress files</h2>
+              <h2 className="text-lg font-medium mb-4">{t("tasks.inProgressFiles")}</h2>
               <div className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="search"
+                  placeholder={t("tasks.searchPlaceholder")}
                   value={searchInProgress}
                   onChange={(e) => setSearchInProgress(e.target.value)}
                   className="pl-9 bg-background"
@@ -317,7 +319,7 @@ const Taken = () => {
             <div className="border rounded-lg p-4 bg-card min-h-[500px]">
               {inProgressTasks.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Geen taken in behandeling
+                  {t("tasks.noInProgressTasks")}
                 </p>
               ) : (
                 inProgressTasks.map((task) => (
@@ -335,11 +337,11 @@ const Taken = () => {
           {/* Completed Column */}
           <div className="space-y-4">
             <div>
-              <h2 className="text-lg font-medium mb-4">Completed files</h2>
+              <h2 className="text-lg font-medium mb-4">{t("tasks.completedFiles")}</h2>
               <div className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="search"
+                  placeholder={t("tasks.searchPlaceholder")}
                   value={searchCompleted}
                   onChange={(e) => setSearchCompleted(e.target.value)}
                   className="pl-9 bg-background"
@@ -349,7 +351,7 @@ const Taken = () => {
             <div className="border rounded-lg p-4 bg-card min-h-[500px]">
               {completedTasks.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Geen voltooide taken
+                  {t("tasks.noCompletedTasks")}
                 </p>
               ) : (
                 completedTasks.map((task) => (

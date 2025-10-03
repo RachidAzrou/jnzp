@@ -276,18 +276,18 @@
     "filter": "Filter",
     "export": "Export",
     "loading": "Loading...",
-    "error": "An error occurred",
-    "success": "Success",
-    "yes": "Yes",
-    "no": "No",
-    "docs": "Docs",
-    "comingSoon": "Feature coming soon",
-    "selected": "selected",
-    "download": "Download",
-    "upload": "Upload",
-    "verified": "Verified",
-    "pending": "Pending",
-    "view": "View"
+    "view": "View",
+    "noResults": "No results"
+  },
+  "tasks": {
+    "title": "Tasks Management",
+    "assignedFiles": "Assigned files",
+    "inProgressFiles": "In Progress files",
+    "completedFiles": "Completed files",
+    "searchPlaceholder": "search",
+    "noAssignedTasks": "No assigned tasks",
+    "noInProgressTasks": "No tasks in progress",
+    "noCompletedTasks": "No completed tasks"
   },
   "navigation": {
     "dashboard": "Dashboard",

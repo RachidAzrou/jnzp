@@ -38,6 +38,8 @@ import InsurerDossierOverview from "./pages/InsurerDossierOverview";
 import InsurerDossierDocuments from "./pages/InsurerDossierDocuments";
 import InsurerInvoices from "./pages/InsurerInvoices";
 import InsurerRapportage from "./pages/InsurerRapportage";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminDirectory from "./pages/AdminDirectory";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
@@ -123,7 +125,10 @@ const RoleBasedHome = () => {
   if (role === 'family') {
     return <Navigate to="/familie" replace />;
   }
-  if (role === 'admin' || role === 'funeral_director') {
+  if (role === 'platform_admin') {
+    return <Navigate to="/admin" replace />;
+  }
+  if (role === 'admin' || role === 'funeral_director' || role === 'org_admin') {
     return <Dashboard />;
   }
 
@@ -273,6 +278,41 @@ const App = () => (
                           <Route path="/chat/:dossierId" element={
                             <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
                               <FDChat />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/directory" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminDirectory />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/dossiers" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <Dossiers />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/integrations" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/invoices" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <FDFacturatie />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/users" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/audit" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminDashboard />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />

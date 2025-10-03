@@ -1,4 +1,4 @@
-import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3 } from "lucide-react";
+import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity } from "lucide-react";
 import { MdOutlineMosque } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import {
@@ -22,26 +22,42 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
+  // Platform Admin
+  { title: "Admin Dashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin', 'org_admin', 'reviewer', 'support'] },
+  { title: "Directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin', 'org_admin'] },
+  { title: "Gebruikers", url: "/admin/users", icon: Users, roles: ['platform_admin', 'org_admin'] },
+  { title: "Integraties", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
+  { title: "Audit Log", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'support'] },
+  
+  // FD & Admin
   { title: "Dashboard", url: "/", icon: Home, roles: ['admin', 'funeral_director'] },
-  { title: "Dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },
-  { title: "Dashboard", url: "/familie", icon: LayoutDashboard, roles: ['family'] },
-  { title: "Dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
-  { title: "Aanvragen", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
   { title: "Dossiers", url: "/dossiers", icon: FolderOpen, roles: ['admin', 'funeral_director'] },
   { title: "Taken", url: "/taken", icon: CheckSquare, roles: ['admin', 'funeral_director'] },
   { title: "Documenten", url: "/documenten", icon: FileText, roles: ['admin', 'funeral_director'] },
   { title: "Planning", url: "/planning", icon: Calendar, roles: ['admin', 'funeral_director'] },
   { title: "Facturatie", url: "/facturatie", icon: Receipt, roles: ['admin', 'funeral_director'] },
   
+  // Insurer
+  { title: "Dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },
   { title: "Facturen", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
   { title: "Rapportage", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
   
+  // Wasplaats
+  { title: "Dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
   { title: "Koelcellen", url: "/wasplaats/koelcellen", icon: FolderOpen, roles: ['wasplaats'] },
   { title: "Facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
+  
+  // Mosque
+  { title: "Aanvragen", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
   { title: "Beschikbaarheid", url: "/moskee/beschikbaarheid", icon: MdOutlineMosque, roles: ['mosque'] },
+  
+  // Family
+  { title: "Dashboard", url: "/familie", icon: LayoutDashboard, roles: ['family'] },
   { title: "Mijn Documenten", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
   { title: "Chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
-  { title: "Instellingen", url: "/instellingen", icon: Settings, roles: ['admin', 'funeral_director', 'family', 'insurer', 'wasplaats', 'mosque'] },
+  
+  // Settings for all
+  { title: "Instellingen", url: "/instellingen", icon: Settings, roles: ['admin', 'funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'platform_admin', 'org_admin', 'reviewer', 'support'] },
 ];
 
 export function AppSidebar() {

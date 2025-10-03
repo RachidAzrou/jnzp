@@ -345,8 +345,7 @@ export default function WasplaatsFacturatie() {
               <TableRow>
                 <TableHead>Nummer</TableHead>
                 <TableHead>Dossier</TableHead>
-                <TableHead>Overledene</TableHead>
-                <TableHead>Uitvaartonderneming</TableHead>
+                <TableHead>Uitvaartondernemer</TableHead>
                 <TableHead>Datum</TableHead>
                 <TableHead className="text-right">Bedrag</TableHead>
                 <TableHead>Status</TableHead>
@@ -356,7 +355,7 @@ export default function WasplaatsFacturatie() {
             <TableBody>
               {filteredInvoices.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                     Geen facturen gevonden
                   </TableCell>
                 </TableRow>
@@ -367,7 +366,6 @@ export default function WasplaatsFacturatie() {
                       {invoice.invoice_number || '-'}
                     </TableCell>
                     <TableCell>{invoice.dossier?.display_id || '-'}</TableCell>
-                    <TableCell>{invoice.dossier?.deceased_name || '-'}</TableCell>
                     <TableCell>{invoice.fd_organization?.name || '-'}</TableCell>
                     <TableCell>
                       {invoice.issued_at

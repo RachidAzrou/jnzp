@@ -211,12 +211,17 @@ const Planning = () => {
       <div className="grid gap-6">
         {/* Mosque Services Section */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                Moskee Planning
-              </CardTitle>
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  </div>
+                  Moskee Planning
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">Geplande ceremonies in moskeeën</p>
+              </div>
               <Button size="sm" className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 <span className="hidden sm:inline">Nieuwe moskee afspraak</span>
@@ -274,12 +279,17 @@ const Planning = () => {
 
         {/* Wasplaats Services Section */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Droplet className="h-5 w-5" />
-                Wasplaats Planning
-              </CardTitle>
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Droplet className="h-5 w-5 text-primary" />
+                  </div>
+                  Wasplaats Planning
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">Geplande rituele wassingen</p>
+              </div>
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
                 Nieuwe wasplaats afspraak
@@ -340,12 +350,17 @@ const Planning = () => {
 
         {/* Flights Section */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Plane className="h-5 w-5" />
-                Vlucht Planning
-              </CardTitle>
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Plane className="h-5 w-5 text-primary" />
+                  </div>
+                  Vlucht Planning
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">Geplande repatriëringsvluchten</p>
+              </div>
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
                 Nieuwe vlucht

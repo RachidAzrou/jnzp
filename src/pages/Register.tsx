@@ -246,19 +246,19 @@ const Register = () => {
                 </p>
               </div>
 
-              <div className="grid gap-2">
+              <div className="grid gap-1.5">
                 {(["family", "funeral_director", "mosque", "wasplaats", "insurer"] as UserRole[]).map((role) => (
                   <button
                     key={role}
                     type="button"
                     onClick={() => setSelectedRole(role)}
-                    className={`relative flex items-center gap-3 p-4 rounded-lg border-2 transition-all duration-200 text-left group hover:border-primary hover:shadow-md ${
+                    className={`relative flex items-center gap-2.5 p-3 rounded-lg border-2 transition-all duration-200 text-left group hover:border-primary hover:shadow-md ${
                       selectedRole === role 
                         ? 'border-primary bg-primary/5 shadow-sm' 
                         : 'border-border hover:bg-accent/50'
                     }`}
                   >
-                    <div className={`p-2.5 rounded-lg transition-colors ${
+                    <div className={`p-2 rounded-lg transition-colors ${
                       selectedRole === role 
                         ? 'bg-primary/10 text-primary' 
                         : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
@@ -266,7 +266,7 @@ const Register = () => {
                       {getRoleIcon(role)}
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium">{getRoleLabel(role)}</div>
+                      <div className="font-medium text-sm">{getRoleLabel(role)}</div>
                     </div>
                     {selectedRole === role && (
                       <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">

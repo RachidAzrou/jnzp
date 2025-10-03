@@ -151,19 +151,15 @@ const Dossiers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
+    <div className="min-h-screen bg-background p-6">
+      <div className="space-y-6 max-w-[1600px] mx-auto">
         {/* Header */}
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>{t("navigation.dossiers")}</span>
-            <span>{">"}</span>
-            <span>{t("dossiers.allFiles")}</span>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold">{t("dossiers.allFiles")}</h1>
         </div>
 
         {/* Search Bar */}
-        <Card className="border-border/40">
+        <Card className="border-0 shadow-sm">
           <CardContent className="pt-6">
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
@@ -231,46 +227,45 @@ const Dossiers = () => {
         </Card>
 
         {/* Table Card */}
-        <Card className="border-border/40">
+        <Card className="border-0 shadow-sm">
           <CardContent className="p-0">
             {/* Desktop Table */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden md:block">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted/30">
-                    <TableHead className="font-semibold">{t("dossiers.jaId")}</TableHead>
-                    <TableHead className="font-semibold">{t("dossiers.deceasedName")}</TableHead>
-                    <TableHead className="font-semibold">{t("dossiers.city")}</TableHead>
-                    <TableHead className="font-semibold">{t("dossiers.dateCreated")}</TableHead>
-                    <TableHead className="font-semibold">{t("dossiers.status")}</TableHead>
-                    <TableHead className="font-semibold"></TableHead>
+                  <TableRow className="border-b">
+                    <TableHead className="font-medium text-sm">{t("dossiers.jaId")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("dossiers.deceasedName")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("dossiers.city")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("dossiers.dateCreated")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("dossiers.status")}</TableHead>
+                    <TableHead className="font-medium text-sm"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {currentDossiers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
-                        {dossiers.length === 0 ? t("dossiers.noDossiers") : t("dossiers.noResults")}
+                      <TableCell colSpan={6} className="text-center py-12 text-sm text-muted-foreground">
+                        {dossiers.length === 0 ? "Geen dossiers" : "Geen resultaten"}
                       </TableCell>
                     </TableRow>
                   ) : (
                     currentDossiers.map((dossier) => (
                       <TableRow key={dossier.id} className="hover:bg-muted/30">
-                        <TableCell className="font-mono text-sm font-medium">
+                        <TableCell className="font-mono text-sm">
                           {dossier.display_id || dossier.ref_number}
                         </TableCell>
-                        <TableCell className="font-medium">{dossier.deceased_name}</TableCell>
-                        <TableCell className="text-muted-foreground">-</TableCell>
-                        <TableCell className="text-muted-foreground">
+                        <TableCell className="text-sm font-medium">{dossier.deceased_name}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">-</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
                           {formatDate(dossier.created_at)}
                         </TableCell>
                         <TableCell>
                           <Badge 
-                            variant="outline" 
-                            className={`${getStatusColor(dossier.status)} flex items-center gap-1 w-fit`}
+                            variant={dossier.status === 'COMPLETED' || dossier.status === 'ARCHIVED' ? 'default' : 'secondary'}
+                            className="text-xs"
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            {getStatusLabel(dossier.status)}
+                            {dossier.status === 'COMPLETED' || dossier.status === 'ARCHIVED' ? '✓' : '○'} {getStatusLabel(dossier.status)}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -290,28 +285,27 @@ const Dossiers = () => {
             </div>
 
             {/* Mobile Card View */}
-            <div className="md:hidden space-y-4 p-4">
+            <div className="md:hidden space-y-3 p-4">
               {currentDossiers.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  {dossiers.length === 0 ? t("dossiers.noDossiers") : t("dossiers.noResults")}
+                <div className="text-center py-12 text-sm text-muted-foreground">
+                  {dossiers.length === 0 ? "Geen dossiers" : "Geen resultaten"}
                 </div>
               ) : (
                 currentDossiers.map((dossier) => (
-                  <div key={dossier.id} className="p-4 border rounded-lg bg-muted/30 space-y-3">
+                  <div key={dossier.id} className="p-4 border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors space-y-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <p className="font-mono text-sm font-medium">{dossier.display_id || dossier.ref_number}</p>
-                        <p className="text-base font-semibold mt-1 truncate">{dossier.deceased_name}</p>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="font-mono text-xs text-muted-foreground">{dossier.display_id || dossier.ref_number}</p>
+                        <p className="text-sm font-medium mt-1 truncate">{dossier.deceased_name}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
                           {formatDate(dossier.created_at)}
                         </p>
                       </div>
                       <Badge 
-                        variant="outline" 
-                        className={`${getStatusColor(dossier.status)} flex items-center gap-1 flex-shrink-0`}
+                        variant={dossier.status === 'COMPLETED' || dossier.status === 'ARCHIVED' ? 'default' : 'secondary'}
+                        className="text-xs flex-shrink-0"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                        {getStatusLabel(dossier.status)}
+                        {dossier.status === 'COMPLETED' || dossier.status === 'ARCHIVED' ? '✓' : '○'} {getStatusLabel(dossier.status)}
                       </Badge>
                     </div>
                     <Button 

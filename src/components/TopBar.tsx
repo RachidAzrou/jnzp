@@ -1,4 +1,4 @@
-import { Search, Bell, User, LogOut } from "lucide-react";
+import { Search, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
+import { NotificationPanel } from "@/components/NotificationPanel";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,12 +65,7 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3">
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 sm:h-10 sm:w-10">
-          <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
-          <span className="absolute -top-1 -right-1 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-destructive text-[9px] sm:text-[10px] font-bold text-destructive-foreground">
-            3
-          </span>
-        </Button>
+        <NotificationPanel />
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -9,7 +9,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { TwoFactorVerification } from "@/components/TwoFactorVerification";
+import { SimpleCaptcha } from "@/components/SimpleCaptcha";
 import { validatePassword, getPasswordRequirements } from "@/utils/passwordValidation";
+import { checkRateLimit, getLoginDelay, formatRetryAfter } from "@/utils/rateLimit";
 import logoAuth from "@/assets/logo-vertical-new.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
@@ -52,6 +54,12 @@ const Auth = () => {
   // Login 2FA state
   const [show2FAVerification, setShow2FAVerification] = useState(false);
   const [pendingSession, setPendingSession] = useState<any>(null);
+  
+  // Rate limiting & Captcha state
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [loginDelay, setLoginDelay] = useState(0);
 
   useEffect(() => {
     // Check if this is a password reset flow
@@ -98,6 +106,19 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Check rate limit (5 attempts per 15 minutes)
+      const rateLimitResult = await checkRateLimit(email, 'login', 5, 15);
+      
+      if (!rateLimitResult.allowed) {
+        toast({
+          title: "Te veel pogingen",
+          description: `Probeer het opnieuw over ${formatRetryAfter(rateLimitResult.retry_after || 0)}.`,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       // Check if account is locked
       const { data: isLocked } = await supabase.rpc('is_account_locked', { 
         p_email: email 
@@ -105,6 +126,35 @@ const Auth = () => {
 
       if (isLocked) {
         throw new Error("Account tijdelijk geblokkeerd na te veel mislukte inlogpogingen. Probeer het over 15 minuten opnieuw.");
+      }
+
+      // Get progressive delay based on failed attempts
+      const delay = await getLoginDelay(email);
+      
+      if (delay > 0) {
+        toast({
+          title: "Wacht alstublieft",
+          description: `Wacht ${delay} seconden voor de volgende poging.`,
+          variant: "destructive",
+        });
+        
+        // Show captcha after 3 failed attempts (delay >= 5)
+        if (delay >= 5) {
+          setShowCaptcha(true);
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, delay * 1000));
+      }
+
+      // Require captcha after 3 failed attempts
+      if (showCaptcha && !captchaToken) {
+        toast({
+          title: "Captcha verificatie vereist",
+          description: "Los de captcha op om door te gaan.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
       }
 
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -117,11 +167,25 @@ const Auth = () => {
         await supabase.from('login_attempts').insert({
           email: email,
           success: false,
-          ip_address: null, // Could be captured from request
+          ip_address: null,
           user_agent: navigator.userAgent,
         });
+        
+        // Increment login attempts
+        setLoginAttempts(prev => prev + 1);
+        
+        // Show captcha after 3 attempts
+        if (loginAttempts >= 2) {
+          setShowCaptcha(true);
+        }
+        
         throw error;
       }
+
+      // Reset captcha state on successful login
+      setShowCaptcha(false);
+      setCaptchaToken(null);
+      setLoginAttempts(0);
 
       // Log successful attempt
       if (data.user) {
@@ -396,6 +460,19 @@ const Auth = () => {
     setResetLoading(true);
 
     try {
+      // Check rate limit (3 requests per hour)
+      const rateLimitResult = await checkRateLimit(resetEmail, 'password_reset', 3, 60);
+      
+      if (!rateLimitResult.allowed) {
+        toast({
+          title: "Te veel reset verzoeken",
+          description: `Probeer het opnieuw over ${formatRetryAfter(rateLimitResult.retry_after || 0)}.`,
+          variant: "destructive",
+        });
+        setResetLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
         redirectTo: `${window.location.origin}/auth?reset=true`,
       });
@@ -730,9 +807,22 @@ const Auth = () => {
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-card px-2 text-muted-foreground">Of</span>
                 </div>
-              </div>
+            </div>
 
-              <Button
+            {showCaptcha && (
+              <SimpleCaptcha
+                onVerify={(token) => {
+                  setCaptchaToken(token);
+                  toast({
+                    title: "Verificatie succesvol",
+                    description: "U kunt nu opnieuw proberen in te loggen.",
+                  });
+                }}
+                className="mt-4"
+              />
+            )}
+
+            <Button
                 type="button"
                 variant="outline"
                 className="w-full"

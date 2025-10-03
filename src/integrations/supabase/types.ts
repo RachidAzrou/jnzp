@@ -74,6 +74,36 @@ export type Database = {
           },
         ]
       }
+      captcha_verifications: {
+        Row: {
+          endpoint: string
+          expires_at: string
+          id: string
+          identifier: string
+          token: string
+          used: boolean
+          verified_at: string
+        }
+        Insert: {
+          endpoint: string
+          expires_at?: string
+          id?: string
+          identifier: string
+          token: string
+          used?: boolean
+          verified_at?: string
+        }
+        Update: {
+          endpoint?: string
+          expires_at?: string
+          id?: string
+          identifier?: string
+          token?: string
+          used?: boolean
+          verified_at?: string
+        }
+        Relationships: []
+      }
       catalog_items: {
         Row: {
           code: string
@@ -1643,6 +1673,33 @@ export type Database = {
           },
         ]
       }
+      rate_limit_tracking: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          identifier: string
+          request_count: number
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          identifier: string
+          request_count?: number
+          window_start?: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          identifier?: string
+          request_count?: number
+          window_start?: string
+        }
+        Relationships: []
+      }
       repatriations: {
         Row: {
           created_at: string
@@ -1971,12 +2028,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_login_delay: {
+        Args: { p_email: string }
+        Returns: number
+      }
       calculate_task_priority: {
         Args: {
           _dossier_id: string
           _task_type: Database["public"]["Enums"]["task_type"]
         }
         Returns: Database["public"]["Enums"]["priority"]
+      }
+      check_rate_limit: {
+        Args: {
+          p_endpoint: string
+          p_identifier: string
+          p_max_requests?: number
+          p_window_minutes?: number
+        }
+        Returns: Json
       }
       claim_totp_period: {
         Args: { p_nonce: string; p_period: number }
@@ -1986,7 +2056,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_expired_captcha: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_expired_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_old_rate_limits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2041,6 +2119,10 @@ export type Database = {
       }
       validate_password_strength: {
         Args: { password: string }
+        Returns: Json
+      }
+      verify_captcha: {
+        Args: { p_endpoint: string; p_identifier: string; p_token: string }
         Returns: Json
       }
       verify_totp_code: {

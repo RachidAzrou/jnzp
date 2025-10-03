@@ -15,29 +15,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import { nl } from "date-fns/locale";
+import { nl, fr, enUS } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [dossiers, setDossiers] = useState<any[]>([]);
   const [auditEvents, setAuditEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const getDateLocale = () => {
+    switch(i18n.language) {
+      case 'fr': return fr;
+      case 'en': return enUS;
+      default: return nl;
+    }
+  };
+
   const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-      CREATED: "Aangemaakt",
-      INTAKE_IN_PROGRESS: "Intake lopend",
-      DOCS_PENDING: "Documenten vereist",
-      FD_ASSIGNED: "FD toegewezen",
-      DOCS_VERIFIED: "Docs geverifieerd",
-      APPROVED: "Goedgekeurd",
-      LEGAL_HOLD: "Legal Hold",
-      PLANNING: "Planning",
-      READY_FOR_TRANSPORT: "Klaar voor transport",
-      IN_TRANSIT: "In transit",
-      ARCHIVED: "Gearchiveerd",
-    };
-    return labels[status] || status.replace(/_/g, " ");
+    return t(`status.${status}`) || status.replace(/_/g, " ");
   };
 
   useEffect(() => {
@@ -71,26 +68,16 @@ const Dashboard = () => {
   const localDossiers = dossiers.filter(d => d.flow === 'LOC').length;
 
   const getTaskDescription = (status: string, legalHold: boolean) => {
-    if (legalHold) return "Parketvrijgave afwachten / uploaden";
-    const descriptions: Record<string, string> = {
-      CREATED: "Intake starten",
-      INTAKE_IN_PROGRESS: "Intake voltooien",
-      DOCS_PENDING: "Document opnieuw opvragen",
-      FD_ASSIGNED: "Dossier reviewen",
-      DOCS_VERIFIED: "Documentatie verifiëren",
-      APPROVED: "Planning voorbereiden",
-      PLANNING: "Moskee/vlucht bevestigen",
-      READY_FOR_TRANSPORT: "Transport voorbereiden",
-      IN_TRANSIT: "Transport monitoren",
-    };
-    return descriptions[status] || "Taak uitvoeren";
+    if (legalHold) return t("tasks.awaitParkingRelease");
+    const taskKey = `tasks.${status.toLowerCase().replace(/_/g, '')}`;
+    return t(taskKey, { defaultValue: t("tasks.performTask") });
   };
 
   const getTaskUrgency = (status: string, legalHold: boolean) => {
-    if (legalHold) return "Hoog";
-    if (["DOCS_PENDING", "FD_ASSIGNED"].includes(status)) return "Hoog";
-    if (["PLANNING", "READY_FOR_TRANSPORT"].includes(status)) return "Normaal";
-    return "Laag";
+    if (legalHold) return t("status.high");
+    if (["DOCS_PENDING", "FD_ASSIGNED"].includes(status)) return t("status.high");
+    if (["PLANNING", "READY_FOR_TRANSPORT"].includes(status)) return t("status.normal");
+    return t("status.low");
   };
 
 
@@ -111,7 +98,7 @@ const Dashboard = () => {
 
   const formatRelativeTime = (timestamp: string) => {
     try {
-      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: nl });
+      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: getDateLocale() });
     } catch {
       return formatEventTime(timestamp);
     }
@@ -131,49 +118,49 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Overzicht van uw actieve dossiers en taken</p>
+        <h1 className="text-3xl font-bold">{t("dashboard.title")}</h1>
+        <p className="text-muted-foreground mt-1">{t("dashboard.overview")}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <div onClick={() => navigate('/dossiers')} className="cursor-pointer transition-all hover:shadow-lg">
           <KPICard
-            title="Lopende dossiers"
+            title={t("dashboard.runningDossiers")}
             value={activeDossiers}
             icon={FolderOpen}
-            trend={{ value: "Klik om lijst te openen", positive: true }}
+            trend={{ value: t("dashboard.clickToOpen"), positive: true }}
           />
         </div>
         <div onClick={() => navigate('/dossiers?status=LEGAL_HOLD')} className="cursor-pointer transition-all hover:shadow-lg">
           <KPICard
-            title="Legal hold"
+            title={t("dashboard.legalHold")}
             value={legalHold}
             icon={AlertTriangle}
-            trend={{ value: "Toon dossiers", positive: false }}
+            trend={{ value: t("dashboard.showDossiers"), positive: false }}
           />
         </div>
         <div onClick={() => navigate('/documenten?filter=missing')} className="cursor-pointer transition-all hover:shadow-lg">
           <KPICard
-            title="Ontbrekende documenten"
+            title={t("dashboard.missingDocuments")}
             value={5}
             icon={FileX}
-            trend={{ value: "Naar documenten", positive: true }}
+            trend={{ value: t("dashboard.toDocuments"), positive: true }}
           />
         </div>
         <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:shadow-lg">
           <KPICard
-            title="Repatriëring"
+            title={t("dashboard.repatriation")}
             value={repatriationDossiers}
             icon={Plane}
-            trend={{ value: "Filter op REP", positive: true }}
+            trend={{ value: t("dashboard.filterOnRep"), positive: true }}
           />
         </div>
         <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:shadow-lg">
           <KPICard
-            title="Lokaal"
+            title={t("dashboard.local")}
             value={localDossiers}
             icon={MapPin}
-            trend={{ value: "Filter op LOC", positive: true }}
+            trend={{ value: t("dashboard.filterOnLoc"), positive: true }}
           />
         </div>
       </div>

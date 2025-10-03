@@ -17,10 +17,12 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { EmptyState } from "@/components/EmptyState";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 const Dossiers = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [dossiers, setDossiers] = useState<any[]>([]);
   const [filteredDossiers, setFilteredDossiers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,20 +96,7 @@ const Dossiers = () => {
   };
 
   const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-      CREATED: "Aangemaakt",
-      INTAKE_IN_PROGRESS: "Intake lopend",
-      DOCS_PENDING: "Documenten vereist",
-      FD_ASSIGNED: "FD toegewezen",
-      DOCS_VERIFIED: "Docs geverifieerd",
-      APPROVED: "Goedgekeurd",
-      LEGAL_HOLD: "Legal Hold",
-      PLANNING: "Planning",
-      READY_FOR_TRANSPORT: "Klaar voor transport",
-      IN_TRANSIT: "In transit",
-      ARCHIVED: "Gearchiveerd",
-    };
-    return labels[status] || status.replace(/_/g, " ");
+    return t(`status.${status}`) || status.replace(/_/g, " ");
   };
 
   const formatDate = (dateString: string | null) => {
@@ -135,14 +124,14 @@ const Dossiers = () => {
     <div className="space-y-4 sm:space-y-6 p-3 sm:p-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Dossiers</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t("dossiers.title")}</h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-1">
-            {filteredDossiers.length} van {dossiers.length} dossiers
+            {filteredDossiers.length} {t("dossiers.ofDossiers")} {dossiers.length} {t("dossiers.title").toLowerCase()}
           </p>
         </div>
         <Button className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
-          Nieuw dossier
+          {t("dossiers.newDossier")}
         </Button>
       </div>
 
@@ -153,7 +142,7 @@ const Dossiers = () => {
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Zoek op ID (REP-/LOC-) of naam..."
+                placeholder={t("dossiers.searchPlaceholder")}
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -168,7 +157,7 @@ const Dossiers = () => {
                 size="sm"
                 onClick={() => setFlowFilter("all")}
               >
-                Alle
+                {t("dossiers.all")}
               </Button>
               <Button
                 variant={flowFilter === "REP" ? "default" : "outline"}
@@ -177,7 +166,7 @@ const Dossiers = () => {
                 className="flex-shrink-0"
               >
                 <Plane className="h-4 w-4 sm:mr-1" />
-                <span className="hidden sm:inline">Repatriëring</span>
+                <span className="hidden sm:inline">{t("flow.repatriation")}</span>
               </Button>
               <Button
                 variant={flowFilter === "LOC" ? "default" : "outline"}
@@ -186,7 +175,7 @@ const Dossiers = () => {
                 className="flex-shrink-0"
               >
                 <MapPin className="h-4 w-4 sm:mr-1" />
-                <span className="hidden sm:inline">Lokaal</span>
+                <span className="hidden sm:inline">{t("flow.local")}</span>
               </Button>
             </div>
 
@@ -198,7 +187,7 @@ const Dossiers = () => {
                 size="sm"
                 onClick={() => setStatusFilter("all")}
               >
-                Alle
+                {t("dossiers.all")}
               </Button>
               <Button
                 variant={statusFilter === "DOCS_PENDING" ? "default" : "outline"}
@@ -206,7 +195,7 @@ const Dossiers = () => {
                 onClick={() => setStatusFilter("DOCS_PENDING")}
                 className="text-xs sm:text-sm"
               >
-                Docs
+                {t("common.docs")}
               </Button>
               <Button
                 variant={statusFilter === "LEGAL_HOLD" ? "destructive" : "outline"}
@@ -230,16 +219,16 @@ const Dossiers = () => {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Dossier</TableHead>
-                <TableHead className="hidden md:table-cell">Flow</TableHead>
-                <TableHead>Naam</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="hidden lg:table-cell">Geboren</TableHead>
-                <TableHead className="hidden lg:table-cell">Overleden</TableHead>
-                <TableHead className="hidden xl:table-cell">Aangemaakt</TableHead>
-                <TableHead>Acties</TableHead>
-              </TableRow>
+                <TableRow>
+                  <TableHead>{t("dossiers.dossier")}</TableHead>
+                  <TableHead className="hidden md:table-cell">{t("dossiers.flow")}</TableHead>
+                  <TableHead>{t("dossiers.name")}</TableHead>
+                  <TableHead>{t("dossiers.status")}</TableHead>
+                  <TableHead className="hidden lg:table-cell">{t("dossiers.born")}</TableHead>
+                  <TableHead className="hidden lg:table-cell">{t("dossiers.deceased")}</TableHead>
+                  <TableHead className="hidden xl:table-cell">{t("dossiers.createdAt")}</TableHead>
+                  <TableHead>{t("dossiers.actions")}</TableHead>
+                </TableRow>
             </TableHeader>
             <TableBody>
               {filteredDossiers.length === 0 ? (
@@ -247,17 +236,17 @@ const Dossiers = () => {
                   <TableCell colSpan={8}>
                     <EmptyState
                       icon={FolderOpen}
-                      title={dossiers.length === 0 ? "Nog geen dossiers" : "Geen resultaten"}
+                      title={dossiers.length === 0 ? t("dossiers.noDossiers") : t("dossiers.noResults")}
                       description={
                         dossiers.length === 0
-                          ? "Start met het aanmaken van uw eerste repatriëringsdossier."
-                          : "Geen dossiers gevonden met de huidige filters. Probeer andere zoektermen."
+                          ? t("dossiers.noDossiersDescription")
+                          : t("dossiers.noResultsDescription")
                       }
                       action={
                         dossiers.length === 0
                           ? {
-                              label: "Nieuw dossier aanmaken",
-                              onClick: () => toast({ title: "Functie komt binnenkort" })
+                              label: t("dossiers.createNewDossier"),
+                              onClick: () => toast({ title: t("common.comingSoon") })
                             }
                           : undefined
                       }

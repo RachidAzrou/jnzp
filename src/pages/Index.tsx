@@ -2,10 +2,12 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const navigate = useNavigate();
   const { role, loading } = useUserRole();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -56,7 +58,7 @@ const Index = () => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <p className="text-xl text-muted-foreground">Laden...</p>
+          <p className="text-xl text-muted-foreground">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -65,7 +67,7 @@ const Index = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center">
-        <p className="text-xl text-muted-foreground">Doorverwijzen...</p>
+        <p className="text-xl text-muted-foreground">{t("common.loading")}</p>
       </div>
     </div>
   );

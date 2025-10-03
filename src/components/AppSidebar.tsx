@@ -13,59 +13,62 @@ import {
 } from "@/components/ui/sidebar";
 import { useUserRole, UserRole, getRoleDisplayName } from "@/hooks/useUserRole";
 import logoHorizontal from "@/assets/logo-horizontal.png";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 type MenuItem = {
-  title: string;
+  titleKey: string;
   url: string;
   icon: any;
   roles: UserRole[];
 };
 
-const menuItems: MenuItem[] = [
-  // Platform Admin
-  { title: "Admin Dashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin', 'org_admin', 'reviewer', 'support'] },
-  { title: "Directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin', 'org_admin'] },
-  { title: "Organisaties", url: "/admin/organizations", icon: Building2, roles: ['platform_admin', 'admin'] },
-  { title: "Gebruikers", url: "/admin/users", icon: Users, roles: ['platform_admin', 'org_admin'] },
-  { title: "Integraties", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
-  { title: "Audit Log", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'support'] },
-  
-  // Org Admin
-  { title: "Team Beheer", url: "/team", icon: UserPlus, roles: ['org_admin', 'admin', 'platform_admin'] },
-  
-  // FD & Admin
-  { title: "Dashboard", url: "/", icon: Home, roles: ['admin', 'funeral_director'] },
-  { title: "Dossiers", url: "/dossiers", icon: FolderOpen, roles: ['admin', 'funeral_director'] },
-  { title: "Taken", url: "/taken", icon: CheckSquare, roles: ['admin', 'funeral_director'] },
-  { title: "Documenten", url: "/documenten", icon: FileText, roles: ['admin', 'funeral_director'] },
-  { title: "Planning", url: "/planning", icon: Calendar, roles: ['admin', 'funeral_director'] },
-  { title: "Facturatie", url: "/facturatie", icon: Receipt, roles: ['admin', 'funeral_director'] },
-  
-  // Insurer
-  { title: "Dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },
-  { title: "Facturen", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
-  { title: "Rapportage", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
-  
-  // Mortuarium
-  { title: "Dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
-  { title: "Koelcellen", url: "/wasplaats/koelcellen", icon: FolderOpen, roles: ['wasplaats'] },
-  { title: "Facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
-  
-  // Mosque
-  { title: "Aanvragen", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
-  { title: "Beschikbaarheid", url: "/moskee/beschikbaarheid", icon: PiMosque, roles: ['mosque'] },
-  
-  // Family
-  { title: "Dashboard", url: "/familie", icon: LayoutDashboard, roles: ['family'] },
-  { title: "Mijn Documenten", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
-  { title: "Chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
-  
-  // Settings for all
-  { title: "Instellingen", url: "/instellingen", icon: Settings, roles: ['admin', 'funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'platform_admin', 'org_admin', 'reviewer', 'support'] },
-];
-
 export function AppSidebar() {
   const { role, loading } = useUserRole();
+  const { t } = useTranslation();
+
+  const menuItems: MenuItem[] = [
+    // Platform Admin
+    { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin', 'org_admin', 'reviewer', 'support'] },
+    { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin', 'org_admin'] },
+    { titleKey: "navigation.organizations", url: "/admin/organizations", icon: Building2, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin', 'org_admin'] },
+    { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
+    { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'support'] },
+    
+    // Org Admin
+    { titleKey: "navigation.teamManagement", url: "/team", icon: UserPlus, roles: ['org_admin', 'admin', 'platform_admin'] },
+    
+    // FD & Admin
+    { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['admin', 'funeral_director'] },
+    { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['admin', 'funeral_director'] },
+    { titleKey: "navigation.tasks", url: "/taken", icon: CheckSquare, roles: ['admin', 'funeral_director'] },
+    { titleKey: "navigation.documents", url: "/documenten", icon: FileText, roles: ['admin', 'funeral_director'] },
+    { titleKey: "navigation.planning", url: "/planning", icon: Calendar, roles: ['admin', 'funeral_director'] },
+    { titleKey: "navigation.facturatie", url: "/facturatie", icon: Receipt, roles: ['admin', 'funeral_director'] },
+    
+    // Insurer
+    { titleKey: "navigation.dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },
+    { titleKey: "navigation.invoicesTitle", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
+    { titleKey: "navigation.reporting", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
+    
+    // Mortuarium
+    { titleKey: "navigation.dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
+    { titleKey: "navigation.coolCells", url: "/wasplaats/koelcellen", icon: FolderOpen, roles: ['wasplaats'] },
+    { titleKey: "navigation.facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
+    
+    // Mosque
+    { titleKey: "navigation.requests", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
+    { titleKey: "navigation.availability", url: "/moskee/beschikbaarheid", icon: PiMosque, roles: ['mosque'] },
+    
+    // Family
+    { titleKey: "navigation.dashboard", url: "/familie", icon: LayoutDashboard, roles: ['family'] },
+    { titleKey: "navigation.myDocuments", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
+    { titleKey: "navigation.chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
+    
+    // Settings for all
+    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['admin', 'funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'platform_admin', 'org_admin', 'reviewer', 'support'] },
+  ];
 
   const filteredMenuItems = menuItems.filter(item => 
     role && item.roles.includes(role)
@@ -77,7 +80,7 @@ export function AppSidebar() {
         <SidebarContent>
           <div className="px-6 py-6 border-b border-sidebar-border">
             <img src={logoHorizontal} alt="JanazApp" className="h-8 brightness-0 invert" />
-            <p className="text-xs text-sidebar-foreground/70 mt-2">Laden...</p>
+            <p className="text-xs text-sidebar-foreground/70 mt-2">{t("common.loading")}</p>
           </div>
         </SidebarContent>
       </Sidebar>
@@ -89,7 +92,10 @@ export function AppSidebar() {
       <SidebarContent>
         <div className="px-6 py-6 border-b border-sidebar-border">
           <img src={logoHorizontal} alt="JanazApp" className="h-8 brightness-0 invert" />
-          <p className="text-xs text-sidebar-foreground/70 mt-2">{getRoleDisplayName(role)} Portal</p>
+          <p className="text-xs text-sidebar-foreground/70 mt-2">{getRoleDisplayName(role)} {t("navigation.portal")}</p>
+          <div className="mt-4">
+            <LanguageSwitcher />
+          </div>
         </div>
         
         <SidebarGroup className="mt-4">
@@ -97,7 +103,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredMenuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.titleKey}>
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
@@ -111,7 +117,7 @@ export function AppSidebar() {
                       }
                     >
                       <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      <span>{t(item.titleKey)}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

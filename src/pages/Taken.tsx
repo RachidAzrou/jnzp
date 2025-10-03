@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Clock, CheckCircle2, RotateCcw } from "lucide-react";
+import { AlertCircle, Clock, CheckCircle2, RotateCcw, Search } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -37,6 +38,9 @@ interface Task {
 const Taken = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchOpen, setSearchOpen] = useState("");
+  const [searchInProgress, setSearchInProgress] = useState("");
+  const [searchCompleted, setSearchCompleted] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -195,65 +199,32 @@ const Taken = () => {
     onResetPriority: (taskId: string, task: Task) => void;
   }) => {
     return (
-      <Card className="mb-3 hover:shadow-md transition-shadow">
-        <CardContent className="pt-4">
-          <div className="space-y-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className="font-medium text-sm">{task.dossier?.ref_number}</p>
-                <p className="text-sm text-muted-foreground">{task.dossier?.deceased_name}</p>
-              </div>
-              {task.dossier?.legal_hold && (
-                <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0 ml-2" />
-              )}
+      <div className="mb-2 p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+        <div className="space-y-2">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground">JA ID: {task.dossier?.ref_number}</p>
+              <p className="font-medium text-sm mt-1">{task.dossier?.deceased_name}</p>
             </div>
-
-            <div>
-              <p className="text-sm font-medium mb-1">{getTaskTypeLabel(task.type)}</p>
-              <p className="text-xs text-muted-foreground">
-                {format(new Date(task.updated_at), "dd MMM yyyy HH:mm", { locale: nl })}
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium">Prioriteit:</span>
-                <Select
-                  value={task.priority}
-                  onValueChange={(value) => onPriorityChange(task.id, value as "HIGH" | "MEDIUM" | "LOW", task)}
-                  disabled={task.status === "DONE"}
-                >
-                  <SelectTrigger className="h-7 w-28">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="HIGH">Hoog</SelectItem>
-                    <SelectItem value="MEDIUM">Normaal</SelectItem>
-                    <SelectItem value="LOW">Laag</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Badge variant={task.priority_source === "MANUAL" ? "outline" : "secondary"} className="text-xs">
-                  {task.priority_source === "MANUAL" ? "Manueel" : "Auto"}
-                </Badge>
-                {task.priority_source === "MANUAL" && task.status !== "DONE" && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onResetPriority(task.id, task)}
-                    className="h-7 text-xs"
-                  >
-                    <RotateCcw className="h-3 w-3 mr-1" />
-                    Automatisch
-                  </Button>
-                )}
-              </div>
-            </div>
+            {task.dossier?.legal_hold && (
+              <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0 ml-2" />
+            )}
           </div>
-        </CardContent>
-      </Card>
+
+          <div>
+            <p className="text-sm">{getTaskTypeLabel(task.type)}</p>
+            <p className="text-xs text-muted-foreground">
+              {format(new Date(task.updated_at), "dd/MM/yy", { locale: nl })}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between gap-2 pt-2">
+            <Button variant="outline" size="sm" className="h-8 text-xs">
+              View
+            </Button>
+          </div>
+        </div>
+      </div>
     );
   };
 
@@ -266,17 +237,29 @@ const Taken = () => {
     return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
   };
 
-  const openTasks = tasks.filter((task) => task.status === "OPEN").sort(sortByPriority);
-  const inProgressTasks = tasks.filter((task) => task.status === "IN_PROGRESS").sort(sortByPriority);
-  const completedTasks = tasks.filter((task) => task.status === "DONE").sort(sortByPriority);
+  const filterTasks = (taskList: Task[], searchTerm: string) => {
+    if (!searchTerm) return taskList;
+    const lowerSearch = searchTerm.toLowerCase();
+    return taskList.filter(
+      (task) =>
+        task.dossier?.ref_number?.toLowerCase().includes(lowerSearch) ||
+        task.dossier?.deceased_name?.toLowerCase().includes(lowerSearch) ||
+        getTaskTypeLabel(task.type).toLowerCase().includes(lowerSearch)
+    );
+  };
+
+  const allOpenTasks = tasks.filter((task) => task.status === "OPEN").sort(sortByPriority);
+  const allInProgressTasks = tasks.filter((task) => task.status === "IN_PROGRESS").sort(sortByPriority);
+  const allCompletedTasks = tasks.filter((task) => task.status === "DONE").sort(sortByPriority);
+
+  const openTasks = filterTasks(allOpenTasks, searchOpen);
+  const inProgressTasks = filterTasks(allInProgressTasks, searchInProgress);
+  const completedTasks = filterTasks(allCompletedTasks, searchCompleted);
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Taken</h1>
-        <p className="text-muted-foreground">
-          Sortering: Hoog → Normaal → Laag, daarna meest recent bijgewerkt
-        </p>
+        <h1 className="text-2xl font-semibold">Tasks Management</h1>
       </div>
 
       {loading ? (
@@ -286,96 +269,99 @@ const Taken = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Open Column */}
-          <div>
-            <Card>
-              <CardHeader className="bg-muted/50">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <AlertCircle className="h-5 w-5 text-destructive" />
-                  Open
-                  <Badge variant="secondary" className="ml-auto">
-                    {openTasks.length}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4">
-                {openTasks.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    Geen openstaande taken
-                  </p>
-                ) : (
-                  openTasks.map((task) => (
-                    <TaskCard 
-                      key={task.id} 
-                      task={task}
-                      onPriorityChange={updateTaskPriority}
-                      onResetPriority={resetToAutoPriority}
-                    />
-                  ))
-                )}
-              </CardContent>
-            </Card>
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-lg font-medium mb-4">Assigned files</h2>
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="search"
+                  value={searchOpen}
+                  onChange={(e) => setSearchOpen(e.target.value)}
+                  className="pl-9 bg-background"
+                />
+              </div>
+            </div>
+            <div className="border rounded-lg p-4 bg-card min-h-[500px]">
+              {openTasks.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Geen openstaande taken
+                </p>
+              ) : (
+                openTasks.map((task) => (
+                  <TaskCard 
+                    key={task.id} 
+                    task={task}
+                    onPriorityChange={updateTaskPriority}
+                    onResetPriority={resetToAutoPriority}
+                  />
+                ))
+              )}
+            </div>
           </div>
 
           {/* In Progress Column */}
-          <div>
-            <Card>
-              <CardHeader className="bg-muted/50">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Clock className="h-5 w-5 text-primary" />
-                  In behandeling
-                  <Badge variant="secondary" className="ml-auto">
-                    {inProgressTasks.length}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4">
-                {inProgressTasks.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    Geen taken in behandeling
-                  </p>
-                ) : (
-                  inProgressTasks.map((task) => (
-                    <TaskCard 
-                      key={task.id} 
-                      task={task}
-                      onPriorityChange={updateTaskPriority}
-                      onResetPriority={resetToAutoPriority}
-                    />
-                  ))
-                )}
-              </CardContent>
-            </Card>
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-lg font-medium mb-4">In Progress files</h2>
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="search"
+                  value={searchInProgress}
+                  onChange={(e) => setSearchInProgress(e.target.value)}
+                  className="pl-9 bg-background"
+                />
+              </div>
+            </div>
+            <div className="border rounded-lg p-4 bg-card min-h-[500px]">
+              {inProgressTasks.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Geen taken in behandeling
+                </p>
+              ) : (
+                inProgressTasks.map((task) => (
+                  <TaskCard 
+                    key={task.id} 
+                    task={task}
+                    onPriorityChange={updateTaskPriority}
+                    onResetPriority={resetToAutoPriority}
+                  />
+                ))
+              )}
+            </div>
           </div>
 
           {/* Completed Column */}
-          <div>
-            <Card>
-              <CardHeader className="bg-muted/50">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  Voltooid
-                  <Badge variant="secondary" className="ml-auto">
-                    {completedTasks.length}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4">
-                {completedTasks.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    Geen voltooide taken
-                  </p>
-                ) : (
-                  completedTasks.map((task) => (
-                    <TaskCard 
-                      key={task.id} 
-                      task={task}
-                      onPriorityChange={updateTaskPriority}
-                      onResetPriority={resetToAutoPriority}
-                    />
-                  ))
-                )}
-              </CardContent>
-            </Card>
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-lg font-medium mb-4">Completed files</h2>
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="search"
+                  value={searchCompleted}
+                  onChange={(e) => setSearchCompleted(e.target.value)}
+                  className="pl-9 bg-background"
+                />
+              </div>
+            </div>
+            <div className="border rounded-lg p-4 bg-card min-h-[500px]">
+              {completedTasks.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Geen voltooide taken
+                </p>
+              ) : (
+                completedTasks.map((task) => (
+                  <TaskCard 
+                    key={task.id} 
+                    task={task}
+                    onPriorityChange={updateTaskPriority}
+                    onResetPriority={resetToAutoPriority}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
       )}

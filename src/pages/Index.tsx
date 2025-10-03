@@ -19,7 +19,11 @@ const Index = () => {
       if (!loading && role) {
         // Redirect based on role
         switch (role) {
+          case "platform_admin":
+            navigate("/admin");
+            break;
           case "admin":
+          case "org_admin":
           case "funeral_director":
             navigate("/dashboard");
             break;
@@ -34,6 +38,10 @@ const Index = () => {
             break;
           case "mosque":
             navigate("/moskee");
+            break;
+          case "reviewer":
+          case "support":
+            navigate("/admin");
             break;
           default:
             navigate("/auth");

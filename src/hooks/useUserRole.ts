@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-export type UserRole = 'admin' | 'funeral_director' | 'family' | 'insurer' | 'wasplaats' | 'mosque' | null;
+export type UserRole = 'platform_admin' | 'admin' | 'org_admin' | 'funeral_director' | 'family' | 'insurer' | 'wasplaats' | 'mosque' | 'reviewer' | 'support' | null;
 
 export const useUserRole = () => {
   const [role, setRole] = useState<UserRole>(null);
@@ -27,10 +27,11 @@ export const useUserRole = () => {
           console.error('Error fetching user role:', error);
           setRole(null);
         } else if (data && data.length > 0) {
-          // If user has multiple roles, prioritize non-family roles
+          // Prioritize roles: platform_admin > admin > org_admin > other roles
           const roles = data.map(d => d.role as UserRole);
-          const primaryRole = roles.find(r => r !== 'family') || roles[0];
-          setRole(primaryRole);
+          const priorityOrder = ['platform_admin', 'admin', 'org_admin', 'funeral_director', 'reviewer', 'support', 'insurer', 'wasplaats', 'mosque', 'family'];
+          const primaryRole = priorityOrder.find(r => roles.includes(r as UserRole)) || roles[0];
+          setRole(primaryRole as UserRole);
         } else {
           setRole(null);
         }
@@ -56,8 +57,12 @@ export const useUserRole = () => {
 
 export const getRoleDisplayName = (role: UserRole): string => {
   switch (role) {
+    case 'platform_admin':
+      return 'Platform Administrator';
     case 'admin':
       return 'Administrator';
+    case 'org_admin':
+      return 'Organisatie Administrator';
     case 'funeral_director':
       return 'Uitvaartondernemer';
     case 'family':
@@ -68,6 +73,10 @@ export const getRoleDisplayName = (role: UserRole): string => {
       return 'Wasplaats';
     case 'mosque':
       return 'Moskee';
+    case 'reviewer':
+      return 'Reviewer';
+    case 'support':
+      return 'Support';
     default:
       return 'Gebruiker';
   }

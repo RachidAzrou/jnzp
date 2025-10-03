@@ -139,7 +139,13 @@
     "task": "Task",
     "urgency": "Urgency",
     "time": "Time",
-    "event": "Event"
+    "event": "Event",
+    "allFiles": "All Files",
+    "jaId": "JA ID",
+    "city": "City",
+    "dateCreated": "Date Created",
+    "allStatuses": "All Statuses",
+    "allFlows": "All Types"
   },
   "documents": {
     "title": "Documents",
@@ -239,7 +245,16 @@
     "ARCHIVED": "Archived",
     "high": "High",
     "normal": "Normal",
-    "low": "Low"
+    "low": "Low",
+    "created": "Created",
+    "fdAssigned": "Assigned",
+    "docsPending": "Documents Pending",
+    "readyForTransport": "Ready for Transport",
+    "inTransit": "In Transit",
+    "planning": "Planning",
+    "completed": "Completed",
+    "archived": "Archived",
+    "legalHold": "Legal Hold"
   },
   "flow": {
     "LOC": "Local",
@@ -247,7 +262,8 @@
     "UNSET": "Not Set",
     "notChosen": "Not chosen",
     "local": "Local",
-    "repatriation": "Repatriation"
+    "repatriation": "Repatriation",
+    "unset": "Not Set"
   },
   "common": {
     "save": "Save",
@@ -270,7 +286,8 @@
     "download": "Download",
     "upload": "Upload",
     "verified": "Verified",
-    "pending": "Pending"
+    "pending": "Pending",
+    "view": "View"
   },
   "navigation": {
     "dashboard": "Dashboard",

@@ -149,7 +149,13 @@
     "task": "Taak",
     "urgency": "Urgentie",
     "time": "Tijd",
-    "event": "Event"
+    "event": "Event",
+    "allFiles": "Alle Dossiers",
+    "jaId": "JA ID",
+    "city": "Stad",
+    "dateCreated": "Datum Aangemaakt",
+    "allStatuses": "Alle Statussen",
+    "allFlows": "Alle Types"
   },
   "documents": {
     "title": "Documenten",
@@ -249,7 +255,16 @@
     "ARCHIVED": "Gearchiveerd",
     "high": "Hoog",
     "normal": "Normaal",
-    "low": "Laag"
+    "low": "Laag",
+    "created": "Aangemaakt",
+    "fdAssigned": "Toegewezen",
+    "docsPending": "Documenten in Afwachting",
+    "readyForTransport": "Klaar voor Transport",
+    "inTransit": "In Transit",
+    "planning": "In Planning",
+    "completed": "Voltooid",
+    "archived": "Gearchiveerd",
+    "legalHold": "Wettelijke Blokkering"
   },
   "flow": {
     "LOC": "Lokaal",
@@ -257,7 +272,8 @@
     "UNSET": "Niet Ingesteld",
     "notChosen": "Niet gekozen",
     "local": "Lokaal",
-    "repatriation": "Repatriëring"
+    "repatriation": "Repatriëring",
+    "unset": "Niet Ingesteld"
   },
   "common": {
     "save": "Opslaan",
@@ -280,7 +296,8 @@
     "download": "Downloaden",
     "upload": "Uploaden",
     "verified": "Geverifieerd",
-    "pending": "In behandeling"
+    "pending": "In behandeling",
+    "view": "Bekijken"
   },
   "navigation": {
     "dashboard": "Dashboard",

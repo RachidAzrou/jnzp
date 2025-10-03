@@ -139,7 +139,13 @@
     "task": "Tâche",
     "urgency": "Urgence",
     "time": "Temps",
-    "event": "Événement"
+    "event": "Événement",
+    "allFiles": "Tous les Dossiers",
+    "jaId": "JA ID",
+    "city": "Ville",
+    "dateCreated": "Date de Création",
+    "allStatuses": "Tous les Statuts",
+    "allFlows": "Tous les Types"
   },
   "documents": {
     "title": "Documents",
@@ -239,7 +245,16 @@
     "ARCHIVED": "Archivé",
     "high": "Élevé",
     "normal": "Normal",
-    "low": "Faible"
+    "low": "Faible",
+    "created": "Créé",
+    "fdAssigned": "Assigné",
+    "docsPending": "Documents en Attente",
+    "readyForTransport": "Prêt pour Transport",
+    "inTransit": "En Transit",
+    "planning": "En Planification",
+    "completed": "Terminé",
+    "archived": "Archivé",
+    "legalHold": "Blocage Légal"
   },
   "flow": {
     "LOC": "Local",
@@ -247,7 +262,8 @@
     "UNSET": "Non Défini",
     "notChosen": "Non choisi",
     "local": "Local",
-    "repatriation": "Rapatriement"
+    "repatriation": "Rapatriement",
+    "unset": "Non Défini"
   },
   "common": {
     "save": "Enregistrer",
@@ -270,7 +286,8 @@
     "download": "Télécharger",
     "upload": "Télécharger",
     "verified": "Vérifié",
-    "pending": "En cours"
+    "pending": "En cours",
+    "view": "Voir"
   },
   "navigation": {
     "dashboard": "Tableau de bord",

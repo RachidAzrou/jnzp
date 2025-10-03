@@ -10,13 +10,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { nl, fr, enUS } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -28,6 +36,9 @@ const Dossiers = () => {
   const [filteredDossiers, setFilteredDossiers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [flowFilter, setFlowFilter] = useState<string>("all");
+  const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const getDateLocale = () => {
@@ -45,7 +56,7 @@ const Dossiers = () => {
   useEffect(() => {
     filterDossiers();
     setCurrentPage(1); // Reset to first page when filters change
-  }, [dossiers, searchQuery]);
+  }, [dossiers, searchQuery, statusFilter, flowFilter]);
 
   const fetchDossiers = async () => {
     setLoading(true);
@@ -73,6 +84,16 @@ const Dossiers = () => {
       );
     }
 
+    // Status filter
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((d) => d.status === statusFilter);
+    }
+
+    // Flow filter
+    if (flowFilter !== "all") {
+      filtered = filtered.filter((d) => d.flow === flowFilter);
+    }
+
     setFilteredDossiers(filtered);
   };
 
@@ -94,9 +115,18 @@ const Dossiers = () => {
   };
 
   const getStatusLabel = (status: string) => {
-    if (status === 'COMPLETED') return t('common.verified');
-    if (status === 'ARCHIVED') return 'Completed';
-    return t('common.pending');
+    const statusMap: Record<string, string> = {
+      'CREATED': t('status.created'),
+      'FD_ASSIGNED': t('status.fdAssigned'),
+      'DOCS_PENDING': t('status.docsPending'),
+      'READY_FOR_TRANSPORT': t('status.readyForTransport'),
+      'IN_TRANSIT': t('status.inTransit'),
+      'PLANNING': t('status.planning'),
+      'COMPLETED': t('status.completed'),
+      'ARCHIVED': t('status.archived'),
+      'LEGAL_HOLD': t('status.legalHold'),
+    };
+    return statusMap[status] || status;
   };
 
   const formatDate = (dateString: string | null) => {
@@ -128,21 +158,74 @@ const Dossiers = () => {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>{t("navigation.dossiers")}</span>
             <span>{">"}</span>
-            <span>All Files</span>
+            <span>{t("dossiers.allFiles")}</span>
           </div>
         </div>
 
         {/* Search Bar */}
         <Card className="border-border/40">
           <CardContent className="pt-6">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder={t("common.search")}
-                className="pl-10 bg-background"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder={t("dossiers.searchPlaceholder")}
+                    className="pl-10 bg-background"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={showFilters ? "bg-muted" : ""}
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              {/* Filters */}
+              {showFilters && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">{t("dossiers.status")}</label>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger className="bg-background">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t("dossiers.allStatuses")}</SelectItem>
+                        <SelectItem value="CREATED">{t("status.created")}</SelectItem>
+                        <SelectItem value="FD_ASSIGNED">{t("status.fdAssigned")}</SelectItem>
+                        <SelectItem value="DOCS_PENDING">{t("status.docsPending")}</SelectItem>
+                        <SelectItem value="READY_FOR_TRANSPORT">{t("status.readyForTransport")}</SelectItem>
+                        <SelectItem value="IN_TRANSIT">{t("status.inTransit")}</SelectItem>
+                        <SelectItem value="PLANNING">{t("status.planning")}</SelectItem>
+                        <SelectItem value="COMPLETED">{t("status.completed")}</SelectItem>
+                        <SelectItem value="ARCHIVED">{t("status.archived")}</SelectItem>
+                        <SelectItem value="LEGAL_HOLD">{t("status.legalHold")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">{t("dossiers.flow")}</label>
+                    <Select value={flowFilter} onValueChange={setFlowFilter}>
+                      <SelectTrigger className="bg-background">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t("dossiers.allFlows")}</SelectItem>
+                        <SelectItem value="REP">{t("flow.repatriation")}</SelectItem>
+                        <SelectItem value="LOC">{t("flow.local")}</SelectItem>
+                        <SelectItem value="UNSET">{t("flow.unset")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -155,11 +238,11 @@ const Dossiers = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/30">
-                    <TableHead className="font-semibold">JA ID</TableHead>
-                    <TableHead className="font-semibold">{t("dossiers.name")}</TableHead>
-                    <TableHead className="font-semibold">City</TableHead>
-                    <TableHead className="font-semibold">Date Created</TableHead>
-                    <TableHead className="font-semibold">Status</TableHead>
+                    <TableHead className="font-semibold">{t("dossiers.jaId")}</TableHead>
+                    <TableHead className="font-semibold">{t("dossiers.deceasedName")}</TableHead>
+                    <TableHead className="font-semibold">{t("dossiers.city")}</TableHead>
+                    <TableHead className="font-semibold">{t("dossiers.dateCreated")}</TableHead>
+                    <TableHead className="font-semibold">{t("dossiers.status")}</TableHead>
                     <TableHead className="font-semibold"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -196,7 +279,7 @@ const Dossiers = () => {
                             size="sm"
                             onClick={() => handleViewDetails(dossier.id)}
                           >
-                            View
+                            {t("common.view")}
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -237,7 +320,7 @@ const Dossiers = () => {
                       onClick={() => handleViewDetails(dossier.id)}
                       className="w-full"
                     >
-                      View
+                      {t("common.view")}
                     </Button>
                   </div>
                 ))

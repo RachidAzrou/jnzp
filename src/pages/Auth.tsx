@@ -785,7 +785,7 @@ const Auth = () => {
           </div>
           <div className="space-y-2">
             <CardDescription className="text-base">
-              Centraal platform voor uitvaartzorg
+              {t("auth.tagline")}
             </CardDescription>
           </div>
         </CardHeader>

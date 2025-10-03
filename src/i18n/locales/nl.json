@@ -1,6 +1,7 @@
 {
   "auth": {
     "welcome": "Welkom bij JanazApp",
+    "tagline": "Centraal platform voor uitvaartzorg",
     "login": "Inloggen",
     "register": "Registreren",
     "email": "E-mailadres",

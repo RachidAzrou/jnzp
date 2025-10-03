@@ -1,6 +1,7 @@
 {
   "auth": {
     "welcome": "Bienvenue sur JanazApp",
+    "tagline": "Plateforme centrale pour les services funéraires",
     "login": "Connexion",
     "register": "S'inscrire",
     "email": "Adresse e-mail",

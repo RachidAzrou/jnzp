@@ -1,5 +1,4 @@
 import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3 } from "lucide-react";
-import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { MdOutlineMosque } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import {
@@ -37,7 +36,7 @@ const menuItems: MenuItem[] = [
   { title: "Facturen", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
   { title: "Rapportage", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
   
-  { title: "Koelcellen", url: "/wasplaats/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['wasplaats'] },
+  { title: "Koelcellen", url: "/wasplaats/koelcellen", icon: FolderOpen, roles: ['wasplaats'] },
   { title: "Facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
   { title: "Beschikbaarheid", url: "/moskee/beschikbaarheid", icon: MdOutlineMosque, roles: ['mosque'] },
   { title: "Mijn Documenten", url: "/mijn-documenten", icon: Upload, roles: ['family'] },

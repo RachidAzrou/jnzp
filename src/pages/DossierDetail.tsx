@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   ArrowLeft, Star, AlertCircle, User, Users, FileText, 
   Building2, Plane, MapPin, DollarSign, Clock, MessageSquare,
-  CheckCircle2, XCircle, Upload, Send
+  CheckCircle2, XCircle, Upload, Send, Zap
 } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -272,7 +272,9 @@ const DossierDetail = () => {
             <Card>
               <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <User className="h-4 w-4 text-primary" />
+                  </div>
                   Overledene
                 </CardTitle>
               </CardHeader>
@@ -304,7 +306,9 @@ const DossierDetail = () => {
             <Card>
               <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Users className="h-4 w-4 text-primary" />
+                  </div>
                   Familie & Contact
                 </CardTitle>
               </CardHeader>
@@ -335,7 +339,9 @@ const DossierDetail = () => {
           <Card>
             <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <FileText className="h-4 w-4 text-primary" />
+                </div>
                 Document Pakket Status
               </CardTitle>
             </CardHeader>
@@ -366,7 +372,12 @@ const DossierDetail = () => {
           {/* Quick Actions */}
           <Card>
             <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-              <CardTitle>Snelle Acties</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Zap className="h-4 w-4 text-primary" />
+                </div>
+                Snelle Acties
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -396,7 +407,12 @@ const DossierDetail = () => {
           <Card>
             <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
               <div className="flex items-center justify-between">
-                <CardTitle>Documenten</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <FileText className="h-4 w-4 text-primary" />
+                  </div>
+                  Documenten
+                </CardTitle>
                 <Button>
                   <Upload className="mr-2 h-4 w-4" />
                   Upload Document
@@ -586,7 +602,9 @@ const DossierDetail = () => {
           <Card>
             <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
               <CardTitle className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Clock className="h-4 w-4 text-primary" />
+                </div>
                 Tijdlijn
               </CardTitle>
             </CardHeader>

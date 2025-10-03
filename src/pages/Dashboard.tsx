@@ -1,4 +1,4 @@
-import { FolderOpen, AlertTriangle, FileX, Clock, Plane, MapPin } from "lucide-react";
+import { FolderOpen, AlertTriangle, FileX, Clock, Plane, MapPin, CheckSquare } from "lucide-react";
 import { KPICard } from "@/components/KPICard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -182,8 +182,15 @@ const Dashboard = () => {
         {/* Actieve dossiers */}
         <Card>
           <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-            <CardTitle>Actieve dossiers</CardTitle>
-            <CardDescription>Dossiers die aandacht vereisen</CardDescription>
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <FolderOpen className="h-4 w-4 text-primary" />
+                </div>
+                Actieve dossiers
+              </CardTitle>
+              <CardDescription className="mt-1">Dossiers die aandacht vereisen</CardDescription>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
@@ -253,8 +260,15 @@ const Dashboard = () => {
         {/* Mijn openstaande taken */}
         <Card>
           <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-            <CardTitle>Mijn openstaande taken</CardTitle>
-            <CardDescription>Taken (vandaag + urgent)</CardDescription>
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <CheckSquare className="h-4 w-4 text-primary" />
+                </div>
+                Mijn openstaande taken
+              </CardTitle>
+              <CardDescription className="mt-1">Taken (vandaag + urgent)</CardDescription>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
@@ -325,8 +339,15 @@ const Dashboard = () => {
       {/* Recent bijgewerkt */}
       <Card>
         <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-          <CardTitle>Recent bijgewerkt</CardTitle>
-          <CardDescription>Laatste activiteiten in het systeem</CardDescription>
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Clock className="h-4 w-4 text-primary" />
+              </div>
+              Recent bijgewerkt
+            </CardTitle>
+            <CardDescription className="mt-1">Laatste activiteiten in het systeem</CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>

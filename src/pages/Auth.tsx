@@ -872,7 +872,7 @@ const Auth = () => {
                 className="w-full"
                 onClick={() => navigate("/register")}
               >
-                {t("auth.noAccount")} {t("auth.signUp")}
+                Registreer hier
               </Button>
             </div>
           </form>

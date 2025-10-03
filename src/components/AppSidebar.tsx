@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -93,9 +94,6 @@ export function AppSidebar() {
         <div className="px-6 py-6 border-b border-sidebar-border">
           <img src={logoHorizontal} alt="JanazApp" className="h-8 brightness-0 invert" />
           <p className="text-xs text-sidebar-foreground/70 mt-2">{getRoleDisplayName(role)} {t("navigation.portal")}</p>
-          <div className="mt-4">
-            <LanguageSwitcher />
-          </div>
         </div>
         
         <SidebarGroup className="mt-4">
@@ -126,6 +124,10 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      <SidebarFooter className="border-t border-sidebar-border p-4">
+        <LanguageSwitcher />
+      </SidebarFooter>
     </Sidebar>
   );
 }

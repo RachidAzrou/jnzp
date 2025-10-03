@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { NotificationPanel } from "@/components/NotificationPanel";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +23,7 @@ import { useUserRole, getRoleDisplayName } from "@/hooks/useUserRole";
 export function TopBar() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [userEmail, setUserEmail] = useState<string>("");
   const { role } = useUserRole();
 
@@ -36,14 +39,14 @@ export function TopBar() {
     const { error } = await supabase.auth.signOut();
     if (error) {
       toast({
-        title: "Fout bij uitloggen",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Uitgelogd",
-        description: "U bent succesvol uitgelogd.",
+        title: t("navigation.logout"),
+        description: t("common.success"),
       });
       navigate("/auth");
     }
@@ -58,13 +61,14 @@ export function TopBar() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Zoeken..."
+            placeholder={t("common.search")}
             className="pl-10"
           />
         </div>
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3">
+        <LanguageSwitcher />
         <NotificationPanel />
         
         <DropdownMenu>
@@ -78,14 +82,14 @@ export function TopBar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Mijn Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("navigation.settings")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate("/instellingen")}>
-              Instellingen
+              {t("navigation.settings")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleLogout} className="text-destructive">
               <LogOut className="mr-2 h-4 w-4" />
-              Uitloggen
+              {t("navigation.logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

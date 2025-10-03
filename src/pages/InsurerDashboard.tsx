@@ -110,16 +110,14 @@ export default function InsurerDashboard() {
     return "In behandeling";
   };
 
+  // Get recent dossiers (last 5)
+  const recentDossiers = filteredDossiers.slice(0, 5);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen bg-background">
       <div className="space-y-6 p-8 max-w-[1600px] mx-auto">
         <div className="flex justify-between items-center">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Verzekeraar Dashboard
-            </h1>
-            <p className="text-lg text-muted-foreground">Overzicht van verzekerde dossiers</p>
-          </div>
+          <h1 className="text-2xl font-semibold">Verzekeraar Dashboard</h1>
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -139,11 +137,8 @@ export default function InsurerDashboard() {
         </div>
 
         {/* Filters */}
-        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
-            <CardTitle className="text-xl font-semibold">Filters</CardTitle>
-          </CardHeader>
-          <CardContent className="flex gap-4">
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6 flex gap-4">
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -204,38 +199,47 @@ export default function InsurerDashboard() {
           />
         </div>
 
-        {/* Dossiers Table */}
-        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
-            <CardTitle className="text-xl font-semibold">Dossiers</CardTitle>
+        {/* Recent Dossiers */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-lg">Recente dossiers</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/insurer/dossiers")}
+              >
+                Alle dossiers
+              </Button>
+            </div>
           </CardHeader>
-          <CardContent className="pt-8">
+          <CardContent>
             {isLoading ? (
-              <div className="text-center py-8 text-muted-foreground">Laden...</div>
-            ) : filteredDossiers.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">Geen dossiers gevonden</div>
+              <div className="text-center py-8 text-sm text-muted-foreground">Laden...</div>
+            ) : recentDossiers.length === 0 ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">Geen dossiers gevonden</div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Dossier</TableHead>
-                    <TableHead>Polis</TableHead>
-                    <TableHead>Minimumpakket</TableHead>
-                    <TableHead>Planning</TableHead>
-                    <TableHead>Laatste update</TableHead>
-                    <TableHead>Actie</TableHead>
+                    <TableHead className="font-medium text-sm">Dossier</TableHead>
+                    <TableHead className="font-medium text-sm">Polis</TableHead>
+                    <TableHead className="font-medium text-sm">Minimumpakket</TableHead>
+                    <TableHead className="font-medium text-sm">Planning</TableHead>
+                    <TableHead className="font-medium text-sm">Laatste update</TableHead>
+                    <TableHead className="font-medium text-sm">Actie</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredDossiers.map((dossier) => (
-                    <TableRow key={dossier.id}>
-                      <TableCell className="font-medium">{dossier.ref_number}</TableCell>
-                      <TableCell>
+                  {recentDossiers.map((dossier) => (
+                    <TableRow key={dossier.id} className="hover:bg-muted/30">
+                      <TableCell className="font-mono text-sm">{dossier.ref_number}</TableCell>
+                      <TableCell className="text-sm">
                         {dossier.polis_checks?.[0] ? (
                           <div>
                             <div>{dossier.polis_checks[0].is_covered ? "Actief" : "Niet gevonden"}</div>
                             {dossier.polis_checks[0].num_travelers && (
-                              <div className="text-sm text-muted-foreground">
+                              <div className="text-xs text-muted-foreground">
                                 {dossier.polis_checks[0].num_travelers} reiziger(s)
                               </div>
                             )}
@@ -245,14 +249,14 @@ export default function InsurerDashboard() {
                         )}
                       </TableCell>
                       <TableCell>{getDocumentPackageStatus(dossier.documents || [])}</TableCell>
-                      <TableCell>
+                      <TableCell className="text-sm">
                         {dossier.legal_hold ? (
-                          <Badge variant="destructive">LEGAL_HOLD</Badge>
+                          <Badge variant="destructive" className="text-xs">LEGAL_HOLD</Badge>
                         ) : (
                           getPlanningStatus(dossier)
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
                         {new Date(dossier.updated_at).toLocaleString("nl-NL", {
                           day: "2-digit",
                           month: "2-digit",

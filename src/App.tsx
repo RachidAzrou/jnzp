@@ -26,6 +26,7 @@ import FDChat from "./pages/FDChat";
 import WasplaatsDashboard from "./pages/WasplaatsDashboard";
 import WasplaatsKoelcellen from "./pages/WasplaatsKoelcellen";
 import WasplaatsReservaties from "./pages/WasplaatsReservaties";
+import WasplaatsFacturatie from "./pages/WasplaatsFacturatie";
 import Facturatie from "./pages/Facturatie";
 import FDFacturatie from "./pages/FDFacturatie";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
@@ -220,7 +221,7 @@ const App = () => (
                           } />
                           <Route path="/wasplaats/facturatie" element={
                             <RoleProtectedRoute allowedRoles={['wasplaats']}>
-                              <Facturatie />
+                              <WasplaatsFacturatie />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/moskee" element={

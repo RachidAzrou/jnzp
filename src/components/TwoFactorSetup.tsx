@@ -8,6 +8,13 @@ import { Shield, Loader2, Copy, Download } from "lucide-react";
 import { authenticator } from "otplib";
 import QRCode from "qrcode";
 
+// Browser-compatible random bytes generator
+const generateRandomSecret = () => {
+  const array = new Uint8Array(20);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(36)).join('').substring(0, 32).toUpperCase();
+};
+
 export const TwoFactorSetup = () => {
   const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -54,8 +61,8 @@ export const TwoFactorSetup = () => {
         return;
       }
 
-      // Generate TOTP secret
-      const newSecret = authenticator.generateSecret();
+      // Generate TOTP secret using browser-compatible method
+      const newSecret = generateRandomSecret();
       setSecret(newSecret);
 
       // Generate recovery codes (10 codes)

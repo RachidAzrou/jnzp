@@ -8,89 +8,105 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 222 47% 11%;
+    /* Neutral background - soft, serene */
+    --background: 210 20% 98%;
+    --foreground: 155 25% 15%;
 
+    /* Cards with subtle elevation */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 155 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 155 25% 15%;
 
-    --primary: 221 83% 53%;
+    /* Primary - Professional Green from logo */
+    --primary: 155 65% 35%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary - Lighter green accent */
+    --secondary: 145 45% 92%;
+    --secondary-foreground: 155 65% 25%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    /* Muted - Soft neutrals for serene feel */
+    --muted: 210 20% 96%;
+    --muted-foreground: 155 15% 45%;
 
-    --accent: 217 92% 60%;
+    /* Accent - Brighter green for highlights */
+    --accent: 145 70% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    /* Subtle borders for clean look */
+    --border: 210 20% 90%;
+    --input: 210 20% 94%;
+    --ring: 155 65% 35%;
 
-    --success: 142 71% 45%;
-    --warning: 38 92% 50%;
-    --info: 199 89% 48%;
+    /* Status colors with green harmony */
+    --success: 145 70% 45%;
+    --warning: 35 90% 55%;
+    --info: 200 85% 50%;
 
-    --radius: 0.5rem;
+    /* Softer radius for modern feel */
+    --radius: 0.75rem;
 
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 221 83% 53%;
+    /* Sidebar - Dark green professional */
+    --sidebar-background: 155 35% 20%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 145 70% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 17%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-accent: 155 30% 25%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 155 25% 18%;
+    --sidebar-ring: 145 70% 45%;
 
-    --transition-smooth: all 0.2s ease-in-out;
+    /* Smooth transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Shadows for depth */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.05);
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    --background: 155 25% 8%;
+    --foreground: 210 20% 98%;
 
-    --card: 217 33% 17%;
-    --card-foreground: 210 40% 98%;
+    --card: 155 20% 12%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 217 33% 17%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 155 20% 12%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 145 70% 45%;
+    --primary-foreground: 155 25% 8%;
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 155 20% 15%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 155 15% 18%;
+    --muted-foreground: 210 15% 65%;
 
-    --accent: 217 92% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 145 70% 50%;
+    --accent-foreground: 155 25% 8%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 221 83% 53%;
+    --border: 155 15% 20%;
+    --input: 155 15% 18%;
+    --ring: 145 70% 45%;
 
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 221 83% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 17%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-background: 155 30% 10%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 145 70% 45%;
+    --sidebar-primary-foreground: 155 25% 8%;
+    --sidebar-accent: 155 20% 15%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 155 15% 12%;
+    --sidebar-ring: 145 70% 45%;
   }
 }
 
@@ -100,6 +116,12 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
   }
 }

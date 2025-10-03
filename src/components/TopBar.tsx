@@ -49,7 +49,7 @@ export function TopBar() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card px-6">
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 px-6 shadow-sm">
       <SidebarTrigger />
       
       <div className="flex-1 flex items-center gap-4">

@@ -11,6 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useUserRole, UserRole, getRoleDisplayName } from "@/hooks/useUserRole";
+import logoHorizontal from "@/assets/logo-horizontal.png";
 
 type MenuItem = {
   title: string;
@@ -53,9 +54,9 @@ export function AppSidebar() {
     return (
       <Sidebar className="border-r">
         <SidebarContent>
-          <div className="px-6 py-4">
-            <h1 className="text-xl font-bold text-sidebar-foreground">JanazApp</h1>
-            <p className="text-xs text-sidebar-foreground/70 mt-1">Laden...</p>
+          <div className="px-6 py-6 border-b border-sidebar-border">
+            <img src={logoHorizontal} alt="JanazApp" className="h-8 brightness-0 invert" />
+            <p className="text-xs text-sidebar-foreground/70 mt-2">Laden...</p>
           </div>
         </SidebarContent>
       </Sidebar>
@@ -65,13 +66,13 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r">
       <SidebarContent>
-        <div className="px-6 py-4">
-          <h1 className="text-xl font-bold text-sidebar-foreground">JanazApp</h1>
-          <p className="text-xs text-sidebar-foreground/70 mt-1">{getRoleDisplayName(role)} Portal</p>
+        <div className="px-6 py-6 border-b border-sidebar-border">
+          <img src={logoHorizontal} alt="JanazApp" className="h-8 brightness-0 invert" />
+          <p className="text-xs text-sidebar-foreground/70 mt-2">{getRoleDisplayName(role)} Portal</p>
         </div>
         
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigatie</SidebarGroupLabel>
+        <SidebarGroup className="mt-4">
+          <SidebarGroupLabel className="px-6 text-sidebar-foreground/60 text-xs uppercase tracking-wider">Navigatie</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredMenuItems.map((item) => (
@@ -81,9 +82,9 @@ export function AppSidebar() {
                       to={item.url}
                       end
                       className={({ isActive }) =>
-                        `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                        `flex items-center gap-3 px-4 py-2.5 mx-3 rounded-lg transition-all duration-200 ${
                           isActive
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium shadow-sm"
                             : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                         }`
                       }

@@ -2,111 +2,107 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* Neutral background - soft, serene */
-    --background: 210 20% 98%;
-    --foreground: 155 25% 15%;
-
-    /* Cards with subtle elevation */
-    --card: 0 0% 100%;
-    --card-foreground: 155 25% 15%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 155 25% 15%;
-
-    /* Primary - Professional Green from logo */
-    --primary: 155 65% 35%;
+    /* Primary brand colors - donkergroen */
+    --primary: 152 79% 29%;
     --primary-foreground: 0 0% 100%;
-
-    /* Secondary - Lighter green accent for badges */
-    --secondary: 145 55% 88%;
-    --secondary-foreground: 155 65% 30%;
-
-    /* Muted - Soft neutrals for serene feel */
-    --muted: 210 20% 96%;
-    --muted-foreground: 155 15% 45%;
-
-    /* Accent - Brighter green for highlights */
-    --accent: 145 70% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 75% 70%;
-    --destructive-foreground: 0 70% 25%;
-
-    /* Subtle borders for clean look */
-    --border: 210 20% 90%;
-    --input: 210 20% 94%;
-    --ring: 155 65% 35%;
-
-    /* Status colors with green harmony */
-    --success: 145 70% 45%;
-    --warning: 35 90% 55%;
-    --info: 200 85% 50%;
-
-    /* Softer radius for modern feel */
-    --radius: 0.75rem;
-
-    /* Sidebar - Dark green professional */
-    --sidebar-background: 155 35% 20%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 145 70% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 155 30% 25%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 155 25% 18%;
-    --sidebar-ring: 145 70% 45%;
-
-    /* Smooth transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* Shadows for depth */
+    /* Secondary brand - lichtgroen */
+    --secondary: 145 65% 45%;
+    --secondary-foreground: 0 0% 100%;
+    
+    /* Accent */
+    --accent: 145 65% 45%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Background and surfaces */
+    --background: 0 0% 100%;
+    --foreground: 220 15% 9%;
+    
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 9%;
+    
+    /* Muted - lichtgrijs */
+    --muted: 214 32% 97%;
+    --muted-foreground: 220 9% 46%;
+    
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 9%;
+    
+    /* Border */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 152 79% 29%;
+    
+    /* Status colors */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    --success: 152 79% 29%;
+    --success-foreground: 0 0% 100%;
+    
+    /* Sidebar */
+    --sidebar-background: 220 15% 9%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 152 79% 29%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 145 65% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 13% 20%;
+    --sidebar-ring: 152 79% 29%;
+    
+    --radius: 0.5rem;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   }
 
   .dark {
-    --background: 155 25% 8%;
-    --foreground: 210 20% 98%;
-
-    --card: 155 20% 12%;
-    --card-foreground: 210 20% 98%;
-
-    --popover: 155 20% 12%;
-    --popover-foreground: 210 20% 98%;
-
-    --primary: 145 70% 45%;
-    --primary-foreground: 155 25% 8%;
-
-    --secondary: 155 20% 15%;
-    --secondary-foreground: 210 20% 98%;
-
-    --muted: 155 15% 18%;
-    --muted-foreground: 210 15% 65%;
-
-    --accent: 145 70% 50%;
-    --accent-foreground: 155 25% 8%;
-
-    --destructive: 0 63% 45%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 155 15% 20%;
-    --input: 155 15% 18%;
-    --ring: 145 70% 45%;
-
-    --sidebar-background: 155 30% 10%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 145 70% 45%;
-    --sidebar-primary-foreground: 155 25% 8%;
-    --sidebar-accent: 155 20% 15%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 155 15% 12%;
-    --sidebar-ring: 145 70% 45%;
+    --background: 220 15% 9%;
+    --foreground: 0 0% 100%;
+    
+    --card: 220 13% 12%;
+    --card-foreground: 0 0% 100%;
+    
+    --popover: 220 13% 12%;
+    --popover-foreground: 0 0% 100%;
+    
+    --primary: 152 79% 29%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 145 65% 45%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 60%;
+    
+    --accent: 145 65% 45%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 152 79% 29%;
+    
+    --sidebar-background: 220 15% 7%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 152 79% 29%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 145 65% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 13% 15%;
   }
 }
 
@@ -114,37 +110,32 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
+  
   body {
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
-
-  /* Smooth scrolling */
+  
   html {
     scroll-behavior: smooth;
   }
-
-  /* Enhanced focus styles for accessibility */
+  
   *:focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-ring ring-offset-2;
   }
-
-  /* Improved table styling */
+  
   table {
     @apply w-full border-collapse;
   }
-
+  
   th {
-    @apply text-left font-semibold text-sm text-muted-foreground px-4 py-3;
+    @apply text-left font-semibold uppercase text-xs tracking-wider text-muted-foreground;
   }
-
+  
   td {
-    @apply px-4 py-3 text-sm;
+    @apply py-3 text-sm;
   }
-
-  /* Better button transitions */
+  
   button {
     @apply transition-all duration-200;
   }

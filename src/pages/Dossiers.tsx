@@ -13,22 +13,20 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Plus, Filter, AlertCircle, FolderOpen, Plane, MapPin } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSearchParams } from "react-router-dom";
-import { DossierDetailSheet } from "@/components/DossierDetailSheet";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { EmptyState } from "@/components/EmptyState";
 import { useToast } from "@/hooks/use-toast";
 
 const Dossiers = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [dossiers, setDossiers] = useState<any[]>([]);
   const [filteredDossiers, setFilteredDossiers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "all");
   const [flowFilter, setFlowFilter] = useState<string>(searchParams.get("flow") || "all");
-  const [selectedDossier, setSelectedDossier] = useState<any>(null);
-  const [sheetOpen, setSheetOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -104,9 +102,8 @@ const Dossiers = () => {
     }
   };
 
-  const handleViewDetails = (dossier: any) => {
-    setSelectedDossier(dossier);
-    setSheetOpen(true);
+  const handleViewDetails = (dossierId: string) => {
+    navigate(`/dossiers/${dossierId}`);
   };
 
   if (loading) {
@@ -301,7 +298,7 @@ const Dossiers = () => {
                       <Button
                         variant="default"
                         size="sm"
-                        onClick={() => handleViewDetails(dossier)}
+                        onClick={() => handleViewDetails(dossier.id)}
                       >
                         Open Dossier
                       </Button>
@@ -314,11 +311,6 @@ const Dossiers = () => {
         </CardContent>
       </Card>
 
-      <DossierDetailSheet
-        dossier={selectedDossier}
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-      />
     </div>
   );
 };

@@ -29,6 +29,7 @@ import WasplaatsReservaties from "./pages/WasplaatsReservaties";
 import WasplaatsFacturatie from "./pages/WasplaatsFacturatie";
 import Facturatie from "./pages/Facturatie";
 import FDFacturatie from "./pages/FDFacturatie";
+import DossierDetail from "./pages/DossierDetail";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
 import MoskeeAanvraag from "./pages/MoskeeAanvraag";
 import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
@@ -152,6 +153,11 @@ const App = () => (
                           <Route path="/dossiers" element={
                             <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
                               <Dossiers />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/dossiers/:id" element={
+                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                              <DossierDetail />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/taken" element={

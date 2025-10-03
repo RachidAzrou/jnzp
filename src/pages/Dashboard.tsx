@@ -216,7 +216,7 @@ const Dashboard = () => {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => navigate('/dossiers')}
+                        onClick={() => navigate(`/dossiers/${dossier.id}`)}
                       >
                         Open
                       </Button>

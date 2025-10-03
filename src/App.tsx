@@ -41,6 +41,7 @@ import InsurerRapportage from "./pages/InsurerRapportage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminDirectory from "./pages/AdminDirectory";
 import Auth from "./pages/Auth";
+import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
 
@@ -143,6 +144,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/auth" element={<Auth />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/*"
             element={

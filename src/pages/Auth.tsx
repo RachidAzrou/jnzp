@@ -1,19 +1,13 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Users, ArrowLeft } from "lucide-react";
-import { MdOutlineMosque } from "react-icons/md";
-import { LuHandshake } from "react-icons/lu";
-import { RiHandHeartLine } from "react-icons/ri";
-import { IoBusiness } from "react-icons/io5";
+import { Loader2 } from "lucide-react";
 import logoAuth from "@/assets/logo-vertical-new.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
@@ -91,12 +85,6 @@ const Auth = () => {
         navigate("/");
       }
     });
-    
-    const code = searchParams.get("invite");
-    if (code) {
-      setInvitationCode(code);
-      setRegistrationStep("details");
-    }
   }, [navigate, searchParams]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -392,25 +380,6 @@ const Auth = () => {
     }
   };
 
-  const getRoleIcon = (role: UserRole) => {
-    switch (role) {
-      case "family": return <Users className="h-5 w-5" />;
-      case "funeral_director": return <LuHandshake className="h-5 w-5" />;
-      case "mosque": return <MdOutlineMosque className="h-5 w-5" />;
-      case "wasplaats": return <RiHandHeartLine className="h-5 w-5" />;
-      case "insurer": return <IoBusiness className="h-5 w-5" />;
-    }
-  };
-
-  const getRoleLabel = (role: UserRole) => {
-    switch (role) {
-      case "family": return "Familie/Nabestaande";
-      case "funeral_director": return "Uitvaartondernemer";
-      case "mosque": return "Moskee";
-      case "wasplaats": return "Mortuarium";
-      case "insurer": return "Verzekeraar";
-    }
-  };
 
   // Password reset form with 2FA check for professionals
   if (isResettingPassword) {
@@ -542,392 +511,78 @@ const Auth = () => {
           </div>
         </CardHeader>
         <CardContent className="pb-8">
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-muted/50">
-              <TabsTrigger value="login" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                Inloggen
-              </TabsTrigger>
-              <TabsTrigger value="signup" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                Registreren
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-6 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-sm font-medium">
-                    E-mailadres
-                  </Label>
-                  <Input
-                    id="login-email"
-                    type="email"
-                    placeholder="naam@voorbeeld.nl"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password" className="text-sm font-medium">
-                    Wachtwoord
-                  </Label>
-                  <Input
-                    id="login-password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all" 
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Bezig met inloggen...
-                    </>
-                  ) : (
-                    "Inloggen"
-                  )}
-                </Button>
-
-                <div className="text-center mt-4">
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="text-sm text-primary"
-                    onClick={() => setShowResetDialog(true)}
-                  >
-                    Wachtwoord vergeten?
-                  </Button>
-                </div>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="signup">
-              {registrationStep === "role" ? (
-                <div className="space-y-6 pt-6">
-                  {/* Progress Indicator */}
-                  <div className="flex items-center justify-center gap-2 mb-8">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                        1
-                      </div>
-                      <span className="text-sm font-medium">Kies rol</span>
-                    </div>
-                    <div className="w-12 h-0.5 bg-muted"></div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-medium">
-                        2
-                      </div>
-                      <span className="text-sm text-muted-foreground">Gegevens</span>
-                    </div>
-                  </div>
-
-                  <div className="text-center space-y-2 mb-6">
-                    <h3 className="font-semibold text-xl">Welke rol beschrijft u het best?</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Kies de optie die bij uw situatie past
-                    </p>
-                  </div>
-
-                  <div className="grid gap-3">
-                    {(["family", "funeral_director", "mosque", "wasplaats", "insurer"] as UserRole[]).map((role) => (
-                      <button
-                        key={role}
-                        type="button"
-                        onClick={() => setSelectedRole(role)}
-                        className={`relative flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-200 text-left group hover:border-primary hover:shadow-lg ${
-                          selectedRole === role 
-                            ? 'border-primary bg-primary/5 shadow-md' 
-                            : 'border-border hover:bg-accent/50'
-                        }`}
-                      >
-                        <div className={`p-3 rounded-lg transition-colors ${
-                          selectedRole === role 
-                            ? 'bg-primary/10 text-primary' 
-                            : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
-                        }`}>
-                          {getRoleIcon(role)}
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-medium text-base">{getRoleLabel(role)}</div>
-                        </div>
-                        {selectedRole === role && (
-                          <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-                            <svg className="w-4 h-4 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-
-                  <Button
-                    onClick={() => selectedRole && setRegistrationStep("details")}
-                    disabled={!selectedRole}
-                    className="w-full h-12 mt-6 text-base"
-                  >
-                    Doorgaan naar gegevens
-                  </Button>
-                </div>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="login-email" className="text-sm font-medium">
+                E-mailadres
+              </Label>
+              <Input
+                id="login-email"
+                type="email"
+                placeholder="naam@voorbeeld.nl"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="login-password" className="text-sm font-medium">
+                Wachtwoord
+              </Label>
+              <Input
+                id="login-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
+              />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all" 
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Bezig met inloggen...
+                </>
               ) : (
-                <div className="space-y-5 pt-4">
-                  {/* Progress Indicator */}
-                  <div className="flex items-center justify-center gap-2 mb-6">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                        ✓
-                      </div>
-                      <span className="text-sm font-medium">Rol</span>
-                    </div>
-                    <div className="w-12 h-0.5 bg-primary"></div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                        2
-                      </div>
-                      <span className="text-sm font-medium">Gegevens</span>
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setRegistrationStep("role");
-                      setSelectedRole(null);
-                    }}
-                    className="mb-4"
-                  >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Wijzig rol
-                  </Button>
-
-                  <div className="text-center pb-4">
-                    <div className="inline-flex items-center gap-3 px-4 py-2 rounded-lg bg-primary/10">
-                      <div className="text-primary">
-                        {selectedRole && getRoleIcon(selectedRole)}
-                      </div>
-                      <span className="font-medium">
-                        {selectedRole && getRoleLabel(selectedRole)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {selectedRole === "family" ? (
-                    <form onSubmit={handleFamilySignup} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="first-name">Voornaam</Label>
-                          <Input
-                            id="first-name"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
-                            required
-                            className="h-11"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="last-name">Achternaam</Label>
-                          <Input
-                            id="last-name"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
-                            required
-                            className="h-11"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Telefoonnummer</Label>
-                        <Input
-                          id="phone"
-                          type="tel"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          required
-                          className="h-11"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">E-mailadres</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                          className="h-11"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="password">Wachtwoord</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                          minLength={12}
-                          className="h-11"
-                        />
-                        <p className="text-xs text-muted-foreground">Minimaal 12 tekens</p>
-                      </div>
-                      <Button type="submit" className="w-full h-12 mt-6" disabled={loading}>
-                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        Maak account aan
-                      </Button>
-                    </form>
-                  ) : (
-                    <form onSubmit={handleProfessionalSignup} className="space-y-5">
-                      <div className="space-y-4 p-5 bg-muted/30 rounded-xl border">
-                        <h4 className="font-semibold text-sm flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                          Organisatiegegevens
-                        </h4>
-                        <div className="space-y-3">
-                          <div className="space-y-2">
-                            <Label htmlFor="org-name">Organisatienaam</Label>
-                            <Input
-                              id="org-name"
-                              value={orgName}
-                              onChange={(e) => setOrgName(e.target.value)}
-                              required
-                              className="h-11"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="org-registration">Ondernemingsnummer</Label>
-                            <Input
-                              id="org-registration"
-                              value={orgRegistrationNumber}
-                              onChange={(e) => setOrgRegistrationNumber(e.target.value)}
-                              placeholder="Bv. 0123.456.789"
-                              required
-                              className="h-11"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="org-address">Adres</Label>
-                            <Input
-                              id="org-address"
-                              value={orgAddress}
-                              onChange={(e) => setOrgAddress(e.target.value)}
-                              required
-                              className="h-11"
-                            />
-                          </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="space-y-2">
-                              <Label htmlFor="org-city">Stad</Label>
-                              <Input
-                                id="org-city"
-                                value={orgCity}
-                                onChange={(e) => setOrgCity(e.target.value)}
-                                required
-                                className="h-11"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="org-postal">Postcode</Label>
-                              <Input
-                                id="org-postal"
-                                value={orgPostalCode}
-                                onChange={(e) => setOrgPostalCode(e.target.value)}
-                                required
-                                className="h-11"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <h4 className="font-semibold text-sm flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
-                          Contactpersoon
-                        </h4>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="contact-first">Voornaam</Label>
-                            <Input
-                              id="contact-first"
-                              value={firstName}
-                              onChange={(e) => setFirstName(e.target.value)}
-                              required
-                              className="h-11"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="contact-last">Achternaam</Label>
-                            <Input
-                              id="contact-last"
-                              value={lastName}
-                              onChange={(e) => setLastName(e.target.value)}
-                              required
-                              className="h-11"
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="contact-phone">Telefoon</Label>
-                          <Input
-                            id="contact-phone"
-                            type="tel"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            required
-                            className="h-11"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="contact-email">E-mail</Label>
-                          <Input
-                            id="contact-email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="h-11"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="contact-password">Wachtwoord</Label>
-                          <Input
-                            id="contact-password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            minLength={12}
-                            className="h-11"
-                          />
-                          <p className="text-xs text-muted-foreground">Minimaal 12 tekens</p>
-                        </div>
-                      </div>
-
-                      <Button type="submit" className="w-full h-12 mt-6" disabled={loading}>
-                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        Dien aanvraag in
-                      </Button>
-
-                      <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-900">
-                        <p className="text-xs text-blue-900 dark:text-blue-100 text-center leading-relaxed">
-                          Uw aanvraag wordt beoordeeld door een administrator. U ontvangt bericht zodra uw account is goedgekeurd.
-                        </p>
-                      </div>
-                    </form>
-                  )}
-                </div>
+                "Inloggen"
               )}
-            </TabsContent>
-          </Tabs>
+            </Button>
+
+            <div className="space-y-2 pt-4">
+              <Button
+                type="button"
+                variant="link"
+                className="w-full text-sm text-primary"
+                onClick={() => setShowResetDialog(true)}
+              >
+                Wachtwoord vergeten?
+              </Button>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Of</span>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate("/register")}
+              >
+                Maak een nieuw account aan
+              </Button>
+            </div>
+          </form>
         </CardContent>
       </Card>
 

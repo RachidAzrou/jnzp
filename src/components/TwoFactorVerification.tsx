@@ -129,6 +129,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce }: TwoFactor
           secret?: string;
           period?: number;
           step?: number;
+          timestamp?: number;
         };
 
         if (!verifyResponse.success) {
@@ -161,10 +162,12 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce }: TwoFactor
           secret: OTPAuth.Secret.fromBase32(verifyResponse.secret),
         });
 
-        // Genereer token voor de beschikbare periode (in milliseconden)
-        const timestamp = verifyResponse.period * (verifyResponse.step || 30) * 1000;
+        // Gebruik de exacte server timestamp (al in seconden van Unix epoch)
+        // OTPAuth verwacht milliseconden, dus vermenigvuldig met 1000
+        const timestamp = (verifyResponse.timestamp || 0) * 1000;
         const expectedToken = totp.generate({ timestamp });
 
+        console.log("Server timestamp:", verifyResponse.timestamp);
         console.log("Expected token for period", verifyResponse.period, ":", expectedToken);
         console.log("User entered:", code);
 

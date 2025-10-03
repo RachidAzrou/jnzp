@@ -280,7 +280,7 @@ const Auth = () => {
       navigate("/");
     } catch (error: any) {
       toast({
-        title: "Inloggen mislukt",
+        title: t("auth.loginFailed"),
         description: error.message,
         variant: "destructive",
       });
@@ -301,8 +301,8 @@ const Auth = () => {
       
       if (error) {
         toast({
-          title: "Inloggen mislukt",
-          description: "Er is een fout opgetreden na 2FA verificatie.",
+          title: t("auth.loginFailed"),
+          description: t("auth.twoFAFailed"),
           variant: "destructive",
         });
         setShow2FAVerification(false);
@@ -345,7 +345,7 @@ const Auth = () => {
       const validation = await validatePassword(password);
       if (!validation.valid) {
         toast({
-          title: "Ongeldig wachtwoord",
+          title: t("auth.invalidPassword"),
           description: validation.error,
           variant: "destructive",
         });
@@ -378,8 +378,8 @@ const Auth = () => {
       }
 
       toast({
-        title: "Account aangemaakt",
-        description: "Controleer uw e-mail voor verificatie. U kunt daarna inloggen.",
+        title: t("auth.accountCreated"),
+        description: t("auth.checkEmail"),
       });
 
       setEmail("");
@@ -409,7 +409,7 @@ const Auth = () => {
       const validation = await validatePassword(password);
       if (!validation.valid) {
         toast({
-          title: "Ongeldig wachtwoord",
+          title: t("auth.invalidPassword"),
           description: validation.error,
           variant: "destructive",
         });
@@ -519,8 +519,8 @@ const Auth = () => {
       if (error) throw error;
 
       toast({
-        title: "Reset-link verzonden",
-        description: "Als dit e-mailadres bij ons bekend is, ontvangt u een herstel-link.",
+        title: t("auth.resetLinkSent"),
+        description: t("auth.resetLinkDescription"),
       });
 
       setShowResetDialog(false);
@@ -553,12 +553,12 @@ const Auth = () => {
       setTwoFACode("");
       
       toast({
-        title: "2FA geverifieerd",
-        description: "U kunt nu uw nieuwe wachtwoord instellen.",
+        title: t("auth.twoFAVerified"),
+        description: t("auth.twoFAVerifiedDescription"),
       });
     } catch (error: any) {
       toast({
-        title: "2FA verificatie mislukt",
+        title: t("auth.twoFAFailed"),
         description: error.message,
         variant: "destructive",
       });
@@ -572,8 +572,8 @@ const Auth = () => {
     
     if (newPassword !== confirmPassword) {
       toast({
-        title: "Wachtwoorden komen niet overeen",
-        description: "Controleer of beide wachtwoorden identiek zijn.",
+        title: t("auth.passwordsDoNotMatch"),
+        description: t("auth.checkPasswordsMatch"),
         variant: "destructive",
       });
       return;
@@ -583,7 +583,7 @@ const Auth = () => {
     const validation = await validatePassword(newPassword);
     if (!validation.valid) {
       toast({
-        title: "Ongeldig wachtwoord",
+        title: t("auth.invalidPassword"),
         description: validation.error,
         variant: "destructive",
       });
@@ -614,8 +614,8 @@ const Auth = () => {
       }
 
       toast({
-        title: "Wachtwoord gewijzigd",
-        description: "Uw wachtwoord is succesvol gewijzigd. Alle eerdere sessies zijn beëindigd.",
+        title: t("auth.passwordChanged"),
+        description: t("auth.passwordChangedDescription"),
       });
 
       // Sign out to end all sessions
@@ -630,7 +630,7 @@ const Auth = () => {
       navigate("/auth");
     } catch (error: any) {
       toast({
-        title: "Wachtwoord wijzigen mislukt",
+        title: t("auth.passwordChangeFailed"),
         description: error.message,
         variant: "destructive",
       });
@@ -659,12 +659,12 @@ const Auth = () => {
             </div>
             <div className="space-y-2">
               <CardTitle>
-                {requires2FA && !is2FAVerified ? "Verificatie vereist" : "Nieuw wachtwoord instellen"}
+                {requires2FA && !is2FAVerified ? t("auth.verificationRequired") : t("auth.setNewPassword")}
               </CardTitle>
               <CardDescription className="text-base">
                 {requires2FA && !is2FAVerified 
-                  ? "Voer uw 2FA-code in om door te gaan" 
-                  : "Kies een sterk wachtwoord van minimaal 12 tekens"
+                  ? t("auth.enterTwoFACode")
+                  : t("auth.chooseStrongPassword")
                 }
               </CardDescription>
             </div>
@@ -674,7 +674,7 @@ const Auth = () => {
               // 2FA Verification Form for Professionals
               <form onSubmit={handleVerify2FA} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="2fa-code">2FA Verificatiecode</Label>
+                  <Label htmlFor="2fa-code">{t("auth.twoFAVerificationCode")}</Label>
                   <Input
                     id="2fa-code"
                     type="text"
@@ -686,17 +686,17 @@ const Auth = () => {
                     className="h-11 text-center text-2xl tracking-widest"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Voer de 6-cijferige code in van uw authenticator-app of SMS
+                    {t("auth.enterSixDigitCode")}
                   </p>
                 </div>
                 <Button type="submit" className="w-full h-11" disabled={loading}>
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Bezig met verifiëren...
+                      {t("auth.verifying")}
                     </>
                   ) : (
-                    "Verifieer"
+                    t("auth.verify")
                   )}
                 </Button>
               </form>
@@ -704,7 +704,7 @@ const Auth = () => {
               // Password Reset Form
               <form onSubmit={handleUpdatePassword} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="new-password">Nieuw wachtwoord</Label>
+                  <Label htmlFor="new-password">{t("auth.newPassword")}</Label>
                   <Input
                     id="new-password"
                     type="password"
@@ -719,7 +719,7 @@ const Auth = () => {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Bevestig wachtwoord</Label>
+                  <Label htmlFor="confirm-password">{t("auth.confirmPassword")}</Label>
                   <Input
                     id="confirm-password"
                     type="password"
@@ -734,10 +734,10 @@ const Auth = () => {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Bezig met wijzigen...
+                      {t("auth.changing")}
                     </>
                   ) : (
-                    "Wachtwoord wijzigen"
+                    t("auth.changePassword")
                   )}
                 </Button>
               </form>
@@ -871,7 +871,7 @@ const Auth = () => {
                 className="w-full"
                 onClick={() => navigate("/register")}
               >
-                Registreer hier
+                {t("auth.registerHere")}
               </Button>
             </div>
           </form>
@@ -884,7 +884,7 @@ const Auth = () => {
           <DialogHeader>
             <DialogTitle>{t("auth.forgotPassword")}</DialogTitle>
             <DialogDescription>
-              Voer uw e-mailadres in. Als dit e-mailadres bij ons bekend is, ontvangt u een herstel-link.
+              {t("auth.resetPasswordDescription")}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handlePasswordReset} className="space-y-4">

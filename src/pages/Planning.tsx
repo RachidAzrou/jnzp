@@ -119,7 +119,13 @@ const Planning = () => {
       COMPLETED: "default",
       FAILED: "destructive"
     };
-    return <Badge variant={variants[status] || "secondary"}>{status}</Badge>;
+    const labels: Record<string, string> = {
+      PENDING: "In afwachting",
+      CONFIRMED: "Bevestigd",
+      COMPLETED: "Voltooid",
+      FAILED: "Mislukt"
+    };
+    return <Badge variant={variants[status] || "secondary"}>{labels[status] || status}</Badge>;
   };
 
   const formatDateTime = (dateString: string) => {

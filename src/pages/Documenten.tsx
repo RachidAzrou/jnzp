@@ -92,7 +92,7 @@ const Documenten = () => {
   const getStatusBadge = (status: string) => {
     if (status === "APPROVED") return <Badge variant="default">Goedgekeurd</Badge>;
     if (status === "REJECTED") return <Badge variant="destructive">Afgewezen</Badge>;
-    return <Badge variant="secondary">In review</Badge>;
+    return <Badge variant="secondary">In behandeling</Badge>;
   };
 
   const handleReviewComplete = async () => {

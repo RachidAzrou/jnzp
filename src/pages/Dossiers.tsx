@@ -93,6 +93,23 @@ const Dossiers = () => {
     return variants[status] || "secondary";
   };
 
+  const getStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      CREATED: "Aangemaakt",
+      INTAKE_IN_PROGRESS: "Intake lopend",
+      DOCS_PENDING: "Documenten vereist",
+      FD_ASSIGNED: "FD toegewezen",
+      DOCS_VERIFIED: "Docs geverifieerd",
+      APPROVED: "Goedgekeurd",
+      LEGAL_HOLD: "Legal Hold",
+      PLANNING: "Planning",
+      READY_FOR_TRANSPORT: "Klaar voor transport",
+      IN_TRANSIT: "In transit",
+      ARCHIVED: "Gearchiveerd",
+    };
+    return labels[status] || status.replace(/_/g, " ");
+  };
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "N/A";
     try {
@@ -285,7 +302,7 @@ const Dossiers = () => {
                           <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-warning" />
                         )}
                         <Badge variant={getStatusVariant(dossier.status)} className="text-[10px] sm:text-xs">
-                          {dossier.status.replace(/_/g, " ")}
+                          {getStatusLabel(dossier.status)}
                         </Badge>
                       </div>
                     </TableCell>

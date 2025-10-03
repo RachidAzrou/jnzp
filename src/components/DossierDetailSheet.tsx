@@ -20,6 +20,23 @@ interface DossierDetailSheetProps {
 export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetailSheetProps) {
   if (!dossier) return null;
 
+  const getStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      CREATED: "Aangemaakt",
+      INTAKE_IN_PROGRESS: "Intake lopend",
+      DOCS_PENDING: "Documenten vereist",
+      FD_ASSIGNED: "FD toegewezen",
+      DOCS_VERIFIED: "Docs geverifieerd",
+      APPROVED: "Goedgekeurd",
+      LEGAL_HOLD: "Legal Hold",
+      PLANNING: "Planning",
+      READY_FOR_TRANSPORT: "Klaar voor transport",
+      IN_TRANSIT: "In transit",
+      ARCHIVED: "Gearchiveerd",
+    };
+    return labels[status] || status.replace(/_/g, " ");
+  };
+
   const getStatusColor = (status: string): "default" | "destructive" | "outline" | "secondary" => {
     const colors: Record<string, "default" | "destructive" | "outline" | "secondary"> = {
       CREATED: "secondary",
@@ -56,7 +73,7 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
               <SheetDescription>{dossier.deceased_name}</SheetDescription>
             </div>
             <Badge variant={getStatusColor(dossier.status)}>
-              {dossier.status.replace(/_/g, " ")}
+              {getStatusLabel(dossier.status)}
             </Badge>
           </div>
         </SheetHeader>
@@ -152,7 +169,7 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
               </div>
               <div className="flex items-center gap-3">
                 <div className="h-2 w-2 rounded-full bg-primary" />
-                <span className="text-sm">Huidige status: {dossier.status.replace(/_/g, ' ')}</span>
+                <span className="text-sm">Huidige status: {getStatusLabel(dossier.status)}</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="h-2 w-2 rounded-full bg-muted-foreground" />

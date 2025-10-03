@@ -23,6 +23,23 @@ const Dashboard = () => {
   const [auditEvents, setAuditEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const getStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      CREATED: "Aangemaakt",
+      INTAKE_IN_PROGRESS: "Intake lopend",
+      DOCS_PENDING: "Documenten vereist",
+      FD_ASSIGNED: "FD toegewezen",
+      DOCS_VERIFIED: "Docs geverifieerd",
+      APPROVED: "Goedgekeurd",
+      LEGAL_HOLD: "Legal Hold",
+      PLANNING: "Planning",
+      READY_FOR_TRANSPORT: "Klaar voor transport",
+      IN_TRANSIT: "In transit",
+      ARCHIVED: "Gearchiveerd",
+    };
+    return labels[status] || status.replace(/_/g, " ");
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const { data: dossiersData } = await supabase
@@ -206,7 +223,7 @@ const Dashboard = () => {
                     <TableCell>{dossier.deceased_name}</TableCell>
                     <TableCell>
                       <Badge variant={dossier.legal_hold ? "destructive" : "default"}>
-                        {dossier.status.replace(/_/g, ' ')}
+                        {getStatusLabel(dossier.status)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">

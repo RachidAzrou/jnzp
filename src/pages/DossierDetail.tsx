@@ -144,6 +144,32 @@ const DossierDetail = () => {
     return colors[status] || "secondary";
   };
 
+  const getStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      CREATED: "Aangemaakt",
+      INTAKE_IN_PROGRESS: "Intake lopend",
+      DOCS_PENDING: "Documenten vereist",
+      FD_ASSIGNED: "FD toegewezen",
+      DOCS_VERIFIED: "Docs geverifieerd",
+      APPROVED: "Goedgekeurd",
+      LEGAL_HOLD: "Legal Hold",
+      PLANNING: "Planning",
+      READY_FOR_TRANSPORT: "Klaar voor transport",
+      IN_TRANSIT: "In transit",
+      ARCHIVED: "Gearchiveerd",
+    };
+    return labels[status] || status.replace(/_/g, " ");
+  };
+
+  const getDocStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      IN_REVIEW: "In behandeling",
+      APPROVED: "Goedgekeurd",
+      REJECTED: "Afgewezen",
+    };
+    return labels[status] || status.replace(/_/g, " ");
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
@@ -189,7 +215,7 @@ const DossierDetail = () => {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant={getStatusColor(dossier.status)} className="text-sm px-3 py-1">
-            {dossier.status.replace(/_/g, " ")}
+            {getStatusLabel(dossier.status)}
           </Badge>
           {dossier.flow === "REP" && (
             <Badge variant="outline" className="gap-1">
@@ -389,7 +415,7 @@ const DossierDetail = () => {
                       <Badge variant={getDocStatusColor(doc.status)}>
                         {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
                         {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
-                        {doc.status.replace(/_/g, " ")}
+                        {getDocStatusLabel(doc.status)}
                       </Badge>
                     </div>
                   ))}

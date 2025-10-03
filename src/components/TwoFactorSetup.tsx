@@ -187,9 +187,21 @@ export const TwoFactorSetup = () => {
     return (
       <div className="space-y-6">
         <div className="text-center space-y-4">
-          <h3 className="font-semibold text-lg">Scan de QR code</h3>
+          <h3 className="font-semibold text-lg">Stap 1: Download een authenticator app</h3>
           <p className="text-sm text-muted-foreground">
-            Gebruik een authenticator app zoals Google Authenticator of Authy
+            Download één van deze apps op uw telefoon:
+          </p>
+          <ul className="text-sm space-y-1 text-left max-w-xs mx-auto">
+            <li>• <strong>Google Authenticator</strong> (iOS/Android)</li>
+            <li>• <strong>Microsoft Authenticator</strong> (iOS/Android)</li>
+            <li>• <strong>Authy</strong> (iOS/Android/Desktop)</li>
+          </ul>
+        </div>
+
+        <div className="text-center space-y-4">
+          <h3 className="font-semibold text-lg">Stap 2: Scan de QR code</h3>
+          <p className="text-sm text-muted-foreground">
+            Open de app en scan deze QR code
           </p>
           {qrCode && (
             <div className="flex justify-center">
@@ -199,7 +211,8 @@ export const TwoFactorSetup = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="verificationCode">Verificatiecode</Label>
+          <h3 className="font-semibold text-center">Stap 3: Voer de code in</h3>
+          <Label htmlFor="verificationCode">Verificatiecode uit de app</Label>
           <Input
             id="verificationCode"
             placeholder="000000"

@@ -131,17 +131,26 @@ const Auth = () => {
           user_agent: navigator.userAgent,
         });
 
-        // Check if user requires 2FA
+        // Check if user requires 2FA AND has it enabled
         const { data: requires2FA } = await supabase.rpc('user_requires_2fa', {
           user_id: data.user.id
         });
 
         if (requires2FA) {
-          // Store session and show 2FA verification
-          setPendingSession(data.session);
-          setShow2FAVerification(true);
-          setLoading(false);
-          return;
+          // Check if 2FA is actually enabled (user has completed setup)
+          const { data: settings } = await supabase
+            .from("user_2fa_settings")
+            .select("totp_enabled")
+            .eq("user_id", data.user.id)
+            .maybeSingle();
+
+          if (settings?.totp_enabled) {
+            // Store session and show 2FA verification
+            setPendingSession(data.session);
+            setShow2FAVerification(true);
+            setLoading(false);
+            return;
+          }
         }
       }
 

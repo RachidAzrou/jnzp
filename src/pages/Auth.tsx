@@ -100,14 +100,11 @@ const Auth = () => {
       <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/95 shadow-2xl border-border/50">
         <CardHeader className="text-center space-y-6 pb-8">
           <div className="flex justify-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
-              <img 
-                src={logoAuth} 
-                alt="JanazApp Logo" 
-                className="h-24 w-24 object-contain relative z-10 animate-fade-in"
-              />
-            </div>
+            <img 
+              src={logoAuth} 
+              alt="JanazApp Logo" 
+              className="h-40 w-40 object-contain animate-fade-in"
+            />
           </div>
           <div className="space-y-2">
             <CardDescription className="text-base">

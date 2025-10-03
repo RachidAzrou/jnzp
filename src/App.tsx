@@ -9,6 +9,7 @@ import { TopBar } from "@/components/TopBar";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
+import { useSessionActivity } from "@/hooks/useSessionActivity";
 import Dashboard from "./pages/Dashboard";
 import Dossiers from "./pages/Dossiers";
 import Taken from "./pages/Taken";
@@ -52,6 +53,9 @@ const queryClient = new QueryClient();
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Enable session activity tracking
+  useSessionActivity();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {

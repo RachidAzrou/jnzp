@@ -1854,6 +1854,42 @@ export type Database = {
           },
         ]
       }
+      user_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          ip_address: unknown | null
+          is_active: boolean
+          last_activity_at: string
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean
+          last_activity_at?: string
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean
+          last_activity_at?: string
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_totp_replay_guard: {
         Row: {
           created_at: string
@@ -1950,6 +1986,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_expired_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_old_replay_guards: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1991,9 +2031,17 @@ export type Database = {
         Args: { p_recovery_code?: string; p_user_id: string }
         Returns: undefined
       }
+      update_session_activity: {
+        Args: { p_session_token: string }
+        Returns: Json
+      }
       user_requires_2fa: {
         Args: { user_id: string }
         Returns: boolean
+      }
+      validate_password_strength: {
+        Args: { password: string }
+        Returns: Json
       }
       verify_totp_code: {
         Args: { p_nonce: string; p_token: string }

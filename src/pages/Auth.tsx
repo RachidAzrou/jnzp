@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { TwoFactorVerification } from "@/components/TwoFactorVerification";
+import { validatePassword, getPasswordRequirements } from "@/utils/passwordValidation";
 import logoAuth from "@/assets/logo-vertical-new.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
@@ -237,6 +238,18 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Validate password
+      const validation = await validatePassword(password);
+      if (!validation.valid) {
+        toast({
+          title: "Ongeldig wachtwoord",
+          description: validation.error,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -289,6 +302,18 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Validate password
+      const validation = await validatePassword(password);
+      if (!validation.valid) {
+        toast({
+          title: "Ongeldig wachtwoord",
+          description: validation.error,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -429,19 +454,21 @@ const Auth = () => {
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (newPassword.length < 12) {
+    if (newPassword !== confirmPassword) {
       toast({
-        title: "Wachtwoord te kort",
-        description: "Het wachtwoord moet minimaal 12 tekens bevatten.",
+        title: "Wachtwoorden komen niet overeen",
+        description: "Controleer of beide wachtwoorden identiek zijn.",
         variant: "destructive",
       });
       return;
     }
 
-    if (newPassword !== confirmPassword) {
+    // Validate password strength
+    const validation = await validatePassword(newPassword);
+    if (!validation.valid) {
       toast({
-        title: "Wachtwoorden komen niet overeen",
-        description: "Controleer of beide wachtwoorden identiek zijn.",
+        title: "Ongeldig wachtwoord",
+        description: validation.error,
         variant: "destructive",
       });
       return;
@@ -487,7 +514,7 @@ const Auth = () => {
       navigate("/auth");
     } catch (error: any) {
       toast({
-        title: "Fout bij wijzigen wachtwoord",
+        title: "Wachtwoord wijzigen mislukt",
         description: error.message,
         variant: "destructive",
       });

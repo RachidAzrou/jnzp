@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export type UserRole = 'platform_admin' | 'admin' | 'org_admin' | 'funeral_director' | 'family' | 'insurer' | 'wasplaats' | 'mosque' | 'reviewer' | 'support' | null;
 
@@ -56,28 +57,35 @@ export const useUserRole = () => {
 };
 
 export const getRoleDisplayName = (role: UserRole): string => {
+  const roleKey = role || 'user';
+  return roleKey;
+};
+
+export const useRoleDisplayName = (role: UserRole): string => {
+  const { t } = useTranslation();
+  
   switch (role) {
     case 'platform_admin':
-      return 'Platform Administrator';
+      return t('roles.platform_admin');
     case 'admin':
-      return 'Administrator';
+      return t('roles.admin');
     case 'org_admin':
-      return 'Organisatie Administrator';
+      return t('roles.org_admin');
     case 'funeral_director':
-      return 'Uitvaartondernemer';
+      return t('roles.funeral_director');
     case 'family':
-      return 'Familie';
+      return t('roles.family');
     case 'insurer':
-      return 'Verzekeraar';
+      return t('roles.insurer');
     case 'wasplaats':
-      return 'Mortuarium';
+      return t('roles.wasplaats');
     case 'mosque':
-      return 'Moskee';
+      return t('roles.mosque');
     case 'reviewer':
-      return 'Reviewer';
+      return t('roles.reviewer');
     case 'support':
-      return 'Support';
+      return t('roles.support');
     default:
-      return 'Gebruiker';
+      return t('roles.user');
   }
 };

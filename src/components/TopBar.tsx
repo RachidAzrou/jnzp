@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { useUserRole, getRoleDisplayName } from "@/hooks/useUserRole";
+import { useUserRole, useRoleDisplayName } from "@/hooks/useUserRole";
 
 export function TopBar() {
   const navigate = useNavigate();
@@ -25,6 +25,7 @@ export function TopBar() {
   const { t } = useTranslation();
   const [userEmail, setUserEmail] = useState<string>("");
   const { role } = useUserRole();
+  const roleDisplayName = useRoleDisplayName(role);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -75,8 +76,8 @@ export function TopBar() {
             <Button variant="ghost" className="flex items-center gap-1 sm:gap-2 rounded-md border px-2 sm:px-3 py-2 h-9 sm:h-10">
               <User className="h-4 w-4" />
               <div className="hidden md:flex flex-col items-start">
-                <span className="text-sm font-medium">{userEmail || "Gebruiker"}</span>
-                <span className="text-xs text-muted-foreground">{getRoleDisplayName(role)}</span>
+                <span className="text-sm font-medium">{userEmail || t("roles.user")}</span>
+                <span className="text-xs text-muted-foreground">{roleDisplayName}</span>
               </div>
             </Button>
           </DropdownMenuTrigger>

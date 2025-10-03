@@ -243,5 +243,18 @@
     "myDocuments": "Mijn Documenten",
     "chat": "Chat",
     "portal": "Portal"
+  },
+  "roles": {
+    "platform_admin": "Platform Administrator",
+    "admin": "Administrator",
+    "org_admin": "Organisatie Administrator",
+    "funeral_director": "Uitvaartondernemer",
+    "family": "Familie",
+    "insurer": "Verzekeraar",
+    "wasplaats": "Mortuarium",
+    "mosque": "Moskee",
+    "reviewer": "Reviewer",
+    "support": "Support",
+    "user": "Gebruiker"
   }
 }

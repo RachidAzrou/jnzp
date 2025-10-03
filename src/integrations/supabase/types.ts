@@ -1637,6 +1637,53 @@ export type Database = {
         }
         Relationships: []
       }
+      qr_scan_events: {
+        Row: {
+          access_granted: boolean
+          denial_reason: string | null
+          id: string
+          ip_address: unknown | null
+          location: string | null
+          metadata: Json | null
+          qr_token_id: string
+          scanned_at: string
+          scanned_by: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          access_granted: boolean
+          denial_reason?: string | null
+          id?: string
+          ip_address?: unknown | null
+          location?: string | null
+          metadata?: Json | null
+          qr_token_id: string
+          scanned_at?: string
+          scanned_by?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          access_granted?: boolean
+          denial_reason?: string | null
+          id?: string
+          ip_address?: unknown | null
+          location?: string | null
+          metadata?: Json | null
+          qr_token_id?: string
+          scanned_at?: string
+          scanned_by?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qr_scan_events_qr_token_id_fkey"
+            columns: ["qr_token_id"]
+            isOneToOne: false
+            referencedRelation: "qr_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       qr_tags: {
         Row: {
           created_at: string
@@ -1675,6 +1722,62 @@ export type Database = {
             columns: ["facility_org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qr_tokens: {
+        Row: {
+          created_at: string
+          created_by: string
+          dossier_id: string
+          expires_at: string
+          id: string
+          max_scans: number | null
+          revoke_reason: string | null
+          revoked: boolean
+          revoked_at: string | null
+          revoked_by: string | null
+          scan_count: number
+          scopes: Json
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          dossier_id: string
+          expires_at: string
+          id?: string
+          max_scans?: number | null
+          revoke_reason?: string | null
+          revoked?: boolean
+          revoked_at?: string | null
+          revoked_by?: string | null
+          scan_count?: number
+          scopes?: Json
+          token: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          dossier_id?: string
+          expires_at?: string
+          id?: string
+          max_scans?: number | null
+          revoke_reason?: string | null
+          revoked?: boolean
+          revoked_at?: string | null
+          revoked_by?: string | null
+          scan_count?: number
+          scopes?: Json
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qr_tokens_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
         ]
@@ -2196,6 +2299,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_expired_qr_tokens: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_expired_sessions: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -2221,6 +2328,10 @@ export type Database = {
         Returns: string
       }
       generate_invitation_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_qr_token: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
@@ -2269,6 +2380,10 @@ export type Database = {
         }
         Returns: string
       }
+      revoke_qr_token: {
+        Args: { p_reason: string; p_token_id: string }
+        Returns: undefined
+      }
       set_encrypted_nis: {
         Args: { p_nis: string; p_profile_id: string }
         Returns: undefined
@@ -2302,6 +2417,15 @@ export type Database = {
           p_current_ip?: string
           p_current_user_agent?: string
           p_token_hash: string
+        }
+        Returns: Json
+      }
+      verify_qr_token: {
+        Args: {
+          p_ip?: string
+          p_scanned_by?: string
+          p_token: string
+          p_user_agent?: string
         }
         Returns: Json
       }

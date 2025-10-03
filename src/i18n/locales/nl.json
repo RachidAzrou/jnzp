@@ -86,7 +86,7 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welkom terug",
+    "welcome": "Welkom",
     "activeDossiers": "Actieve Dossiers",
     "openTasks": "Openstaande Taken",
     "recentActivity": "Recente Activiteit",
@@ -107,7 +107,17 @@
     "showDossiers": "Toon dossiers",
     "toDocuments": "Naar documenten",
     "filterOnRep": "Filter op REP",
-    "filterOnLoc": "Filter op LOC"
+    "filterOnLoc": "Filter op LOC",
+    "filesOverview": "Dossiers Overzicht",
+    "completedFiles": "Voltooide Dossiers",
+    "totalFiles": "Totaal dossiers",
+    "assignedFiles": "Toegewezen dossiers",
+    "thisWeek": "Deze week",
+    "thisMonth": "Deze maand",
+    "today": "Vandaag",
+    "myRecentCompletedFiles": "Mijn recent voltooide dossiers",
+    "manageAllTasks": "Alle taken beheren",
+    "date": "datum"
   },
   "dossiers": {
     "title": "Dossiers",

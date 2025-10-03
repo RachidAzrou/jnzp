@@ -15,6 +15,7 @@ const Dashboard = () => {
   const [dossiers, setDossiers] = useState<any[]>([]);
   const [auditEvents, setAuditEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string>("");
 
   const getDateLocale = () => {
     switch(i18n.language) {
@@ -30,6 +31,14 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      // Fetch user info
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.user_metadata) {
+        const firstName = user.user_metadata.first_name || '';
+        const lastName = user.user_metadata.last_name || '';
+        setUserName(`${firstName} ${lastName}`.trim() || user.email || '');
+      }
+
       const { data: dossiersData } = await supabase
         .from("dossiers")
         .select("*")
@@ -56,23 +65,37 @@ const Dashboard = () => {
   const repatriationDossiers = dossiers.filter(d => d.flow === 'REP').length;
   const localDossiers = dossiers.filter(d => d.flow === 'LOC').length;
 
+  // Calculate completed dossiers in the last 7 days
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const completedDossiers = dossiers.filter(d => 
+    d.status === 'COMPLETED' && new Date(d.updated_at) >= weekAgo
+  ).length;
+
   // Prepare pie chart data
+  const assignedDossiers = dossiers.filter(d => d.assigned_fd_org_id !== null).length;
   const pieData = [
-    { name: 'Total', value: activeDossiers, color: 'hsl(var(--muted))' },
-    { name: 'Assigned', value: Math.floor(activeDossiers * 0.35), color: 'hsl(var(--primary))' }
+    { name: t('dashboard.totalFiles'), value: activeDossiers, color: 'hsl(var(--muted))' },
+    { name: t('dashboard.assignedFiles'), value: assignedDossiers, color: 'hsl(var(--primary))' }
   ];
 
-  // Prepare bar chart data (mock data for weekly completed files)
-  const barData = [
-    { name: '01 Nov', value: 5 },
-    { name: '02 Nov', value: 9 },
-    { name: '03 Nov', value: 8 },
-    { name: '04 Nov', value: 6 },
-    { name: '05 Nov', value: 10 },
-    { name: '06 Nov', value: 8 },
-    { name: '07 Nov', value: 11 },
-    { name: '08 Nov', value: 9 },
-  ];
+  // Prepare bar chart data - real data from last 8 days
+  const barData = Array.from({ length: 8 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (7 - i));
+    const dayStart = new Date(date.setHours(0, 0, 0, 0));
+    const dayEnd = new Date(date.setHours(23, 59, 59, 999));
+    
+    const count = dossiers.filter(d => {
+      const updatedAt = new Date(d.updated_at);
+      return d.status === 'COMPLETED' && updatedAt >= dayStart && updatedAt <= dayEnd;
+    }).length;
+
+    return {
+      name: format(dayStart, 'dd MMM', { locale: getDateLocale() }),
+      value: count
+    };
+  });
 
   const formatEventDate = (timestamp: string) => {
     return format(new Date(timestamp), "dd/MM/yy", { locale: getDateLocale() });
@@ -96,7 +119,7 @@ const Dashboard = () => {
         <div className="space-y-1">
           <p className="text-sm text-muted-foreground">{getCurrentDate()}</p>
           <h1 className="text-2xl sm:text-3xl font-semibold">
-            {t("dashboard.title")}
+            {t("dashboard.welcome")} {userName}
           </h1>
         </div>
 
@@ -106,11 +129,8 @@ const Dashboard = () => {
           <Card className="border-border/40">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-medium">
-                Files Overview
+                {t("dashboard.filesOverview")}
               </CardTitle>
-              <button className="text-xs text-muted-foreground hover:text-foreground">
-                01 Nov - 30 Nov
-              </button>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="flex items-center justify-center gap-8">
@@ -136,13 +156,13 @@ const Dashboard = () => {
                 <div className="space-y-4">
                   <div className="cursor-pointer" onClick={() => navigate('/dossiers')}>
                     <p className="text-3xl font-bold">{activeDossiers}</p>
-                    <p className="text-sm text-muted-foreground">Total files</p>
+                    <p className="text-sm text-muted-foreground">{t("dashboard.totalFiles")}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-sm bg-primary"></div>
                     <div>
-                      <p className="text-xl font-semibold">{pieData[1].value}</p>
-                      <p className="text-sm text-muted-foreground">Assigned files</p>
+                      <p className="text-xl font-semibold">{assignedDossiers}</p>
+                      <p className="text-sm text-muted-foreground">{t("dashboard.assignedFiles")}</p>
                     </div>
                   </div>
                 </div>
@@ -154,17 +174,14 @@ const Dashboard = () => {
           <Card className="border-border/40">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-medium">
-                Completed Files
+                {t("dashboard.completedFiles")}
               </CardTitle>
-              <button className="text-xs text-muted-foreground hover:text-foreground">
-                01 Nov - 30 Nov
-              </button>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="mb-4 flex gap-4 text-xs border-b">
-                <button className="pb-2 border-b-2 border-foreground font-medium">This week</button>
-                <button className="pb-2 text-muted-foreground hover:text-foreground">This month</button>
-                <button className="pb-2 text-muted-foreground hover:text-foreground">Today</button>
+                <button className="pb-2 border-b-2 border-foreground font-medium">{t("dashboard.thisWeek")}</button>
+                <button className="pb-2 text-muted-foreground hover:text-foreground">{t("dashboard.thisMonth")}</button>
+                <button className="pb-2 text-muted-foreground hover:text-foreground">{t("dashboard.today")}</button>
               </div>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={barData}>
@@ -192,14 +209,14 @@ const Dashboard = () => {
         <Card className="border-border/40">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base font-medium">
-              My Recent Completed Files
+              {t("dashboard.myRecentCompletedFiles")}
             </CardTitle>
             <Button 
               onClick={() => navigate('/dossiers')}
               size="sm"
               className="bg-primary hover:bg-primary/90"
             >
-              Manage All Tasks
+              {t("dashboard.manageAllTasks")}
             </Button>
           </CardHeader>
           <CardContent className="pt-2">
@@ -223,7 +240,7 @@ const Dashboard = () => {
                         {dossier.deceased_name}
                       </span>
                       <span className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
-                        date: {formatEventDate(dossier.updated_at)}
+                        {t("dashboard.date")}: {formatEventDate(dossier.updated_at)}
                       </span>
                     </div>
                   </div>

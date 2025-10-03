@@ -23,9 +23,9 @@ All colors MUST be HSL.
     --primary: 155 65% 35%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Lighter green accent */
-    --secondary: 145 45% 92%;
-    --secondary-foreground: 155 65% 25%;
+    /* Secondary - Lighter green accent for badges */
+    --secondary: 145 55% 88%;
+    --secondary-foreground: 155 65% 30%;
 
     /* Muted - Soft neutrals for serene feel */
     --muted: 210 20% 96%;
@@ -35,8 +35,8 @@ All colors MUST be HSL.
     --accent: 145 70% 45%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 75% 70%;
+    --destructive-foreground: 0 70% 25%;
 
     /* Subtle borders for clean look */
     --border: 210 20% 90%;

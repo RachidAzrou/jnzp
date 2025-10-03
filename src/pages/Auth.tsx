@@ -64,13 +64,17 @@ const Auth = () => {
   const [loginDelay, setLoginDelay] = useState(0);
 
   useEffect(() => {
-    // Check if this is a password reset flow
-    const resetParam = searchParams.get("reset");
-    if (resetParam === "true") {
-      setIsResettingPassword(true);
+    const init = async () => {
+      // Check if this is an invitation acceptance flow
+      const inviteCode = searchParams.get("invite");
       
-      // Check user role to determine if 2FA is required
-      supabase.auth.getSession().then(async ({ data: { session } }) => {
+      // Check if this is a password reset flow
+      const resetParam = searchParams.get("reset");
+      if (resetParam === "true") {
+        setIsResettingPassword(true);
+        
+        // Check user role to determine if 2FA is required
+        const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
           // Get user role
           const { data: roleData } = await supabase
@@ -84,7 +88,7 @@ const Auth = () => {
           if (roleData) {
             setUserRole(roleData.role);
             // Professionals need 2FA
-            const professionalRoles = ["funeral_director", "mosque", "wasplaats", "insurer", "org_admin"];
+            const professionalRoles = ["funeral_director", "mosque", "wasplaats", "insurer", "org_admin", "admin", "platform_admin"];
             if (professionalRoles.includes(roleData.role)) {
               setRequires2FA(true);
             } else {
@@ -92,16 +96,34 @@ const Auth = () => {
             }
           }
         }
-      });
-      return;
-    }
+        return;
+      }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
+        // If logged in with invite code, accept invitation
+        if (inviteCode) {
+          const { data, error } = await supabase.rpc('accept_invitation', {
+            p_code: inviteCode,
+            p_user_id: session.user.id,
+          });
+          
+          if (!error && data) {
+            const result = data as any;
+            if (result.success) {
+              toast({
+                title: 'Uitnodiging geaccepteerd',
+                description: 'U bent toegevoegd aan de organisatie',
+              });
+            }
+          }
+        }
         navigate("/");
       }
-    });
-  }, [navigate, searchParams]);
+    };
+    
+    init();
+  }, [navigate, searchParams, toast]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

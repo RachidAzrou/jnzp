@@ -41,18 +41,39 @@ const Register = () => {
   const [invitationCode, setInvitationCode] = useState<string>("");
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
-        navigate("/");
+        // Check if user has invitation code to accept
+        const code = searchParams.get("invite");
+        if (code) {
+          // User is logged in with invitation - accept it
+          const { data, error } = await supabase.rpc('accept_invitation', {
+            p_code: code,
+            p_user_id: session.user.id,
+          });
+          
+          if (!error && data) {
+            const result = data as any;
+            if (result.success) {
+              toast({
+                title: 'Uitnodiging geaccepteerd',
+                description: 'U bent toegevoegd aan de organisatie',
+              });
+              navigate('/');
+            }
+          }
+        } else {
+          navigate("/");
+        }
       }
     });
     
     const code = searchParams.get("invite");
     if (code) {
       setInvitationCode(code);
-      setRegistrationStep("details");
+      // Don't force to details step - let user choose their flow
     }
-  }, [navigate, searchParams]);
+  }, [navigate, searchParams, toast]);
 
   const handleFamilySignup = async (e: React.FormEvent) => {
     e.preventDefault();

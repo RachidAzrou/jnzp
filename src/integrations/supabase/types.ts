@@ -2144,6 +2144,10 @@ export type Database = {
       }
     }
     Functions: {
+      accept_invitation: {
+        Args: { p_code: string; p_user_id: string }
+        Returns: Json
+      }
       calculate_device_risk: {
         Args: {
           p_current_ip: string
@@ -2162,6 +2166,10 @@ export type Database = {
           _task_type: Database["public"]["Enums"]["task_type"]
         }
         Returns: Database["public"]["Enums"]["priority"]
+      }
+      check_2fa_requirement: {
+        Args: { p_user_id: string }
+        Returns: boolean
       }
       check_rate_limit: {
         Args: {
@@ -2271,6 +2279,10 @@ export type Database = {
       }
       update_session_activity: {
         Args: { p_session_token: string }
+        Returns: Json
+      }
+      user_2fa_status: {
+        Args: { p_user_id: string }
         Returns: Json
       }
       user_requires_2fa: {

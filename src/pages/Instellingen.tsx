@@ -3,14 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { User, Building2, Bell } from "lucide-react";
+import { User, Building2, Bell, Shield } from "lucide-react";
 import { useUserRole } from "@/hooks/useUserRole";
 import { TwoFactorSetup } from "@/components/TwoFactorSetup";
 
 const Instellingen = () => {
+  const [searchParams] = useSearchParams();
   const [profile, setProfile] = useState({
     email: "",
     firstName: "",
@@ -31,12 +34,19 @@ const Instellingen = () => {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [must2FASetup, setMust2FASetup] = useState(false);
   const { toast } = useToast();
   const { role } = useUserRole();
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+    
+    // Check if forced 2FA setup
+    const setup2fa = searchParams.get('setup2fa');
+    if (setup2fa === 'true') {
+      setMust2FASetup(true);
+    }
+  }, [searchParams]);
 
   const fetchProfile = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -392,12 +402,22 @@ const Instellingen = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Bell className="h-5 w-5" />
+                <Shield className="h-5 w-5" />
                 Tweefactorauthenticatie (2FA)
               </CardTitle>
-              <CardDescription>Extra beveiliging voor uw account</CardDescription>
+              <CardDescription>
+                {must2FASetup ? 'Verplicht voor professionele accounts' : 'Extra beveiliging voor uw account'}
+              </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              {must2FASetup && (
+                <Alert variant="destructive">
+                  <Shield className="h-4 w-4" />
+                  <AlertDescription>
+                    U moet twee-factor authenticatie instellen om verder te kunnen met uw account.
+                  </AlertDescription>
+                </Alert>
+              )}
               <TwoFactorSetup />
             </CardContent>
           </Card>

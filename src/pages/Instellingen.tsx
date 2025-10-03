@@ -218,22 +218,22 @@ const Instellingen = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Instellingen</h1>
-        <p className="text-muted-foreground mt-1">Configureer uw account en voorkeuren</p>
-      </div>
+    <div className="min-h-screen bg-background p-6">
+      <div className="space-y-6 max-w-[1200px] mx-auto">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold">Instellingen</h1>
+        </div>
 
-      <div className="grid gap-6">
-        {/* Profile Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Profiel gegevens
-            </CardTitle>
-            <CardDescription>Beheer uw persoonlijke informatie</CardDescription>
-          </CardHeader>
+        <div className="grid gap-6">
+          {/* Profile Settings */}
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <User className="h-5 w-5 text-muted-foreground" />
+                Profiel gegevens
+              </CardTitle>
+            </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
@@ -286,13 +286,12 @@ const Instellingen = () => {
         </Card>
 
         {/* Organization Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5" />
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Building2 className="h-5 w-5 text-muted-foreground" />
               Organisatiegegevens
             </CardTitle>
-            <CardDescription>Beheer uw organisatie informatie</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
@@ -401,15 +400,12 @@ const Instellingen = () => {
 
         {/* 2FA Settings - Only for professional users */}
         {role && ['funeral_director', 'org_admin', 'admin', 'platform_admin', 'wasplaats', 'mosque', 'insurer'].includes(role) && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Shield className="h-5 w-5 text-muted-foreground" />
                 Tweefactorauthenticatie (2FA)
               </CardTitle>
-              <CardDescription>
-                {must2FASetup ? 'Verplicht voor professionele accounts' : 'Extra beveiliging voor uw account'}
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {must2FASetup && (
@@ -426,13 +422,12 @@ const Instellingen = () => {
         )}
 
         {/* Notification Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5" />
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Bell className="h-5 w-5 text-muted-foreground" />
               Notificaties
             </CardTitle>
-            <CardDescription>Beheer uw notificatie voorkeuren</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
@@ -467,12 +462,9 @@ const Instellingen = () => {
         <GDPRRequestPanel />
 
         {/* Legal Documents */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Juridische Documenten</CardTitle>
-            <CardDescription>
-              Lees onze privacy policy en algemene voorwaarden
-            </CardDescription>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg">Juridische Documenten</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Link to="/privacy" target="_blank">
@@ -489,6 +481,7 @@ const Instellingen = () => {
         </Card>
       </div>
     </div>
+  </div>
   );
 };
 

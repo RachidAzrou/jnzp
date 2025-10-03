@@ -479,16 +479,16 @@ export default function Facturatie() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Facturatie</h1>
-          <p className="text-muted-foreground mt-1">Beheer facturen voor dossiers</p>
+    <div className="min-h-screen bg-background p-6">
+      <div className="space-y-6 max-w-[1600px] mx-auto">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold">Facturatie</h1>
         </div>
 
         <Dialog open={isNewInvoiceOpen} onOpenChange={setIsNewInvoiceOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button variant="outline">
               <Plus className="h-4 w-4 mr-2" />
               Nieuwe Factuur
             </Button>
@@ -527,50 +527,54 @@ export default function Facturatie() {
         </Dialog>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Facturen Overzicht</CardTitle>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-medium">Facturen Overzicht</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Dossier</TableHead>
-                <TableHead>Overledene</TableHead>
-                <TableHead>Datum</TableHead>
-                <TableHead>Bedrag</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actie</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {invoices.map((invoice) => (
-                <TableRow key={invoice.id}>
-                  <TableCell>{invoice.dossiers.ref_number}</TableCell>
-                  <TableCell>{invoice.dossiers.deceased_name}</TableCell>
-                  <TableCell>
-                    {new Date(invoice.created_at).toLocaleDateString("nl-NL")}
-                  </TableCell>
-                  <TableCell>€{Number(invoice.total).toFixed(2)}</TableCell>
-                  <TableCell>
-                    <Badge className={statusColors[invoice.status]}>
-                      {statusLabels[invoice.status]}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => openInvoiceDetail(invoice)}
-                    >
-                      <FileText className="h-4 w-4 mr-2" />
-                      Openen
-                    </Button>
-                  </TableCell>
+        <CardContent className="p-0">
+          <div className="hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b">
+                  <TableHead className="font-medium text-sm">Dossier</TableHead>
+                  <TableHead className="font-medium text-sm">Overledene</TableHead>
+                  <TableHead className="font-medium text-sm">Datum</TableHead>
+                  <TableHead className="font-medium text-sm">Bedrag</TableHead>
+                  <TableHead className="font-medium text-sm">Status</TableHead>
+                  <TableHead className="font-medium text-sm">Actie</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {invoices.map((invoice) => (
+                  <TableRow key={invoice.id} className="hover:bg-muted/30">
+                    <TableCell className="font-mono text-sm">{invoice.dossiers.ref_number}</TableCell>
+                    <TableCell className="text-sm">{invoice.dossiers.deceased_name}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {new Date(invoice.created_at).toLocaleDateString("nl-NL")}
+                    </TableCell>
+                    <TableCell className="text-sm font-medium">€{Number(invoice.total).toFixed(2)}</TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant={invoice.status === 'PAID' ? 'default' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {statusLabels[invoice.status]}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openInvoiceDetail(invoice)}
+                      >
+                        Openen
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 

@@ -214,7 +214,12 @@ const DossierDetail = () => {
           <p className="text-xl text-muted-foreground">{dossier.deceased_name}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant={getStatusColor(dossier.status)} className="text-sm px-3 py-1">
+          <Badge 
+            variant={getStatusColor(dossier.status)} 
+            className={`text-sm px-3 py-1 min-w-[140px] justify-center ${
+              getStatusColor(dossier.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
+            }`}
+          >
             {getStatusLabel(dossier.status)}
           </Badge>
           {dossier.flow === "REP" && (
@@ -412,7 +417,12 @@ const DossierDetail = () => {
                           </p>
                         </div>
                       </div>
-                      <Badge variant={getDocStatusColor(doc.status)}>
+                      <Badge 
+                        variant={getDocStatusColor(doc.status)}
+                        className={`min-w-[120px] justify-center ${
+                          getDocStatusColor(doc.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
+                        }`}
+                      >
                         {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
                         {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
                         {getDocStatusLabel(doc.status)}

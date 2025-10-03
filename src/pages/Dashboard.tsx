@@ -222,7 +222,12 @@ const Dashboard = () => {
                     </TableCell>
                     <TableCell>{dossier.deceased_name}</TableCell>
                     <TableCell>
-                      <Badge variant={dossier.legal_hold ? "destructive" : "default"}>
+                      <Badge 
+                        variant={dossier.legal_hold ? "destructive" : "default"}
+                        className={`min-w-[120px] justify-center ${
+                          !dossier.legal_hold ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
+                        }`}
+                      >
                         {getStatusLabel(dossier.status)}
                       </Badge>
                     </TableCell>
@@ -289,6 +294,9 @@ const Dashboard = () => {
                               urgency === "Normaal" ? "default" : 
                               "secondary"
                             }
+                            className={`min-w-[120px] justify-center ${
+                              urgency !== "Hoog" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
+                            }`}
                           >
                             {urgency}
                           </Badge>

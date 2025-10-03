@@ -72,7 +72,12 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
               <SheetTitle className="text-2xl">Dossier {dossier.ref_number}</SheetTitle>
               <SheetDescription>{dossier.deceased_name}</SheetDescription>
             </div>
-            <Badge variant={getStatusColor(dossier.status)}>
+            <Badge 
+              variant={getStatusColor(dossier.status)}
+              className={`min-w-[120px] justify-center ${
+                getStatusColor(dossier.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
+              }`}
+            >
               {getStatusLabel(dossier.status)}
             </Badge>
           </div>

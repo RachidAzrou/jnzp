@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [auditEvents, setAuditEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("");
+  const [chartPeriod, setChartPeriod] = useState<'week' | 'month' | 'today'>('week');
 
   const getDateLocale = () => {
     switch(i18n.language) {
@@ -79,23 +80,70 @@ const Dashboard = () => {
     { name: t('dashboard.assignedFiles'), value: assignedDossiers, color: 'hsl(var(--primary))' }
   ];
 
-  // Prepare bar chart data - real data from last 8 days
-  const barData = Array.from({ length: 8 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (7 - i));
-    const dayStart = new Date(date.setHours(0, 0, 0, 0));
-    const dayEnd = new Date(date.setHours(23, 59, 59, 999));
-    
-    const count = dossiers.filter(d => {
-      const updatedAt = new Date(d.updated_at);
-      return d.status === 'COMPLETED' && updatedAt >= dayStart && updatedAt <= dayEnd;
-    }).length;
+  // Prepare bar chart data based on selected period
+  const getBarChartData = () => {
+    if (chartPeriod === 'today') {
+      // Show hourly data for today
+      return Array.from({ length: 24 }, (_, i) => {
+        const hour = i;
+        const hourStart = new Date();
+        hourStart.setHours(hour, 0, 0, 0);
+        const hourEnd = new Date();
+        hourEnd.setHours(hour, 59, 59, 999);
+        
+        const count = dossiers.filter(d => {
+          const updatedAt = new Date(d.updated_at);
+          const today = new Date();
+          return d.status === 'COMPLETED' && 
+                 updatedAt.toDateString() === today.toDateString() &&
+                 updatedAt.getHours() === hour;
+        }).length;
 
-    return {
-      name: format(dayStart, 'dd MMM', { locale: getDateLocale() }),
-      value: count
-    };
-  });
+        return {
+          name: `${hour.toString().padStart(2, '0')}:00`,
+          value: count
+        };
+      }).filter(item => item.value > 0 || new Date().getHours() >= parseInt(item.name));
+    } else if (chartPeriod === 'month') {
+      // Show last 30 days
+      return Array.from({ length: 30 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (29 - i));
+        const dayStart = new Date(date.setHours(0, 0, 0, 0));
+        const dayEnd = new Date(date.setHours(23, 59, 59, 999));
+        
+        const count = dossiers.filter(d => {
+          const updatedAt = new Date(d.updated_at);
+          return d.status === 'COMPLETED' && updatedAt >= dayStart && updatedAt <= dayEnd;
+        }).length;
+
+        return {
+          name: format(dayStart, 'dd MMM', { locale: getDateLocale() }),
+          value: count
+        };
+      });
+    } else {
+      // Show last 8 days (week view)
+      return Array.from({ length: 8 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (7 - i));
+        const dayStart = new Date(date.setHours(0, 0, 0, 0));
+        const dayEnd = new Date(date.setHours(23, 59, 59, 999));
+        
+        const count = dossiers.filter(d => {
+          const updatedAt = new Date(d.updated_at);
+          return d.status === 'COMPLETED' && updatedAt >= dayStart && updatedAt <= dayEnd;
+        }).length;
+
+        return {
+          name: format(dayStart, 'dd MMM', { locale: getDateLocale() }),
+          value: count
+        };
+      });
+    }
+  };
+
+  const barData = getBarChartData();
 
   const formatEventDate = (timestamp: string) => {
     return format(new Date(timestamp), "dd/MM/yy", { locale: getDateLocale() });
@@ -179,9 +227,36 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="pt-6">
               <div className="mb-4 flex gap-4 text-xs border-b">
-                <button className="pb-2 border-b-2 border-foreground font-medium">{t("dashboard.thisWeek")}</button>
-                <button className="pb-2 text-muted-foreground hover:text-foreground">{t("dashboard.thisMonth")}</button>
-                <button className="pb-2 text-muted-foreground hover:text-foreground">{t("dashboard.today")}</button>
+                <button 
+                  onClick={() => setChartPeriod('week')}
+                  className={`pb-2 transition-colors ${
+                    chartPeriod === 'week' 
+                      ? 'border-b-2 border-foreground font-medium' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t("dashboard.thisWeek")}
+                </button>
+                <button 
+                  onClick={() => setChartPeriod('month')}
+                  className={`pb-2 transition-colors ${
+                    chartPeriod === 'month' 
+                      ? 'border-b-2 border-foreground font-medium' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t("dashboard.thisMonth")}
+                </button>
+                <button 
+                  onClick={() => setChartPeriod('today')}
+                  className={`pb-2 transition-colors ${
+                    chartPeriod === 'today' 
+                      ? 'border-b-2 border-foreground font-medium' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t("dashboard.today")}
+                </button>
               </div>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={barData}>

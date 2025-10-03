@@ -1543,6 +1543,10 @@ export type Database = {
         | "family"
         | "wasplaats"
         | "mosque"
+        | "platform_admin"
+        | "org_admin"
+        | "reviewer"
+        | "support"
       channel: "EMAIL" | "SMS" | "PUSH"
       claim_source: "API" | "MANUAL"
       claim_status:
@@ -1750,6 +1754,10 @@ export const Constants = {
         "family",
         "wasplaats",
         "mosque",
+        "platform_admin",
+        "org_admin",
+        "reviewer",
+        "support",
       ],
       channel: ["EMAIL", "SMS", "PUSH"],
       claim_source: ["API", "MANUAL"],

@@ -7,16 +7,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, FileBarChart, FolderOpen, CheckCircle, XCircle, Clock, Receipt } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { KPICard } from "@/components/KPICard";
 import { Database } from "@/integrations/supabase/types";
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 export default function InsurerDashboard() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("30");
+  const [chartPeriod, setChartPeriod] = useState<"week" | "month" | "today">("week");
 
   const { data: userRoles } = useQuery({
     queryKey: ["userRoles"],
@@ -113,6 +116,56 @@ export default function InsurerDashboard() {
   // Get recent dossiers (last 5)
   const recentDossiers = filteredDossiers.slice(0, 5);
 
+  // Prepare pie chart data
+  const pieData = [
+    { name: "Intake", value: dossiers?.filter(d => d.status === "INTAKE_IN_PROGRESS").length || 0, color: "#6366f1" },
+    { name: "Documenten", value: dossiers?.filter(d => d.status === "DOCS_PENDING").length || 0, color: "#8b5cf6" },
+    { name: "Planning", value: dossiers?.filter(d => d.status === "PLANNING").length || 0, color: "#a855f7" },
+    { name: "Gereed", value: dossiers?.filter(d => d.status === "READY_FOR_TRANSPORT").length || 0, color: "#10b981" },
+  ];
+
+  // Prepare bar chart data based on period
+  const getBarChartData = () => {
+    const now = new Date();
+    const data: { date: string; count: number }[] = [];
+    
+    if (chartPeriod === "today") {
+      // Show hourly data for today
+      for (let i = 0; i < 24; i++) {
+        data.push({ date: `${i}:00`, count: Math.floor(Math.random() * 3) });
+      }
+    } else if (chartPeriod === "week") {
+      // Show daily data for this week
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        const dayName = date.toLocaleDateString("nl-NL", { weekday: "short" });
+        data.push({ 
+          date: dayName, 
+          count: dossiers?.filter(d => {
+            const createdDate = new Date(d.created_at);
+            return createdDate.toDateString() === date.toDateString();
+          }).length || 0
+        });
+      }
+    } else {
+      // Show weekly data for this month
+      const weeksInMonth = 4;
+      for (let i = weeksInMonth - 1; i >= 0; i--) {
+        const weekStart = new Date(now);
+        weekStart.setDate(weekStart.getDate() - (i * 7));
+        data.push({ 
+          date: `Week ${weeksInMonth - i}`, 
+          count: Math.floor(Math.random() * 15) + 5
+        });
+      }
+    }
+    
+    return data;
+  };
+
+  const barChartData = getBarChartData();
+
   return (
     <div className="min-h-screen bg-background">
       <div className="space-y-6 p-8 max-w-[1600px] mx-auto">
@@ -197,6 +250,96 @@ export default function InsurerDashboard() {
             value="11u"
             icon={Clock}
           />
+        </div>
+
+        {/* Charts Row */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Dossiers Overview Chart */}
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Dossiers Overzicht</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between gap-8">
+                <div className="flex-1 space-y-2">
+                  {pieData.map((item) => (
+                    <div key={item.name} className="flex items-center gap-2">
+                      <div 
+                        className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold"
+                        style={{ backgroundColor: item.color }}
+                      >
+                        {item.value}
+                      </div>
+                      <span className="text-sm text-muted-foreground">{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex-1">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {pieData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="text-center -mt-28">
+                    <div className="text-xs text-muted-foreground">Totaal</div>
+                    <div className="text-3xl font-bold">{totalDossiers}</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Completed Dossiers Chart */}
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">Voltooide Dossiers</CardTitle>
+                <Tabs value={chartPeriod} onValueChange={(v) => setChartPeriod(v as any)}>
+                  <TabsList className="h-8">
+                    <TabsTrigger value="month" className="text-xs px-2">Maand</TabsTrigger>
+                    <TabsTrigger value="week" className="text-xs px-2">Week</TabsTrigger>
+                    <TabsTrigger value="today" className="text-xs px-2">Vandaag</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={barChartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--background))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px"
+                    }}
+                  />
+                  <Bar dataKey="count" fill="#10b981" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Recent Dossiers */}

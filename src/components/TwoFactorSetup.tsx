@@ -41,31 +41,49 @@ export const TwoFactorSetup = () => {
   };
 
   const generateSecret = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) return;
+    try {
+      setSaving(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Fout",
+          description: "Geen gebruiker gevonden. Probeer opnieuw in te loggen.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    // Generate TOTP secret
-    const newSecret = authenticator.generateSecret();
-    setSecret(newSecret);
+      // Generate TOTP secret
+      const newSecret = authenticator.generateSecret();
+      setSecret(newSecret);
 
-    // Generate recovery codes (10 codes)
-    const codes = Array.from({ length: 10 }, () => 
-      Math.random().toString(36).substring(2, 10).toUpperCase()
-    );
-    setRecoveryCodes(codes);
+      // Generate recovery codes (10 codes)
+      const codes = Array.from({ length: 10 }, () => 
+        Math.random().toString(36).substring(2, 10).toUpperCase()
+      );
+      setRecoveryCodes(codes);
 
-    // Create OTP Auth URL for QR code
-    const otpauth = authenticator.keyuri(
-      user.email || "user",
-      "JanazApp",
-      newSecret
-    );
+      // Create OTP Auth URL for QR code
+      const otpauth = authenticator.keyuri(
+        user.email || "user",
+        "JanazApp",
+        newSecret
+      );
 
-    // Generate QR code
-    const qrCodeDataUrl = await QRCode.toDataURL(otpauth);
-    setQrCode(qrCodeDataUrl);
-    setSetupMode(true);
+      // Generate QR code
+      const qrCodeDataUrl = await QRCode.toDataURL(otpauth);
+      setQrCode(qrCodeDataUrl);
+      setSetupMode(true);
+    } catch (error: any) {
+      toast({
+        title: "Fout bij genereren QR code",
+        description: error.message || "Er is iets misgegaan. Probeer het opnieuw.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleVerifyAndEnable = async () => {

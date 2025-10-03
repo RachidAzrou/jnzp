@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useUserRole, UserRole, useRoleDisplayName } from "@/hooks/useUserRole";
+import { useUserRole, UserRole, useRolePortalName } from "@/hooks/useUserRole";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -27,7 +27,7 @@ type MenuItem = {
 export function AppSidebar() {
   const { role, loading } = useUserRole();
   const { t } = useTranslation();
-  const roleDisplayName = useRoleDisplayName(role);
+  const rolePortalName = useRolePortalName(role);
 
   const menuItems: MenuItem[] = [
     // Platform Admin
@@ -94,7 +94,7 @@ export function AppSidebar() {
       <SidebarContent>
         <div className="px-6 py-6 border-b border-sidebar-border">
           <img src={logoHorizontal} alt="JanazApp" className="h-8 brightness-0 invert" />
-          <p className="text-xs text-sidebar-foreground/70 mt-2">{roleDisplayName} {t("navigation.portal")}</p>
+          <p className="text-xs text-sidebar-foreground/70 mt-2">{rolePortalName}</p>
         </div>
         
         <SidebarGroup className="mt-4">

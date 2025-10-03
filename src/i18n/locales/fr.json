@@ -256,5 +256,18 @@
     "reviewer": "Réviseur",
     "support": "Support",
     "user": "Utilisateur"
+  },
+  "rolePortals": {
+    "platform_admin": "Portail de l'administrateur de plateforme",
+    "admin": "Portail de l'administrateur",
+    "org_admin": "Portail de l'administrateur d'organisation",
+    "funeral_director": "Portail des pompes funèbres",
+    "family": "Portail familial",
+    "insurer": "Portail de l'assureur",
+    "wasplaats": "Portail de la morgue",
+    "mosque": "Portail de la mosquée",
+    "reviewer": "Portail du réviseur",
+    "support": "Portail du support",
+    "user": "Portail de l'utilisateur"
   }
 }

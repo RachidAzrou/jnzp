@@ -89,3 +89,32 @@ export const useRoleDisplayName = (role: UserRole): string => {
       return t('roles.user');
   }
 };
+
+export const useRolePortalName = (role: UserRole): string => {
+  const { t } = useTranslation();
+  
+  switch (role) {
+    case 'platform_admin':
+      return t('rolePortals.platform_admin');
+    case 'admin':
+      return t('rolePortals.admin');
+    case 'org_admin':
+      return t('rolePortals.org_admin');
+    case 'funeral_director':
+      return t('rolePortals.funeral_director');
+    case 'family':
+      return t('rolePortals.family');
+    case 'insurer':
+      return t('rolePortals.insurer');
+    case 'wasplaats':
+      return t('rolePortals.wasplaats');
+    case 'mosque':
+      return t('rolePortals.mosque');
+    case 'reviewer':
+      return t('rolePortals.reviewer');
+    case 'support':
+      return t('rolePortals.support');
+    default:
+      return t('rolePortals.user');
+  }
+};

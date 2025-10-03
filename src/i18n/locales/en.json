@@ -242,7 +242,7 @@
     "family": "Family",
     "myDocuments": "My Documents",
     "chat": "Chat",
-    "portal": "Portal"
+    "portal": "portal"
   },
   "roles": {
     "platform_admin": "Platform Administrator",
@@ -256,5 +256,18 @@
     "reviewer": "Reviewer",
     "support": "Support",
     "user": "User"
+  },
+  "rolePortals": {
+    "platform_admin": "Platform Administrator portal",
+    "admin": "Administrator portal",
+    "org_admin": "Organization Administrator portal",
+    "funeral_director": "Funeral director portal",
+    "family": "Family portal",
+    "insurer": "Insurer portal",
+    "wasplaats": "Mortuary portal",
+    "mosque": "Mosque portal",
+    "reviewer": "Reviewer portal",
+    "support": "Support portal",
+    "user": "User portal"
   }
 }

@@ -767,10 +767,13 @@ export type Database = {
           id: string
           insurer_notes: string | null
           invoice_number: string | null
+          invoice_type: string | null
           issued_at: string | null
           needs_info_reason: string | null
+          notes: string | null
           paid_at: string | null
           payment_reference: string | null
+          payment_terms_days: number | null
           status: Database["public"]["Enums"]["invoice_status"]
           subtotal: number
           total: number
@@ -785,10 +788,13 @@ export type Database = {
           id?: string
           insurer_notes?: string | null
           invoice_number?: string | null
+          invoice_type?: string | null
           issued_at?: string | null
           needs_info_reason?: string | null
+          notes?: string | null
           paid_at?: string | null
           payment_reference?: string | null
+          payment_terms_days?: number | null
           status?: Database["public"]["Enums"]["invoice_status"]
           subtotal?: number
           total?: number
@@ -803,10 +809,13 @@ export type Database = {
           id?: string
           insurer_notes?: string | null
           invoice_number?: string | null
+          invoice_type?: string | null
           issued_at?: string | null
           needs_info_reason?: string | null
+          notes?: string | null
           paid_at?: string | null
           payment_reference?: string | null
+          payment_terms_days?: number | null
           status?: Database["public"]["Enums"]["invoice_status"]
           subtotal?: number
           total?: number

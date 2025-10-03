@@ -9,13 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Calendar, Plane, Building2, Plus, Droplet } from "lucide-react";
+import { Calendar, Plane, Building2, Plus, Droplet, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { EmptyState } from "@/components/EmptyState";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
 // Mock data for demonstration
 const mockMosqueServices = [
@@ -92,6 +93,8 @@ const Planning = () => {
   const [wasplaatsServices, setWasplaatsServices] = useState<any[]>([]);
   const [flights, setFlights] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchDossier, setSearchDossier] = useState("");
+  const [searchName, setSearchName] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -127,6 +130,21 @@ const Planning = () => {
     }
   };
 
+  // Filter functions
+  const filterBySearch = (items: any[]) => {
+    return items.filter(item => {
+      const matchesDossier = !searchDossier || 
+        item.dossier_ref?.toLowerCase().includes(searchDossier.toLowerCase());
+      const matchesName = !searchName || 
+        item.deceased_name?.toLowerCase().includes(searchName.toLowerCase());
+      return matchesDossier && matchesName;
+    });
+  };
+
+  const filteredMosqueServices = filterBySearch(mosqueServices);
+  const filteredWasplaatsServices = filterBySearch(wasplaatsServices);
+  const filteredFlights = filterBySearch(flights);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
@@ -141,6 +159,47 @@ const Planning = () => {
         <h1 className="text-3xl font-bold">Planning</h1>
         <p className="text-muted-foreground mt-1">Overzicht van moskee ceremonies en vluchten</p>
       </div>
+
+      {/* Filter Section */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex gap-4 items-center">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Zoek op dossier nummer..."
+                  value={searchDossier}
+                  onChange={(e) => setSearchDossier(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Zoek op naam overledene..."
+                  value={searchName}
+                  onChange={(e) => setSearchName(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+            {(searchDossier || searchName) && (
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setSearchDossier("");
+                  setSearchName("");
+                }}
+              >
+                Reset filters
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6">
         {/* Mosque Services Section */}
@@ -158,7 +217,7 @@ const Planning = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {mosqueServices.length === 0 ? (
+            {filteredMosqueServices.length === 0 ? (
               <EmptyState
                 icon={Building2}
                 title="Geen moskee ceremonies"
@@ -182,7 +241,7 @@ const Planning = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mosqueServices.map((service) => (
+                  {filteredMosqueServices.map((service) => (
                     <TableRow key={service.id}>
                       <TableCell className="font-medium font-mono">
                         {service.dossier_ref}
@@ -220,7 +279,7 @@ const Planning = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {wasplaatsServices.length === 0 ? (
+            {filteredWasplaatsServices.length === 0 ? (
               <EmptyState
                 icon={Droplet}
                 title="Geen wasplaats afspraken"
@@ -245,7 +304,7 @@ const Planning = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {wasplaatsServices.map((service) => (
+                  {filteredWasplaatsServices.map((service) => (
                     <TableRow key={service.id}>
                       <TableCell className="font-medium font-mono">
                         {service.dossier_ref}
@@ -286,7 +345,7 @@ const Planning = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {flights.length === 0 ? (
+            {filteredFlights.length === 0 ? (
               <EmptyState
                 icon={Plane}
                 title="Geen vluchten gepland"
@@ -311,7 +370,7 @@ const Planning = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {flights.map((flight) => (
+                  {filteredFlights.map((flight) => (
                     <TableRow key={flight.id}>
                       <TableCell className="font-medium font-mono">
                         {flight.dossier_ref}

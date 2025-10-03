@@ -12,6 +12,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useUserRole, UserRole, getRoleDisplayName } from "@/hooks/useUserRole";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 
 type MenuItem = {
@@ -89,7 +90,10 @@ export function AppSidebar() {
       <SidebarContent>
         <div className="px-6 py-6 border-b border-sidebar-border">
           <img src={logoHorizontal} alt="JanazApp" className="h-8 brightness-0 invert" />
-          <p className="text-xs text-sidebar-foreground/70 mt-2">{getRoleDisplayName(role)} Portal</p>
+          <div className="flex items-center justify-between mt-3">
+            <p className="text-xs text-sidebar-foreground/70">{getRoleDisplayName(role)} Portal</p>
+            <LanguageSwitcher />
+          </div>
         </div>
         
         <SidebarGroup className="mt-4">

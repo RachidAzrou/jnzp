@@ -579,7 +579,7 @@ const Auth = () => {
                 className="w-full"
                 onClick={() => navigate("/register")}
               >
-                Maak een nieuw account aan
+                Registreer hier
               </Button>
             </div>
           </form>

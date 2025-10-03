@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { TwoFactorVerification } from "@/components/TwoFactorVerification";
 import logoAuth from "@/assets/logo-vertical-new.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
@@ -46,6 +47,10 @@ const Auth = () => {
   const [twoFACode, setTwoFACode] = useState("");
   const [is2FAVerified, setIs2FAVerified] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  
+  // Login 2FA state
+  const [show2FAVerification, setShow2FAVerification] = useState(false);
+  const [pendingSession, setPendingSession] = useState<any>(null);
 
   useEffect(() => {
     // Check if this is a password reset flow
@@ -92,12 +97,53 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      // Check if account is locked
+      const { data: isLocked } = await supabase.rpc('is_account_locked', { 
+        p_email: email 
+      });
+
+      if (isLocked) {
+        throw new Error("Account tijdelijk geblokkeerd na te veel mislukte inlogpogingen. Probeer het over 15 minuten opnieuw.");
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // Log failed attempt
+        await supabase.from('login_attempts').insert({
+          email: email,
+          success: false,
+          ip_address: null, // Could be captured from request
+          user_agent: navigator.userAgent,
+        });
+        throw error;
+      }
+
+      // Log successful attempt
+      if (data.user) {
+        await supabase.from('login_attempts').insert({
+          email: email,
+          success: true,
+          ip_address: null,
+          user_agent: navigator.userAgent,
+        });
+
+        // Check if user requires 2FA
+        const { data: requires2FA } = await supabase.rpc('user_requires_2fa', {
+          user_id: data.user.id
+        });
+
+        if (requires2FA) {
+          // Store session and show 2FA verification
+          setPendingSession(data.session);
+          setShow2FAVerification(true);
+          setLoading(false);
+          return;
+        }
+      }
 
       toast({
         title: "Welkom terug!",
@@ -114,6 +160,26 @@ const Auth = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handle2FAVerified = () => {
+    setShow2FAVerification(false);
+    setPendingSession(null);
+    
+    toast({
+      title: "Welkom terug!",
+      description: "U bent succesvol ingelogd.",
+    });
+
+    navigate("/");
+  };
+
+  const handle2FACancel = async () => {
+    setShow2FAVerification(false);
+    setPendingSession(null);
+    
+    // Sign out the pending session
+    await supabase.auth.signOut();
   };
 
   const handleFamilySignup = async (e: React.FormEvent) => {
@@ -485,6 +551,22 @@ const Auth = () => {
             )}
           </CardContent>
         </Card>
+      </div>
+    );
+  }
+
+  // Show 2FA verification if required
+  if (show2FAVerification) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+        
+        <TwoFactorVerification 
+          onVerified={handle2FAVerified}
+          onCancel={handle2FACancel}
+        />
       </div>
     );
   }

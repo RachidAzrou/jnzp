@@ -42,6 +42,7 @@ import InsurerRapportage from "./pages/InsurerRapportage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminDirectory from "./pages/AdminDirectory";
 import AdminOrganizations from "./pages/AdminOrganizations";
+import AdminGDPR from "./pages/AdminGDPR";
 import TeamManagement from "./pages/TeamManagement";
 import Auth from "./pages/Auth";
 import Register from "./pages/Register";
@@ -307,6 +308,11 @@ const App = () => (
                           <Route path="/admin/organizations" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
                               <AdminOrganizations />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/gdpr" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminGDPR />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/dossiers" element={

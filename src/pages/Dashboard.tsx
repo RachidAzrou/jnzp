@@ -183,14 +183,54 @@ const Dashboard = () => {
               </div>
             </CardHeader>
             <CardContent className="pt-8">
-              <div className="overflow-x-auto -mx-8 px-8">
+              {/* Mobile card view */}
+              <div className="md:hidden space-y-4">
+                {dossiers.slice(0, 5).map((dossier) => (
+                  <div key={dossier.id} className="p-4 border rounded-lg bg-muted/30 space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-mono text-sm font-medium">{dossier.display_id || dossier.ref_number}</p>
+                        <p className="text-base font-semibold mt-1 truncate">{dossier.deceased_name}</p>
+                      </div>
+                      {dossier.flow !== "UNSET" && (
+                        <Badge variant="outline" className="gap-1 flex-shrink-0">
+                          {dossier.flow === "REP" ? <Plane className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
+                          {dossier.flow}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge 
+                        variant={dossier.legal_hold ? "destructive" : "default"}
+                        className={`text-xs ${!dossier.legal_hold ? "bg-primary/10 text-primary border-primary/20" : ""}`}
+                      >
+                        {getStatusLabel(dossier.status)}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {formatRelativeTime(dossier.updated_at)}
+                      </span>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => navigate(`/dossiers/${dossier.id}`)}
+                      className="w-full hover:bg-primary hover:text-primary-foreground"
+                    >
+                      {t("dossiers.open")}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop table view */}
+              <div className="hidden md:block overflow-x-auto -mx-8 px-8">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="whitespace-nowrap">{t("dossiers.dossier")}</TableHead>
-                    <TableHead className="whitespace-nowrap hidden sm:table-cell">{t("dossiers.flow")}</TableHead>
+                    <TableHead className="whitespace-nowrap">{t("dossiers.flow")}</TableHead>
                     <TableHead className="whitespace-nowrap">{t("dossiers.name")}</TableHead>
-                    <TableHead className="whitespace-nowrap hidden md:table-cell">{t("dossiers.status")}</TableHead>
+                    <TableHead className="whitespace-nowrap">{t("dossiers.status")}</TableHead>
                     <TableHead className="whitespace-nowrap hidden lg:table-cell">{t("dossiers.update")}</TableHead>
                     <TableHead className="whitespace-nowrap">{t("dossiers.action")}</TableHead>
                   </TableRow>
@@ -198,38 +238,38 @@ const Dashboard = () => {
                 <TableBody>
                   {dossiers.slice(0, 5).map((dossier) => (
                     <TableRow key={dossier.id}>
-                      <TableCell className="font-medium font-mono text-xs sm:text-sm whitespace-nowrap">
+                      <TableCell className="font-medium font-mono text-sm whitespace-nowrap">
                         {dossier.display_id || dossier.ref_number}
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell">
+                      <TableCell>
                         {dossier.flow === "REP" && (
                           <Badge variant="outline" className="gap-1 whitespace-nowrap">
                             <Plane className="h-3 w-3" />
-                            <span className="hidden sm:inline">REP</span>
+                            REP
                           </Badge>
                         )}
                         {dossier.flow === "LOC" && (
                           <Badge variant="outline" className="gap-1 whitespace-nowrap">
                             <MapPin className="h-3 w-3" />
-                            <span className="hidden sm:inline">LOC</span>
+                            LOC
                           </Badge>
                         )}
                         {dossier.flow === "UNSET" && (
                           <Badge variant="secondary">-</Badge>
                         )}
                       </TableCell>
-                      <TableCell className="max-w-[150px] sm:max-w-none truncate text-sm">{dossier.deceased_name}</TableCell>
-                      <TableCell className="hidden md:table-cell">
+                      <TableCell className="max-w-[200px] truncate">{dossier.deceased_name}</TableCell>
+                      <TableCell>
                         <Badge 
                           variant={dossier.legal_hold ? "destructive" : "default"}
-                          className={`min-w-[100px] sm:min-w-[120px] justify-center text-xs ${
+                          className={`min-w-[120px] justify-center ${
                             !dossier.legal_hold ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
                           }`}
                         >
                           <span className="truncate">{getStatusLabel(dossier.status)}</span>
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-xs sm:text-sm text-muted-foreground hidden lg:table-cell whitespace-nowrap">
+                      <TableCell className="text-sm text-muted-foreground hidden lg:table-cell whitespace-nowrap">
                         {formatRelativeTime(dossier.updated_at)}
                       </TableCell>
                       <TableCell>
@@ -239,12 +279,11 @@ const Dashboard = () => {
                           onClick={() => navigate(`/dossiers/${dossier.id}`)}
                           className="hover:bg-primary hover:text-primary-foreground transition-colors whitespace-nowrap"
                         >
-                          <span className="hidden sm:inline">{t("dossiers.open")}</span>
-                          <span className="sm:hidden">→</span>
+                          {t("dossiers.open")}
                         </Button>
                       </TableCell>
                     </TableRow>
-                ))}
+                  ))}
                 </TableBody>
               </Table>
               </div>
@@ -265,45 +304,94 @@ const Dashboard = () => {
               </div>
             </CardHeader>
             <CardContent className="pt-8">
-              <div className="overflow-x-auto -mx-8 px-8">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.dossier")}</TableHead>
-                    <TableHead className="whitespace-nowrap hidden sm:table-cell">{t("dossiers.task")}</TableHead>
-                    <TableHead className="whitespace-nowrap hidden md:table-cell">{t("dossiers.urgency")}</TableHead>
-                    <TableHead className="whitespace-nowrap">{t("dossiers.action")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {urgentTasks.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8 text-sm">
-                        {t("dashboard.noUrgentTasks")}
-                    </TableCell>
-                  </TableRow>
+              {/* Mobile card view */}
+              <div className="md:hidden space-y-4">
+                {urgentTasks.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8 text-sm">
+                    {t("dashboard.noUrgentTasks")}
+                  </p>
                 ) : (
                   urgentTasks.map((task) => {
                     const urgency = getTaskUrgency(task.status, task.legal_hold);
                     const taskDesc = getTaskDescription(task.status, task.legal_hold);
                     const action = getTaskAction(task.status, task.id);
 
+                    return (
+                      <div key={task.id} className="p-4 border rounded-lg bg-muted/30 space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-mono text-sm font-medium">{task.display_id || task.ref_number}</p>
+                            <p className="text-sm text-muted-foreground mt-1">{taskDesc}</p>
+                          </div>
+                          <Badge 
+                            variant={
+                              urgency === "Hoog" ? "destructive" : 
+                              urgency === "Normaal" ? "default" : 
+                              "secondary"
+                            }
+                            className={`text-xs flex-shrink-0 ${
+                              urgency !== "Hoog" ? "bg-primary/10 text-primary border-primary/20" : ""
+                            }`}
+                          >
+                            {urgency}
+                          </Badge>
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={action}
+                          className="w-full hover:bg-primary hover:text-primary-foreground"
+                        >
+                          {task.status === "DOCS_PENDING" ? t("tasks.toDocuments") :
+                           task.status === "PLANNING" ? t("tasks.toPlanning") :
+                           t("tasks.openDossier")}
+                        </Button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Desktop table view */}
+              <div className="hidden md:block overflow-x-auto -mx-8 px-8">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="whitespace-nowrap">{t("dossiers.dossier")}</TableHead>
+                    <TableHead className="whitespace-nowrap">{t("dossiers.task")}</TableHead>
+                    <TableHead className="whitespace-nowrap">{t("dossiers.urgency")}</TableHead>
+                    <TableHead className="whitespace-nowrap">{t("dossiers.action")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {urgentTasks.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                        {t("dashboard.noUrgentTasks")}
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    urgentTasks.map((task) => {
+                      const urgency = getTaskUrgency(task.status, task.legal_hold);
+                      const taskDesc = getTaskDescription(task.status, task.legal_hold);
+                      const action = getTaskAction(task.status, task.id);
+
                       return (
                         <TableRow key={task.id}>
-                          <TableCell className="font-medium font-mono text-xs sm:text-sm whitespace-nowrap">
+                          <TableCell className="font-medium font-mono text-sm whitespace-nowrap">
                             {task.display_id || task.ref_number}
                           </TableCell>
-                          <TableCell className="text-xs sm:text-sm hidden sm:table-cell max-w-[200px] truncate">
+                          <TableCell className="text-sm max-w-[200px] truncate">
                             {taskDesc}
                           </TableCell>
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell>
                             <Badge 
                               variant={
                                 urgency === "Hoog" ? "destructive" : 
                                 urgency === "Normaal" ? "default" : 
                                 "secondary"
                               }
-                              className={`min-w-[100px] sm:min-w-[120px] justify-center text-xs ${
+                              className={`min-w-[120px] justify-center ${
                                 urgency !== "Hoog" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
                               }`}
                             >
@@ -315,14 +403,11 @@ const Dashboard = () => {
                               variant="outline" 
                               size="sm"
                               onClick={action}
-                              className="hover:bg-primary hover:text-primary-foreground transition-colors whitespace-nowrap text-xs sm:text-sm"
+                              className="hover:bg-primary hover:text-primary-foreground transition-colors whitespace-nowrap"
                             >
-                              <span className="hidden sm:inline">
                               {task.status === "DOCS_PENDING" ? t("tasks.toDocuments") :
                                task.status === "PLANNING" ? t("tasks.toPlanning") :
                                t("tasks.openDossier")}
-                              </span>
-                              <span className="sm:hidden">→</span>
                             </Button>
                           </TableCell>
                         </TableRow>

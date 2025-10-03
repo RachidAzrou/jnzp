@@ -295,7 +295,7 @@ const Dossiers = () => {
                         )}
                         <Badge 
                           variant={getStatusVariant(dossier.status)} 
-                          className={`text-[10px] sm:text-xs ${
+                          className={`text-[10px] sm:text-xs min-w-[120px] justify-center ${
                             getStatusVariant(dossier.status) !== "destructive" 
                               ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" 
                               : ""

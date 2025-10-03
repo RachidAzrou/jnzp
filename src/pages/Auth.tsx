@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Upload, Users, ArrowLeft } from "lucide-react";
+import { Loader2, Users, ArrowLeft } from "lucide-react";
 import { MdOutlineMosque } from "react-icons/md";
 import { LuHandshake } from "react-icons/lu";
 import { RiHandHeartLine } from "react-icons/ri";
@@ -34,11 +34,11 @@ const Auth = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [registrationStep, setRegistrationStep] = useState<RegistrationStep>("role");
   const [orgName, setOrgName] = useState("");
-  const [orgVatNumber, setOrgVatNumber] = useState("");
+  const [orgRegistrationNumber, setOrgRegistrationNumber] = useState("");
   const [orgAddress, setOrgAddress] = useState("");
   const [orgCity, setOrgCity] = useState("");
   const [orgPostalCode, setOrgPostalCode] = useState("");
-  const [verificationDoc, setVerificationDoc] = useState<File | null>(null);
+  
   const [invitationCode, setInvitationCode] = useState<string>("");
   
   // Password reset state
@@ -212,7 +212,7 @@ const Auth = () => {
           name: orgName,
           type: orgType as "FUNERAL_DIRECTOR" | "MOSQUE" | "WASPLAATS" | "INSURER",
           verification_status: "PENDING_VERIFICATION",
-          vat_number: orgVatNumber,
+          registration_number: orgRegistrationNumber,
           address: orgAddress,
           city: orgCity,
           postal_code: orgPostalCode,
@@ -224,34 +224,6 @@ const Auth = () => {
         .single();
 
       if (orgError) throw orgError;
-
-      await supabase.from("user_roles").insert({
-        user_id: data.user.id,
-        role: "org_admin",
-        organization_id: orgData.id,
-        scope: "ORG",
-      });
-
-      if (verificationDoc && orgData) {
-        const fileName = `${orgData.id}/${Date.now()}_${verificationDoc.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from("dossier-documents")
-          .upload(fileName, verificationDoc);
-
-        if (!uploadError) {
-          const { data: { publicUrl } } = supabase.storage
-            .from("dossier-documents")
-            .getPublicUrl(fileName);
-
-          await supabase.from("organization_verification_docs").insert({
-            organization_id: orgData.id,
-            document_type: "KVK_UITTREKSEL",
-            file_name: verificationDoc.name,
-            file_url: publicUrl,
-            uploaded_by: data.user.id,
-          });
-        }
-      }
 
       if (orgData) {
         await supabase.rpc("log_admin_action", {
@@ -273,11 +245,10 @@ const Auth = () => {
       setLastName("");
       setPhone("");
       setOrgName("");
-      setOrgVatNumber("");
+      setOrgRegistrationNumber("");
       setOrgAddress("");
       setOrgCity("");
       setOrgPostalCode("");
-      setVerificationDoc(null);
       setSelectedRole(null);
       setRegistrationStep("role");
     } catch (error: any) {
@@ -769,11 +740,12 @@ const Auth = () => {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="org-vat">BTW-nummer</Label>
+                          <Label htmlFor="org-registration">Ondernemingsnummer</Label>
                           <Input
-                            id="org-vat"
-                            value={orgVatNumber}
-                            onChange={(e) => setOrgVatNumber(e.target.value)}
+                            id="org-registration"
+                            value={orgRegistrationNumber}
+                            onChange={(e) => setOrgRegistrationNumber(e.target.value)}
+                            placeholder="Bv. 0123.456.789"
                             required
                           />
                         </div>
@@ -860,26 +832,6 @@ const Auth = () => {
                             required
                           />
                         </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="verification-doc">
-                          Upload bewijs (KVK-uittreksel, vergunning)
-                        </Label>
-                        <div className="flex items-center gap-2">
-                          <Input
-                            id="verification-doc"
-                            type="file"
-                            onChange={(e) => setVerificationDoc(e.target.files?.[0] || null)}
-                            accept=".pdf,.jpg,.jpeg,.png"
-                          />
-                          <Upload className="h-5 w-5 text-muted-foreground" />
-                        </div>
-                        {verificationDoc && (
-                          <p className="text-sm text-muted-foreground">
-                            {verificationDoc.name}
-                          </p>
-                        )}
                       </div>
 
                       <Button type="submit" className="w-full" disabled={loading}>

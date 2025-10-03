@@ -16,6 +16,7 @@ import logoAuth from "@/assets/logo-vertical-new.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
+type DetailsSubStep = "organization" | "contact";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const Register = () => {
   // Registration flow state
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [registrationStep, setRegistrationStep] = useState<RegistrationStep>("role");
+  const [detailsSubStep, setDetailsSubStep] = useState<DetailsSubStep>("organization");
   const [orgName, setOrgName] = useState("");
   const [orgRegistrationNumber, setOrgRegistrationNumber] = useState("");
   const [orgAddress, setOrgAddress] = useState("");
@@ -230,7 +232,7 @@ const Register = () => {
                   </div>
                   <span className="text-xs font-medium">Kies rol</span>
                 </div>
-                <div className="w-12 h-0.5 bg-muted"></div>
+                <div className="w-8 h-0.5 bg-muted"></div>
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-medium">
                     2
@@ -298,46 +300,62 @@ const Register = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {/* Progress Indicator */}
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                    ✓
+              {/* Progress Indicator for Family */}
+              {selectedRole === "family" && (
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                      ✓
+                    </div>
+                    <span className="text-xs font-medium">Rol</span>
                   </div>
-                  <span className="text-xs font-medium">Rol</span>
-                </div>
-                <div className="w-12 h-0.5 bg-primary"></div>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                    2
+                  <div className="w-8 h-0.5 bg-primary"></div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                      2
+                    </div>
+                    <span className="text-xs font-medium">Gegevens</span>
                   </div>
-                  <span className="text-xs font-medium">Gegevens</span>
                 </div>
-              </div>
+              )}
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setRegistrationStep("role");
-                  setSelectedRole(null);
-                }}
-                className="mb-2"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Wijzig rol
-              </Button>
-
-              <div className="text-center pb-3">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20">
-                  <div className="text-primary">
-                    {selectedRole && getRoleIcon(selectedRole)}
+              {/* Progress Indicator for Professional */}
+              {selectedRole !== "family" && (
+                <div className="flex items-center justify-center gap-1.5 mb-4">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                      ✓
+                    </div>
+                    <span className="text-[10px] font-medium">Rol</span>
                   </div>
-                  <span className="font-medium text-sm">
-                    {selectedRole && getRoleLabel(selectedRole)}
-                  </span>
+                  <div className="w-6 h-0.5 bg-primary"></div>
+                  <div className="flex items-center gap-1.5">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${
+                      detailsSubStep === "organization" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "bg-primary text-primary-foreground"
+                    }`}>
+                      {detailsSubStep === "contact" ? "✓" : "2"}
+                    </div>
+                    <span className={`text-[10px] ${detailsSubStep === "organization" ? "font-medium" : "font-medium"}`}>
+                      Organisatie
+                    </span>
+                  </div>
+                  <div className={`w-6 h-0.5 ${detailsSubStep === "contact" ? "bg-primary" : "bg-muted"}`}></div>
+                  <div className="flex items-center gap-1.5">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${
+                      detailsSubStep === "contact" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "bg-muted text-muted-foreground"
+                    }`}>
+                      3
+                    </div>
+                    <span className={`text-[10px] ${detailsSubStep === "contact" ? "font-medium" : "text-muted-foreground"}`}>
+                      Contact
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {selectedRole === "family" ? (
                 <form onSubmit={handleFamilySignup} className="space-y-3">
@@ -403,8 +421,33 @@ const Register = () => {
                     Maak account aan
                   </Button>
                 </form>
-              ) : (
-                <form onSubmit={handleProfessionalSignup} className="space-y-4">
+              ) : detailsSubStep === "organization" ? (
+                <div className="space-y-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setRegistrationStep("role");
+                      setSelectedRole(null);
+                      setDetailsSubStep("organization");
+                    }}
+                    className="mb-2"
+                  >
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Wijzig rol
+                  </Button>
+
+                  <div className="text-center pb-3">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20">
+                      <div className="text-primary">
+                        {selectedRole && getRoleIcon(selectedRole)}
+                      </div>
+                      <span className="font-medium text-sm">
+                        {selectedRole && getRoleLabel(selectedRole)}
+                      </span>
+                    </div>
+                  </div>
+
                   <div className="space-y-3 p-4 bg-muted/30 rounded-lg border">
                     <h4 className="font-semibold text-sm flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
@@ -464,6 +507,38 @@ const Register = () => {
                           />
                         </div>
                       </div>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={() => setDetailsSubStep("contact")}
+                    disabled={!orgName || !orgRegistrationNumber || !orgAddress || !orgCity || !orgPostalCode}
+                    className="w-full h-10 mt-4"
+                  >
+                    Volgende stap
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleProfessionalSignup} className="space-y-4">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setDetailsSubStep("organization")}
+                    className="mb-2"
+                  >
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Terug naar organisatie
+                  </Button>
+
+                  <div className="text-center pb-3">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20">
+                      <div className="text-primary">
+                        {selectedRole && getRoleIcon(selectedRole)}
+                      </div>
+                      <span className="font-medium text-sm">
+                        {selectedRole && getRoleLabel(selectedRole)}
+                      </span>
                     </div>
                   </div>
 

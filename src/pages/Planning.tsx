@@ -9,7 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Calendar, Plane, Building2, Plus, Droplet, Search } from "lucide-react";
+import { Calendar, Plane, Plus, Search } from "lucide-react";
+import { MdOutlineShower, MdOutlineMosque } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -216,7 +217,7 @@ const Planning = () => {
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                   <div className="p-2 rounded-lg bg-primary/10">
-                    <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                    <MdOutlineMosque className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                   </div>
                   Moskee Planning
                 </CardTitle>
@@ -232,7 +233,7 @@ const Planning = () => {
           <CardContent>
             {filteredMosqueServices.length === 0 ? (
               <EmptyState
-                icon={Building2}
+                icon={MdOutlineMosque}
                 title="Geen moskee ceremonies"
                 description="Er zijn momenteel geen moskee ceremonies gepland. Klik op 'Nieuwe moskee afspraak' om de eerste te plannen."
                 action={{
@@ -284,7 +285,7 @@ const Planning = () => {
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <div className="p-2 rounded-lg bg-primary/10">
-                    <Droplet className="h-5 w-5 text-primary" />
+                    <MdOutlineShower className="h-5 w-5 text-primary" />
                   </div>
                   Wasplaats Planning
                 </CardTitle>
@@ -299,7 +300,7 @@ const Planning = () => {
           <CardContent>
             {filteredWasplaatsServices.length === 0 ? (
               <EmptyState
-                icon={Droplet}
+                icon={MdOutlineShower}
                 title="Geen wasplaats afspraken"
                 description="Er zijn nog geen wasplaats afspraken gepland. Voeg een afspraak toe wanneer de wassing gepland moet worden."
                 action={{

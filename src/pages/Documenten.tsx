@@ -247,13 +247,7 @@ const Documenten = () => {
           <h1 className="text-3xl font-bold">Documenten</h1>
           <p className="text-muted-foreground mt-1">Snelle documenttriage en beoordeling</p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={loadNextToReview} variant="default">
-            <ChevronRight className="mr-2 h-4 w-4" />
-            Volgende te beoordelen
-          </Button>
-          <DocumentUploadDialog dossiers={dossiers} onUploadComplete={fetchData} />
-        </div>
+        <DocumentUploadDialog dossiers={dossiers} onUploadComplete={fetchData} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">

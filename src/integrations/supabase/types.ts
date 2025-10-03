@@ -1840,10 +1840,14 @@ export type Database = {
           device_name: string | null
           expires_at: string
           id: string
-          ip_address: unknown | null
+          ip_prefix: unknown | null
+          last_rotated_at: string
           last_used_at: string
-          trusted_at: string
-          user_agent: string | null
+          revoke_reason: string | null
+          revoked: boolean
+          risk_score: number
+          token_hash: string
+          user_agent_hash: string | null
           user_id: string
         }
         Insert: {
@@ -1852,10 +1856,14 @@ export type Database = {
           device_name?: string | null
           expires_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_prefix?: unknown | null
+          last_rotated_at?: string
           last_used_at?: string
-          trusted_at?: string
-          user_agent?: string | null
+          revoke_reason?: string | null
+          revoked?: boolean
+          risk_score?: number
+          token_hash: string
+          user_agent_hash?: string | null
           user_id: string
         }
         Update: {
@@ -1864,10 +1872,14 @@ export type Database = {
           device_name?: string | null
           expires_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_prefix?: unknown | null
+          last_rotated_at?: string
           last_used_at?: string
-          trusted_at?: string
-          user_agent?: string | null
+          revoke_reason?: string | null
+          revoked?: boolean
+          risk_score?: number
+          token_hash?: string
+          user_agent_hash?: string | null
           user_id?: string
         }
         Relationships: []
@@ -2067,6 +2079,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_device_risk: {
+        Args: {
+          p_current_ip: string
+          p_current_user_agent: string
+          p_device_id: string
+        }
+        Returns: number
+      }
       calculate_login_delay: {
         Args: { p_email: string }
         Returns: number
@@ -2091,6 +2111,10 @@ export type Database = {
         Args: { p_nonce: string; p_period: number }
         Returns: Json
       }
+      cleanup_device_tokens: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_expired_2fa_nonces: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -2100,10 +2124,6 @@ export type Database = {
         Returns: undefined
       }
       cleanup_expired_sessions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      cleanup_expired_trusted_devices: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2127,6 +2147,10 @@ export type Database = {
         Args: { p_nonce: string }
         Returns: Json
       }
+      get_ip_prefix: {
+        Args: { p_ip: string }
+        Returns: unknown
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2136,10 +2160,6 @@ export type Database = {
       }
       is_account_locked: {
         Args: { p_email: string }
-        Returns: boolean
-      }
-      is_device_trusted: {
-        Args: { p_device_fingerprint: string; p_user_id: string }
         Returns: boolean
       }
       log_admin_action: {
@@ -2152,11 +2172,13 @@ export type Database = {
         }
         Returns: string
       }
-      trust_device: {
+      register_device_token: {
         Args: {
           p_device_fingerprint: string
           p_device_name?: string
           p_ip?: string
+          p_old_token_hash?: string
+          p_token_hash: string
           p_user_agent?: string
           p_user_id: string
         }
@@ -2180,6 +2202,14 @@ export type Database = {
       }
       verify_captcha: {
         Args: { p_endpoint: string; p_identifier: string; p_token: string }
+        Returns: Json
+      }
+      verify_device_token: {
+        Args: {
+          p_current_ip?: string
+          p_current_user_agent?: string
+          p_token_hash: string
+        }
         Returns: Json
       }
       verify_totp_code: {

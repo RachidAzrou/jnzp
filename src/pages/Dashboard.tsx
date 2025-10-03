@@ -121,69 +121,72 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-8 p-6 max-w-[1600px] mx-auto">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">{t("dashboard.title")}</h1>
-        <p className="text-muted-foreground text-base">{t("dashboard.overview")}</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="space-y-8 p-8 max-w-[1600px] mx-auto">
+        <div className="space-y-3">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            {t("dashboard.title")}
+          </h1>
+          <p className="text-muted-foreground text-lg">{t("dashboard.overview")}</p>
+        </div>
 
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-5">
-        <div onClick={() => navigate('/dossiers')} className="cursor-pointer transition-all hover:scale-105">
-          <KPICard
-            title={t("dashboard.runningDossiers")}
-            value={activeDossiers}
-            icon={FolderOpen}
-            trend={{ value: t("dashboard.clickToOpen"), positive: true }}
-          />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+          <div onClick={() => navigate('/dossiers')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+            <KPICard
+              title={t("dashboard.runningDossiers")}
+              value={activeDossiers}
+              icon={FolderOpen}
+              trend={{ value: t("dashboard.clickToOpen"), positive: true }}
+            />
+          </div>
+          <div onClick={() => navigate('/dossiers?status=LEGAL_HOLD')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+            <KPICard
+              title={t("dashboard.legalHold")}
+              value={legalHold}
+              icon={AlertTriangle}
+              trend={{ value: t("dashboard.showDossiers"), positive: false }}
+            />
+          </div>
+          <div onClick={() => navigate('/documenten?filter=missing')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+            <KPICard
+              title={t("dashboard.missingDocuments")}
+              value={5}
+              icon={FileX}
+              trend={{ value: t("dashboard.toDocuments"), positive: true }}
+            />
+          </div>
+          <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+            <KPICard
+              title={t("dashboard.repatriation")}
+              value={repatriationDossiers}
+              icon={Plane}
+              trend={{ value: t("dashboard.filterOnRep"), positive: true }}
+            />
+          </div>
+          <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1">
+            <KPICard
+              title={t("dashboard.local")}
+              value={localDossiers}
+              icon={MapPin}
+              trend={{ value: t("dashboard.filterOnLoc"), positive: true }}
+            />
+          </div>
         </div>
-        <div onClick={() => navigate('/dossiers?status=LEGAL_HOLD')} className="cursor-pointer transition-all hover:scale-105">
-          <KPICard
-            title={t("dashboard.legalHold")}
-            value={legalHold}
-            icon={AlertTriangle}
-            trend={{ value: t("dashboard.showDossiers"), positive: false }}
-          />
-        </div>
-        <div onClick={() => navigate('/documenten?filter=missing')} className="cursor-pointer transition-all hover:scale-105">
-          <KPICard
-            title={t("dashboard.missingDocuments")}
-            value={5}
-            icon={FileX}
-            trend={{ value: t("dashboard.toDocuments"), positive: true }}
-          />
-        </div>
-        <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:scale-105">
-          <KPICard
-            title={t("dashboard.repatriation")}
-            value={repatriationDossiers}
-            icon={Plane}
-            trend={{ value: t("dashboard.filterOnRep"), positive: true }}
-          />
-        </div>
-        <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:scale-105">
-          <KPICard
-            title={t("dashboard.local")}
-            value={localDossiers}
-            icon={MapPin}
-            trend={{ value: t("dashboard.filterOnLoc"), positive: true }}
-          />
-        </div>
-      </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Actieve dossiers */}
-        <Card className="shadow-md border-border/50">
-          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent pb-4">
-            <div>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <FolderOpen className="h-5 w-5 text-primary" />
-                </div>
-                {t("dashboard.activeDossiers")}
-              </CardTitle>
-              <CardDescription className="mt-2 text-sm">{t("dashboard.dossiersRequiringAttention")}</CardDescription>
-            </div>
-          </CardHeader>
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Actieve dossiers */}
+          <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
+              <div>
+                <CardTitle className="flex items-center gap-3 text-xl font-semibold">
+                  <div className="p-2.5 rounded-xl bg-primary/15 shadow-sm">
+                    <FolderOpen className="h-5 w-5 text-primary" />
+                  </div>
+                  {t("dashboard.activeDossiers")}
+                </CardTitle>
+                <CardDescription className="mt-2.5 text-base">{t("dashboard.dossiersRequiringAttention")}</CardDescription>
+              </div>
+            </CardHeader>
           <CardContent className="pt-6">
             <Table>
               <TableHeader>
@@ -250,19 +253,19 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Mijn openstaande taken */}
-        <Card className="shadow-md border-border/50">
-          <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent pb-4">
-            <div>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <CheckSquare className="h-5 w-5 text-primary" />
-                </div>
-                {t("dashboard.myOpenTasks")}
-              </CardTitle>
-              <CardDescription className="mt-2 text-sm">{t("dashboard.tasksToday")}</CardDescription>
-            </div>
-          </CardHeader>
+          {/* Mijn openstaande taken */}
+          <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
+              <div>
+                <CardTitle className="flex items-center gap-3 text-xl font-semibold">
+                  <div className="p-2.5 rounded-xl bg-primary/15 shadow-sm">
+                    <CheckSquare className="h-5 w-5 text-primary" />
+                  </div>
+                  {t("dashboard.myOpenTasks")}
+                </CardTitle>
+                <CardDescription className="mt-2.5 text-base">{t("dashboard.tasksToday")}</CardDescription>
+              </div>
+            </CardHeader>
           <CardContent className="pt-6">
             <Table>
               <TableHeader>
@@ -330,19 +333,19 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Recent bijgewerkt */}
-      <Card className="shadow-md border-border/50">
-        <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent pb-4">
-          <div>
-            <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Clock className="h-5 w-5 text-primary" />
-              </div>
-              {t("dashboard.recentlyUpdated")}
-            </CardTitle>
-            <CardDescription className="mt-2 text-sm">{t("dashboard.lastActivities")}</CardDescription>
-          </div>
-        </CardHeader>
+        {/* Recent bijgewerkt */}
+        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
+            <div>
+              <CardTitle className="flex items-center gap-3 text-xl font-semibold">
+                <div className="p-2.5 rounded-xl bg-primary/15 shadow-sm">
+                  <Clock className="h-5 w-5 text-primary" />
+                </div>
+                {t("dashboard.recentlyUpdated")}
+              </CardTitle>
+              <CardDescription className="mt-2.5 text-base">{t("dashboard.lastActivities")}</CardDescription>
+            </div>
+          </CardHeader>
         <CardContent className="pt-6">
           <Table>
             <TableHeader>
@@ -374,8 +377,9 @@ const Dashboard = () => {
               )}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

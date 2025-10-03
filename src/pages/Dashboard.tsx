@@ -136,7 +136,6 @@ const Dashboard = () => {
               title={t("dashboard.runningDossiers")}
               value={activeDossiers}
               icon={FolderOpen}
-              trend={{ value: t("dashboard.clickToOpen"), positive: true }}
             />
           </div>
           <div onClick={() => navigate('/dossiers?status=LEGAL_HOLD')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
@@ -144,7 +143,6 @@ const Dashboard = () => {
               title={t("dashboard.legalHold")}
               value={legalHold}
               icon={AlertTriangle}
-              trend={{ value: t("dashboard.showDossiers"), positive: false }}
             />
           </div>
           <div onClick={() => navigate('/documenten?filter=missing')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
@@ -152,7 +150,6 @@ const Dashboard = () => {
               title={t("dashboard.missingDocuments")}
               value={5}
               icon={FileX}
-              trend={{ value: t("dashboard.toDocuments"), positive: true }}
             />
           </div>
           <div onClick={() => navigate('/dossiers?flow=REP')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
@@ -160,7 +157,6 @@ const Dashboard = () => {
               title={t("dashboard.repatriation")}
               value={repatriationDossiers}
               icon={Plane}
-              trend={{ value: t("dashboard.filterOnRep"), positive: true }}
             />
           </div>
           <div onClick={() => navigate('/dossiers?flow=LOC')} className="cursor-pointer transition-all hover:scale-[1.02] hover:-translate-y-1 h-full">
@@ -168,7 +164,6 @@ const Dashboard = () => {
               title={t("dashboard.local")}
               value={localDossiers}
               icon={MapPin}
-              trend={{ value: t("dashboard.filterOnLoc"), positive: true }}
             />
           </div>
         </div>

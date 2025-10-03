@@ -101,121 +101,115 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce }: TwoFactor
         onVerified();
         setVerifying(false);
       } else {
-        // TOTP flow - eerst settings ophalen, dan valideren, dan claimen
+        // TOTP flow - server-side verificatie met anti-replay
         console.log("Verifying TOTP code...");
         console.log("Nonce:", nonce);
 
-        const { data: rawResponse, error: settingsError } = await supabase
-          .rpc('get_2fa_settings_with_nonce', {
-            p_nonce: nonce
+        // Stap 1: Vraag beschikbare periode en secret op
+        const { data: verifyData, error: verifyError } = await supabase
+          .rpc('verify_totp_code', {
+            p_nonce: nonce,
+            p_token: code
           });
 
-        if (settingsError || !rawResponse) {
+        if (verifyError || !verifyData) {
           toast({
             title: "Fout",
-            description: "Kon 2FA instellingen niet ophalen.",
+            description: "Kon verificatie niet starten.",
             variant: "destructive",
           });
           setVerifying(false);
           return;
         }
 
-        const response = rawResponse as {
-          valid: boolean;
-          totp_enabled?: boolean;
-          totp_secret?: string;
-          user_id?: string;
+        const verifyResponse = verifyData as {
+          success: boolean;
           error?: string;
+          user_id?: string;
+          secret?: string;
+          period?: number;
+          step?: number;
         };
 
-        if (!response.valid) {
+        if (!verifyResponse.success) {
           toast({
-            title: "Sessie verlopen",
-            description: response.error || "De verificatie sessie is verlopen. Log opnieuw in.",
+            title: "Verificatie mislukt",
+            description: verifyResponse.error || "De verificatie is mislukt.",
             variant: "destructive",
           });
-          onCancel();
+          setVerifying(false);
           return;
         }
 
-        if (!response.totp_enabled || !response.totp_secret) {
+        // Stap 2: Valideer de code client-side met de beschikbare periode
+        if (!verifyResponse.secret || verifyResponse.period === undefined) {
           toast({
-            title: "2FA niet ingeschakeld",
-            description: "Tweefactorauthenticatie is niet ingeschakeld voor dit account.",
+            title: "Fout",
+            description: "Verificatie data ontbreekt.",
             variant: "destructive",
           });
-          onCancel();
+          setVerifying(false);
           return;
         }
 
-        // Valideer TOTP code met window=1
         const totp = new OTPAuth.TOTP({
           issuer: "JanazApp",
           label: "user",
           algorithm: "SHA1",
           digits: 6,
           period: 30,
-          secret: OTPAuth.Secret.fromBase32(response.totp_secret),
+          secret: OTPAuth.Secret.fromBase32(verifyResponse.secret),
         });
 
-        const currentToken = totp.generate();
-        console.log("Current valid token:", currentToken);
-        console.log("User entered token:", code);
+        // Genereer token voor de beschikbare periode
+        const timestamp = verifyResponse.period * (verifyResponse.step || 30);
+        const expectedToken = totp.generate({ timestamp });
 
-        const delta = totp.validate({ token: code, window: 1 });
-        console.log("Validation delta:", delta);
+        console.log("Expected token for period", verifyResponse.period, ":", expectedToken);
+        console.log("User entered:", code);
 
-        if (delta === null) {
+        if (expectedToken !== code) {
           toast({
             title: "Ongeldige code",
-            description: "De verificatiecode is onjuist. Probeer opnieuw.",
+            description: "De verificatiecode is onjuist.",
             variant: "destructive",
           });
           setVerifying(false);
           return;
         }
 
-        // Code is geldig, nu claimen we de periode om replay te voorkomen
-        const now = Math.floor(Date.now() / 1000);
-        const step = 30;
-        const currentPeriod = Math.floor(now / step);
-        const usedPeriod = currentPeriod + delta;
-
-        console.log("Claiming period:", usedPeriod);
-
-        // Probeer de periode te claimen
-        const { error: claimError } = await supabase
-          .from('user_totp_replay_guard')
-          .insert({
-            user_id: response.user_id,
-            period: usedPeriod
+        // Stap 3: Claim de periode (server-side, atomisch)
+        const { data: claimData, error: claimError } = await supabase
+          .rpc('claim_totp_period', {
+            p_nonce: nonce,
+            p_period: verifyResponse.period
           });
 
-        if (claimError) {
-          // Als het een duplicate key error is, is de code al gebruikt
-          if (claimError.code === '23505') {
-            toast({
-              title: "Code al gebruikt",
-              description: "Deze verificatiecode is al gebruikt. Wacht op een nieuwe code.",
-              variant: "destructive",
-            });
-          } else {
-            console.error("Claim error:", claimError);
-            toast({
-              title: "Verificatie fout",
-              description: "Er is een fout opgetreden bij het verifiëren.",
-              variant: "destructive",
-            });
-          }
+        if (claimError || !claimData) {
+          toast({
+            title: "Fout",
+            description: "Kon periode niet claimen.",
+            variant: "destructive",
+          });
           setVerifying(false);
           return;
         }
 
-        // Update last verified timestamp
-        await supabase.rpc('update_2fa_verification', {
-          p_user_id: response.user_id,
-          p_recovery_code: null
-        });
+        const claimResponse = claimData as {
+          success: boolean;
+          error?: string;
+          user_id?: string;
+        };
+
+        if (!claimResponse.success) {
+          toast({
+            title: "Code al gebruikt",
+            description: claimResponse.error || "Deze code is al gebruikt.",
+            variant: "destructive",
+          });
+          setVerifying(false);
+          return;
+        }
 
         toast({
           title: "Verificatie succesvol",

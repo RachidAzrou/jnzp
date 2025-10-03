@@ -1942,6 +1942,10 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["priority"]
       }
+      claim_totp_period: {
+        Args: { p_nonce: string; p_period: number }
+        Returns: Json
+      }
       cleanup_expired_2fa_nonces: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1990,6 +1994,10 @@ export type Database = {
       user_requires_2fa: {
         Args: { user_id: string }
         Returns: boolean
+      }
+      verify_totp_code: {
+        Args: { p_nonce: string; p_token: string }
+        Returns: Json
       }
     }
     Enums: {

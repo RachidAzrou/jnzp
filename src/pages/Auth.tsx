@@ -8,8 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Upload, Building2, Users, Home as HomeIcon, ArrowLeft } from "lucide-react";
+import { Loader2, Upload, Users, ArrowLeft } from "lucide-react";
 import { MdOutlineMosque } from "react-icons/md";
+import { LuHandshake } from "react-icons/lu";
+import { RiHandHeartLine } from "react-icons/ri";
+import { IoBusiness } from "react-icons/io5";
 import logoAuth from "@/assets/logo-vertical-new.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
@@ -245,11 +248,11 @@ const Auth = () => {
 
   const getRoleIcon = (role: UserRole) => {
     switch (role) {
-      case "family": return <Users className="h-6 w-6" />;
-      case "funeral_director": return <Building2 className="h-6 w-6" />;
-      case "mosque": return <MdOutlineMosque className="h-6 w-6" />;
-      case "wasplaats": return <HomeIcon className="h-6 w-6" />;
-      case "insurer": return <Building2 className="h-6 w-6" />;
+      case "family": return <Users className="h-5 w-5" />;
+      case "funeral_director": return <LuHandshake className="h-5 w-5" />;
+      case "mosque": return <MdOutlineMosque className="h-5 w-5" />;
+      case "wasplaats": return <RiHandHeartLine className="h-5 w-5" />;
+      case "insurer": return <IoBusiness className="h-5 w-5" />;
     }
   };
 
@@ -258,7 +261,7 @@ const Auth = () => {
       case "family": return "Familie/Nabestaande";
       case "funeral_director": return "Uitvaartondernemer";
       case "mosque": return "Moskee";
-      case "wasplaats": return "Wasplaats";
+      case "wasplaats": return "Mortuarium";
       case "insurer": return "Verzekeraar";
     }
   };
@@ -357,12 +360,14 @@ const Auth = () => {
                         <Label
                           key={role}
                           htmlFor={role}
-                          className="flex items-center space-x-3 border rounded-lg p-4 cursor-pointer hover:bg-accent transition-colors"
+                          className="flex items-center space-x-4 border-2 rounded-xl p-5 cursor-pointer hover:border-primary hover:bg-primary/5 transition-all duration-200 group"
                         >
-                          <RadioGroupItem value={role} id={role} />
-                          <div className="flex items-center space-x-3 flex-1">
-                            {getRoleIcon(role)}
-                            <span className="font-medium">{getRoleLabel(role)}</span>
+                          <RadioGroupItem value={role} id={role} className="mt-0.5" />
+                          <div className="flex items-center space-x-4 flex-1">
+                            <div className="text-primary group-hover:scale-110 transition-transform">
+                              {getRoleIcon(role)}
+                            </div>
+                            <span className="font-medium text-base">{getRoleLabel(role)}</span>
                           </div>
                         </Label>
                       ))}

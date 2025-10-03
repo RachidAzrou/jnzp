@@ -70,7 +70,7 @@ export const getRoleDisplayName = (role: UserRole): string => {
     case 'insurer':
       return 'Verzekeraar';
     case 'wasplaats':
-      return 'Wasplaats';
+      return 'Mortuarium';
     case 'mosque':
       return 'Moskee';
     case 'reviewer':

@@ -75,7 +75,7 @@ const Instellingen = () => {
             admin: 'Beheerder',
             funeral_director: 'Uitvaartondernemer',
             insurer: 'Verzekeraar',
-            wasplaats: 'Wasplaats',
+            wasplaats: 'Mortuarium',
             mosque: 'Moskee',
             family: 'Familie'
           };

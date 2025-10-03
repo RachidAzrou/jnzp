@@ -81,7 +81,7 @@ export default function WasplaatsDashboard() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Wasplaats Dashboard</h1>
+        <h1 className="text-3xl font-bold">Mortuarium Dashboard</h1>
         <div className="flex gap-2">
           <Button onClick={() => navigate("/wasplaats/koelcellen")}>
             <Calendar className="h-4 w-4 mr-2" />

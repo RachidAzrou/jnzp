@@ -34,7 +34,7 @@ export default function WasplaatsReservaties() {
         .single();
 
       if (!orgData) {
-        throw new Error("Geen wasplaats organisatie gevonden");
+        throw new Error("Geen mortuarium organisatie gevonden");
       }
 
       const { error } = await supabase.from("cool_cell_reservations").insert({

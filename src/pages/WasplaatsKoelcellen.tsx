@@ -236,7 +236,7 @@ export default function WasplaatsKoelcellen() {
             <DialogHeader>
               <DialogTitle>Nieuwe Koelcel(len)</DialogTitle>
               <DialogDescription>
-                Voeg één of meerdere koelcellen toe aan uw wasplaats.
+                Voeg één of meerdere koelcellen toe aan uw mortuarium.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">

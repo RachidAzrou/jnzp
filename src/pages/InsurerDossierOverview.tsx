@@ -308,7 +308,7 @@ export default function InsurerDossierOverview() {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Wasplaats:</span>
+                  <span className="text-muted-foreground">Mortuarium:</span>
                   <span className="font-medium">
                     {dossier.wash_services?.[0] ? (
                       dossier.wash_services[0].status === "WASHED" ? (

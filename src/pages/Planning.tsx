@@ -46,7 +46,7 @@ const mockWasplaatsServices = [
     id: "w1",
     dossier_ref: "A007",
     deceased_name: "Amina Radi",
-    facility_name: "Wasplaats Amsterdam",
+    facility_name: "Mortuarium Amsterdam",
     scheduled_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // +2 hours
     status: "CONFIRMED",
     cool_cell: "Cel 3",
@@ -56,7 +56,7 @@ const mockWasplaatsServices = [
     id: "w2",
     dossier_ref: "A012",
     deceased_name: "Hassan El-Mansouri",
-    facility_name: "Wasplaats Rotterdam",
+    facility_name: "Mortuarium Rotterdam",
     scheduled_at: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(), // +6 hours
     status: "PENDING",
     cool_cell: "Cel 1",
@@ -278,7 +278,7 @@ const Planning = () => {
           </CardContent>
         </Card>
 
-        {/* Wasplaats Services Section */}
+        {/* Mortuarium Services Section */}
         <Card>
           <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
             <div className="flex items-center justify-between">
@@ -287,13 +287,13 @@ const Planning = () => {
                   <div className="p-2 rounded-lg bg-primary/10">
                     <MdOutlineShower className="h-5 w-5 text-primary" />
                   </div>
-                  Wasplaats Planning
+                  Mortuarium Planning
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">Geplande rituele wassingen</p>
               </div>
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Nieuwe wasplaats afspraak
+                Nieuwe mortuarium afspraak
               </Button>
             </div>
           </CardHeader>
@@ -301,8 +301,8 @@ const Planning = () => {
             {filteredWasplaatsServices.length === 0 ? (
               <EmptyState
                 icon={MdOutlineShower}
-                title="Geen wasplaats afspraken"
-                description="Er zijn nog geen wasplaats afspraken gepland. Voeg een afspraak toe wanneer de wassing gepland moet worden."
+                title="Geen mortuarium afspraken"
+                description="Er zijn nog geen mortuarium afspraken gepland. Voeg een afspraak toe wanneer de wassing gepland moet worden."
                 action={{
                   label: "Afspraak maken",
                   onClick: () => toast({ title: "Functie komt binnenkort" })

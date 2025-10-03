@@ -485,16 +485,16 @@ const DossierDetail = () => {
               </CardContent>
             </Card>
 
-            {/* Wasplaats */}
+            {/* Mortuarium */}
             <Card>
               <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-                <CardTitle>Wasplaats</CardTitle>
+                <CardTitle>Mortuarium</CardTitle>
               </CardHeader>
               <CardContent>
                 {washService ? (
                   <div className="space-y-3">
                     <div>
-                      <p className="text-sm text-muted-foreground">Wasplaats</p>
+                      <p className="text-sm text-muted-foreground">Mortuarium</p>
                       <p className="font-medium">{washService.organizations?.name || "N/A"}</p>
                     </div>
                     <div>
@@ -503,7 +503,7 @@ const DossierDetail = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Geen wasplaats dienst gepland</p>
+                  <p className="text-sm text-muted-foreground">Geen mortuarium dienst gepland</p>
                 )}
               </CardContent>
             </Card>

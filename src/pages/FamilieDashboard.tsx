@@ -204,7 +204,7 @@ export default function FamilieDashboard() {
           id: '7',
           title: 'Planning voorkeuren',
           description: flow === 'LOC' 
-            ? 'Moskee en wasplaats voorkeuren'
+            ? 'Moskee en mortuarium voorkeuren'
             : flow === 'REP'
             ? 'Bestemming en reizigers'
             : 'Kies eerst lokaal of repatriëring',

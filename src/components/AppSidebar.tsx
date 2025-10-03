@@ -42,7 +42,7 @@ const menuItems: MenuItem[] = [
   { title: "Facturen", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
   { title: "Rapportage", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
   
-  // Wasplaats
+  // Mortuarium
   { title: "Dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
   { title: "Koelcellen", url: "/wasplaats/koelcellen", icon: FolderOpen, roles: ['wasplaats'] },
   { title: "Facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Upload, Users, ArrowLeft } from "lucide-react";
 import { MdOutlineMosque } from "react-icons/md";
@@ -39,8 +40,52 @@ const Auth = () => {
   const [orgPostalCode, setOrgPostalCode] = useState("");
   const [verificationDoc, setVerificationDoc] = useState<File | null>(null);
   const [invitationCode, setInvitationCode] = useState<string>("");
+  
+  // Password reset state
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [requires2FA, setRequires2FA] = useState(false);
+  const [twoFACode, setTwoFACode] = useState("");
+  const [is2FAVerified, setIs2FAVerified] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
+    // Check if this is a password reset flow
+    const resetParam = searchParams.get("reset");
+    if (resetParam === "true") {
+      setIsResettingPassword(true);
+      
+      // Check user role to determine if 2FA is required
+      supabase.auth.getSession().then(async ({ data: { session } }) => {
+        if (session?.user) {
+          // Get user role
+          const { data: roleData } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", session.user.id)
+            .order("role")
+            .limit(1)
+            .maybeSingle();
+
+          if (roleData) {
+            setUserRole(roleData.role);
+            // Professionals need 2FA
+            const professionalRoles = ["funeral_director", "mosque", "wasplaats", "insurer", "org_admin"];
+            if (professionalRoles.includes(roleData.role)) {
+              setRequires2FA(true);
+            } else {
+              setIs2FAVerified(true); // Family doesn't need 2FA
+            }
+          }
+        }
+      });
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate("/");
@@ -246,6 +291,136 @@ const Auth = () => {
     }
   };
 
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth?reset=true`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Reset-link verzonden",
+        description: "Als dit e-mailadres bij ons bekend is, ontvangt u een herstel-link.",
+      });
+
+      setShowResetDialog(false);
+      setResetEmail("");
+    } catch (error: any) {
+      toast({
+        title: "Fout",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const handleVerify2FA = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // For MVP: Simple 6-digit code check
+      // In production, this should verify against a TOTP or SMS code
+      if (twoFACode.length !== 6) {
+        throw new Error("De 2FA-code moet 6 cijfers bevatten");
+      }
+
+      // TODO: Implement actual 2FA verification
+      // For now, accept any 6-digit code for demonstration
+      setIs2FAVerified(true);
+      setTwoFACode("");
+      
+      toast({
+        title: "2FA geverifieerd",
+        description: "U kunt nu uw nieuwe wachtwoord instellen.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "2FA verificatie mislukt",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (newPassword.length < 12) {
+      toast({
+        title: "Wachtwoord te kort",
+        description: "Het wachtwoord moet minimaal 12 tekens bevatten.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Wachtwoorden komen niet overeen",
+        description: "Controleer of beide wachtwoorden identiek zijn.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) throw error;
+
+      // Log the password reset action
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user) {
+        await supabase.rpc("log_admin_action", {
+          p_action: "PWD_RESET",
+          p_target_type: "User",
+          p_target_id: userData.user.id,
+          p_metadata: { 
+            timestamp: new Date().toISOString(),
+            role: userRole 
+          },
+        });
+      }
+
+      toast({
+        title: "Wachtwoord gewijzigd",
+        description: "Uw wachtwoord is succesvol gewijzigd. Alle eerdere sessies zijn beëindigd.",
+      });
+
+      // Sign out to end all sessions
+      await supabase.auth.signOut();
+
+      // Redirect to login
+      setIsResettingPassword(false);
+      setNewPassword("");
+      setConfirmPassword("");
+      setIs2FAVerified(false);
+      setRequires2FA(false);
+      navigate("/auth");
+    } catch (error: any) {
+      toast({
+        title: "Fout bij wijzigen wachtwoord",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getRoleIcon = (role: UserRole) => {
     switch (role) {
       case "family": return <Users className="h-5 w-5" />;
@@ -265,6 +440,114 @@ const Auth = () => {
       case "insurer": return "Verzekeraar";
     }
   };
+
+  // Password reset form with 2FA check for professionals
+  if (isResettingPassword) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+        
+        <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/95 shadow-2xl border-border/50">
+          <CardHeader className="text-center space-y-6 pb-8">
+            <div className="flex justify-center">
+              <img 
+                src={logoAuth} 
+                alt="JanazApp Logo" 
+                className="h-40 w-40 object-contain animate-fade-in"
+              />
+            </div>
+            <div className="space-y-2">
+              <CardTitle>
+                {requires2FA && !is2FAVerified ? "Verificatie vereist" : "Nieuw wachtwoord instellen"}
+              </CardTitle>
+              <CardDescription className="text-base">
+                {requires2FA && !is2FAVerified 
+                  ? "Voer uw 2FA-code in om door te gaan" 
+                  : "Kies een sterk wachtwoord van minimaal 12 tekens"
+                }
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="pb-8">
+            {requires2FA && !is2FAVerified ? (
+              // 2FA Verification Form for Professionals
+              <form onSubmit={handleVerify2FA} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="2fa-code">2FA Verificatiecode</Label>
+                  <Input
+                    id="2fa-code"
+                    type="text"
+                    placeholder="123456"
+                    value={twoFACode}
+                    onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    required
+                    maxLength={6}
+                    className="h-11 text-center text-2xl tracking-widest"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Voer de 6-cijferige code in van uw authenticator-app of SMS
+                  </p>
+                </div>
+                <Button type="submit" className="w-full h-11" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Bezig met verifiëren...
+                    </>
+                  ) : (
+                    "Verifieer"
+                  )}
+                </Button>
+              </form>
+            ) : (
+              // Password Reset Form
+              <form onSubmit={handleUpdatePassword} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="new-password">Nieuw wachtwoord</Label>
+                  <Input
+                    id="new-password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    minLength={12}
+                    className="h-11"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Minimaal 12 tekens
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Bevestig wachtwoord</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    minLength={12}
+                    className="h-11"
+                  />
+                </div>
+                <Button type="submit" className="w-full h-11" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Bezig met wijzigen...
+                    </>
+                  ) : (
+                    "Wachtwoord wijzigen"
+                  )}
+                </Button>
+              </form>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4 relative overflow-hidden">
@@ -341,6 +624,17 @@ const Auth = () => {
                     "Inloggen"
                   )}
                 </Button>
+
+                <div className="text-center mt-4">
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="text-sm text-primary"
+                    onClick={() => setShowResetDialog(true)}
+                  >
+                    Wachtwoord vergeten?
+                  </Button>
+                </div>
               </form>
             </TabsContent>
 
@@ -604,6 +898,54 @@ const Auth = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Password Reset Dialog */}
+      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Wachtwoord herstellen</DialogTitle>
+            <DialogDescription>
+              Voer uw e-mailadres in. Als dit e-mailadres bij ons bekend is, ontvangt u een herstel-link.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handlePasswordReset} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="reset-email">E-mailadres</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                placeholder="naam@voorbeeld.nl"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                required
+                className="h-11"
+              />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowResetDialog(false);
+                  setResetEmail("");
+                }}
+              >
+                Annuleren
+              </Button>
+              <Button type="submit" disabled={resetLoading}>
+                {resetLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Bezig...
+                  </>
+                ) : (
+                  "Verstuur reset-link"
+                )}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

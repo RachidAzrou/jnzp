@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import logoAuth from "@/assets/logo-auth.png";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -90,23 +91,50 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">JanazApp</CardTitle>
-          <CardDescription>Uitvaartondernemer Portal</CardDescription>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+      
+      <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/95 shadow-2xl border-border/50">
+        <CardHeader className="text-center space-y-6 pb-8">
+          <div className="flex justify-center">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
+              <img 
+                src={logoAuth} 
+                alt="JanazApp Logo" 
+                className="h-24 w-24 object-contain relative z-10 animate-fade-in"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Welkom bij JanazApp
+            </CardTitle>
+            <CardDescription className="text-base">
+              Uitvaartondernemer Portal
+            </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pb-8">
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Inloggen</TabsTrigger>
-              <TabsTrigger value="signup">Registreren</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-muted/50">
+              <TabsTrigger value="login" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                Inloggen
+              </TabsTrigger>
+              <TabsTrigger value="signup" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                Registreren
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={handleLogin} className="space-y-6 pt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">E-mailadres</Label>
+                  <Label htmlFor="login-email" className="text-sm font-medium">
+                    E-mailadres
+                  </Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -114,19 +142,27 @@ const Auth = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password">Wachtwoord</Label>
+                  <Label htmlFor="login-password" className="text-sm font-medium">
+                    Wachtwoord
+                  </Label>
                   <Input
                     id="login-password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button 
+                  type="submit" 
+                  className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all" 
+                  disabled={loading}
+                >
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -140,29 +176,37 @@ const Auth = () => {
             </TabsContent>
 
             <TabsContent value="signup">
-              <form onSubmit={handleSignup} className="space-y-4">
+              <form onSubmit={handleSignup} className="space-y-5 pt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="first-name">Voornaam</Label>
+                    <Label htmlFor="first-name" className="text-sm font-medium">
+                      Voornaam
+                    </Label>
                     <Input
                       id="first-name"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       required
+                      className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="last-name">Achternaam</Label>
+                    <Label htmlFor="last-name" className="text-sm font-medium">
+                      Achternaam
+                    </Label>
                     <Input
                       id="last-name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       required
+                      className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">E-mailadres</Label>
+                  <Label htmlFor="signup-email" className="text-sm font-medium">
+                    E-mailadres
+                  </Label>
                   <Input
                     id="signup-email"
                     type="email"
@@ -170,19 +214,27 @@ const Auth = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Wachtwoord</Label>
+                  <Label htmlFor="signup-password" className="text-sm font-medium">
+                    Wachtwoord
+                  </Label>
                   <Input
                     id="signup-password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button 
+                  type="submit" 
+                  className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all" 
+                  disabled={loading}
+                >
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

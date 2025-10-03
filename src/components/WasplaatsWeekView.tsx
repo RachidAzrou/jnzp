@@ -42,15 +42,15 @@ type WeekViewProps = {
 const getStatusColor = (status: string) => {
   switch (status) {
     case "FREE":
-      return "bg-success/30 hover:bg-success/40 border-success/50 cursor-default";
+      return "bg-green-100 hover:bg-green-200 border-green-300 cursor-default";
     case "PENDING":
-      return "bg-warning/30 hover:bg-warning/40 border-warning/50 cursor-pointer";
+      return "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 cursor-pointer";
     case "CONFIRMED":
-      return "bg-blue-500/30 hover:bg-blue-500/40 border-blue-500/50 cursor-pointer";
+      return "bg-blue-100 hover:bg-blue-200 border-blue-300 cursor-pointer";
     case "OCCUPIED":
-      return "bg-destructive/30 hover:bg-destructive/40 border-destructive/50 cursor-pointer";
+      return "bg-red-100 hover:bg-red-200 border-red-300 cursor-pointer";
     case "OUT_OF_SERVICE":
-      return "bg-destructive/50 hover:bg-destructive/60 border-destructive/70 cursor-default";
+      return "bg-gray-200 hover:bg-gray-300 border-gray-400 cursor-default";
     default:
       return "bg-muted hover:bg-muted/80 cursor-default";
   }
@@ -210,7 +210,7 @@ export function WasplaatsWeekView({
                           </div>
                         ) : reservation ? (
                           <div className="text-center">
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="secondary" className="text-xs bg-white border">
                               {getStatusLabel(status)}
                             </Badge>
                             <p className="text-xs mt-1">
@@ -221,7 +221,7 @@ export function WasplaatsWeekView({
                           </div>
                         ) : (
                           <div className="text-center">
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="secondary" className="text-xs bg-white border">
                               {getStatusLabel(status)}
                             </Badge>
                           </div>

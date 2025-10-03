@@ -42,11 +42,11 @@ const getReservationStyle = (start: Date, end: Date) => {
 const getStatusColor = (status: string) => {
   switch (status) {
     case "PENDING":
-      return "bg-warning/80 border-warning text-warning-foreground";
+      return "bg-yellow-100 border-yellow-300 text-yellow-900";
     case "CONFIRMED":
-      return "bg-blue-500/80 border-blue-500 text-white";
+      return "bg-blue-100 border-blue-300 text-blue-900";
     case "OCCUPIED":
-      return "bg-destructive/80 border-destructive text-destructive-foreground";
+      return "bg-red-100 border-red-300 text-red-900";
     default:
       return "bg-muted border-muted-foreground";
   }
@@ -109,7 +109,7 @@ export function WasplaatsDayView({
                     <div className="w-32 flex-shrink-0 font-medium pr-4">
                       <span>{cell.label}</span>
                     </div>
-                    <div className="flex-1 relative h-12 bg-muted/30 rounded border">
+                    <div className="flex-1 relative h-12 bg-white rounded border">
                       {/* Hour grid lines */}
                       {hours.slice(1).map((hour) => (
                         <div
@@ -146,8 +146,8 @@ export function WasplaatsDayView({
 
                       {/* Out of service overlay */}
                       {isOutOfService && (
-                        <div className="absolute inset-0 bg-destructive/20 flex items-center justify-center rounded border-2 border-destructive">
-                          <span className="text-xs text-destructive font-medium">
+                        <div className="absolute inset-0 bg-gray-200 flex items-center justify-center rounded border-2 border-gray-400">
+                          <span className="text-xs text-gray-700 font-medium">
                             Buiten dienst
                           </span>
                         </div>
@@ -155,8 +155,8 @@ export function WasplaatsDayView({
 
                       {/* Manually occupied (no reservation) */}
                       {!isOutOfService && isOccupied && cellReservations.length === 0 && (
-                        <div className="absolute inset-0 bg-destructive/20 flex items-center justify-center rounded border-2 border-destructive">
-                          <span className="text-xs text-destructive font-medium">
+                        <div className="absolute inset-0 bg-red-100 flex items-center justify-center rounded border-2 border-red-300">
+                          <span className="text-xs text-red-700 font-medium">
                             Bezet
                           </span>
                         </div>
@@ -164,8 +164,8 @@ export function WasplaatsDayView({
 
                       {/* Free indicator */}
                       {!isOutOfService && !isOccupied && cellReservations.length === 0 && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-xs text-muted-foreground">
+                        <div className="absolute inset-0 bg-green-100 flex items-center justify-center rounded border-2 border-green-300">
+                          <span className="text-xs text-green-700 font-medium">
                             Vrij
                           </span>
                         </div>
@@ -179,23 +179,23 @@ export function WasplaatsDayView({
             {/* Legend */}
             <div className="mt-6 flex gap-4 justify-center flex-wrap">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-success/30 border border-success/50" />
+                <div className="w-4 h-4 rounded bg-green-100 border border-green-300" />
                 <span className="text-xs">Vrij</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-warning/80 border border-warning" />
+                <div className="w-4 h-4 rounded bg-yellow-100 border border-yellow-300" />
                 <span className="text-xs">In afwachting</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-blue-500/80 border border-blue-500" />
+                <div className="w-4 h-4 rounded bg-blue-100 border border-blue-300" />
                 <span className="text-xs">Bevestigd</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-destructive/80 border border-destructive" />
+                <div className="w-4 h-4 rounded bg-red-100 border border-red-300" />
                 <span className="text-xs">Bezet</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-destructive/50 border border-destructive/70" />
+                <div className="w-4 h-4 rounded bg-gray-200 border border-gray-400" />
                 <span className="text-xs">Buiten dienst</span>
               </div>
             </div>

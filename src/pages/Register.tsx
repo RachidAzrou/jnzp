@@ -163,7 +163,7 @@ const Register = () => {
 
       toast({
         title: "Aanvraag ingediend",
-        description: "Uw aanvraag wordt beoordeeld. U ontvangt bericht zodra uw account is goedgekeurd.",
+        description: "Uw aanvraag wordt beoordeeld door een administrator. U ontvangt bericht zodra uw account is goedgekeurd.",
       });
 
       navigate("/auth");
@@ -610,12 +610,6 @@ const Register = () => {
                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     Dien aanvraag in
                   </Button>
-
-                  <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-900">
-                    <p className="text-xs text-blue-900 dark:text-blue-100 text-center leading-relaxed">
-                      Uw aanvraag wordt beoordeeld door een administrator. U ontvangt bericht zodra uw account is goedgekeurd.
-                    </p>
-                  </div>
                 </form>
               )}
             </div>

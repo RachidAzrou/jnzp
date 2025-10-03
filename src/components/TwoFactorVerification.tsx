@@ -161,8 +161,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce }: TwoFactor
           secret: OTPAuth.Secret.fromBase32(verifyResponse.secret),
         });
 
-        // Genereer token voor de beschikbare periode
-        const timestamp = verifyResponse.period * (verifyResponse.step || 30);
+        // Genereer token voor de beschikbare periode (in milliseconden)
+        const timestamp = verifyResponse.period * (verifyResponse.step || 30) * 1000;
         const expectedToken = totp.generate({ timestamp });
 
         console.log("Expected token for period", verifyResponse.period, ":", expectedToken);

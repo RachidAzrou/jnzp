@@ -4,13 +4,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Loader2 } from "lucide-react";
+import { Shield, Loader2, Copy, Download } from "lucide-react";
+import { authenticator } from "otplib";
+import QRCode from "qrcode";
 
 export const TwoFactorSetup = () => {
   const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [setupMode, setSetupMode] = useState(false);
+  const [qrCode, setQrCode] = useState("");
+  const [secret, setSecret] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+  const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -34,18 +40,71 @@ export const TwoFactorSetup = () => {
     setLoading(false);
   };
 
-  const handleEnable = async () => {
+  const generateSecret = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) return;
+
+    // Generate TOTP secret
+    const newSecret = authenticator.generateSecret();
+    setSecret(newSecret);
+
+    // Generate recovery codes (10 codes)
+    const codes = Array.from({ length: 10 }, () => 
+      Math.random().toString(36).substring(2, 10).toUpperCase()
+    );
+    setRecoveryCodes(codes);
+
+    // Create OTP Auth URL for QR code
+    const otpauth = authenticator.keyuri(
+      user.email || "user",
+      "JanazApp",
+      newSecret
+    );
+
+    // Generate QR code
+    const qrCodeDataUrl = await QRCode.toDataURL(otpauth);
+    setQrCode(qrCodeDataUrl);
+    setSetupMode(true);
+  };
+
+  const handleVerifyAndEnable = async () => {
+    if (!verificationCode || verificationCode.length !== 6) {
+      toast({
+        title: "Ongeldige code",
+        description: "Voer een 6-cijferige code in.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Verify the TOTP code
+    const isValid = authenticator.verify({
+      token: verificationCode,
+      secret: secret,
+    });
+
+    if (!isValid) {
+      toast({
+        title: "Ongeldige code",
+        description: "De verificatiecode is onjuist. Probeer opnieuw.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSaving(true);
     const { data: { user } } = await supabase.auth.getUser();
     
     if (user) {
-      // For MVP: simplified 2FA setup
       const { error } = await supabase
         .from("user_2fa_settings")
         .upsert({
           user_id: user.id,
           totp_enabled: true,
-          totp_secret: "TEMP_SECRET_" + Math.random().toString(36).substring(7)
+          totp_secret: secret,
+          recovery_codes: recoveryCodes,
+          last_verified_at: new Date().toISOString(),
         });
 
       if (error) {
@@ -56,6 +115,7 @@ export const TwoFactorSetup = () => {
         });
       } else {
         setEnabled(true);
+        setSetupMode(false);
         toast({
           title: "2FA ingeschakeld",
           description: "Tweefactorauthenticatie is nu actief voor uw account.",
@@ -72,7 +132,11 @@ export const TwoFactorSetup = () => {
     if (user) {
       const { error } = await supabase
         .from("user_2fa_settings")
-        .update({ totp_enabled: false })
+        .update({ 
+          totp_enabled: false,
+          totp_secret: null,
+          recovery_codes: null,
+        })
         .eq("user_id", user.id);
 
       if (error) {
@@ -92,10 +156,95 @@ export const TwoFactorSetup = () => {
     setSaving(false);
   };
 
+  const downloadRecoveryCodes = () => {
+    const text = `JanazApp Recovery Codes\n\nBewaar deze codes op een veilige plek.\n\n${recoveryCodes.join('\n')}`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'janazapp-recovery-codes.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const copyRecoveryCodes = () => {
+    navigator.clipboard.writeText(recoveryCodes.join('\n'));
+    toast({
+      title: "Gekopieerd",
+      description: "Recovery codes zijn gekopieerd naar klembord.",
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-4">
         <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  }
+
+  if (setupMode) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center space-y-4">
+          <h3 className="font-semibold text-lg">Scan de QR code</h3>
+          <p className="text-sm text-muted-foreground">
+            Gebruik een authenticator app zoals Google Authenticator of Authy
+          </p>
+          {qrCode && (
+            <div className="flex justify-center">
+              <img src={qrCode} alt="QR Code" className="w-48 h-48" />
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="verificationCode">Verificatiecode</Label>
+          <Input
+            id="verificationCode"
+            placeholder="000000"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            maxLength={6}
+          />
+          <p className="text-xs text-muted-foreground">
+            Voer de 6-cijferige code in uit uw authenticator app
+          </p>
+        </div>
+
+        <div className="space-y-4 p-4 bg-muted rounded-lg">
+          <h4 className="font-semibold text-sm">Recovery Codes</h4>
+          <p className="text-xs text-muted-foreground">
+            Bewaar deze codes op een veilige plek. U kunt ze gebruiken als u geen toegang heeft tot uw authenticator app.
+          </p>
+          <div className="grid grid-cols-2 gap-2 font-mono text-sm">
+            {recoveryCodes.map((code, i) => (
+              <div key={i} className="bg-background p-2 rounded">
+                {code}
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={copyRecoveryCodes}>
+              <Copy className="h-4 w-4 mr-2" />
+              Kopiëren
+            </Button>
+            <Button size="sm" variant="outline" onClick={downloadRecoveryCodes}>
+              <Download className="h-4 w-4 mr-2" />
+              Downloaden
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <Button onClick={handleVerifyAndEnable} disabled={saving || verificationCode.length !== 6}>
+            {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+            Verifiëren en inschakelen
+          </Button>
+          <Button variant="outline" onClick={() => setSetupMode(false)}>
+            Annuleren
+          </Button>
+        </div>
       </div>
     );
   }
@@ -125,7 +274,7 @@ export const TwoFactorSetup = () => {
             Tweefactorauthenticatie voegt een extra beveiligingslaag toe aan uw account.
             Bij het inloggen heeft u naast uw wachtwoord ook een verificatiecode nodig.
           </p>
-          <Button onClick={handleEnable} disabled={saving}>
+          <Button onClick={generateSecret} disabled={saving}>
             {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
             2FA inschakelen
           </Button>

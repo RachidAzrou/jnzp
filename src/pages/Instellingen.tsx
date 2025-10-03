@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { User, Building2, Bell } from "lucide-react";
 import { useUserRole } from "@/hooks/useUserRole";
+import { TwoFactorSetup } from "@/components/TwoFactorSetup";
 
 const Instellingen = () => {
   const [profile, setProfile] = useState({
@@ -385,6 +386,22 @@ const Instellingen = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* 2FA Settings - Only for professional users */}
+        {role && ['funeral_director', 'org_admin', 'admin', 'platform_admin', 'wasplaats', 'mosque', 'insurer'].includes(role) && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bell className="h-5 w-5" />
+                Tweefactorauthenticatie (2FA)
+              </CardTitle>
+              <CardDescription>Extra beveiliging voor uw account</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TwoFactorSetup />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Notification Settings */}
         <Card>

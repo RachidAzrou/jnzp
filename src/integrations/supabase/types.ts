@@ -1026,6 +1026,33 @@ export type Database = {
           },
         ]
       }
+      login_attempts: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          ip_address: string | null
+          success: boolean
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: string | null
+          success?: boolean
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: string | null
+          success?: boolean
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       medical_docs: {
         Row: {
           address: string
@@ -1716,6 +1743,45 @@ export type Database = {
           },
         ]
       }
+      user_2fa_settings: {
+        Row: {
+          backup_phone: string | null
+          created_at: string
+          id: string
+          last_verified_at: string | null
+          recovery_codes: string[] | null
+          sms_enabled: boolean
+          totp_enabled: boolean
+          totp_secret: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          backup_phone?: string | null
+          created_at?: string
+          id?: string
+          last_verified_at?: string | null
+          recovery_codes?: string[] | null
+          sms_enabled?: boolean
+          totp_enabled?: boolean
+          totp_secret?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          backup_phone?: string | null
+          created_at?: string
+          id?: string
+          last_verified_at?: string | null
+          recovery_codes?: string[] | null
+          sms_enabled?: boolean
+          totp_enabled?: boolean
+          totp_secret?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -1836,6 +1902,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_account_locked: {
+        Args: { p_email: string }
+        Returns: boolean
+      }
       log_admin_action: {
         Args: {
           p_action: string
@@ -1845,6 +1915,10 @@ export type Database = {
           p_target_type: string
         }
         Returns: string
+      }
+      user_requires_2fa: {
+        Args: { user_id: string }
+        Returns: boolean
       }
     }
     Enums: {

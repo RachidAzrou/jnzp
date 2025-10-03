@@ -12,6 +12,7 @@ import { TwoFactorVerification } from "@/components/TwoFactorVerification";
 import { SimpleCaptcha } from "@/components/SimpleCaptcha";
 import { validatePassword, getPasswordRequirements } from "@/utils/passwordValidation";
 import { checkRateLimit, getLoginDelay, formatRetryAfter } from "@/utils/rateLimit";
+import { checkDeviceTrust } from "@/utils/deviceTrust";
 import logoAuth from "@/assets/logo-vertical-new.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
@@ -54,6 +55,7 @@ const Auth = () => {
   // Login 2FA state
   const [show2FAVerification, setShow2FAVerification] = useState(false);
   const [pendingSession, setPendingSession] = useState<any>(null);
+  const [pending2FAUserId, setPending2FAUserId] = useState<string | null>(null);
   
   // Rate limiting & Captcha state
   const [loginAttempts, setLoginAttempts] = useState(0);
@@ -210,25 +212,37 @@ const Auth = () => {
             .maybeSingle();
 
           if (settings?.totp_enabled) {
-            // Maak een veilige, kortstondige nonce
-            const { data: nonceData, error: nonceError } = await supabase.rpc('create_2fa_nonce', {
-              p_user_id: data.user.id,
-              p_ip: null,
-              p_user_agent: navigator.userAgent
-            });
-
-            if (nonceError || !nonceData) {
-              throw new Error("Kon geen 2FA verificatie starten");
-            }
-
-            // Store nonce (NOT session data)
-            setPendingSession({ nonce: nonceData });
-            setShow2FAVerification(true);
-            setLoading(false);
+            // Check if device is trusted
+            const isDeviceTrusted = await checkDeviceTrust(data.user.id);
             
-            // CRITICAL: Sign out immediately to prevent bypass
-            await supabase.auth.signOut();
-            return;
+            if (!isDeviceTrusted) {
+              // Maak een veilige, kortstondige nonce
+              const { data: nonceData, error: nonceError } = await supabase.rpc('create_2fa_nonce', {
+                p_user_id: data.user.id,
+                p_ip: null,
+                p_user_agent: navigator.userAgent
+              });
+
+              if (nonceError || !nonceData) {
+                throw new Error("Kon geen 2FA verificatie starten");
+              }
+
+              // Store nonce and user ID for device trust
+              setPendingSession({ nonce: nonceData });
+              setPending2FAUserId(data.user.id);
+              setShow2FAVerification(true);
+              setLoading(false);
+              
+              // CRITICAL: Sign out immediately to prevent bypass
+              await supabase.auth.signOut();
+              return;
+            } else {
+              // Device is trusted, skip 2FA
+              toast({
+                title: "Welkom terug!",
+                description: "Ingelogd op vertrouwd apparaat.",
+              });
+            }
           }
         }
       }
@@ -720,6 +734,7 @@ const Auth = () => {
           onVerified={handle2FAVerified}
           onCancel={handle2FACancel}
           nonce={pendingSession?.nonce || ""}
+          userId={pending2FAUserId || undefined}
         />
       </div>
     );

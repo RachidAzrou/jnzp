@@ -2,23 +2,27 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { TbAuth2Fa } from "react-icons/tb";
 import * as OTPAuth from "otpauth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { trustDevice } from "@/utils/deviceTrust";
 
 interface TwoFactorVerificationProps {
   onVerified: () => void;
   onCancel: () => void;
   nonce: string;
+  userId?: string;
 }
 
-export const TwoFactorVerification = ({ onVerified, onCancel, nonce }: TwoFactorVerificationProps) => {
+export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: TwoFactorVerificationProps) => {
   const [code, setCode] = useState("");
   const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [trustThisDevice, setTrustThisDevice] = useState(false);
   const { toast } = useToast();
 
   const handleVerify = async () => {
@@ -214,6 +218,17 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce }: TwoFactor
           return;
         }
 
+        // Trust device if requested
+        if (trustThisDevice && userId) {
+          const trusted = await trustDevice(userId);
+          if (trusted) {
+            toast({
+              title: "Apparaat vertrouwd",
+              description: "U hoeft 30 dagen geen 2FA in te voeren op dit apparaat.",
+            });
+          }
+        }
+
         toast({
           title: "Verificatie succesvol",
           description: "U wordt ingelogd...",
@@ -271,8 +286,22 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce }: TwoFactor
           />
         </div>
 
+        <div className="flex items-center space-x-2 pb-2">
+          <Checkbox
+            id="trust-device"
+            checked={trustThisDevice}
+            onCheckedChange={(checked) => setTrustThisDevice(checked as boolean)}
+          />
+          <Label
+            htmlFor="trust-device"
+            className="text-sm font-normal cursor-pointer"
+          >
+            Vertrouw dit apparaat voor 30 dagen
+          </Label>
+        </div>
+
         <div className="flex flex-col gap-2">
-          <Button 
+          <Button
             onClick={(e) => {
               e.preventDefault();
               console.log("Verify button clicked!");

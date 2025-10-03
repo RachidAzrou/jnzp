@@ -1833,6 +1833,45 @@ export type Database = {
           },
         ]
       }
+      trusted_devices: {
+        Row: {
+          created_at: string
+          device_fingerprint: string
+          device_name: string | null
+          expires_at: string
+          id: string
+          ip_address: unknown | null
+          last_used_at: string
+          trusted_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_fingerprint: string
+          device_name?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          last_used_at?: string
+          trusted_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_fingerprint?: string
+          device_name?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          last_used_at?: string
+          trusted_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_2fa_settings: {
         Row: {
           backup_phone: string | null
@@ -2064,6 +2103,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_expired_trusted_devices: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_old_rate_limits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -2095,6 +2138,10 @@ export type Database = {
         Args: { p_email: string }
         Returns: boolean
       }
+      is_device_trusted: {
+        Args: { p_device_fingerprint: string; p_user_id: string }
+        Returns: boolean
+      }
       log_admin_action: {
         Args: {
           p_action: string
@@ -2102,6 +2149,16 @@ export type Database = {
           p_reason?: string
           p_target_id: string
           p_target_type: string
+        }
+        Returns: string
+      }
+      trust_device: {
+        Args: {
+          p_device_fingerprint: string
+          p_device_name?: string
+          p_ip?: string
+          p_user_agent?: string
+          p_user_id: string
         }
         Returns: string
       }

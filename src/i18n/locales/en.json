@@ -82,6 +82,85 @@
     "time": "Time",
     "event": "Event"
   },
+  "documents": {
+    "title": "Documents",
+    "uploadDocuments": "Upload documents",
+    "downloadSelected": "Download selected",
+    "markAsVerified": "Mark as verified",
+    "filterMissing": "Filter: Missing documents",
+    "noDocumentsSelected": "No documents selected",
+    "selectFirst": "Select documents first to mark them.",
+    "noDocuments": "No documents yet",
+    "noResults": "No results",
+    "uploadDescription": "Upload documents for your dossiers to start the verification workflow.",
+    "noResultsDescription": "No documents found with the current filters.",
+    "fileName": "File name",
+    "type": "Type",
+    "uploadedAt": "Uploaded at",
+    "verified": "Verified",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "planning": {
+    "title": "Planning",
+    "overview": "Overview of scheduled funerals and transports",
+    "scheduleFuneral": "Schedule funeral",
+    "noPlanning": "No planning yet",
+    "noPlanningDescription": "Schedule your first funeral to get started.",
+    "date": "Date",
+    "location": "Location",
+    "transport": "Transport"
+  },
+  "invoicing": {
+    "title": "Invoicing",
+    "overview": "Overview of invoices and payments",
+    "createInvoice": "Create invoice",
+    "noInvoices": "No invoices yet",
+    "noInvoicesDescription": "Create your first invoice.",
+    "invoiceNumber": "Invoice number",
+    "amount": "Amount",
+    "date": "Date",
+    "paid": "Paid",
+    "unpaid": "Unpaid"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "myTasks": "My Tasks",
+    "startIntake": "Start intake",
+    "completeIntake": "Complete intake",
+    "requestDocumentAgain": "Request document again",
+    "reviewDossier": "Review dossier",
+    "verifyDocumentation": "Verify documentation",
+    "preparePlanning": "Prepare planning",
+    "confirmMosqueFlight": "Confirm mosque/flight",
+    "prepareTransport": "Prepare transport",
+    "monitorTransport": "Monitor transport",
+    "awaitParkingRelease": "Await parking release / upload",
+    "performTask": "Perform task",
+    "toDocuments": "To Documents",
+    "toPlanning": "To Planning",
+    "openDossier": "Open Dossier",
+    "overview": "Overview of your open tasks",
+    "noTasks": "No open tasks",
+    "noTasksDescription": "You currently have no open tasks."
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "account": "Account",
+    "security": "Security",
+    "notifications": "Notifications",
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "team": {
+    "title": "Team Management",
+    "addMember": "Add member",
+    "members": "Team members",
+    "role": "Role",
+    "email": "Email",
+    "actions": "Actions"
+  },
   "status": {
     "CREATED": "Created",
     "INTAKE_IN_PROGRESS": "Intake in progress",
@@ -111,22 +190,6 @@
     "local": "Local",
     "repatriation": "Repatriation"
   },
-  "tasks": {
-    "startIntake": "Start intake",
-    "completeIntake": "Complete intake",
-    "requestDocumentAgain": "Request document again",
-    "reviewDossier": "Review dossier",
-    "verifyDocumentation": "Verify documentation",
-    "preparePlanning": "Prepare planning",
-    "confirmMosqueFlight": "Confirm mosque/flight",
-    "prepareTransport": "Prepare transport",
-    "monitorTransport": "Monitor transport",
-    "awaitParkingRelease": "Await parking release / upload",
-    "performTask": "Perform task",
-    "toDocuments": "To Documents",
-    "toPlanning": "To Planning",
-    "openDossier": "Open Dossier"
-  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
@@ -143,7 +206,12 @@
     "yes": "Yes",
     "no": "No",
     "docs": "Docs",
-    "comingSoon": "Feature coming soon"
+    "comingSoon": "Feature coming soon",
+    "selected": "selected",
+    "download": "Download",
+    "upload": "Upload",
+    "verified": "Verified",
+    "pending": "Pending"
   },
   "navigation": {
     "dashboard": "Dashboard",

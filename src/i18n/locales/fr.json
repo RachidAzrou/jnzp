@@ -82,6 +82,85 @@
     "time": "Temps",
     "event": "Événement"
   },
+  "documents": {
+    "title": "Documents",
+    "uploadDocuments": "Télécharger des documents",
+    "downloadSelected": "Télécharger la sélection",
+    "markAsVerified": "Marquer comme vérifié",
+    "filterMissing": "Filtre: Documents manquants",
+    "noDocumentsSelected": "Aucun document sélectionné",
+    "selectFirst": "Sélectionnez d'abord des documents pour les marquer.",
+    "noDocuments": "Pas encore de documents",
+    "noResults": "Aucun résultat",
+    "uploadDescription": "Téléchargez des documents pour vos dossiers pour commencer le processus de vérification.",
+    "noResultsDescription": "Aucun document trouvé avec les filtres actuels.",
+    "fileName": "Nom du fichier",
+    "type": "Type",
+    "uploadedAt": "Téléchargé le",
+    "verified": "Vérifié",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "planning": {
+    "title": "Planification",
+    "overview": "Aperçu des funérailles et transports planifiés",
+    "scheduleFuneral": "Planifier des funérailles",
+    "noPlanning": "Pas encore de planification",
+    "noPlanningDescription": "Planifiez vos premières funérailles pour commencer.",
+    "date": "Date",
+    "location": "Lieu",
+    "transport": "Transport"
+  },
+  "invoicing": {
+    "title": "Facturation",
+    "overview": "Aperçu des factures et paiements",
+    "createInvoice": "Créer une facture",
+    "noInvoices": "Pas encore de factures",
+    "noInvoicesDescription": "Créez votre première facture.",
+    "invoiceNumber": "Numéro de facture",
+    "amount": "Montant",
+    "date": "Date",
+    "paid": "Payé",
+    "unpaid": "Impayé"
+  },
+  "tasks": {
+    "title": "Tâches",
+    "myTasks": "Mes Tâches",
+    "startIntake": "Démarrer l'admission",
+    "completeIntake": "Terminer l'admission",
+    "requestDocumentAgain": "Demander à nouveau le document",
+    "reviewDossier": "Examiner le dossier",
+    "verifyDocumentation": "Vérifier la documentation",
+    "preparePlanning": "Préparer la planification",
+    "confirmMosqueFlight": "Confirmer mosquée/vol",
+    "prepareTransport": "Préparer le transport",
+    "monitorTransport": "Surveiller le transport",
+    "awaitParkingRelease": "Attendre la libération du parquet / télécharger",
+    "performTask": "Effectuer la tâche",
+    "toDocuments": "Vers Documents",
+    "toPlanning": "Vers Planification",
+    "openDossier": "Ouvrir Dossier",
+    "overview": "Aperçu de vos tâches en cours",
+    "noTasks": "Aucune tâche en cours",
+    "noTasksDescription": "Vous n'avez actuellement aucune tâche en cours."
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profile": "Profil",
+    "account": "Compte",
+    "security": "Sécurité",
+    "notifications": "Notifications",
+    "language": "Langue",
+    "theme": "Thème"
+  },
+  "team": {
+    "title": "Gestion d'équipe",
+    "addMember": "Ajouter un membre",
+    "members": "Membres de l'équipe",
+    "role": "Rôle",
+    "email": "E-mail",
+    "actions": "Actions"
+  },
   "status": {
     "CREATED": "Créé",
     "INTAKE_IN_PROGRESS": "Admission en cours",
@@ -111,22 +190,6 @@
     "local": "Local",
     "repatriation": "Rapatriement"
   },
-  "tasks": {
-    "startIntake": "Démarrer l'admission",
-    "completeIntake": "Terminer l'admission",
-    "requestDocumentAgain": "Demander à nouveau le document",
-    "reviewDossier": "Examiner le dossier",
-    "verifyDocumentation": "Vérifier la documentation",
-    "preparePlanning": "Préparer la planification",
-    "confirmMosqueFlight": "Confirmer mosquée/vol",
-    "prepareTransport": "Préparer le transport",
-    "monitorTransport": "Surveiller le transport",
-    "awaitParkingRelease": "Attendre la libération du parquet / télécharger",
-    "performTask": "Effectuer la tâche",
-    "toDocuments": "Vers Documents",
-    "toPlanning": "Vers Planification",
-    "openDossier": "Ouvrir Dossier"
-  },
   "common": {
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -143,7 +206,12 @@
     "yes": "Oui",
     "no": "Non",
     "docs": "Docs",
-    "comingSoon": "Fonction à venir"
+    "comingSoon": "Fonction à venir",
+    "selected": "sélectionné",
+    "download": "Télécharger",
+    "upload": "Télécharger",
+    "verified": "Vérifié",
+    "pending": "En cours"
   },
   "navigation": {
     "dashboard": "Tableau de bord",

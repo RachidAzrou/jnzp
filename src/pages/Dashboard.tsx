@@ -174,21 +174,21 @@ const Dashboard = () => {
                 <div className="p-2 rounded-lg bg-primary/10">
                   <FolderOpen className="h-4 w-4 text-primary" />
                 </div>
-                Actieve dossiers
+                {t("dashboard.activeDossiers")}
               </CardTitle>
-              <CardDescription className="mt-1">Dossiers die aandacht vereisen</CardDescription>
+              <CardDescription className="mt-1">{t("dashboard.dossiersRequiringAttention")}</CardDescription>
             </div>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Dossier</TableHead>
-                  <TableHead>Flow</TableHead>
-                  <TableHead>Naam</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Update</TableHead>
-                  <TableHead>Actie</TableHead>
+                  <TableHead>{t("dossiers.dossier")}</TableHead>
+                  <TableHead>{t("dossiers.flow")}</TableHead>
+                  <TableHead>{t("dossiers.name")}</TableHead>
+                  <TableHead>{t("dossiers.status")}</TableHead>
+                  <TableHead>{t("dossiers.update")}</TableHead>
+                  <TableHead>{t("dossiers.action")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -234,7 +234,7 @@ const Dashboard = () => {
                         size="sm"
                         onClick={() => navigate(`/dossiers/${dossier.id}`)}
                       >
-                        Open
+                        {t("dossiers.open")}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -252,26 +252,26 @@ const Dashboard = () => {
                 <div className="p-2 rounded-lg bg-primary/10">
                   <CheckSquare className="h-4 w-4 text-primary" />
                 </div>
-                Mijn openstaande taken
+                {t("dashboard.myOpenTasks")}
               </CardTitle>
-              <CardDescription className="mt-1">Taken (vandaag + urgent)</CardDescription>
+              <CardDescription className="mt-1">{t("dashboard.tasksToday")}</CardDescription>
             </div>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Dossier</TableHead>
-                  <TableHead>Taak</TableHead>
-                  <TableHead>Urgentie</TableHead>
-                  <TableHead>Actie</TableHead>
+                  <TableHead>{t("dossiers.dossier")}</TableHead>
+                  <TableHead>{t("dossiers.task")}</TableHead>
+                  <TableHead>{t("dossiers.urgency")}</TableHead>
+                  <TableHead>{t("dossiers.action")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {urgentTasks.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                      Geen urgente taken
+                      {t("dashboard.noUrgentTasks")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -308,9 +308,9 @@ const Dashboard = () => {
                             size="sm"
                             onClick={action}
                           >
-                            {task.status === "DOCS_PENDING" ? "Naar Documenten" :
-                             task.status === "PLANNING" ? "Naar Planning" :
-                             "Open Dossier"}
+                            {task.status === "DOCS_PENDING" ? t("tasks.toDocuments") :
+                             task.status === "PLANNING" ? t("tasks.toPlanning") :
+                             t("tasks.openDossier")}
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -331,25 +331,25 @@ const Dashboard = () => {
               <div className="p-2 rounded-lg bg-primary/10">
                 <Clock className="h-4 w-4 text-primary" />
               </div>
-              Recent bijgewerkt
+              {t("dashboard.recentlyUpdated")}
             </CardTitle>
-            <CardDescription className="mt-1">Laatste activiteiten in het systeem</CardDescription>
+            <CardDescription className="mt-1">{t("dashboard.lastActivities")}</CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-20">Tijd</TableHead>
-                <TableHead className="w-24">Dossier</TableHead>
-                <TableHead>Event</TableHead>
+                <TableHead className="w-20">{t("dossiers.time")}</TableHead>
+                <TableHead className="w-24">{t("dossiers.dossier")}</TableHead>
+                <TableHead>{t("dossiers.event")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {auditEvents.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                    Geen recente activiteiten
+                    {t("dashboard.noRecentActivities")}
                   </TableCell>
                 </TableRow>
               ) : (

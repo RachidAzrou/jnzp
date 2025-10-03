@@ -82,6 +82,85 @@
     "time": "Tijd",
     "event": "Event"
   },
+  "documents": {
+    "title": "Documenten",
+    "uploadDocuments": "Documenten uploaden",
+    "downloadSelected": "Geselecteerde downloaden",
+    "markAsVerified": "Markeer als geverifieerd",
+    "filterMissing": "Filter: Ontbrekende documenten",
+    "noDocumentsSelected": "Geen documenten geselecteerd",
+    "selectFirst": "Selecteer eerst documenten om te markeren.",
+    "noDocuments": "Nog geen documenten",
+    "noResults": "Geen resultaten",
+    "uploadDescription": "Upload documenten voor uw dossiers om te starten met de verificatie workflow.",
+    "noResultsDescription": "Geen documenten gevonden met de huidige filters.",
+    "fileName": "Bestandsnaam",
+    "type": "Type",
+    "uploadedAt": "Geüpload op",
+    "verified": "Geverifieerd",
+    "yes": "Ja",
+    "no": "Nee"
+  },
+  "planning": {
+    "title": "Planning",
+    "overview": "Overzicht van geplande uitvaarten en transporten",
+    "scheduleFuneral": "Uitvaart plannen",
+    "noPlanning": "Nog geen planning",
+    "noPlanningDescription": "Plan uw eerste uitvaart om te starten.",
+    "date": "Datum",
+    "location": "Locatie",
+    "transport": "Transport"
+  },
+  "invoicing": {
+    "title": "Facturatie",
+    "overview": "Overzicht van facturen en betalingen",
+    "createInvoice": "Factuur aanmaken",
+    "noInvoices": "Nog geen facturen",
+    "noInvoicesDescription": "Maak uw eerste factuur aan.",
+    "invoiceNumber": "Factuurnummer",
+    "amount": "Bedrag",
+    "date": "Datum",
+    "paid": "Betaald",
+    "unpaid": "Onbetaald"
+  },
+  "tasks": {
+    "title": "Taken",
+    "myTasks": "Mijn Taken",
+    "startIntake": "Intake starten",
+    "completeIntake": "Intake voltooien",
+    "requestDocumentAgain": "Document opnieuw opvragen",
+    "reviewDossier": "Dossier reviewen",
+    "verifyDocumentation": "Documentatie verifiëren",
+    "preparePlanning": "Planning voorbereiden",
+    "confirmMosqueFlight": "Moskee/vlucht bevestigen",
+    "prepareTransport": "Transport voorbereiden",
+    "monitorTransport": "Transport monitoren",
+    "awaitParkingRelease": "Parketvrijgave afwachten / uploaden",
+    "performTask": "Taak uitvoeren",
+    "toDocuments": "Naar Documenten",
+    "toPlanning": "Naar Planning",
+    "openDossier": "Open Dossier",
+    "overview": "Overzicht van uw openstaande taken",
+    "noTasks": "Geen openstaande taken",
+    "noTasksDescription": "U heeft momenteel geen openstaande taken."
+  },
+  "settings": {
+    "title": "Instellingen",
+    "profile": "Profiel",
+    "account": "Account",
+    "security": "Beveiliging",
+    "notifications": "Meldingen",
+    "language": "Taal",
+    "theme": "Thema"
+  },
+  "team": {
+    "title": "Team Beheer",
+    "addMember": "Lid toevoegen",
+    "members": "Teamleden",
+    "role": "Rol",
+    "email": "E-mail",
+    "actions": "Acties"
+  },
   "status": {
     "CREATED": "Aangemaakt",
     "INTAKE_IN_PROGRESS": "Intake lopend",
@@ -111,22 +190,6 @@
     "local": "Lokaal",
     "repatriation": "Repatriëring"
   },
-  "tasks": {
-    "startIntake": "Intake starten",
-    "completeIntake": "Intake voltooien",
-    "requestDocumentAgain": "Document opnieuw opvragen",
-    "reviewDossier": "Dossier reviewen",
-    "verifyDocumentation": "Documentatie verifiëren",
-    "preparePlanning": "Planning voorbereiden",
-    "confirmMosqueFlight": "Moskee/vlucht bevestigen",
-    "prepareTransport": "Transport voorbereiden",
-    "monitorTransport": "Transport monitoren",
-    "awaitParkingRelease": "Parketvrijgave afwachten / uploaden",
-    "performTask": "Taak uitvoeren",
-    "toDocuments": "Naar Documenten",
-    "toPlanning": "Naar Planning",
-    "openDossier": "Open Dossier"
-  },
   "common": {
     "save": "Opslaan",
     "cancel": "Annuleren",
@@ -143,7 +206,12 @@
     "yes": "Ja",
     "no": "Nee",
     "docs": "Docs",
-    "comingSoon": "Functie komt binnenkort"
+    "comingSoon": "Functie komt binnenkort",
+    "selected": "geselecteerd",
+    "download": "Downloaden",
+    "upload": "Uploaden",
+    "verified": "Geverifieerd",
+    "pending": "In behandeling"
   },
   "navigation": {
     "dashboard": "Dashboard",

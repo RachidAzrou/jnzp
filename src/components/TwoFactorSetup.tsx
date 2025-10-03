@@ -100,6 +100,10 @@ export const TwoFactorSetup = () => {
     try {
       setSaving(true);
       
+      console.log("Verifying 2FA code...");
+      console.log("Secret (base32):", secret);
+      console.log("Entered code:", verificationCode);
+      
       // Create TOTP instance with the secret
       const totp = new OTPAuth.TOTP({
         issuer: "JanazApp",
@@ -110,9 +114,13 @@ export const TwoFactorSetup = () => {
         secret: OTPAuth.Secret.fromBase32(secret),
       });
 
+      // Generate current valid token for debugging
+      const currentToken = totp.generate();
+      console.log("Current valid token:", currentToken);
+      
       // Verify the code with a larger window to account for time drift
-      // window: 2 means we check 2 periods before and after (total 5 periods)
       const delta = totp.validate({ token: verificationCode, window: 2 });
+      console.log("Validation result (delta):", delta);
       
       if (delta === null) {
         toast({

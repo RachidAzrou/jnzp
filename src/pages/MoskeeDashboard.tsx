@@ -140,21 +140,27 @@ export default function MoskeeDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Moskee — Aanvragen</h1>
-        <div className="flex gap-2">
-          <Button onClick={() => navigate("/moskee/beschikbaarheid")}>
-            Beschikbaarheid
-          </Button>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="p-8 space-y-6 max-w-[1600px] mx-auto">
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Moskee — Aanvragen
+            </h1>
+            <p className="text-lg text-muted-foreground">Beheer en bevestig janāza-gebed aanvragen</p>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={() => navigate("/moskee/beschikbaarheid")}>
+              Beschikbaarheid
+            </Button>
           <Button onClick={() => navigate("/moskee/notificaties")} variant="outline">
             Notificaties
           </Button>
+          </div>
         </div>
-      </div>
 
-      <Card>
-        <CardHeader>
+        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
           <div className="flex gap-4 items-center">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -246,8 +252,9 @@ export default function MoskeeDashboard() {
               </div>
             )}
           </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -248,17 +248,20 @@ export default function FamilieDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Welkom bij JanazApp</h1>
-        <p className="text-muted-foreground mt-1">
-          {dossier ? `Dossier ${dossier.display_id || dossier.ref_number}` : 'Uw persoonlijke dashboard'}
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="space-y-6 p-8 max-w-[1600px] mx-auto">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            Welkom bij JanazApp
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            {dossier ? `Dossier ${dossier.display_id || dossier.ref_number}` : 'Uw persoonlijke dashboard'}
+          </p>
+        </div>
 
-      {/* Communication Channels */}
-      {dossier && (
-        <Card>
+        {/* Communication Channels */}
+        {dossier && (
+          <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle>Communicatie</CardTitle>
             <CardDescription>Kies hoe u met ons wilt communiceren</CardDescription>
@@ -301,22 +304,22 @@ export default function FamilieDashboard() {
               💡 U ontvangt altijd een melding bij nieuwe reacties, ongeacht het kanaal
             </p>
           </CardContent>
-        </Card>
-      )}
+          </Card>
+        )}
 
-      {dossier?.legal_hold && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Legal Hold</AlertTitle>
-          <AlertDescription>
-            Dit dossier is onderhevig aan een juridische blokkering. Bepaalde acties zijn beperkt tot 
-            vrijgave door het parket.
-          </AlertDescription>
-        </Alert>
-      )}
+        {dossier?.legal_hold && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Legal Hold</AlertTitle>
+            <AlertDescription>
+              Dit dossier is onderhevig aan een juridische blokkering. Bepaalde acties zijn beperkt tot 
+              vrijgave door het parket.
+            </AlertDescription>
+          </Alert>
+        )}
 
-      {dossier && (
-        <Card>
+        {dossier && (
+          <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle>Dossier Informatie</CardTitle>
           </CardHeader>
@@ -361,10 +364,10 @@ export default function FamilieDashboard() {
             </div>
           </CardContent>
         </Card>
-      )}
+        )}
 
-      <Card>
-        <CardHeader>
+        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
           <CardTitle>Voortgang</CardTitle>
           <CardDescription>
             {completedTasks} van {totalTasks} stappen voltooid
@@ -443,13 +446,13 @@ export default function FamilieDashboard() {
               <CircularProgress value={progress} size={240} strokeWidth={16} />
             </div>
           </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Mosque Service Status - Read Only */}
-      {mosqueService && dossier?.flow === 'LOC' && (
-        <Card>
-          <CardHeader>
+        {/* Mosque Service Status - Read Only */}
+        {mosqueService && dossier?.flow === 'LOC' && (
+          <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
             <CardTitle>Janāza-gebed status</CardTitle>
             <CardDescription>Status van uw moskee aanvraag (alleen-lezen)</CardDescription>
           </CardHeader>
@@ -550,10 +553,10 @@ export default function FamilieDashboard() {
             </div>
           </CardContent>
         </Card>
-      )}
+        )}
 
-      <Card>
-        <CardHeader>
+        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
           <CardTitle>Updates</CardTitle>
           <CardDescription>Laatste berichten en meldingen</CardDescription>
         </CardHeader>
@@ -578,8 +581,9 @@ export default function FamilieDashboard() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

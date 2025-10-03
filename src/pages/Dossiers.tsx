@@ -121,22 +121,25 @@ const Dossiers = () => {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-3 sm:p-0">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">{t("dossiers.title")}</h1>
-          <p className="text-sm sm:text-base text-muted-foreground mt-1">
-            {filteredDossiers.length} {t("dossiers.ofDossiers")} {dossiers.length} {t("dossiers.title").toLowerCase()}
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="space-y-6 p-8 max-w-[1600px] mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              {t("dossiers.title")}
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              {filteredDossiers.length} {t("dossiers.ofDossiers")} {dossiers.length} {t("dossiers.title").toLowerCase()}
+            </p>
+          </div>
+          <Button className="w-full sm:w-auto">
+            <Plus className="mr-2 h-4 w-4" />
+            {t("dossiers.newDossier")}
+          </Button>
         </div>
-        <Button className="w-full sm:w-auto">
-          <Plus className="mr-2 h-4 w-4" />
-          {t("dossiers.newDossier")}
-        </Button>
-      </div>
 
-      <Card>
-        <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
+        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
           <div className="flex flex-col gap-4">
             {/* Search */}
             <div className="relative w-full">
@@ -319,9 +322,9 @@ const Dossiers = () => {
               )}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
-
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

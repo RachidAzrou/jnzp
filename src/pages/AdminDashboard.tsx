@@ -106,16 +106,19 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Platform Admin Dashboard</h1>
-          <p className="text-muted-foreground">Centraal overzicht van JanazApp</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="flex flex-col gap-6 p-8 max-w-[1600px] mx-auto">
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Platform Admin Dashboard
+            </h1>
+            <p className="text-lg text-muted-foreground">Centraal overzicht van JanazApp</p>
+          </div>
         </div>
-      </div>
 
-      {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* KPI Cards */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Actieve Dossiers"
           value={stats.activeDossiers}
@@ -136,9 +139,9 @@ export default function AdminDashboard() {
           value={stats.coolerCellOccupancy}
           icon={Refrigerator}
         />
-      </div>
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Integratie fouten"
           value={stats.integrationErrors}
@@ -159,12 +162,12 @@ export default function AdminDashboard() {
           value="-"
           icon={Flag}
         />
-      </div>
+        </div>
 
-      {/* Alerts & Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
+        {/* Alerts & Quick Actions */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
             <CardTitle>Recente Events</CardTitle>
           </CardHeader>
           <CardContent>
@@ -183,8 +186,8 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
             <CardTitle>Snelkoppelingen</CardTitle>
           </CardHeader>
           <CardContent>
@@ -238,8 +241,9 @@ export default function AdminDashboard() {
                 Audit Log
               </Button>
             </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

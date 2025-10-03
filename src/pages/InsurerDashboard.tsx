@@ -111,11 +111,14 @@ export default function InsurerDashboard() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Verzekeraar Dashboard</h1>
-            <p className="text-muted-foreground">Overzicht van verzekerde dossiers</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="space-y-6 p-8 max-w-[1600px] mx-auto">
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Verzekeraar Dashboard
+            </h1>
+            <p className="text-lg text-muted-foreground">Overzicht van verzekerde dossiers</p>
           </div>
           <div className="flex gap-2">
             <Button
@@ -136,9 +139,9 @@ export default function InsurerDashboard() {
         </div>
 
         {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Filters</CardTitle>
+        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
+            <CardTitle className="text-xl font-semibold">Filters</CardTitle>
           </CardHeader>
           <CardContent className="flex gap-4">
             <div className="flex-1">
@@ -178,7 +181,7 @@ export default function InsurerDashboard() {
         </Card>
 
         {/* KPIs */}
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-4">
           <KPICard
             title="Lopende dossiers"
             value={totalDossiers.toString()}
@@ -202,9 +205,9 @@ export default function InsurerDashboard() {
         </div>
 
         {/* Dossiers Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Dossiers</CardTitle>
+        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
+            <CardTitle className="text-xl font-semibold">Dossiers</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -274,5 +277,6 @@ export default function InsurerDashboard() {
           </CardContent>
         </Card>
       </div>
-    );
-  }
+    </div>
+  );
+}

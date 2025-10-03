@@ -268,15 +268,7 @@ const Dossiers = () => {
                  filteredDossiers.map((dossier) => (
                   <TableRow key={dossier.id} className="cursor-pointer hover:bg-muted/50">
                      <TableCell className="font-medium">
-                      <div className="flex items-center gap-1 sm:gap-2">
-                        <span className="font-mono text-xs sm:text-sm">{dossier.display_id || dossier.ref_number}</span>
-                        {dossier.legal_hold && (
-                          <Badge variant="destructive" className="gap-1 text-[10px] sm:text-xs">
-                            <AlertCircle className="h-2 w-2 sm:h-3 sm:w-3" />
-                            <span className="hidden sm:inline">Legal Hold</span>
-                          </Badge>
-                        )}
-                      </div>
+                      <span className="font-mono text-xs sm:text-sm">{dossier.display_id || dossier.ref_number}</span>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       {dossier.flow === "REP" && (

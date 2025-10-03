@@ -302,7 +302,7 @@ const DossierDetail = () => {
 
             {/* Familie & Contact */}
             <Card>
-              <CardHeader>
+              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
                   Familie & Contact
@@ -333,7 +333,7 @@ const DossierDetail = () => {
 
           {/* Document Status Summary */}
           <Card>
-            <CardHeader>
+            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Document Pakket Status
@@ -365,7 +365,7 @@ const DossierDetail = () => {
 
           {/* Quick Actions */}
           <Card>
-            <CardHeader>
+            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
               <CardTitle>Snelle Acties</CardTitle>
             </CardHeader>
             <CardContent>
@@ -442,7 +442,7 @@ const DossierDetail = () => {
           <div className="grid gap-4 md:grid-cols-2">
             {/* Moskee */}
             <Card>
-              <CardHeader>
+              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
                 <CardTitle>Moskee</CardTitle>
               </CardHeader>
               <CardContent>
@@ -471,7 +471,7 @@ const DossierDetail = () => {
 
             {/* Wasplaats */}
             <Card>
-              <CardHeader>
+              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
                 <CardTitle>Wasplaats</CardTitle>
               </CardHeader>
               <CardContent>
@@ -494,7 +494,7 @@ const DossierDetail = () => {
 
             {/* Verzekeraar */}
             <Card>
-              <CardHeader>
+              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
                 <CardTitle>Verzekeraar</CardTitle>
               </CardHeader>
               <CardContent>
@@ -524,7 +524,7 @@ const DossierDetail = () => {
         {/* Chat Tab */}
         <TabsContent value="chat" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
               <CardTitle>Communicatie met Familie</CardTitle>
             </CardHeader>
             <CardContent>
@@ -547,7 +547,7 @@ const DossierDetail = () => {
         {/* Financial Tab */}
         <TabsContent value="financial" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
               <div className="flex items-center justify-between">
                 <CardTitle>Facturen</CardTitle>
                 <Button>
@@ -584,7 +584,7 @@ const DossierDetail = () => {
         {/* Timeline Tab */}
         <TabsContent value="timeline" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
                 Tijdlijn

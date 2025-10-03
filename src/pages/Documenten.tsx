@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, CheckCircle, XCircle, Clock, FileText, Eye } from "lucide-react";
+import { Search, CheckCircle, XCircle, Clock, FileText, Eye, SlidersHorizontal } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSearchParams } from "react-router-dom";
@@ -20,8 +20,10 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { EmptyState } from "@/components/EmptyState";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTranslation } from "react-i18next";
 
 const Documenten = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [documents, setDocuments] = useState<any[]>([]);
   const [dossiers, setDossiers] = useState<any[]>([]);
@@ -33,6 +35,7 @@ const Documenten = () => {
   const [selectedDocForReview, setSelectedDocForReview] = useState<any | null>(null);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState<Set<string>>(new Set());
+  const [showFilters, setShowFilters] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -154,60 +157,58 @@ const Documenten = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Documenten</h1>
-          <p className="text-muted-foreground mt-1">Snelle documenttriage en beoordeling</p>
-        </div>
-        <DocumentUploadDialog dossiers={dossiers} onUploadComplete={fetchData} />
+    <div className="min-h-screen bg-background p-6">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold">Documenten</h1>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="pt-8">
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-4 mb-6">
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Totaal</p>
-                <p className="text-2xl font-bold mt-1">{documents.length}</p>
+                <p className="text-2xl font-semibold mt-1">{documents.length}</p>
               </div>
-              <Eye className="h-8 w-8 text-muted-foreground" />
+              <Eye className="h-8 w-8 text-muted-foreground opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-8">
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Goedgekeurd</p>
-                <p className="text-2xl font-bold mt-1 text-success">{approvedCount}</p>
+                <p className="text-2xl font-semibold mt-1">{approvedCount}</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-success" />
+              <CheckCircle className="h-8 w-8 text-green-600 opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-8">
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">In behandeling</p>
-                <p className="text-2xl font-bold mt-1 text-warning">{pendingCount}</p>
+                <p className="text-2xl font-semibold mt-1">{pendingCount}</p>
               </div>
-              <Clock className="h-8 w-8 text-warning" />
+              <Clock className="h-8 w-8 text-yellow-600 opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-8">
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Afgewezen</p>
-                <p className="text-2xl font-bold mt-1 text-destructive">{rejectedCount}</p>
+                <p className="text-2xl font-semibold mt-1">{rejectedCount}</p>
               </div>
-              <XCircle className="h-8 w-8 text-destructive" />
+              <XCircle className="h-8 w-8 text-red-600 opacity-50" />
             </div>
           </CardContent>
         </Card>
@@ -215,37 +216,34 @@ const Documenten = () => {
 
       {/* Document List */}
       <div className="space-y-4">
-          {statusFilter === "missing" && (
-            <Card className="bg-warning/10 border-warning">
-              <CardContent className="pt-4">
-                <p className="text-sm">
-                  <strong>Filter actief:</strong> Ontbrekende documenten ({filteredDocs.length})
-                  <Button variant="link" size="sm" onClick={() => setStatusFilter("all")} className="ml-2">
-                    Filter wissen
-                  </Button>
-                </p>
-              </CardContent>
-            </Card>
-          )}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            {/* Search Bar with Filter Toggle */}
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Zoek op dossier/naam/bestand..."
+                  className="pl-10 bg-background"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+              </Button>
+              <DocumentUploadDialog dossiers={dossiers} onUploadComplete={fetchData} />
+            </div>
 
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      placeholder="Zoek op dossier/naam/bestand..."
-                      className="pl-10"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
+            {/* Filter Panel */}
+            {showFilters && (
+              <div className="pt-4 space-y-2">
                 <div className="flex gap-2 flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Status:</span>
-                  </div>
+                  <span className="text-sm font-medium">Status:</span>
                   <Button
                     variant={statusFilter === "all" ? "default" : "outline"}
                     size="sm"
@@ -283,18 +281,23 @@ const Documenten = () => {
                   </Button>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="pt-8">
-              <div className="mb-4 flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                  {selectedDocs.size > 0 && `${selectedDocs.size} geselecteerd`}
+            )}
+          </CardHeader>
+          <CardContent>
+            {/* Bulk Actions */}
+            {selectedDocs.size > 0 && (
+              <div className="mb-4 flex items-center justify-between bg-muted/30 p-3 rounded-lg">
+                <p className="text-sm">
+                  {selectedDocs.size} geselecteerd
                 </p>
-                {selectedDocs.size > 0 && (
-                  <Button size="sm" variant="outline" onClick={bulkMarkAsReview}>
-                    Markeer als 'In review'
-                  </Button>
-                )}
+                <Button size="sm" variant="outline" onClick={bulkMarkAsReview}>
+                  Markeer als 'In review'
+                </Button>
               </div>
+            )}
+
+            {/* Desktop Table */}
+            <div className="hidden md:block">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -321,23 +324,17 @@ const Documenten = () => {
                 <TableBody>
                   {filteredDocs.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7}>
-                        <EmptyState
-                          icon={FileText}
-                          title={documents.length === 0 ? "Nog geen documenten" : "Geen resultaten"}
-                          description={
-                            documents.length === 0
-                              ? "Upload documenten voor uw dossiers om te starten met de verificatie workflow."
-                              : "Geen documenten gevonden met de huidige filters."
-                          }
-                        />
+                      <TableCell colSpan={7} className="text-center py-8">
+                        <p className="text-sm text-muted-foreground">
+                          {documents.length === 0 ? "Nog geen documenten" : "Geen resultaten"}
+                        </p>
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredDocs.map((doc) => (
                       <TableRow 
                         key={doc.id}
-                        className={selectedDocForReview?.id === doc.id ? "bg-muted/50" : ""}
+                        className="hover:bg-muted/30"
                       >
                         <TableCell>
                           <Checkbox 
@@ -351,7 +348,7 @@ const Documenten = () => {
                         <TableCell className="text-sm">
                           {doc.doc_type.replace(/_/g, " ")}
                         </TableCell>
-                        <TableCell className="max-w-[200px] truncate">
+                        <TableCell className="max-w-[200px] truncate text-sm">
                           {doc.file_name}
                           {doc.rejection_reason && (
                             <p className="text-xs text-destructive mt-1">
@@ -360,10 +357,21 @@ const Documenten = () => {
                           )}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {format(new Date(doc.uploaded_at), "dd-MM HH:mm")}
+                          {format(new Date(doc.uploaded_at), "dd/MM/yy")}
                         </TableCell>
                         <TableCell>
-                          {getStatusBadge(doc.status)}
+                          <Badge 
+                            variant={
+                              doc.status === "APPROVED" 
+                                ? "default" 
+                                : doc.status === "REJECTED" 
+                                ? "destructive" 
+                                : "secondary"
+                            }
+                            className="text-xs"
+                          >
+                            {doc.status === "APPROVED" ? "Goedgekeurd" : doc.status === "REJECTED" ? "Afgewezen" : "In behandeling"}
+                          </Badge>
                         </TableCell>
                         <TableCell>
                           <Button
@@ -374,7 +382,7 @@ const Documenten = () => {
                               setReviewDialogOpen(true);
                             }}
                           >
-                            Beoordelen
+                            {t("common.view")}
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -382,8 +390,9 @@ const Documenten = () => {
                   )}
                 </TableBody>
               </Table>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
         
         {/* Document Review Dialog */}
         <DocumentReviewDialog

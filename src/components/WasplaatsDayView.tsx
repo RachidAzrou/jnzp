@@ -102,6 +102,7 @@ export function WasplaatsDayView({
                   (r) => r.cool_cell_id === cell.id
                 );
                 const isOutOfService = cell.status === "OUT_OF_SERVICE";
+                const isOccupied = cell.status === "OCCUPIED";
 
                 return (
                   <div key={cell.id} className="flex items-center">
@@ -145,15 +146,24 @@ export function WasplaatsDayView({
 
                       {/* Out of service overlay */}
                       {isOutOfService && (
-                        <div className="absolute inset-0 bg-destructive/10 flex items-center justify-center rounded">
+                        <div className="absolute inset-0 bg-destructive/20 flex items-center justify-center rounded border-2 border-destructive">
                           <span className="text-xs text-destructive font-medium">
                             Buiten dienst
                           </span>
                         </div>
                       )}
 
+                      {/* Manually occupied (no reservation) */}
+                      {!isOutOfService && isOccupied && cellReservations.length === 0 && (
+                        <div className="absolute inset-0 bg-destructive/20 flex items-center justify-center rounded border-2 border-destructive">
+                          <span className="text-xs text-destructive font-medium">
+                            Bezet
+                          </span>
+                        </div>
+                      )}
+
                       {/* Free indicator */}
-                      {!isOutOfService && cellReservations.length === 0 && (
+                      {!isOutOfService && !isOccupied && cellReservations.length === 0 && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <span className="text-xs text-muted-foreground">
                             Vrij

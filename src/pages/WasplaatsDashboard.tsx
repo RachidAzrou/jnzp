@@ -56,7 +56,7 @@ export default function WasplaatsDashboard() {
         supabase.from("facility_day_blocks").select("*"),
       ]);
 
-      if (cellsRes.data) setCoolCells(cellsRes.data);
+      if (cellsRes.data) setCoolCells(cellsRes.data.sort((a, b) => a.label.localeCompare(b.label, 'nl', { numeric: true })));
       if (reservationsRes.data) setReservations(reservationsRes.data);
       if (blocksRes.data) setDayBlocks(blocksRes.data);
     } catch (error) {

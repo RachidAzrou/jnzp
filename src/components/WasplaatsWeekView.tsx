@@ -97,13 +97,16 @@ export function WasplaatsWeekView({
     
     if (!cell) return { status: "FREE", reservations: [], reservation: null };
     
+    // Check if the entire facility is blocked for this day
     const isBlocked = dayBlocks.some((b) => b.date === dayStr);
     if (isBlocked) return { status: "BLOCKED", reservations: [], reservation: null };
     
+    // If the cell itself is out of service, always show that
     if (cell.status === "OUT_OF_SERVICE") {
       return { status: "OUT_OF_SERVICE", reservations: [], reservation: null };
     }
 
+    // Check for reservations on this day
     const dayReservations = reservations.filter(
       (r) =>
         r.cool_cell_id === cellId &&
@@ -111,7 +114,7 @@ export function WasplaatsWeekView({
     );
 
     if (dayReservations.length > 0) {
-      // Use the status from the reservation itself
+      // Use the status from the reservation
       const firstReservation = dayReservations[0];
       return { 
         status: firstReservation.status, 
@@ -120,6 +123,12 @@ export function WasplaatsWeekView({
       };
     }
 
+    // If the cell is manually marked as OCCUPIED (without a reservation), show that
+    if (cell.status === "OCCUPIED") {
+      return { status: "OCCUPIED", reservations: [], reservation: null };
+    }
+
+    // Otherwise, the cell is free
     return { status: "FREE", reservations: [], reservation: null };
   };
 

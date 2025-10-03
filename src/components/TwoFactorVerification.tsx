@@ -79,7 +79,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel }: TwoFactorVerific
           .eq("user_id", user.id);
       }
     } else {
-      // Verify TOTP code
+      // Verify TOTP code with larger window for time drift
       const totp = new OTPAuth.TOTP({
         issuer: "JanazApp",
         label: "user",
@@ -89,7 +89,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel }: TwoFactorVerific
         secret: OTPAuth.Secret.fromBase32(settings.totp_secret || ""),
       });
 
-      const delta = totp.validate({ token: code, window: 1 });
+      const delta = totp.validate({ token: code, window: 2 });
       isValid = delta !== null;
     }
 

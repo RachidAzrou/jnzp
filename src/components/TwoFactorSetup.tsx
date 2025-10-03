@@ -98,6 +98,8 @@ export const TwoFactorSetup = () => {
     }
 
     try {
+      setSaving(true);
+      
       // Create TOTP instance with the secret
       const totp = new OTPAuth.TOTP({
         issuer: "JanazApp",
@@ -108,19 +110,19 @@ export const TwoFactorSetup = () => {
         secret: OTPAuth.Secret.fromBase32(secret),
       });
 
-      // Verify the code
-      const delta = totp.validate({ token: verificationCode, window: 1 });
+      // Verify the code with a larger window to account for time drift
+      // window: 2 means we check 2 periods before and after (total 5 periods)
+      const delta = totp.validate({ token: verificationCode, window: 2 });
       
       if (delta === null) {
         toast({
           title: "Ongeldige code",
-          description: "De verificatiecode is onjuist. Probeer opnieuw.",
+          description: "De verificatiecode is onjuist. Controleer of de tijd op uw telefoon correct is ingesteld.",
           variant: "destructive",
         });
+        setSaving(false);
         return;
       }
-
-      setSaving(true);
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {

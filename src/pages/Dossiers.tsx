@@ -293,7 +293,14 @@ const Dossiers = () => {
                         {dossier.status === "DOCS_PENDING" && !dossier.legal_hold && (
                           <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-warning" />
                         )}
-                        <Badge variant={getStatusVariant(dossier.status)} className="text-[10px] sm:text-xs bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
+                        <Badge 
+                          variant={getStatusVariant(dossier.status)} 
+                          className={`text-[10px] sm:text-xs ${
+                            getStatusVariant(dossier.status) !== "destructive" 
+                              ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" 
+                              : ""
+                          }`}
+                        >
                           {getStatusLabel(dossier.status)}
                         </Badge>
                       </div>

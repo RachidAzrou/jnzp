@@ -1596,6 +1596,42 @@ export type Database = {
         }
         Relationships: []
       }
+      password_reset_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          ip_address: unknown | null
+          token_hash: string
+          used: boolean
+          used_at: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          token_hash: string
+          used?: boolean
+          used_at?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          token_hash?: string
+          used?: boolean
+          used_at?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       pending_2fa: {
         Row: {
           created_at: string
@@ -2353,6 +2389,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: boolean
       }
+      check_password_reset_rate_limit: {
+        Args: { p_email: string }
+        Returns: Json
+      }
       check_rate_limit: {
         Args: {
           p_endpoint: string
@@ -2375,6 +2415,10 @@ export type Database = {
         Returns: undefined
       }
       cleanup_expired_captcha: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_expired_password_reset_tokens: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2451,6 +2495,19 @@ export type Database = {
         }
         Returns: string
       }
+      log_password_change: {
+        Args: {
+          p_ip?: string
+          p_method: string
+          p_user_agent?: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      mark_password_reset_token_used: {
+        Args: { p_token_hash: string }
+        Returns: undefined
+      }
       register_device_token: {
         Args: {
           p_device_fingerprint: string
@@ -2509,6 +2566,10 @@ export type Database = {
           p_current_user_agent?: string
           p_token_hash: string
         }
+        Returns: Json
+      }
+      verify_password_reset_token: {
+        Args: { p_token_hash: string }
         Returns: Json
       }
       verify_qr_token: {

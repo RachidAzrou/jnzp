@@ -204,16 +204,23 @@ export function WasplaatsWeekView({
                       >
                         {status === "BLOCKED" ? (
                           <div className="text-center">
-                            <Badge variant="destructive" className="text-xs">
+                            <Badge variant="secondary" className="text-xs bg-red-700 text-white border-0">
                               Geblokkeerd
                             </Badge>
                           </div>
                         ) : reservation ? (
                           <div className="text-center">
-                            <Badge variant="secondary" className="text-xs bg-white border">
+                            <Badge variant="secondary" className={`text-xs border-0 ${
+                              status === "FREE" ? "bg-green-600 text-white" :
+                              status === "PENDING" ? "bg-orange-600 text-white" :
+                              status === "CONFIRMED" ? "bg-blue-600 text-white" :
+                              status === "OCCUPIED" ? "bg-red-600 text-white" :
+                              status === "OUT_OF_SERVICE" ? "bg-gray-600 text-white" :
+                              "bg-gray-600 text-white"
+                            }`}>
                               {getStatusLabel(status)}
                             </Badge>
-                            <p className="text-xs mt-1">
+                            <p className="text-xs mt-1 font-medium">
                               {format(new Date(reservation.start_at), "HH:mm")}
                               -
                               {format(new Date(reservation.end_at), "HH:mm")}
@@ -221,7 +228,12 @@ export function WasplaatsWeekView({
                           </div>
                         ) : (
                           <div className="text-center">
-                            <Badge variant="secondary" className="text-xs bg-white border">
+                            <Badge variant="secondary" className={`text-xs border-0 ${
+                              status === "FREE" ? "bg-green-600 text-white" :
+                              status === "OCCUPIED" ? "bg-red-600 text-white" :
+                              status === "OUT_OF_SERVICE" ? "bg-gray-600 text-white" :
+                              "bg-gray-600 text-white"
+                            }`}>
                               {getStatusLabel(status)}
                             </Badge>
                           </div>

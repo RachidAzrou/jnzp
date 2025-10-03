@@ -111,13 +111,13 @@ export function AppSidebar() {
                       end
                     >
                       {({ isActive }) => (
-                        <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 ${
+                        <div className={`flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl transition-all duration-300 ${
                           isActive
-                            ? "bg-primary/10 backdrop-blur-xl border border-primary/20 text-primary font-semibold shadow-lg shadow-primary/10"
+                            ? "bg-primary/10 backdrop-blur-xl border border-primary/20 text-white font-bold shadow-lg shadow-primary/10"
                             : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 hover:backdrop-blur-sm"
                         }`}>
                           <item.icon className="h-5 w-5 flex-shrink-0" />
-                          <span className="text-sm font-medium">{t(item.titleKey)}</span>
+                          <span className="text-sm">{t(item.titleKey)}</span>
                         </div>
                       )}
                     </NavLink>

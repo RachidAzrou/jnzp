@@ -26,10 +26,10 @@ type CoolCell = {
 };
 
 const statusColors: Record<string, string> = {
-  FREE: "bg-success text-success-foreground",
-  RESERVED: "bg-warning text-warning-foreground",
-  OCCUPIED: "bg-primary text-primary-foreground",
-  OUT_OF_SERVICE: "bg-destructive text-destructive-foreground",
+  FREE: "bg-green-600 text-white border-0",
+  RESERVED: "bg-orange-600 text-white border-0",
+  OCCUPIED: "bg-red-600 text-white border-0",
+  OUT_OF_SERVICE: "bg-gray-600 text-white border-0",
 };
 
 const statusLabels: Record<string, string> = {

@@ -111,12 +111,12 @@ export function AppSidebar() {
                       end
                     >
                       {({ isActive }) => (
-                        <div className={`flex items-center gap-3 px-4 py-2.5 mx-3 rounded-xl transition-all duration-300 group ${
+                        <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 ${
                           isActive
-                            ? "bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20"
-                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60 hover:shadow-md"
+                            ? "bg-primary/10 backdrop-blur-xl border border-primary/20 text-primary font-semibold shadow-lg shadow-primary/10"
+                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 hover:backdrop-blur-sm"
                         }`}>
-                          <item.icon className={`h-[18px] w-[18px] flex-shrink-0 transition-transform duration-300 ${isActive ? '' : 'group-hover:scale-110'}`} />
+                          <item.icon className="h-5 w-5 flex-shrink-0" />
                           <span className="text-sm font-medium">{t(item.titleKey)}</span>
                         </div>
                       )}

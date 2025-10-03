@@ -10,18 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Download, Eye, CheckCircle, XCircle, Clock, FileText, ChevronRight } from "lucide-react";
+import { Search, CheckCircle, XCircle, Clock, FileText, Eye } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSearchParams } from "react-router-dom";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { DocumentUploadDialog } from "@/components/DocumentUploadDialog";
+import { DocumentReviewDialog } from "@/components/DocumentReviewDialog";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { EmptyState } from "@/components/EmptyState";
 import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const Documenten = () => {
   const [searchParams] = useSearchParams();
@@ -33,9 +31,7 @@ const Documenten = () => {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [selectedDocForReview, setSelectedDocForReview] = useState<any | null>(null);
-  const [reviewDecision, setReviewDecision] = useState<"approve" | "reject" | null>(null);
-  const [rejectionReason, setRejectionReason] = useState("");
-  const [noteToFamily, setNoteToFamily] = useState("");
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
@@ -99,93 +95,10 @@ const Documenten = () => {
     return <Badge variant="secondary">In review</Badge>;
   };
 
-  const handleRejectSubmit = async (saveAndNext: boolean = false) => {
-    if (!selectedDocForReview) return;
-    
-    if (reviewDecision === "reject" && !rejectionReason.trim()) {
-      toast({
-        title: "Afwijsreden verplicht",
-        description: "Geef een reden op voor het afwijzen van dit document (minimaal 8 tekens).",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (reviewDecision === "reject" && rejectionReason.trim().length < 8) {
-      toast({
-        title: "Afwijsreden te kort",
-        description: "De afwijsreden moet minimaal 8 tekens bevatten.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const updateData: any = {
-      reviewed_at: new Date().toISOString(),
-    };
-
-    if (reviewDecision === "approve") {
-      updateData.status = "APPROVED";
-    } else if (reviewDecision === "reject") {
-      updateData.status = "REJECTED";
-      updateData.rejection_reason = rejectionReason;
-    }
-
-    const { error } = await supabase
-      .from("documents")
-      .update(updateData)
-      .eq("id", selectedDocForReview.id);
-
-    if (error) {
-      toast({
-        title: "Fout",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
-      toast({ 
-        title: reviewDecision === "approve" ? "Document goedgekeurd" : "Document afgewezen"
-      });
-      
-      await fetchData();
-      
-      if (saveAndNext) {
-        loadNextToReview();
-      } else {
-        resetReviewPanel();
-      }
-    }
-  };
-
-  const resetReviewPanel = () => {
+  const handleReviewComplete = async () => {
+    await fetchData();
     setSelectedDocForReview(null);
-    setReviewDecision(null);
-    setRejectionReason("");
-    setNoteToFamily("");
-  };
-
-  const loadNextToReview = () => {
-    const reviewable = filteredDocs.filter(doc => 
-      ["IN_REVIEW", "REJECTED"].includes(doc.status)
-    );
-    
-    if (reviewable.length > 0) {
-      const currentIndex = selectedDocForReview 
-        ? reviewable.findIndex(d => d.id === selectedDocForReview.id)
-        : -1;
-      
-      const nextDoc = reviewable[currentIndex + 1] || reviewable[0];
-      setSelectedDocForReview(nextDoc);
-      setReviewDecision(null);
-      setRejectionReason("");
-      setNoteToFamily("");
-    } else {
-      toast({
-        title: "Geen documenten te beoordelen",
-        description: "Er zijn geen documenten die beoordeling vereisen.",
-      });
-      resetReviewPanel();
-    }
+    setReviewDialogOpen(false);
   };
 
   const toggleDocSelection = (docId: string) => {
@@ -300,10 +213,8 @@ const Documenten = () => {
         </Card>
       </div>
 
-      {/* Two-column layout: List + Review Panel */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left: Document List */}
-        <div className="lg:col-span-2 space-y-4">
+      {/* Document List */}
+      <div className="space-y-4">
           {statusFilter === "missing" && (
             <Card className="bg-warning/10 border-warning">
               <CardContent className="pt-4">
@@ -456,13 +367,11 @@ const Documenten = () => {
                         </TableCell>
                         <TableCell>
                           <Button
-                            variant={selectedDocForReview?.id === doc.id ? "default" : "outline"}
+                            variant="outline"
                             size="sm"
                             onClick={() => {
                               setSelectedDocForReview(doc);
-                              setReviewDecision(null);
-                              setRejectionReason("");
-                              setNoteToFamily("");
+                              setReviewDialogOpen(true);
                             }}
                           >
                             Beoordelen
@@ -475,151 +384,17 @@ const Documenten = () => {
               </Table>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Right: Review Panel */}
-        <div className="lg:col-span-1">
-          <Card className="sticky top-6">
-            <CardHeader>
-              <h3 className="font-semibold">Review-paneel</h3>
-              <p className="text-sm text-muted-foreground">
-                Selecteer een document om te beoordelen
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {!selectedDocForReview ? (
-                <div className="text-center py-8">
-                  <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-                  <p className="text-sm text-muted-foreground">
-                    Geen document geselecteerd
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="mt-4"
-                    onClick={loadNextToReview}
-                  >
-                    <ChevronRight className="h-4 w-4 mr-2" />
-                    Start beoordeling
-                  </Button>
-                </div>
-              ) : (
-                <>
-                  {/* Document Info */}
-                  <div className="space-y-2 border-b pb-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Dossier:</span>
-                      <span className="font-mono text-sm">{selectedDocForReview.dossiers?.ref_number}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Type:</span>
-                      <span className="text-sm">{selectedDocForReview.doc_type.replace(/_/g, " ")}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Bestand:</span>
-                      <span className="text-sm truncate max-w-[150px]">{selectedDocForReview.file_name}</span>
-                    </div>
-                  </div>
-
-                  {/* Preview Placeholder */}
-                  <div className="bg-muted/30 border-2 border-dashed rounded-lg p-8 text-center">
-                    <Eye className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      Documentvoorbeeld (komt binnenkort)
-                    </p>
-                    <div className="flex gap-2 justify-center mt-4">
-                      <Button variant="outline" size="sm">
-                        <Download className="h-4 w-4 mr-1" />
-                        Download
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Review Decision */}
-                  <div className="space-y-3 border-b pb-4">
-                    <Label>Beoordeling *</Label>
-                    <RadioGroup value={reviewDecision || ""} onValueChange={(val) => setReviewDecision(val as "approve" | "reject")}>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="approve" id="approve" />
-                        <Label htmlFor="approve" className="font-normal cursor-pointer">
-                          Goedkeuren
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="reject" id="reject" />
-                        <Label htmlFor="reject" className="font-normal cursor-pointer">
-                          Afwijzen
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  {/* Rejection Reason (only if rejecting) */}
-                  {reviewDecision === "reject" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="reason">Afwijsreden * (min. 8 tekens)</Label>
-                      <Textarea
-                        id="reason"
-                        placeholder="Bijv. Document onleesbaar, verkeerd type..."
-                        value={rejectionReason}
-                        onChange={(e) => setRejectionReason(e.target.value)}
-                        rows={3}
-                      />
-                      {rejectionReason && rejectionReason.length < 8 && (
-                        <p className="text-xs text-destructive">
-                          Minimaal 8 tekens vereist
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Optional Note to Family */}
-                  <div className="space-y-2">
-                    <Label htmlFor="note">Notitie aan familie (optioneel)</Label>
-                    <Textarea
-                      id="note"
-                      placeholder="Extra boodschap voor de familie..."
-                      value={noteToFamily}
-                      onChange={(e) => setNoteToFamily(e.target.value)}
-                      rows={2}
-                    />
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="space-y-2 pt-2">
-                    <Button 
-                      className="w-full"
-                      disabled={!reviewDecision || (reviewDecision === "reject" && rejectionReason.length < 8)}
-                      onClick={() => handleRejectSubmit(false)}
-                    >
-                      {reviewDecision === "approve" ? "Goedkeuren" : "Afwijzen"}
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="w-full"
-                      disabled={!reviewDecision || (reviewDecision === "reject" && rejectionReason.length < 8)}
-                      onClick={() => handleRejectSubmit(true)}
-                    >
-                      Opslaan & Volgende
-                      <ChevronRight className="h-4 w-4 ml-2" />
-                    </Button>
-                    <Button 
-                      variant="ghost"
-                      className="w-full"
-                      onClick={resetReviewPanel}
-                    >
-                      Annuleren
-                    </Button>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground text-center mt-4">
-                    Bij afwijzen is een reden verplicht. Familie ontvangt de reden.
-                  </p>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+        
+        {/* Document Review Dialog */}
+        <DocumentReviewDialog
+          document={selectedDocForReview}
+          open={reviewDialogOpen}
+          onClose={() => {
+            setReviewDialogOpen(false);
+            setSelectedDocForReview(null);
+          }}
+          onReviewComplete={handleReviewComplete}
+        />
       </div>
     </div>
   );

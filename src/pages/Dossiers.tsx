@@ -115,15 +115,15 @@ const Dossiers = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
         <div>
-          <h1 className="text-3xl font-bold">Dossiers</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold">Dossiers</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">
             {filteredDossiers.length} van {dossiers.length} dossiers
           </p>
         </div>
-        <Button>
+        <Button className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           Nieuw dossier
         </Button>
@@ -144,8 +144,8 @@ const Dossiers = () => {
             </div>
             
             {/* Flow Filter */}
-            <div className="flex gap-2 items-center">
-              <span className="text-sm font-medium text-muted-foreground">Flow:</span>
+            <div className="flex gap-2 items-center flex-wrap">
+              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Flow:</span>
               <Button
                 variant={flowFilter === "all" ? "default" : "outline"}
                 size="sm"
@@ -157,23 +157,25 @@ const Dossiers = () => {
                 variant={flowFilter === "REP" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setFlowFilter("REP")}
+                className="flex-shrink-0"
               >
-                <Plane className="h-4 w-4 mr-1" />
-                Repatriëring
+                <Plane className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Repatriëring</span>
               </Button>
               <Button
                 variant={flowFilter === "LOC" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setFlowFilter("LOC")}
+                className="flex-shrink-0"
               >
-                <MapPin className="h-4 w-4 mr-1" />
-                Lokaal
+                <MapPin className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Lokaal</span>
               </Button>
             </div>
 
             {/* Status Filter */}
             <div className="flex gap-2 items-center flex-wrap">
-              <span className="text-sm font-medium text-muted-foreground">Status:</span>
+              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Status:</span>
               <Button
                 variant={statusFilter === "all" ? "default" : "outline"}
                 size="sm"
@@ -185,16 +187,18 @@ const Dossiers = () => {
                 variant={statusFilter === "DOCS_PENDING" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setStatusFilter("DOCS_PENDING")}
+                className="text-xs sm:text-sm"
               >
-                Docs Pending
+                Docs
               </Button>
               <Button
                 variant={statusFilter === "LEGAL_HOLD" ? "destructive" : "outline"}
                 size="sm"
                 onClick={() => setStatusFilter("LEGAL_HOLD")}
+                className="flex-shrink-0"
               >
-                <AlertCircle className="h-4 w-4 mr-1" />
-                Legal Hold
+                <AlertCircle className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Legal Hold</span>
               </Button>
               <Button
                 variant={statusFilter === "PLANNING" ? "default" : "outline"}
@@ -211,12 +215,12 @@ const Dossiers = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Dossier</TableHead>
-                <TableHead>Flow</TableHead>
-                <TableHead>Naam overledene</TableHead>
+                <TableHead className="hidden md:table-cell">Flow</TableHead>
+                <TableHead>Naam</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Geboortedatum</TableHead>
-                <TableHead>Overlijdensdatum</TableHead>
-                <TableHead>Aangemaakt</TableHead>
+                <TableHead className="hidden lg:table-cell">Geboren</TableHead>
+                <TableHead className="hidden lg:table-cell">Overleden</TableHead>
+                <TableHead className="hidden xl:table-cell">Aangemaakt</TableHead>
                 <TableHead>Acties</TableHead>
               </TableRow>
             </TableHeader>
@@ -244,20 +248,20 @@ const Dossiers = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredDossiers.map((dossier) => (
+                 filteredDossiers.map((dossier) => (
                   <TableRow key={dossier.id} className="cursor-pointer hover:bg-muted/50">
                      <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono">{dossier.display_id || dossier.ref_number}</span>
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <span className="font-mono text-xs sm:text-sm">{dossier.display_id || dossier.ref_number}</span>
                         {dossier.legal_hold && (
-                          <Badge variant="destructive" className="gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            Legal Hold
+                          <Badge variant="destructive" className="gap-1 text-[10px] sm:text-xs">
+                            <AlertCircle className="h-2 w-2 sm:h-3 sm:w-3" />
+                            <span className="hidden sm:inline">Legal Hold</span>
                           </Badge>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       {dossier.flow === "REP" && (
                         <Badge variant="outline" className="gap-1">
                           <Plane className="h-3 w-3" />
@@ -274,24 +278,24 @@ const Dossiers = () => {
                         <Badge variant="secondary">Niet gekozen</Badge>
                       )}
                     </TableCell>
-                    <TableCell>{dossier.deceased_name}</TableCell>
+                    <TableCell className="text-sm">{dossier.deceased_name}</TableCell>
                      <TableCell>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 sm:gap-2">
                         {dossier.status === "DOCS_PENDING" && !dossier.legal_hold && (
-                          <AlertCircle className="h-4 w-4 text-warning" />
+                          <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-warning" />
                         )}
-                        <Badge variant={getStatusVariant(dossier.status)}>
+                        <Badge variant={getStatusVariant(dossier.status)} className="text-[10px] sm:text-xs">
                           {dossier.status.replace(/_/g, " ")}
                         </Badge>
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell className="text-xs sm:text-sm text-muted-foreground hidden lg:table-cell">
                       {formatDate(dossier.deceased_dob)}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell className="text-xs sm:text-sm text-muted-foreground hidden lg:table-cell">
                       {formatDate(dossier.date_of_death)}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell className="text-xs sm:text-sm text-muted-foreground hidden xl:table-cell">
                       {formatDate(dossier.created_at)}
                     </TableCell>
                      <TableCell>
@@ -299,8 +303,10 @@ const Dossiers = () => {
                         variant="default"
                         size="sm"
                         onClick={() => handleViewDetails(dossier.id)}
+                        className="text-xs sm:text-sm"
                       >
-                        Open Dossier
+                        <span className="hidden sm:inline">Open Dossier</span>
+                        <span className="sm:hidden">Open</span>
                       </Button>
                     </TableCell>
                   </TableRow>

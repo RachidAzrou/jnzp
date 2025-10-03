@@ -49,11 +49,11 @@ export function TopBar() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 px-6 shadow-sm">
+    <header className="sticky top-0 z-10 flex h-14 sm:h-16 items-center gap-2 sm:gap-4 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 px-3 sm:px-6 shadow-sm">
       <SidebarTrigger />
       
-      <div className="flex-1 flex items-center gap-4">
-        <div className="relative w-full max-w-md">
+      <div className="flex-1 flex items-center gap-2 sm:gap-4">
+        <div className="relative w-full max-w-md hidden sm:block">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
@@ -63,19 +63,19 @@ export function TopBar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 sm:h-10 sm:w-10">
+          <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-destructive text-[9px] sm:text-[10px] font-bold text-destructive-foreground">
             3
           </span>
         </Button>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-2 rounded-md border px-3 py-2">
+            <Button variant="ghost" className="flex items-center gap-1 sm:gap-2 rounded-md border px-2 sm:px-3 py-2 h-9 sm:h-10">
               <User className="h-4 w-4" />
-              <div className="flex flex-col items-start">
+              <div className="hidden md:flex flex-col items-start">
                 <span className="text-sm font-medium">{userEmail || "Gebruiker"}</span>
                 <span className="text-xs text-muted-foreground">{getRoleDisplayName(role)}</span>
               </div>

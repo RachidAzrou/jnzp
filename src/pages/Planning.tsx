@@ -154,16 +154,16 @@ const Planning = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-0">
       <div>
-        <h1 className="text-3xl font-bold">Planning</h1>
-        <p className="text-muted-foreground mt-1">Overzicht van moskee ceremonies en vluchten</p>
+        <h1 className="text-2xl sm:text-3xl font-bold">Planning</h1>
+        <p className="text-sm sm:text-base text-muted-foreground mt-1">Overzicht van moskee ceremonies en vluchten</p>
       </div>
 
       {/* Filter Section */}
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex gap-4 items-center">
+        <CardContent className="pt-4 sm:pt-6">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -193,6 +193,7 @@ const Planning = () => {
                   setSearchDossier("");
                   setSearchName("");
                 }}
+                className="w-full sm:w-auto"
               >
                 Reset filters
               </Button>
@@ -205,14 +206,15 @@ const Planning = () => {
         {/* Mosque Services Section */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
                 Moskee Planning
               </CardTitle>
-              <Button size="sm">
+              <Button size="sm" className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
-                Nieuwe moskee afspraak
+                <span className="hidden sm:inline">Nieuwe moskee afspraak</span>
+                <span className="sm:hidden">Nieuwe afspraak</span>
               </Button>
             </div>
           </CardHeader>

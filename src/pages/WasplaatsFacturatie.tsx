@@ -16,6 +16,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Invoice = {
   id: string;
@@ -56,6 +64,11 @@ export default function WasplaatsFacturatie() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isNewInvoiceDialogOpen, setIsNewInvoiceDialogOpen] = useState(false);
+  const [dossierSearchTerm, setDossierSearchTerm] = useState("");
+  const [fdSearchTerm, setFdSearchTerm] = useState("");
+  const [searchedDossiers, setSearchedDossiers] = useState<any[]>([]);
+  const [searchedFDs, setSearchedFDs] = useState<any[]>([]);
 
   useEffect(() => {
     fetchInvoices();
@@ -116,6 +129,66 @@ export default function WasplaatsFacturatie() {
     );
   });
 
+  const searchDossiers = async () => {
+    if (!dossierSearchTerm.trim()) {
+      setSearchedDossiers([]);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("dossiers")
+        .select(`
+          id,
+          display_id,
+          deceased_name,
+          ref_number,
+          assigned_fd_org_id,
+          fd_organization:organizations!dossiers_assigned_fd_org_id_fkey (
+            name
+          )
+        `)
+        .or(`display_id.ilike.%${dossierSearchTerm}%,deceased_name.ilike.%${dossierSearchTerm}%,ref_number.ilike.%${dossierSearchTerm}%`)
+        .limit(10);
+
+      if (error) throw error;
+      setSearchedDossiers(data || []);
+    } catch (error) {
+      console.error("Error searching dossiers:", error);
+    }
+  };
+
+  const searchFDs = async () => {
+    if (!fdSearchTerm.trim()) {
+      setSearchedFDs([]);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("organizations")
+        .select("id, name, contact_email, contact_phone")
+        .eq("type", "FUNERAL_DIRECTOR")
+        .ilike("name", `%${fdSearchTerm}%`)
+        .limit(10);
+
+      if (error) throw error;
+      setSearchedFDs(data || []);
+    } catch (error) {
+      console.error("Error searching FDs:", error);
+    }
+  };
+
+  const handleDossierSelect = (dossierId: string) => {
+    setIsNewInvoiceDialogOpen(false);
+    navigate(`/wasplaats/facturatie/nieuw?dossier=${dossierId}`);
+  };
+
+  const handleFDSelect = (fdId: string) => {
+    setIsNewInvoiceDialogOpen(false);
+    navigate(`/wasplaats/facturatie/nieuw?fd=${fdId}`);
+  };
+
   if (loading) {
     return <div className="p-6">Laden...</div>;
   }
@@ -129,11 +202,127 @@ export default function WasplaatsFacturatie() {
             Beheer facturen voor wasplaatsdiensten
           </p>
         </div>
-        <Button onClick={() => navigate("/wasplaats/facturatie/nieuw")}>
+        <Button onClick={() => setIsNewInvoiceDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Nieuwe Factuur
         </Button>
       </div>
+
+      <Dialog open={isNewInvoiceDialogOpen} onOpenChange={setIsNewInvoiceDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Nieuwe Factuur Aanmaken</DialogTitle>
+            <DialogDescription>
+              Zoek een dossier of uitvaartonderneming om een factuur voor aan te maken
+            </DialogDescription>
+          </DialogHeader>
+
+          <Tabs defaultValue="dossier" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="dossier">Zoek op Dossier</TabsTrigger>
+              <TabsTrigger value="fd">Zoek op Uitvaartonderneming</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="dossier" className="space-y-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Zoek op dossier ID, referentie of naam overledene..."
+                  value={dossierSearchTerm}
+                  onChange={(e) => {
+                    setDossierSearchTerm(e.target.value);
+                    searchDossiers();
+                  }}
+                  className="pl-10"
+                />
+              </div>
+
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {searchedDossiers.length > 0 ? (
+                  searchedDossiers.map((dossier) => (
+                    <Card
+                      key={dossier.id}
+                      className="p-4 hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => handleDossierSelect(dossier.id)}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">{dossier.display_id || dossier.ref_number}</p>
+                          <p className="text-sm text-muted-foreground">{dossier.deceased_name}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {dossier.fd_organization?.name || 'Geen FD toegewezen'}
+                          </p>
+                        </div>
+                        <Button size="sm" variant="outline">
+                          Selecteer
+                        </Button>
+                      </div>
+                    </Card>
+                  ))
+                ) : dossierSearchTerm ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    Geen dossiers gevonden
+                  </p>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">
+                    Begin met typen om te zoeken
+                  </p>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="fd" className="space-y-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Zoek op naam uitvaartonderneming..."
+                  value={fdSearchTerm}
+                  onChange={(e) => {
+                    setFdSearchTerm(e.target.value);
+                    searchFDs();
+                  }}
+                  className="pl-10"
+                />
+              </div>
+
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {searchedFDs.length > 0 ? (
+                  searchedFDs.map((fd) => (
+                    <Card
+                      key={fd.id}
+                      className="p-4 hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => handleFDSelect(fd.id)}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">{fd.name}</p>
+                          {fd.contact_email && (
+                            <p className="text-sm text-muted-foreground">{fd.contact_email}</p>
+                          )}
+                          {fd.contact_phone && (
+                            <p className="text-xs text-muted-foreground">{fd.contact_phone}</p>
+                          )}
+                        </div>
+                        <Button size="sm" variant="outline">
+                          Selecteer
+                        </Button>
+                      </div>
+                    </Card>
+                  ))
+                ) : fdSearchTerm ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    Geen uitvaartondernemingen gevonden
+                  </p>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">
+                    Begin met typen om te zoeken
+                  </p>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
 
       <Card>
         <CardHeader>

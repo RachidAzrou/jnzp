@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Loader2 } from "lucide-react";
-import { authenticator } from "otplib";
+import * as OTPAuth from "otpauth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -80,10 +80,17 @@ export const TwoFactorVerification = ({ onVerified, onCancel }: TwoFactorVerific
       }
     } else {
       // Verify TOTP code
-      isValid = authenticator.verify({
-        token: code,
-        secret: settings.totp_secret || "",
+      const totp = new OTPAuth.TOTP({
+        issuer: "JanazApp",
+        label: "user",
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+        secret: OTPAuth.Secret.fromBase32(settings.totp_secret || ""),
       });
+
+      const delta = totp.validate({ token: code, window: 1 });
+      isValid = delta !== null;
     }
 
     if (!isValid) {

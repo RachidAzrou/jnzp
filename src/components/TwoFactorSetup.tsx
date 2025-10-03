@@ -5,21 +5,8 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Loader2, Copy, Download } from "lucide-react";
-import { authenticator } from "otplib";
+import * as OTPAuth from "otpauth";
 import QRCode from "qrcode";
-
-// Browser-compatible base32 secret generator for TOTP
-const generateRandomSecret = () => {
-  const base32Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-  const array = new Uint8Array(20);
-  crypto.getRandomValues(array);
-  
-  let secret = '';
-  for (let i = 0; i < array.length; i++) {
-    secret += base32Chars[array[i] % 32];
-  }
-  return secret;
-};
 
 export const TwoFactorSetup = () => {
   const [enabled, setEnabled] = useState(false);
@@ -67,8 +54,16 @@ export const TwoFactorSetup = () => {
         return;
       }
 
-      // Generate TOTP secret using browser-compatible method
-      const newSecret = generateRandomSecret();
+      // Create TOTP instance
+      const totp = new OTPAuth.TOTP({
+        issuer: "JanazApp",
+        label: user.email || "user",
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+      });
+
+      const newSecret = totp.secret.base32;
       setSecret(newSecret);
 
       // Generate recovery codes (10 codes)
@@ -77,15 +72,8 @@ export const TwoFactorSetup = () => {
       );
       setRecoveryCodes(codes);
 
-      // Create OTP Auth URL for QR code
-      const otpauth = authenticator.keyuri(
-        user.email || "user",
-        "JanazApp",
-        newSecret
-      );
-
-      // Generate QR code
-      const qrCodeDataUrl = await QRCode.toDataURL(otpauth);
+      // Generate QR code from the URI
+      const qrCodeDataUrl = await QRCode.toDataURL(totp.toString());
       setQrCode(qrCodeDataUrl);
       setSetupMode(true);
     } catch (error: any) {
@@ -109,51 +97,67 @@ export const TwoFactorSetup = () => {
       return;
     }
 
-    // Verify the TOTP code
-    const isValid = authenticator.verify({
-      token: verificationCode,
-      secret: secret,
-    });
-
-    if (!isValid) {
-      toast({
-        title: "Ongeldige code",
-        description: "De verificatiecode is onjuist. Probeer opnieuw.",
-        variant: "destructive",
+    try {
+      // Create TOTP instance with the secret
+      const totp = new OTPAuth.TOTP({
+        issuer: "JanazApp",
+        label: "user",
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+        secret: OTPAuth.Secret.fromBase32(secret),
       });
-      return;
-    }
 
-    setSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (user) {
-      const { error } = await supabase
-        .from("user_2fa_settings")
-        .upsert({
-          user_id: user.id,
-          totp_enabled: true,
-          totp_secret: secret,
-          recovery_codes: recoveryCodes,
-          last_verified_at: new Date().toISOString(),
-        });
-
-      if (error) {
+      // Verify the code
+      const delta = totp.validate({ token: verificationCode, window: 1 });
+      
+      if (delta === null) {
         toast({
-          title: "Fout",
-          description: error.message,
+          title: "Ongeldige code",
+          description: "De verificatiecode is onjuist. Probeer opnieuw.",
           variant: "destructive",
         });
-      } else {
-        setEnabled(true);
-        setSetupMode(false);
-        toast({
-          title: "2FA ingeschakeld",
-          description: "Tweefactorauthenticatie is nu actief voor uw account.",
-        });
+        return;
       }
+
+      setSaving(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        const { error } = await supabase
+          .from("user_2fa_settings")
+          .upsert({
+            user_id: user.id,
+            totp_enabled: true,
+            totp_secret: secret,
+            recovery_codes: recoveryCodes,
+            last_verified_at: new Date().toISOString(),
+          });
+
+        if (error) {
+          toast({
+            title: "Fout",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          setEnabled(true);
+          setSetupMode(false);
+          toast({
+            title: "2FA ingeschakeld",
+            description: "Tweefactorauthenticatie is nu actief voor uw account.",
+          });
+        }
+      }
+    } catch (error: any) {
+      toast({
+        title: "Verificatie mislukt",
+        description: error.message || "Er is een fout opgetreden bij het verifiëren.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const handleDisable = async () => {

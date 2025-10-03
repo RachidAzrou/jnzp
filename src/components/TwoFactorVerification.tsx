@@ -12,11 +12,10 @@ import { useToast } from "@/hooks/use-toast";
 interface TwoFactorVerificationProps {
   onVerified: () => void;
   onCancel: () => void;
-  userId: string;
-  userEmail: string;
+  nonce: string;
 }
 
-export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail }: TwoFactorVerificationProps) => {
+export const TwoFactorVerification = ({ onVerified, onCancel, nonce }: TwoFactorVerificationProps) => {
   const [code, setCode] = useState("");
   const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -42,30 +41,63 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
 
     try {
       console.log("=== 2FA Verification Start ===");
-      console.log("User ID:", userId);
-      console.log("User Email:", userEmail);
+      console.log("Nonce:", nonce);
       console.log("Code entered:", code);
       console.log("Is recovery mode:", isRecoveryMode);
 
-      // Get user's 2FA settings using the SECURITY DEFINER function
-      const { data: settingsData, error: settingsError } = await supabase
-        .rpc('get_2fa_settings_for_verification', {
-          p_user_id: userId
+      // Get user's 2FA settings met veilige nonce
+      const { data: rawResponse, error: settingsError } = await supabase
+        .rpc('get_2fa_settings_with_nonce', {
+          p_nonce: nonce
         });
       
-      console.log("2FA settings fetched:", settingsData, "Error:", settingsError);
+      console.log("2FA settings response:", rawResponse, "Error:", settingsError);
 
-      if (settingsError || !settingsData || settingsData.length === 0) {
+      if (settingsError || !rawResponse) {
         toast({
           title: "Fout",
-          description: "2FA instellingen niet gevonden.",
+          description: "Kon 2FA instellingen niet ophalen.",
           variant: "destructive",
         });
         setVerifying(false);
         return;
       }
 
-      const settings = settingsData[0];
+      // Type assertion voor JSON response
+      const response = rawResponse as {
+        valid: boolean;
+        totp_enabled?: boolean;
+        totp_secret?: string;
+        recovery_codes?: string[];
+        user_id?: string;
+        error?: string;
+      };
+
+      if (!response.valid) {
+        toast({
+          title: "Sessie verlopen",
+          description: response.error || "De verificatie sessie is verlopen. Log opnieuw in.",
+          variant: "destructive",
+        });
+        onCancel();
+        return;
+      }
+
+      if (!response.totp_enabled) {
+        toast({
+          title: "2FA niet ingeschakeld",
+          description: "Tweefactorauthenticatie is niet ingeschakeld voor dit account.",
+          variant: "destructive",
+        });
+        onCancel();
+        return;
+      }
+
+      const settings = {
+        totp_secret: response.totp_secret || "",
+        recovery_codes: response.recovery_codes || [],
+        user_id: response.user_id || ""
+      };
 
       let isValid = false;
 
@@ -76,9 +108,9 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
         console.log("Recovery code valid:", isValid);
         
         if (isValid) {
-          // Remove used recovery code using SECURITY DEFINER function
+          // Remove used recovery code
           await supabase.rpc('update_2fa_verification', {
-            p_user_id: userId,
+            p_user_id: settings.user_id,
             p_recovery_code: code.toUpperCase()
           });
         }
@@ -117,10 +149,10 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
         return;
       }
 
-      // Update last verified timestamp using SECURITY DEFINER function
+      // Update last verified timestamp
       console.log("Updating last verified timestamp...");
       await supabase.rpc('update_2fa_verification', {
-        p_user_id: userId,
+        p_user_id: settings.user_id,
         p_recovery_code: null
       });
 
@@ -144,7 +176,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel, userId, userEmail 
     }
   };
 
-  console.log("TwoFactorVerification render - userId:", userId, "email:", userEmail);
+  console.log("TwoFactorVerification render - nonce:", nonce);
 
   return (
     <Card className="w-full max-w-md mx-auto relative z-10">

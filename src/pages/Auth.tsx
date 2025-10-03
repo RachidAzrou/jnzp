@@ -145,16 +145,23 @@ const Auth = () => {
             .maybeSingle();
 
           if (settings?.totp_enabled) {
-            // Store session data for 2FA verification
-            setPendingSession({
-              userId: data.user.id,
-              email: data.user.email,
+            // Maak een veilige, kortstondige nonce
+            const { data: nonceData, error: nonceError } = await supabase.rpc('create_2fa_nonce', {
+              p_user_id: data.user.id,
+              p_ip: null,
+              p_user_agent: navigator.userAgent
             });
+
+            if (nonceError || !nonceData) {
+              throw new Error("Kon geen 2FA verificatie starten");
+            }
+
+            // Store nonce (NOT session data)
+            setPendingSession({ nonce: nonceData });
             setShow2FAVerification(true);
             setLoading(false);
             
             // CRITICAL: Sign out immediately to prevent bypass
-            // User will be re-authenticated after 2FA verification
             await supabase.auth.signOut();
             return;
           }
@@ -608,8 +615,7 @@ const Auth = () => {
         <TwoFactorVerification 
           onVerified={handle2FAVerified}
           onCancel={handle2FACancel}
-          userId={pendingSession?.userId || ""}
-          userEmail={pendingSession?.email || ""}
+          nonce={pendingSession?.nonce || ""}
         />
       </div>
     );

@@ -1491,6 +1491,39 @@ export type Database = {
         }
         Relationships: []
       }
+      pending_2fa: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          ip: unknown | null
+          nonce: string
+          used: boolean
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip?: unknown | null
+          nonce?: string
+          used?: boolean
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip?: unknown | null
+          nonce?: string
+          used?: boolean
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       polis_checks: {
         Row: {
           checked_at: string
@@ -1891,17 +1924,21 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["priority"]
       }
+      cleanup_expired_2fa_nonces: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      create_2fa_nonce: {
+        Args: { p_ip?: string; p_user_agent?: string; p_user_id: string }
+        Returns: string
+      }
       generate_invitation_code: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      get_2fa_settings_for_verification: {
-        Args: { p_user_id: string }
-        Returns: {
-          recovery_codes: string[]
-          totp_enabled: boolean
-          totp_secret: string
-        }[]
+      get_2fa_settings_with_nonce: {
+        Args: { p_nonce: string }
+        Returns: Json
       }
       has_role: {
         Args: {

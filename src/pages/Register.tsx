@@ -202,63 +202,63 @@ const Register = () => {
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
       
-      <Card className="w-full max-w-2xl relative backdrop-blur-sm bg-card/95 shadow-2xl border-border/50">
-        <CardHeader className="text-center space-y-6 pb-8">
+      <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/95 shadow-2xl border-border/50">
+        <CardHeader className="text-center space-y-4 pb-6">
           <div className="flex justify-center">
             <img 
               src={logoAuth} 
               alt="JanazApp Logo" 
-              className="h-32 w-32 object-contain animate-fade-in"
+              className="h-24 w-24 object-contain animate-fade-in"
             />
           </div>
-          <div className="space-y-2">
-            <CardTitle className="text-2xl">Registreren bij JanazApp</CardTitle>
-            <CardDescription className="text-base">
+          <div className="space-y-1">
+            <CardTitle className="text-xl">Registreren bij JanazApp</CardTitle>
+            <CardDescription>
               Maak een account aan om aan de slag te gaan
             </CardDescription>
           </div>
         </CardHeader>
         
-        <CardContent className="pb-8">
+        <CardContent className="pb-6">
           {registrationStep === "role" ? (
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Progress Indicator */}
-              <div className="flex items-center justify-center gap-2 mb-8">
+              <div className="flex items-center justify-center gap-2 mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-medium">
+                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
                     1
                   </div>
-                  <span className="text-sm font-medium">Kies rol</span>
+                  <span className="text-xs font-medium">Kies rol</span>
                 </div>
-                <div className="w-16 h-0.5 bg-muted"></div>
+                <div className="w-12 h-0.5 bg-muted"></div>
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-muted text-muted-foreground flex items-center justify-center font-medium">
+                  <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-medium">
                     2
                   </div>
-                  <span className="text-sm text-muted-foreground">Gegevens</span>
+                  <span className="text-xs text-muted-foreground">Gegevens</span>
                 </div>
               </div>
 
-              <div className="text-center space-y-2 mb-8">
-                <h3 className="font-semibold text-2xl">Welke rol beschrijft u het best?</h3>
-                <p className="text-muted-foreground">
+              <div className="text-center space-y-1 mb-4">
+                <h3 className="font-semibold text-lg">Welke rol beschrijft u het best?</h3>
+                <p className="text-sm text-muted-foreground">
                   Kies de optie die bij uw situatie past
                 </p>
               </div>
 
-              <div className="grid gap-4 max-w-xl mx-auto">
+              <div className="grid gap-2">
                 {(["family", "funeral_director", "mosque", "wasplaats", "insurer"] as UserRole[]).map((role) => (
                   <button
                     key={role}
                     type="button"
                     onClick={() => setSelectedRole(role)}
-                    className={`relative flex items-center gap-4 p-6 rounded-xl border-2 transition-all duration-200 text-left group hover:border-primary hover:shadow-lg ${
+                    className={`relative flex items-center gap-3 p-4 rounded-lg border-2 transition-all duration-200 text-left group hover:border-primary hover:shadow-md ${
                       selectedRole === role 
-                        ? 'border-primary bg-primary/5 shadow-md' 
+                        ? 'border-primary bg-primary/5 shadow-sm' 
                         : 'border-border hover:bg-accent/50'
                     }`}
                   >
-                    <div className={`p-4 rounded-lg transition-colors ${
+                    <div className={`p-2.5 rounded-lg transition-colors ${
                       selectedRole === role 
                         ? 'bg-primary/10 text-primary' 
                         : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
@@ -266,11 +266,11 @@ const Register = () => {
                       {getRoleIcon(role)}
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-lg">{getRoleLabel(role)}</div>
+                      <div className="font-medium">{getRoleLabel(role)}</div>
                     </div>
                     {selectedRole === role && (
-                      <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
-                        <svg className="w-5 h-5 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                        <svg className="w-3 h-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -279,39 +279,39 @@ const Register = () => {
                 ))}
               </div>
 
-              <div className="flex gap-3 max-w-xl mx-auto mt-8">
+              <div className="flex gap-2 mt-4">
                 <Button
                   variant="outline"
                   onClick={() => navigate("/auth")}
-                  className="flex-1 h-12"
+                  className="flex-1 h-11"
                 >
-                  Terug naar inloggen
+                  Terug
                 </Button>
                 <Button
                   onClick={() => selectedRole && setRegistrationStep("details")}
                   disabled={!selectedRole}
-                  className="flex-1 h-12 text-base"
+                  className="flex-1 h-11"
                 >
-                  Doorgaan naar gegevens
+                  Doorgaan
                 </Button>
               </div>
             </div>
           ) : (
-            <div className="space-y-6 max-w-xl mx-auto">
+            <div className="space-y-4">
               {/* Progress Indicator */}
-              <div className="flex items-center justify-center gap-2 mb-6">
+              <div className="flex items-center justify-center gap-2 mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-medium">
+                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
                     ✓
                   </div>
-                  <span className="text-sm font-medium">Rol</span>
+                  <span className="text-xs font-medium">Rol</span>
                 </div>
-                <div className="w-16 h-0.5 bg-primary"></div>
+                <div className="w-12 h-0.5 bg-primary"></div>
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-medium">
+                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
                     2
                   </div>
-                  <span className="text-sm font-medium">Gegevens</span>
+                  <span className="text-xs font-medium">Gegevens</span>
                 </div>
               </div>
 
@@ -322,71 +322,71 @@ const Register = () => {
                   setRegistrationStep("role");
                   setSelectedRole(null);
                 }}
-                className="mb-4"
+                className="mb-2"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Wijzig rol
               </Button>
 
-              <div className="text-center pb-6">
-                <div className="inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-primary/10 border border-primary/20">
+              <div className="text-center pb-3">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20">
                   <div className="text-primary">
                     {selectedRole && getRoleIcon(selectedRole)}
                   </div>
-                  <span className="font-semibold text-lg">
+                  <span className="font-medium text-sm">
                     {selectedRole && getRoleLabel(selectedRole)}
                   </span>
                 </div>
               </div>
 
               {selectedRole === "family" ? (
-                <form onSubmit={handleFamilySignup} className="space-y-5">
-                  <div className="grid grid-cols-2 gap-4">
+                <form onSubmit={handleFamilySignup} className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
-                      <Label htmlFor="first-name">Voornaam</Label>
+                      <Label htmlFor="first-name" className="text-sm">Voornaam</Label>
                       <Input
                         id="first-name"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         required
-                        className="h-11"
+                        className="h-10"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="last-name">Achternaam</Label>
+                      <Label htmlFor="last-name" className="text-sm">Achternaam</Label>
                       <Input
                         id="last-name"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         required
-                        className="h-11"
+                        className="h-10"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Telefoonnummer</Label>
+                    <Label htmlFor="phone" className="text-sm">Telefoonnummer</Label>
                     <Input
                       id="phone"
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
-                      className="h-11"
+                      className="h-10"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">E-mailadres</Label>
+                    <Label htmlFor="email" className="text-sm">E-mailadres</Label>
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="h-11"
+                      className="h-10"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Wachtwoord</Label>
+                    <Label htmlFor="password" className="text-sm">Wachtwoord</Label>
                     <Input
                       id="password"
                       type="password"
@@ -394,130 +394,130 @@ const Register = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       minLength={12}
-                      className="h-11"
+                      className="h-10"
                     />
                     <p className="text-xs text-muted-foreground">Minimaal 12 tekens</p>
                   </div>
-                  <Button type="submit" className="w-full h-12 mt-6" disabled={loading}>
+                  <Button type="submit" className="w-full h-10 mt-4" disabled={loading}>
                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     Maak account aan
                   </Button>
                 </form>
               ) : (
-                <form onSubmit={handleProfessionalSignup} className="space-y-6">
-                  <div className="space-y-4 p-6 bg-muted/30 rounded-xl border">
-                    <h4 className="font-semibold flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-primary"></div>
+                <form onSubmit={handleProfessionalSignup} className="space-y-4">
+                  <div className="space-y-3 p-4 bg-muted/30 rounded-lg border">
+                    <h4 className="font-semibold text-sm flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
                       Organisatiegegevens
                     </h4>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="org-name">Organisatienaam</Label>
+                    <div className="space-y-2.5">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="org-name" className="text-sm">Organisatienaam</Label>
                         <Input
                           id="org-name"
                           value={orgName}
                           onChange={(e) => setOrgName(e.target.value)}
                           required
-                          className="h-11"
+                          className="h-10"
                         />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="org-registration">Ondernemingsnummer</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="org-registration" className="text-sm">Ondernemingsnummer</Label>
                         <Input
                           id="org-registration"
                           value={orgRegistrationNumber}
                           onChange={(e) => setOrgRegistrationNumber(e.target.value)}
                           placeholder="Bv. 0123.456.789"
                           required
-                          className="h-11"
+                          className="h-10"
                         />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="org-address">Adres</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="org-address" className="text-sm">Adres</Label>
                         <Input
                           id="org-address"
                           value={orgAddress}
                           onChange={(e) => setOrgAddress(e.target.value)}
                           required
-                          className="h-11"
+                          className="h-10"
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="org-city">Stad</Label>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="org-city" className="text-sm">Stad</Label>
                           <Input
                             id="org-city"
                             value={orgCity}
                             onChange={(e) => setOrgCity(e.target.value)}
                             required
-                            className="h-11"
+                            className="h-10"
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="org-postal">Postcode</Label>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="org-postal" className="text-sm">Postcode</Label>
                           <Input
                             id="org-postal"
                             value={orgPostalCode}
                             onChange={(e) => setOrgPostalCode(e.target.value)}
                             required
-                            className="h-11"
+                            className="h-10"
                           />
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <h4 className="font-semibold flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <div className="space-y-2.5">
+                    <h4 className="font-semibold text-sm flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
                       Contactpersoon
                     </h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="contact-first">Voornaam</Label>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="contact-first" className="text-sm">Voornaam</Label>
                         <Input
                           id="contact-first"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
                           required
-                          className="h-11"
+                          className="h-10"
                         />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="contact-last">Achternaam</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="contact-last" className="text-sm">Achternaam</Label>
                         <Input
                           id="contact-last"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
                           required
-                          className="h-11"
+                          className="h-10"
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-phone">Telefoon</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="contact-phone" className="text-sm">Telefoon</Label>
                       <Input
                         id="contact-phone"
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         required
-                        className="h-11"
+                        className="h-10"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-email">E-mail</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="contact-email" className="text-sm">E-mail</Label>
                       <Input
                         id="contact-email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="h-11"
+                        className="h-10"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-password">Wachtwoord</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="contact-password" className="text-sm">Wachtwoord</Label>
                       <Input
                         id="contact-password"
                         type="password"
@@ -525,18 +525,18 @@ const Register = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         minLength={12}
-                        className="h-11"
+                        className="h-10"
                       />
                       <p className="text-xs text-muted-foreground">Minimaal 12 tekens</p>
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full h-12 mt-6" disabled={loading}>
+                  <Button type="submit" className="w-full h-10 mt-4" disabled={loading}>
                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     Dien aanvraag in
                   </Button>
 
-                  <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-900">
+                  <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-900">
                     <p className="text-xs text-blue-900 dark:text-blue-100 text-center leading-relaxed">
                       Uw aanvraag wordt beoordeeld door een administrator. U ontvangt bericht zodra uw account is goedgekeurd.
                     </p>

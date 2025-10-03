@@ -187,7 +187,7 @@ const Dashboard = () => {
                 <CardDescription className="mt-2.5 text-base">{t("dashboard.dossiersRequiringAttention")}</CardDescription>
               </div>
             </CardHeader>
-          <CardContent className="pt-6">
+            <CardContent className="pt-8">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -266,7 +266,7 @@ const Dashboard = () => {
                 <CardDescription className="mt-2.5 text-base">{t("dashboard.tasksToday")}</CardDescription>
               </div>
             </CardHeader>
-          <CardContent className="pt-6">
+            <CardContent className="pt-8">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -346,7 +346,7 @@ const Dashboard = () => {
               <CardDescription className="mt-2.5 text-base">{t("dashboard.lastActivities")}</CardDescription>
             </div>
           </CardHeader>
-        <CardContent className="pt-6">
+          <CardContent className="pt-8">
           <Table>
             <TableHeader>
               <TableRow>

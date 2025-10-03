@@ -13,20 +13,20 @@ interface KPICardProps {
 
 export function KPICard({ title, value, icon: Icon, trend }: KPICardProps) {
   return (
-    <Card className="shadow-md border-border/50 hover:shadow-lg transition-shadow">
-      <CardContent className="pt-6">
-        <div className="flex items-center justify-between gap-4">
+    <Card className="shadow-md border-border/50 hover:shadow-lg transition-shadow overflow-hidden">
+      <CardContent className="pt-8">
+        <div className="flex items-center justify-between gap-6">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-muted-foreground truncate">{title}</p>
-            <p className="text-3xl font-bold mt-2 tracking-tight">{value}</p>
+            <p className="text-sm font-medium text-muted-foreground truncate mb-2">{title}</p>
+            <p className="text-4xl font-bold mt-3 tracking-tight">{value}</p>
             {trend && (
-              <p className={`text-xs mt-2 font-medium ${trend.positive ? 'text-success' : 'text-destructive'}`}>
+              <p className={`text-sm mt-3 font-medium ${trend.positive ? 'text-success' : 'text-destructive'}`}>
                 {trend.value}
               </p>
             )}
           </div>
-          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 flex-shrink-0">
-            <Icon className="h-7 w-7 text-primary" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 flex-shrink-0">
+            <Icon className="h-8 w-8 text-primary" />
           </div>
         </div>
       </CardContent>

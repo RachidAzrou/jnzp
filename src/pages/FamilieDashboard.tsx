@@ -374,78 +374,78 @@ export default function FamilieDashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid lg:grid-cols-[1fr,auto] gap-8 items-start">
-            {/* Left: Timeline steps */}
-            <div className="space-y-0">
-              {tasks.map((task, index) => {
-                const Icon = task.icon;
-                const isLast = index === tasks.length - 1;
-                
-                return (
-                  <div key={task.id} className="relative flex gap-4 pb-8">
-                    {/* Timeline line */}
-                    {!isLast && (
-                      <div 
-                        className={cn(
-                          "absolute left-6 top-14 w-0.5 h-full -translate-x-1/2",
-                          task.completed ? "bg-primary" : "bg-muted"
-                        )}
-                      />
-                    )}
+            <div className="grid lg:grid-cols-[1fr,auto] gap-12 items-start">
+              {/* Left: Timeline steps */}
+              <div className="space-y-0">
+                {tasks.map((task, index) => {
+                  const Icon = task.icon;
+                  const isLast = index === tasks.length - 1;
+                  
+                  return (
+                    <div key={task.id} className="relative flex gap-6 pb-10">
+                      {/* Timeline line */}
+                      {!isLast && (
+                        <div 
+                          className={cn(
+                            "absolute left-7 top-16 w-0.5 h-full -translate-x-1/2",
+                            task.completed ? "bg-primary" : "bg-muted"
+                          )}
+                        />
+                      )}
                     
-                    {/* Step circle with icon */}
-                    <div className="relative flex-shrink-0">
-                      <div
-                        className={cn(
-                          "w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all",
-                          task.completed
-                            ? "bg-primary border-primary text-primary-foreground"
-                            : "bg-background border-muted text-muted-foreground"
-                        )}
-                      >
-                        {task.completed ? (
-                          <CheckCircle2 className="h-6 w-6" />
-                        ) : (
-                          <Icon className="h-5 w-5" />
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* Step content */}
-                    <div className="flex-1 pt-1">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className={cn(
-                            "font-semibold text-base mb-1",
-                            task.completed && "text-foreground"
-                          )}>
-                            Step {index + 1}: {task.title}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {task.description}
-                          </p>
-                        </div>
-                        <Button
-                          variant={task.completed ? "outline" : "default"}
-                          size="sm"
-                          onClick={() => task.route !== '#' && navigate(task.route)}
-                          disabled={task.route === '#'}
-                          className="flex-shrink-0"
+                      {/* Step circle with icon */}
+                      <div className="relative flex-shrink-0">
+                        <div
+                          className={cn(
+                            "w-14 h-14 rounded-full border-4 flex items-center justify-center transition-all",
+                            task.completed
+                              ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20"
+                              : "bg-background border-muted text-muted-foreground"
+                          )}
                         >
-                          {task.action}
-                        </Button>
+                          {task.completed ? (
+                            <CheckCircle2 className="h-7 w-7" />
+                          ) : (
+                            <Icon className="h-6 w-6" />
+                          )}
+                        </div>
+                      </div>
+                    
+                      {/* Step content */}
+                      <div className="flex-1 pt-2">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className={cn(
+                              "font-semibold text-lg mb-2",
+                              task.completed && "text-foreground"
+                            )}>
+                              Step {index + 1}: {task.title}
+                            </p>
+                            <p className="text-base text-muted-foreground">
+                              {task.description}
+                            </p>
+                          </div>
+                          <Button
+                            variant={task.completed ? "outline" : "default"}
+                            size="default"
+                            onClick={() => task.route !== '#' && navigate(task.route)}
+                            disabled={task.route === '#'}
+                            className="flex-shrink-0"
+                          >
+                            {task.action}
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+              
+              {/* Right: Circular progress */}
+              <div className="flex justify-center lg:justify-end">
+                <CircularProgress value={progress} size={260} strokeWidth={18} />
+              </div>
             </div>
-            
-            {/* Right: Circular progress */}
-            <div className="flex justify-center lg:justify-end">
-              <CircularProgress value={progress} size={240} strokeWidth={16} />
-            </div>
-          </div>
           </CardContent>
         </Card>
 

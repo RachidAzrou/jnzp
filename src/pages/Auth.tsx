@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import logoAuth from "@/assets/logo-auth.png";
+import logoAuth from "@/assets/logo-vertical-new.png";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -110,11 +110,8 @@ const Auth = () => {
             </div>
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Welkom bij JanazApp
-            </CardTitle>
             <CardDescription className="text-base">
-              Uitvaartondernemer Portal
+              Centraal platform voor uitvaartzorg
             </CardDescription>
           </div>
         </CardHeader>

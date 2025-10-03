@@ -154,15 +154,15 @@ const Auth = () => {
       if (error) throw error;
       if (!data.user) throw new Error("User creation failed");
 
-      const orgType = selectedRole === "funeral_director" ? "FD" : 
+      const orgType = selectedRole === "funeral_director" ? "FUNERAL_DIRECTOR" : 
                       selectedRole === "mosque" ? "MOSQUE" :
                       selectedRole === "wasplaats" ? "WASPLAATS" : "INSURER";
 
       const { data: orgData, error: orgError } = await supabase
         .from("organizations")
-        .insert({
+        .insert([{
           name: orgName,
-          type: orgType,
+          type: orgType as "FUNERAL_DIRECTOR" | "MOSQUE" | "WASPLAATS" | "INSURER",
           verification_status: "PENDING_VERIFICATION",
           vat_number: orgVatNumber,
           address: orgAddress,
@@ -171,7 +171,7 @@ const Auth = () => {
           contact_email: email,
           contact_phone: phone,
           requested_by: data.user.id,
-        })
+        }])
         .select()
         .single();
 
@@ -205,12 +205,14 @@ const Auth = () => {
         }
       }
 
-      await supabase.rpc("log_admin_action", {
-        p_action: "ORG_REGISTRATION_REQUEST",
-        p_target_type: "Organization",
-        p_target_id: orgData.id,
-        p_metadata: { org_type: orgType, email: email },
-      });
+      if (orgData) {
+        await supabase.rpc("log_admin_action", {
+          p_action: "ORG_REGISTRATION_REQUEST",
+          p_target_type: "Organization",
+          p_target_id: orgData.id,
+          p_metadata: { org_type: orgType, email: email },
+        });
+      }
 
       toast({
         title: "Aanvraag ingediend",

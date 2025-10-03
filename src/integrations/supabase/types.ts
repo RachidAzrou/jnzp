@@ -1991,10 +1991,6 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
-      verify_totp_with_replay_guard: {
-        Args: { p_nonce: string; p_token: string }
-        Returns: Json
-      }
     }
     Enums: {
       app_role:

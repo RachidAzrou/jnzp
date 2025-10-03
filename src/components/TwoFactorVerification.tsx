@@ -186,9 +186,16 @@ export const TwoFactorVerification = ({ onVerified, onCancel }: TwoFactorVerific
 
         <div className="flex flex-col gap-2">
           <Button 
-            onClick={handleVerify} 
+            onClick={(e) => {
+              e.preventDefault();
+              console.log("Verify button clicked!");
+              console.log("Verifying state:", verifying);
+              console.log("Code length:", code.length);
+              handleVerify();
+            }} 
             disabled={verifying || (!isRecoveryMode && code.length !== 6) || (isRecoveryMode && code.length !== 8)}
             className="w-full"
+            type="button"
           >
             {verifying ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
             Verifiëren

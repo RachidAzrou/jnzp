@@ -8,11 +8,17 @@ import { Shield, Loader2, Copy, Download } from "lucide-react";
 import { authenticator } from "otplib";
 import QRCode from "qrcode";
 
-// Browser-compatible random bytes generator
+// Browser-compatible base32 secret generator for TOTP
 const generateRandomSecret = () => {
+  const base32Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
   const array = new Uint8Array(20);
   crypto.getRandomValues(array);
-  return Array.from(array, byte => byte.toString(36)).join('').substring(0, 32).toUpperCase();
+  
+  let secret = '';
+  for (let i = 0; i < array.length; i++) {
+    secret += base32Chars[array[i] % 32];
+  }
+  return secret;
 };
 
 export const TwoFactorSetup = () => {

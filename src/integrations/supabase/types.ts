@@ -771,6 +771,56 @@ export type Database = {
           },
         ]
       }
+      invitation_links: {
+        Row: {
+          code: string
+          created_at: string | null
+          created_by: string
+          current_uses: number | null
+          expires_at: string
+          id: string
+          max_uses: number | null
+          organization_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          created_by: string
+          current_uses?: number | null
+          expires_at: string
+          id?: string
+          max_uses?: number | null
+          organization_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          created_by?: string
+          current_uses?: number | null
+          expires_at?: string
+          id?: string
+          max_uses?: number | null
+          organization_id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitation_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_actions: {
         Row: {
           action: string
@@ -1310,6 +1360,44 @@ export type Database = {
           },
         ]
       }
+      organization_verification_docs: {
+        Row: {
+          document_type: string
+          file_name: string
+          file_url: string
+          id: string
+          organization_id: string
+          uploaded_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          document_type: string
+          file_name: string
+          file_url: string
+          id?: string
+          organization_id: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          document_type?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          organization_id?: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_verification_docs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           address: string | null
@@ -1322,6 +1410,9 @@ export type Database = {
           name: string
           postal_code: string | null
           registration_number: string | null
+          rejection_reason: string | null
+          requested_at: string | null
+          requested_by: string | null
           type: Database["public"]["Enums"]["org_type"]
           updated_at: string
           vat_number: string | null
@@ -1340,6 +1431,9 @@ export type Database = {
           name: string
           postal_code?: string | null
           registration_number?: string | null
+          rejection_reason?: string | null
+          requested_at?: string | null
+          requested_by?: string | null
           type: Database["public"]["Enums"]["org_type"]
           updated_at?: string
           vat_number?: string | null
@@ -1358,6 +1452,9 @@ export type Database = {
           name?: string
           postal_code?: string | null
           registration_number?: string | null
+          rejection_reason?: string | null
+          requested_at?: string | null
+          requested_by?: string | null
           type?: Database["public"]["Enums"]["org_type"]
           updated_at?: string
           vat_number?: string | null
@@ -1413,6 +1510,9 @@ export type Database = {
           id: string
           last_name: string | null
           phone: string | null
+          phone_verified: boolean | null
+          status: Database["public"]["Enums"]["user_status"] | null
+          two_fa_enabled: boolean | null
           updated_at: string
         }
         Insert: {
@@ -1422,6 +1522,9 @@ export type Database = {
           id: string
           last_name?: string | null
           phone?: string | null
+          phone_verified?: boolean | null
+          status?: Database["public"]["Enums"]["user_status"] | null
+          two_fa_enabled?: boolean | null
           updated_at?: string
         }
         Update: {
@@ -1431,6 +1534,9 @@ export type Database = {
           id?: string
           last_name?: string | null
           phone?: string | null
+          phone_verified?: boolean | null
+          status?: Database["public"]["Enums"]["user_status"] | null
+          two_fa_enabled?: boolean | null
           updated_at?: string
         }
         Relationships: []
@@ -1719,6 +1825,10 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["priority"]
       }
+      generate_invitation_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1815,6 +1925,13 @@ export type Database = {
         | "LEGAL_HOLD_FOLLOW_UP"
         | "TRANSPORT_PREPARE"
         | "DOC_REVIEW"
+      user_status:
+        | "PENDING_REGISTRATION"
+        | "EMAIL_VERIFIED"
+        | "TWOFA_VERIFIED"
+        | "PENDING_VERIFICATION"
+        | "ACTIVE"
+        | "DISABLED"
       wash_status:
         | "PENDING"
         | "SCHEDULED"
@@ -2032,6 +2149,14 @@ export const Constants = {
         "LEGAL_HOLD_FOLLOW_UP",
         "TRANSPORT_PREPARE",
         "DOC_REVIEW",
+      ],
+      user_status: [
+        "PENDING_REGISTRATION",
+        "EMAIL_VERIFIED",
+        "TWOFA_VERIFIED",
+        "PENDING_VERIFICATION",
+        "ACTIVE",
+        "DISABLED",
       ],
       wash_status: [
         "PENDING",

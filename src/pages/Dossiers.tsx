@@ -218,8 +218,8 @@ const Dossiers = () => {
               </Button>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
+          </CardHeader>
+          <CardContent className="pt-8">
           <Table>
             <TableHeader>
                 <TableRow>

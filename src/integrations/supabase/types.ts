@@ -1854,6 +1854,24 @@ export type Database = {
           },
         ]
       }
+      user_totp_replay_guard: {
+        Row: {
+          created_at: string
+          period: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          period: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          period?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       wash_services: {
         Row: {
           cool_cell_id: string | null
@@ -1928,6 +1946,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_old_replay_guards: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_2fa_nonce: {
         Args: { p_ip?: string; p_user_agent?: string; p_user_id: string }
         Returns: string
@@ -1968,6 +1990,10 @@ export type Database = {
       user_requires_2fa: {
         Args: { user_id: string }
         Returns: boolean
+      }
+      verify_totp_with_replay_guard: {
+        Args: { p_nonce: string; p_token: string }
+        Returns: Json
       }
     }
     Enums: {

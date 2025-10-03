@@ -40,130 +40,153 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce }: TwoFactor
     setVerifying(true);
 
     try {
-      console.log("=== 2FA Verification Start ===");
-      console.log("Nonce:", nonce);
-      console.log("Code entered:", code);
-      console.log("Is recovery mode:", isRecoveryMode);
-
-      // Get user's 2FA settings met veilige nonce
-      const { data: rawResponse, error: settingsError } = await supabase
-        .rpc('get_2fa_settings_with_nonce', {
-          p_nonce: nonce
-        });
-      
-      console.log("2FA settings response:", rawResponse, "Error:", settingsError);
-
-      if (settingsError || !rawResponse) {
-        toast({
-          title: "Fout",
-          description: "Kon 2FA instellingen niet ophalen.",
-          variant: "destructive",
-        });
-        setVerifying(false);
-        return;
-      }
-
-      // Type assertion voor JSON response
-      const response = rawResponse as {
-        valid: boolean;
-        totp_enabled?: boolean;
-        totp_secret?: string;
-        recovery_codes?: string[];
-        user_id?: string;
-        error?: string;
-      };
-
-      if (!response.valid) {
-        toast({
-          title: "Sessie verlopen",
-          description: response.error || "De verificatie sessie is verlopen. Log opnieuw in.",
-          variant: "destructive",
-        });
-        onCancel();
-        return;
-      }
-
-      if (!response.totp_enabled) {
-        toast({
-          title: "2FA niet ingeschakeld",
-          description: "Tweefactorauthenticatie is niet ingeschakeld voor dit account.",
-          variant: "destructive",
-        });
-        onCancel();
-        return;
-      }
-
-      const settings = {
-        totp_secret: response.totp_secret || "",
-        recovery_codes: response.recovery_codes || [],
-        user_id: response.user_id || ""
-      };
-
-      let isValid = false;
-
       if (isRecoveryMode) {
-        console.log("Checking recovery code...");
-        // Check if recovery code is valid
-        isValid = settings.recovery_codes?.includes(code.toUpperCase()) || false;
-        console.log("Recovery code valid:", isValid);
-        
-        if (isValid) {
-          // Remove used recovery code
-          await supabase.rpc('update_2fa_verification', {
-            p_user_id: settings.user_id,
-            p_recovery_code: code.toUpperCase()
+        // Recovery code flow - check via get_2fa_settings_with_nonce
+        const { data: rawResponse, error: settingsError } = await supabase
+          .rpc('get_2fa_settings_with_nonce', {
+            p_nonce: nonce
           });
-        }
-      } else {
-        console.log("Verifying TOTP code...");
-        console.log("Secret from DB:", settings.totp_secret);
         
-        // Verify TOTP code with larger window for time drift
-        const totp = new OTPAuth.TOTP({
-          issuer: "JanazApp",
-          label: "user",
-          algorithm: "SHA1",
-          digits: 6,
-          period: 30,
-          secret: OTPAuth.Secret.fromBase32(settings.totp_secret || ""),
+        if (settingsError || !rawResponse) {
+          toast({
+            title: "Fout",
+            description: "Kon 2FA instellingen niet ophalen.",
+            variant: "destructive",
+          });
+          setVerifying(false);
+          return;
+        }
+
+        const response = rawResponse as {
+          valid: boolean;
+          totp_enabled?: boolean;
+          recovery_codes?: string[];
+          user_id?: string;
+          error?: string;
+        };
+
+        if (!response.valid) {
+          toast({
+            title: "Sessie verlopen",
+            description: response.error || "De verificatie sessie is verlopen. Log opnieuw in.",
+            variant: "destructive",
+          });
+          onCancel();
+          return;
+        }
+
+        const isValid = response.recovery_codes?.includes(code.toUpperCase()) || false;
+        
+        if (!isValid) {
+          toast({
+            title: "Ongeldige recovery code",
+            description: "De recovery code is onjuist.",
+            variant: "destructive",
+          });
+          setVerifying(false);
+          return;
+        }
+
+        // Remove used recovery code
+        await supabase.rpc('update_2fa_verification', {
+          p_user_id: response.user_id,
+          p_recovery_code: code.toUpperCase()
         });
 
-        const currentToken = totp.generate();
-        console.log("Current valid token:", currentToken);
-        console.log("User entered token:", code);
-
-        const delta = totp.validate({ token: code, window: 2 });
-        console.log("Validation delta:", delta);
-        isValid = delta !== null;
-      }
-
-      console.log("Final validation result:", isValid);
-
-      if (!isValid) {
         toast({
-          title: "Ongeldige code",
-          description: "De verificatiecode is onjuist. Probeer opnieuw.",
-          variant: "destructive",
+          title: "Verificatie succesvol",
+          description: "U wordt ingelogd...",
         });
+
+        onVerified();
         setVerifying(false);
-        return;
+      } else {
+        // TOTP flow - gebruik server-side verificatie met anti-replay
+        console.log("Verifying TOTP with anti-replay guard...");
+        console.log("Nonce:", nonce);
+        console.log("Token:", code);
+
+        const { data: verifyResponse, error: verifyError } = await supabase
+          .rpc('verify_totp_with_replay_guard', {
+            p_nonce: nonce,
+            p_token: code
+          });
+
+        console.log("Verify response:", verifyResponse, "Error:", verifyError);
+
+        if (verifyError || !verifyResponse) {
+          toast({
+            title: "Verificatie fout",
+            description: "Kon code niet verifiëren.",
+            variant: "destructive",
+          });
+          setVerifying(false);
+          return;
+        }
+
+        const result = verifyResponse as {
+          valid: boolean;
+          error?: string;
+          period?: number;
+          user_id?: string;
+          secret?: string;
+          claimed?: boolean;
+        };
+
+        if (!result.valid) {
+          toast({
+            title: "Ongeldige code",
+            description: result.error || "De verificatiecode is onjuist of al gebruikt.",
+            variant: "destructive",
+          });
+          setVerifying(false);
+          return;
+        }
+
+        // Server heeft de periode geclaimd, nu client-side validatie
+        if (result.claimed && result.secret && result.period !== undefined) {
+          const totp = new OTPAuth.TOTP({
+            issuer: "JanazApp",
+            label: "user",
+            algorithm: "SHA1",
+            digits: 6,
+            period: 30,
+            secret: OTPAuth.Secret.fromBase32(result.secret),
+          });
+
+          // Genereer token voor de geclaimde periode
+          const timestamp = result.period * 30;
+          const expectedToken = totp.generate({ timestamp });
+          
+          console.log("Expected token for period", result.period, ":", expectedToken);
+          console.log("User entered:", code);
+
+          if (expectedToken !== code) {
+            toast({
+              title: "Ongeldige code",
+              description: "De verificatiecode is onjuist.",
+              variant: "destructive",
+            });
+            setVerifying(false);
+            return;
+          }
+
+          // Update last verified timestamp
+          await supabase.rpc('update_2fa_verification', {
+            p_user_id: result.user_id,
+            p_recovery_code: null
+          });
+
+          toast({
+            title: "Verificatie succesvol",
+            description: "U wordt ingelogd...",
+          });
+
+          onVerified();
+          setVerifying(false);
+        }
       }
 
-      // Update last verified timestamp
-      console.log("Updating last verified timestamp...");
-      await supabase.rpc('update_2fa_verification', {
-        p_user_id: settings.user_id,
-        p_recovery_code: null
-      });
-
-      toast({
-        title: "Verificatie succesvol",
-        description: "U wordt ingelogd...",
-      });
-
-      console.log("Calling onVerified callback...");
-      onVerified();
-      setVerifying(false);
       console.log("=== 2FA Verification End ===");
     } catch (error: any) {
       console.error("2FA verification error:", error);

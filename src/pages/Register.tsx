@@ -14,6 +14,7 @@ import { IoBusiness } from "react-icons/io5";
 import { Users } from "lucide-react";
 import logoAuth from "@/assets/logo-icon-new.png";
 import logoJanazApp from "@/assets/logo-janazapp.png";
+import authBackground from "@/assets/auth-background.jpg";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
@@ -223,31 +224,35 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse delay-700" />
+    <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 md:p-6 relative">
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img 
+          src={authBackground} 
+          alt="" 
+          className="w-full h-full object-cover"
+        />
       </div>
       
-      <div className="w-full max-w-5xl relative">
-        <Card className="overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200 shadow-2xl">
+      <div className="w-full max-w-[95vw] sm:max-w-6xl lg:max-w-7xl relative my-4 sm:my-8">
+        <Card className="overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200 shadow-2xl min-h-[600px] lg:min-h-[700px]">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left side - Logo */}
-            <div className="hidden md:flex items-center justify-center p-12 bg-white relative overflow-hidden">
+            <div className="hidden md:flex items-center justify-center p-8 lg:p-16 bg-white relative overflow-hidden min-h-[600px] lg:min-h-[700px]">
               <div className="absolute inset-0">
                 <div className="flex items-center justify-center h-full">
                   <img 
                     src={logoJanazApp} 
                     alt="JanazApp Logo" 
-                    className="w-64 h-auto object-contain"
+                    className="w-64 lg:w-96 h-auto object-contain"
                   />
                 </div>
               </div>
             </div>
 
             {/* Right side - Registration form */}
-            <div className="p-8 md:p-12 bg-white">
+            <div className="p-6 sm:p-8 md:p-10 lg:p-14 bg-white flex items-center">
+              <div className="w-full">
               <div className="space-y-6">
                 {/* Language Switcher */}
                 <div className="flex justify-end">
@@ -657,6 +662,7 @@ const Register = () => {
                )}
                   </div>
                 )}
+              </div>
               </div>
             </div>
           </div>

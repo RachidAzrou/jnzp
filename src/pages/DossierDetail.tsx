@@ -231,14 +231,9 @@ const DossierDetail = () => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Terug naar dossiers
           </Button>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold">
-              Dossier {dossier.display_id || dossier.ref_number}
-            </h1>
-            <Button variant="outline" size="icon">
-              <Star className="h-4 w-4" />
-            </Button>
-          </div>
+          <h1 className="text-3xl font-bold">
+            Dossier {dossier.display_id || dossier.ref_number}
+          </h1>
           <p className="text-xl text-muted-foreground">{dossier.deceased_name}</p>
         </div>
         <div className="flex items-center gap-2">

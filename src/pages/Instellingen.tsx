@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { User, Building2, Bell, Shield } from "lucide-react";
 import { useUserRole } from "@/hooks/useUserRole";
 import { TwoFactorSetup } from "@/components/TwoFactorSetup";
@@ -15,6 +16,7 @@ import { GDPRRequestPanel } from "@/components/GDPRRequestPanel";
 import { Link } from "react-router-dom";
 
 const Instellingen = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [profile, setProfile] = useState({
     email: "",
@@ -131,7 +133,7 @@ const Instellingen = () => {
 
         if (emailError) {
           toast({
-            title: "Fout bij opslaan e-mail",
+            title: t("settings.errorSavingEmail"),
             description: emailError.message,
             variant: "destructive",
           });
@@ -148,14 +150,14 @@ const Instellingen = () => {
 
       if (error) {
         toast({
-          title: "Fout bij opslaan",
+          title: t("settings.errorSaving"),
           description: error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Profiel bijgewerkt",
-          description: "Uw gegevens zijn succesvol opgeslagen.",
+          title: t("settings.profileUpdated"),
+          description: t("settings.profileUpdatedDesc"),
         });
       }
     }
@@ -193,14 +195,14 @@ const Instellingen = () => {
 
         if (error) {
           toast({
-            title: "Fout bij opslaan",
+            title: t("settings.errorSaving"),
             description: error.message,
             variant: "destructive",
           });
         } else {
           toast({
-            title: "Organisatie bijgewerkt",
-            description: "De organisatiegegevens zijn succesvol opgeslagen.",
+            title: t("settings.organizationUpdated"),
+            description: t("settings.organizationUpdatedDesc"),
           });
         }
       }
@@ -222,7 +224,7 @@ const Instellingen = () => {
       <div className="space-y-6 max-w-[1200px] mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold">Instellingen</h1>
+          <h1 className="text-2xl font-semibold">{t("settings.title")}</h1>
         </div>
 
         <div className="grid gap-6">
@@ -231,13 +233,13 @@ const Instellingen = () => {
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <User className="h-5 w-5 text-muted-foreground" />
-                Profiel gegevens
+                {t("settings.profileData")}
               </CardTitle>
             </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="firstName">Voornaam</Label>
+                <Label htmlFor="firstName">{t("settings.firstName")}</Label>
                 <Input
                   id="firstName"
                   value={profile.firstName}
@@ -245,7 +247,7 @@ const Instellingen = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">Achternaam</Label>
+                <Label htmlFor="lastName">{t("settings.lastName")}</Label>
                 <Input
                   id="lastName"
                   value={profile.lastName}
@@ -255,7 +257,7 @@ const Instellingen = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">E-mailadres</Label>
+              <Label htmlFor="email">{t("settings.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -265,7 +267,7 @@ const Instellingen = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Telefoonnummer</Label>
+              <Label htmlFor="phone">{t("settings.phone")}</Label>
               <Input
                 id="phone"
                 type="tel"
@@ -279,7 +281,7 @@ const Instellingen = () => {
 
             <div className="flex justify-end">
               <Button onClick={handleSave} disabled={saving}>
-                {saving ? "Opslaan..." : "Opslaan"}
+                {saving ? t("settings.saving") : t("common.save")}
               </Button>
             </div>
           </CardContent>
@@ -290,13 +292,13 @@ const Instellingen = () => {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Building2 className="h-5 w-5 text-muted-foreground" />
-              Organisatiegegevens
+              {t("settings.organizationData")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="orgName">Organisatie naam</Label>
+                <Label htmlFor="orgName">{t("settings.organizationName")}</Label>
                 <Input
                   id="orgName"
                   value={organization.name}
@@ -304,7 +306,7 @@ const Instellingen = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="orgType">Type</Label>
+                <Label htmlFor="orgType">{t("settings.type")}</Label>
                 <Input
                   id="orgType"
                   value={organization.type}
@@ -315,18 +317,18 @@ const Instellingen = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="orgAddress">Adres</Label>
+              <Label htmlFor="orgAddress">{t("settings.address")}</Label>
               <Input
                 id="orgAddress"
                 value={organization.address}
                 onChange={(e) => setOrganization({ ...organization, address: e.target.value })}
-                placeholder="Straat en huisnummer"
+                placeholder={t("settings.addressPlaceholder")}
               />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="orgPostalCode">Postcode</Label>
+                <Label htmlFor="orgPostalCode">{t("settings.postalCode")}</Label>
                 <Input
                   id="orgPostalCode"
                   value={organization.postalCode}
@@ -335,7 +337,7 @@ const Instellingen = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="orgCity">Stad</Label>
+                <Label htmlFor="orgCity">{t("settings.city")}</Label>
                 <Input
                   id="orgCity"
                   value={organization.city}
@@ -346,7 +348,7 @@ const Instellingen = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="orgCountry">Land</Label>
+              <Label htmlFor="orgCountry">{t("settings.country")}</Label>
               <Input
                 id="orgCountry"
                 value={organization.country}
@@ -357,7 +359,7 @@ const Instellingen = () => {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="orgEmail">E-mailadres</Label>
+                <Label htmlFor="orgEmail">{t("settings.email")}</Label>
                 <Input
                   id="orgEmail"
                   type="email"
@@ -367,7 +369,7 @@ const Instellingen = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="orgPhone">Telefoonnummer</Label>
+                <Label htmlFor="orgPhone">{t("settings.phone")}</Label>
                 <Input
                   id="orgPhone"
                   type="tel"
@@ -379,7 +381,7 @@ const Instellingen = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="orgVat">BTW-nummer</Label>
+              <Label htmlFor="orgVat">{t("settings.vatNumber")}</Label>
               <Input
                 id="orgVat"
                 value={organization.vatNumber}
@@ -392,7 +394,7 @@ const Instellingen = () => {
 
             <div className="flex justify-end">
               <Button onClick={handleSaveOrganization} disabled={saving}>
-                {saving ? "Opslaan..." : "Opslaan"}
+                {saving ? t("settings.saving") : t("common.save")}
               </Button>
             </div>
           </CardContent>
@@ -404,7 +406,7 @@ const Instellingen = () => {
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Shield className="h-5 w-5 text-muted-foreground" />
-                Tweefactorauthenticatie (2FA)
+                {t("settings.twoFactorAuth")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -412,7 +414,7 @@ const Instellingen = () => {
                 <Alert variant="destructive">
                   <Shield className="h-4 w-4" />
                   <AlertDescription>
-                    U moet twee-factor authenticatie instellen om verder te kunnen met uw account.
+                    {t("settings.must2FASetup")}
                   </AlertDescription>
                 </Alert>
               )}
@@ -426,18 +428,18 @@ const Instellingen = () => {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Bell className="h-5 w-5 text-muted-foreground" />
-              Notificaties
+              {t("settings.notifications")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">E-mail notificaties</p>
+                <p className="font-medium">{t("settings.emailNotifications")}</p>
                 <p className="text-sm text-muted-foreground">
-                  Ontvang updates over dossiers en taken
+                  {t("settings.emailNotificationsDesc")}
                 </p>
               </div>
-              <Button variant="outline" size="sm">Ingeschakeld</Button>
+              <Button variant="outline" size="sm">{t("settings.enabled")}</Button>
             </div>
 
             {role !== 'wasplaats' && (
@@ -446,12 +448,12 @@ const Instellingen = () => {
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Document goedkeuringen</p>
+                    <p className="font-medium">{t("settings.documentApprovals")}</p>
                     <p className="text-sm text-muted-foreground">
-                      Notificaties bij document reviews
+                      {t("settings.documentApprovalsDesc")}
                     </p>
                   </div>
-                  <Button variant="outline" size="sm">Ingeschakeld</Button>
+                  <Button variant="outline" size="sm">{t("settings.enabled")}</Button>
                 </div>
               </>
             )}
@@ -464,17 +466,17 @@ const Instellingen = () => {
         {/* Legal Documents */}
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Juridische Documenten</CardTitle>
+            <CardTitle className="text-lg">{t("settings.legalDocuments")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Link to="/privacy" target="_blank">
               <Button variant="outline" className="w-full justify-start">
-                Privacy Beleid
+                {t("settings.privacyPolicy")}
               </Button>
             </Link>
             <Link to="/terms" target="_blank">
               <Button variant="outline" className="w-full justify-start">
-                Algemene Voorwaarden
+                {t("settings.termsOfService")}
               </Button>
             </Link>
           </CardContent>

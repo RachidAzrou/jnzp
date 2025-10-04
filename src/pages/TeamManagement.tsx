@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +50,7 @@ interface InvitationLink {
 }
 
 const TeamManagement = () => {
+  const { t } = useTranslation();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<InvitationLink[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,8 +79,8 @@ const TeamManagement = () => {
 
       if (!roleData?.organization_id) {
         toast({
-          title: "Geen organisatie",
-          description: "U bent niet gekoppeld aan een organisatie",
+          title: t("team.noOrganization"),
+          description: t("team.noOrganizationDesc"),
           variant: "destructive",
         });
         return;
@@ -91,7 +93,7 @@ const TeamManagement = () => {
       ]);
     } catch (error: any) {
       toast({
-        title: "Fout bij laden",
+        title: t("team.errorLoading"),
         description: error.message,
         variant: "destructive",
       });
@@ -141,8 +143,8 @@ const TeamManagement = () => {
   const generateInvite = async () => {
     if (!organizationId || !inviteRole) {
       toast({
-        title: "Incomplete gegevens",
-        description: "Selecteer een rol",
+        title: t("team.incompleteData"),
+        description: t("team.selectRoleFirst"),
         variant: "destructive",
       });
       return;
@@ -151,7 +153,7 @@ const TeamManagement = () => {
     setGenerating(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Niet ingelogd");
+      if (!user) throw new Error(t("team.notLoggedIn"));
 
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 7);
@@ -176,8 +178,8 @@ const TeamManagement = () => {
       if (error) throw error;
 
       toast({
-        title: "Uitnodiging aangemaakt",
-        description: "Deel de uitnodigingslink met uw teamlid",
+        title: t("team.invitationCreated"),
+        description: t("team.invitationCreatedDesc"),
       });
 
       fetchInvitations(organizationId);
@@ -186,7 +188,7 @@ const TeamManagement = () => {
       setMaxUses("1");
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -201,8 +203,8 @@ const TeamManagement = () => {
     setCopiedCode(code);
     setTimeout(() => setCopiedCode(null), 2000);
     toast({
-      title: "Link gekopieerd",
-      description: "De uitnodigingslink is gekopieerd naar het klembord",
+      title: t("team.linkCopied"),
+      description: t("team.linkCopiedDesc"),
     });
   };
 
@@ -225,12 +227,12 @@ const TeamManagement = () => {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg font-medium">Teamleden</CardTitle>
-              <CardDescription className="text-sm">Beheer uw teamleden en uitnodigingen</CardDescription>
+              <CardTitle className="text-lg font-medium">{t("team.teamMembers")}</CardTitle>
+              <CardDescription className="text-sm">{t("team.manageTeam")}</CardDescription>
             </div>
             <Button onClick={() => setShowInviteDialog(true)} size="sm">
               <UserPlus className="mr-2 h-4 w-4" />
-              Teamlid uitnodigen
+              {t("team.inviteTeamMember")}
             </Button>
           </div>
         </CardHeader>
@@ -238,9 +240,9 @@ const TeamManagement = () => {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Naam</TableHead>
-                <TableHead className="font-medium text-sm">Email</TableHead>
-                <TableHead className="font-medium text-sm">Rol</TableHead>
+                <TableHead className="font-medium text-sm">{t("team.name")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("team.email")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("team.role")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -260,22 +262,22 @@ const TeamManagement = () => {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Actieve uitnodigingen</CardTitle>
-          <CardDescription className="text-sm">Uitnodigingslinks die nog geldig zijn</CardDescription>
+          <CardTitle className="text-lg font-medium">{t("team.activeInvitations")}</CardTitle>
+          <CardDescription className="text-sm">{t("team.validInvitationsDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           {invitations.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              Geen actieve uitnodigingen
+              {t("team.noActiveInvitations")}
             </p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="font-medium text-sm">Rol</TableHead>
-                  <TableHead className="font-medium text-sm">Gebruikt</TableHead>
-                  <TableHead className="font-medium text-sm">Verloopt op</TableHead>
-                  <TableHead className="font-medium text-sm">Acties</TableHead>
+                  <TableHead className="font-medium text-sm">{t("team.role")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("team.used")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("team.expiresOn")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("team.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -312,18 +314,18 @@ const TeamManagement = () => {
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Teamlid uitnodigen</DialogTitle>
+            <DialogTitle>{t("team.inviteTeamMember")}</DialogTitle>
             <DialogDescription>
-              Maak een uitnodigingslink aan voor een nieuw teamlid
+              {t("team.createInvitation")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="role">Rol</Label>
+              <Label htmlFor="role">{t("team.role")}</Label>
               <Select value={inviteRole} onValueChange={setInviteRole}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecteer rol" />
+                  <SelectValue placeholder={t("team.selectRole")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="funeral_director">Uitvaartondernemer</SelectItem>
@@ -335,7 +337,7 @@ const TeamManagement = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="max-uses">Maximaal aantal gebruik</Label>
+              <Label htmlFor="max-uses">{t("team.maxUses")}</Label>
               <Input
                 id="max-uses"
                 type="number"
@@ -348,11 +350,11 @@ const TeamManagement = () => {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
-              Annuleren
+              {t("common.cancel")}
             </Button>
             <Button onClick={generateInvite} disabled={generating || !inviteRole}>
               {generating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Aanmaken
+              {generating ? t("team.creating") : t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>

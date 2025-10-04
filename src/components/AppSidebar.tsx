@@ -103,7 +103,7 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-sidebar-border">
       <SidebarContent>
-        <div className="px-6 py-6 border-b border-sidebar-border flex flex-col items-center justify-center">
+        <div className="px-6 py-6 flex flex-col items-center justify-center">
           <img src={logoHorizontal} alt="JanazApp" className={`h-8 brightness-0 invert transition-all ${isCollapsed ? 'hidden' : ''}`} />
           {!isCollapsed && (
             <p className="text-xs text-sidebar-foreground/70 mt-2 font-medium text-center">{rolePortalName}</p>
@@ -145,7 +145,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="border-t border-sidebar-border p-4 bg-sidebar-background/50">
+      <SidebarFooter className="p-4 bg-sidebar-background/50">
         {!isCollapsed && <LanguageSwitcher />}
       </SidebarFooter>
     </Sidebar>

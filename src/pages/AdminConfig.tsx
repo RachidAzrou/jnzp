@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Settings, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface FeatureFlag {
   key: string;
@@ -23,6 +24,7 @@ interface FeatureFlag {
 }
 
 export default function AdminConfig() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [flags, setFlags] = useState<FeatureFlag[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,9 +110,9 @@ export default function AdminConfig() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold flex items-center gap-2">
+          <h1 className="page-title flex items-center gap-2">
             <Settings className="h-6 w-6" />
-            Configuratie
+            {t("admin.config.title")}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Beheer feature flags en platforminstellingen
@@ -124,16 +126,16 @@ export default function AdminConfig() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Feature Flags</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.config.featureFlags")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Feature</TableHead>
-                <TableHead className="font-medium text-sm">Beschrijving</TableHead>
-                <TableHead className="font-medium text-sm">Scope</TableHead>
-                <TableHead className="font-medium text-sm">Status</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.feature")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.description")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.scope")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

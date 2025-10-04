@@ -9,8 +9,10 @@ import {
 import { KPICard } from "@/components/KPICard";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     activeDossiers: 0,
@@ -168,7 +170,7 @@ export default function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Laatste Events</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("admin.dashboard.latestEvents")}</CardTitle>
           </CardHeader>
           <CardContent>
             {alerts.length > 0 ? (
@@ -200,7 +202,7 @@ export default function AdminDashboard() {
 
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Snelkoppelingen</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("admin.dashboard.quickActions")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-2">

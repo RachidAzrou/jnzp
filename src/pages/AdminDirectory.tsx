@@ -16,6 +16,7 @@ import {
   Building2, CheckCircle, XCircle, AlertCircle, Search 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface Organization {
   id: string;
@@ -29,6 +30,7 @@ interface Organization {
 }
 
 export default function AdminDirectory() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
@@ -204,13 +206,13 @@ export default function AdminDirectory() {
       {/* Filters */}
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Filters</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Zoek op naam, stad, email..."
+              placeholder={t("placeholders.searchNameCity")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -291,18 +293,18 @@ export default function AdminDirectory() {
       {/* Organizations Table */}
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Organisaties ({filteredOrgs.length})</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.directory.organizationsCount")} ({filteredOrgs.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Naam</TableHead>
-                <TableHead className="font-medium text-sm">Type</TableHead>
-                <TableHead className="font-medium text-sm">Status</TableHead>
-                <TableHead className="font-medium text-sm">Stad</TableHead>
-                <TableHead className="font-medium text-sm">Contact</TableHead>
-                <TableHead className="font-medium text-sm">Acties</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.name")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.type")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.status")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.city")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.contact")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

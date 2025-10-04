@@ -303,6 +303,16 @@ const App = () => (
                               <InsurerRapportage />
                             </RoleProtectedRoute>
                           } />
+                          <Route path="/fd/chat" element={
+                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'org_admin']}>
+                              <FDChat />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/insurer/chat" element={
+                            <RoleProtectedRoute allowedRoles={['insurer']}>
+                              <FDChat />
+                            </RoleProtectedRoute>
+                          } />
                           <Route path="/chat/:dossierId" element={
                             <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
                               <FDChat />

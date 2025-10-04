@@ -34,28 +34,28 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
 
   const menuItems: MenuItem[] = [
-    // Platform Admin - Alleen deze items voor platform_admin
-    { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin'] },
-    { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin'] },
-    { titleKey: "navigation.organizations", url: "/admin/organizations", icon: Building2, roles: ['platform_admin'] },
-    { titleKey: "navigation.dossiers", url: "/admin/dossiers", icon: FolderOpen, roles: ['platform_admin'] },
-    { titleKey: "navigation.documentReview", url: "/admin/documents", icon: FileText, roles: ['platform_admin'] },
-    { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
-    { titleKey: "navigation.invoicesTitle", url: "/admin/invoices", icon: Receipt, roles: ['platform_admin'] },
-    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin'] },
-    { titleKey: "navigation.config", url: "/admin/config", icon: Flag, roles: ['platform_admin'] },
-    { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin'] },
+    // Platform Admin - Deze items voor platform_admin EN admin
+    { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.organizations", url: "/admin/organizations", icon: Building2, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.dossiers", url: "/admin/dossiers", icon: FolderOpen, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.documentReview", url: "/admin/documents", icon: FileText, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.invoicesTitle", url: "/admin/invoices", icon: Receipt, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.config", url: "/admin/config", icon: Flag, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'admin'] },
     
     // Org Admin
     { titleKey: "navigation.teamManagement", url: "/team", icon: UserPlus, roles: ['org_admin', 'admin', 'platform_admin'] },
     
-    // FD & Admin
-    { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['admin', 'funeral_director'] },
-    { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['admin', 'funeral_director'] },
-    { titleKey: "navigation.tasks", url: "/taken", icon: CheckSquare, roles: ['admin', 'funeral_director'] },
-    { titleKey: "navigation.documents", url: "/documenten", icon: FileText, roles: ['admin', 'funeral_director'] },
-    { titleKey: "navigation.planning", url: "/planning", icon: Calendar, roles: ['admin', 'funeral_director'] },
-    { titleKey: "navigation.facturatie", url: "/facturatie", icon: Receipt, roles: ['admin', 'funeral_director'] },
+    // FD & Org Admin (niet voor platform_admin/admin - die hebben eigen menu)
+    { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director', 'org_admin'] },
+    { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['funeral_director', 'org_admin'] },
+    { titleKey: "navigation.tasks", url: "/taken", icon: CheckSquare, roles: ['funeral_director', 'org_admin'] },
+    { titleKey: "navigation.documents", url: "/documenten", icon: FileText, roles: ['funeral_director', 'org_admin'] },
+    { titleKey: "navigation.planning", url: "/planning", icon: Calendar, roles: ['funeral_director', 'org_admin'] },
+    { titleKey: "navigation.facturatie", url: "/facturatie", icon: Receipt, roles: ['funeral_director', 'org_admin'] },
     
     // Insurer
     { titleKey: "navigation.dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },

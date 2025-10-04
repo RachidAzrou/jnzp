@@ -359,7 +359,7 @@ const DossierDetail = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 border-b pb-2">
               <FileText className="h-5 w-5 text-muted-foreground" />
-              <h3 className="text-lg font-semibold">Document Pakket Status</h3>
+              <h3 className="text-lg font-semibold">Overzicht documentgoedkeuringen</h3>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center p-6 border bg-muted/30">

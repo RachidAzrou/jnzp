@@ -768,7 +768,7 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative">
+    <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 md:p-6 relative">
       {/* Background image */}
       <div className="absolute inset-0">
         <img 
@@ -778,25 +778,26 @@ const Auth = () => {
         />
       </div>
       
-      <div className="w-full max-w-6xl relative">
-        <Card className="overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200 shadow-2xl">
+      <div className="w-full max-w-[95vw] sm:max-w-6xl lg:max-w-7xl relative my-4 sm:my-8">
+        <Card className="overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200 shadow-2xl min-h-[600px] lg:min-h-[700px]">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left side - Decorative */}
-            <div className="hidden md:flex items-center justify-center p-12 bg-white relative overflow-hidden">
+            <div className="hidden md:flex items-center justify-center p-8 lg:p-16 bg-white relative overflow-hidden min-h-[600px] lg:min-h-[700px]">
               <div className="absolute inset-0">
                 {/* Logo in de linkerkant */}
                 <div className="flex items-center justify-center h-full">
                   <img 
                     src={logoJanazApp} 
                     alt="JanazApp Logo" 
-                    className="w-80 h-auto object-contain"
+                    className="w-64 lg:w-96 h-auto object-contain"
                   />
                 </div>
               </div>
             </div>
 
             {/* Right side - Login form */}
-            <div className="p-8 md:p-12 bg-white">
+            <div className="p-6 sm:p-8 md:p-10 lg:p-14 bg-white flex items-center">
+              <div className="w-full">
               <div className="space-y-8">
                 {/* Language Switcher */}
                 <div className="flex justify-end">
@@ -897,6 +898,7 @@ const Auth = () => {
                     </div>
                   </div>
                 </form>
+              </div>
               </div>
             </div>
           </div>

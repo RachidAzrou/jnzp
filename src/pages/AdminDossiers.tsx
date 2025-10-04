@@ -209,14 +209,14 @@ export default function AdminDossiers() {
       {/* Search & Filters */}
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Zoeken & filteren</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.dossiers.searchFilter")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Zoek op ID of naam..."
+                placeholder={t("placeholders.searchIdName")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
@@ -224,7 +224,7 @@ export default function AdminDossiers() {
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder={t("common.status")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Alle statussen</SelectItem>
@@ -242,18 +242,18 @@ export default function AdminDossiers() {
       {/* Dossiers Table */}
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Dossiers ({filteredDossiers.length})</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.dossiers.dossiersCount")} ({filteredDossiers.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">ID</TableHead>
-                <TableHead className="font-medium text-sm">Naam</TableHead>
-                <TableHead className="font-medium text-sm">Status</TableHead>
-                <TableHead className="font-medium text-sm">Flow</TableHead>
-                <TableHead className="font-medium text-sm">Aangemaakt</TableHead>
-                <TableHead className="font-medium text-sm">Acties</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.id")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.name")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.status")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.flow")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.created")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -331,7 +331,7 @@ export default function AdminDossiers() {
           {overrideType === "status" && (
             <Select value={newStatus} onValueChange={(value) => setNewStatus(value as DossierStatus)}>
               <SelectTrigger>
-                <SelectValue placeholder="Nieuwe status" />
+                <SelectValue placeholder={t("placeholders.newStatus")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="CREATED">Aangemaakt</SelectItem>
@@ -348,7 +348,7 @@ export default function AdminDossiers() {
             </Select>
           )}
           <Textarea
-            placeholder="Reden voor override (verplicht)..."
+            placeholder={t("placeholders.overrideReason")}
             value={overrideReason}
             onChange={(e) => setOverrideReason(e.target.value)}
             className="min-h-[100px]"

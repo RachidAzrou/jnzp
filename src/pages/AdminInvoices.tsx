@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Receipt, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface Invoice {
   id: string;
@@ -24,6 +25,7 @@ interface Invoice {
 }
 
 export default function AdminInvoices() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,9 +112,9 @@ export default function AdminInvoices() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold flex items-center gap-2">
+          <h1 className="page-title flex items-center gap-2">
             <Receipt className="h-6 w-6" />
-            Facturatiemonitoring
+            {t("admin.invoices.title")}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Overzicht van alle facturen in het platform
@@ -126,16 +128,16 @@ export default function AdminInvoices() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Facturen ({invoices.length})</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.invoices.invoicesCount")} ({invoices.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Factuurnummer</TableHead>
-                <TableHead className="font-medium text-sm">Status</TableHead>
-                <TableHead className="font-medium text-sm">Bedrag</TableHead>
-                <TableHead className="font-medium text-sm">Aangemaakt</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.invoiceNumber")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.status")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.amount")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.created")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

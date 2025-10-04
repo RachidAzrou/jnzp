@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Activity, RefreshCw, AlertCircle, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface Integration {
   id: string;
@@ -25,6 +26,7 @@ interface Integration {
 }
 
 export default function AdminIntegrations() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [loading, setLoading] = useState(true);
@@ -130,9 +132,9 @@ export default function AdminIntegrations() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold flex items-center gap-2">
+        <h1 className="page-title flex items-center gap-2">
           <Activity className="h-6 w-6" />
-          Integratiebeheer
+          {t("admin.integrations.title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Monitor en beheer externe API integraties
@@ -141,17 +143,17 @@ export default function AdminIntegrations() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Integraties</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.integrations.title")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Provider</TableHead>
-                <TableHead className="font-medium text-sm">Status</TableHead>
-                <TableHead className="font-medium text-sm">Laatste sync</TableHead>
-                <TableHead className="font-medium text-sm">Foutmelding</TableHead>
-                <TableHead className="font-medium text-sm">Acties</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.provider")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.status")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.lastSync")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.errorMessage")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

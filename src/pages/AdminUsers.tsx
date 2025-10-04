@@ -23,6 +23,7 @@ import {
 import { Users, Search, Ban, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRoleDisplayName } from "@/hooks/useUserRole";
+import { useTranslation } from "react-i18next";
 
 interface UserWithRole {
   id: string;
@@ -33,6 +34,7 @@ interface UserWithRole {
 }
 
 export default function AdminUsers() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<UserWithRole[]>([]);
@@ -122,9 +124,9 @@ export default function AdminUsers() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold flex items-center gap-2">
+        <h1 className="page-title flex items-center gap-2">
           <Users className="h-6 w-6" />
-          Gebruikersbeheer
+          {t("admin.users.title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Beheer gebruikersaccounts en rollen
@@ -133,13 +135,13 @@ export default function AdminUsers() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Zoeken</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.users.searchLabel")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Zoek op email..."
+              placeholder={t("placeholders.searchEmail")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -150,7 +152,7 @@ export default function AdminUsers() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Gebruikers ({filteredUsers.length})</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.users.usersCount")} ({filteredUsers.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>

@@ -35,6 +35,7 @@ interface Document {
 }
 
 export default function AdminDocumentReview() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
@@ -217,17 +218,17 @@ export default function AdminDocumentReview() {
       {/* Documents Table */}
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Te beoordelen ({documents.length})</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.documentReview.toReview")} ({documents.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Dossier ID</TableHead>
-                <TableHead className="font-medium text-sm">Document type</TableHead>
-                <TableHead className="font-medium text-sm">Bestandsnaam</TableHead>
-                <TableHead className="font-medium text-sm">Geüpload op</TableHead>
-                <TableHead className="font-medium text-sm">Acties</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.dossierId")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.documentType")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.filename")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.uploadedOn")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -299,7 +300,7 @@ export default function AdminDocumentReview() {
           </DialogHeader>
           {actionType === "reject" && (
             <Textarea
-              placeholder="Reden voor afkeuring..."
+              placeholder={t("placeholders.rejectionReason")}
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
               className="min-h-[100px]"

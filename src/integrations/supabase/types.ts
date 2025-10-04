@@ -166,6 +166,7 @@ export type Database = {
           message: string
           sender_role: Database["public"]["Enums"]["app_role"]
           sender_user_id: string
+          thread_id: string | null
           updated_at: string
           whatsapp_message_id: string | null
         }
@@ -180,6 +181,7 @@ export type Database = {
           message: string
           sender_role: Database["public"]["Enums"]["app_role"]
           sender_user_id: string
+          thread_id?: string | null
           updated_at?: string
           whatsapp_message_id?: string | null
         }
@@ -194,6 +196,7 @@ export type Database = {
           message?: string
           sender_role?: Database["public"]["Enums"]["app_role"]
           sender_user_id?: string
+          thread_id?: string | null
           updated_at?: string
           whatsapp_message_id?: string | null
         }
@@ -205,7 +208,35 @@ export type Database = {
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "chat_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      chat_policies: {
+        Row: {
+          cross_org_dm_enabled: boolean | null
+          id: string
+          triad_chat_enabled: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          cross_org_dm_enabled?: boolean | null
+          id?: string
+          triad_chat_enabled?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          cross_org_dm_enabled?: boolean | null
+          id?: string
+          triad_chat_enabled?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       claim_actions: {
         Row: {
@@ -1196,6 +1227,35 @@ export type Database = {
           },
         ]
       }
+      message_read_receipts: {
+        Row: {
+          id: string
+          message_id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          message_id: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          message_id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_read_receipts_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mosque_availability: {
         Row: {
           asr: boolean
@@ -2053,6 +2113,98 @@ export type Database = {
           },
         ]
       }
+      thread_members: {
+        Row: {
+          id: string
+          joined_at: string
+          last_read_at: string | null
+          muted: boolean | null
+          role: string | null
+          thread_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          last_read_at?: string | null
+          muted?: boolean | null
+          role?: string | null
+          thread_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          last_read_at?: string | null
+          muted?: boolean | null
+          role?: string | null
+          thread_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thread_members_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      threads: {
+        Row: {
+          created_at: string
+          created_by: string
+          dossier_id: string | null
+          id: string
+          last_message_at: string | null
+          name: string | null
+          org_id: string | null
+          type: Database["public"]["Enums"]["thread_type"]
+          updated_at: string
+          visibility_policy: Json | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          dossier_id?: string | null
+          id?: string
+          last_message_at?: string | null
+          name?: string | null
+          org_id?: string | null
+          type: Database["public"]["Enums"]["thread_type"]
+          updated_at?: string
+          visibility_policy?: Json | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          dossier_id?: string | null
+          id?: string
+          last_message_at?: string | null
+          name?: string | null
+          org_id?: string | null
+          type?: Database["public"]["Enums"]["thread_type"]
+          updated_at?: string
+          visibility_policy?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "threads_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "threads_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trusted_devices: {
         Row: {
           created_at: string
@@ -2664,6 +2816,12 @@ export type Database = {
         | "LEGAL_HOLD_FOLLOW_UP"
         | "TRANSPORT_PREPARE"
         | "DOC_REVIEW"
+      thread_type:
+        | "dossier_family"
+        | "dossier_insurer"
+        | "dossier_shared"
+        | "org_channel"
+        | "dm"
       user_status:
         | "PENDING_REGISTRATION"
         | "EMAIL_VERIFIED"
@@ -2888,6 +3046,13 @@ export const Constants = {
         "LEGAL_HOLD_FOLLOW_UP",
         "TRANSPORT_PREPARE",
         "DOC_REVIEW",
+      ],
+      thread_type: [
+        "dossier_family",
+        "dossier_insurer",
+        "dossier_shared",
+        "org_channel",
+        "dm",
       ],
       user_status: [
         "PENDING_REGISTRATION",

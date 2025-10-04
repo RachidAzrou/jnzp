@@ -126,8 +126,8 @@ export function AppSidebar() {
                       className={({ isActive }) => 
                         `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 ${
                           isActive
-                            ? "bg-primary/10 backdrop-blur-xl border border-primary/20 text-white font-bold shadow-lg shadow-primary/10 mx-2 w-[calc(100%-1rem)]"
-                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 mx-3"
+                            ? "bg-white/10 backdrop-blur-xl border border-white/20 text-white font-medium shadow-lg shadow-primary/20 mx-2"
+                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 mx-2"
                         } ${isCollapsed ? 'justify-center' : ''}`
                       }
                     >

@@ -1,7 +1,7 @@
 import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, UserPlus, Flag } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { CgSmartHomeRefrigerator } from "react-icons/cg";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -31,6 +31,7 @@ export function AppSidebar() {
   const { t } = useTranslation();
   const rolePortalName = useRolePortalName(role);
   const { state } = useSidebar();
+  const location = useLocation();
   const isCollapsed = state === "collapsed";
 
   const menuItems: MenuItem[] = [
@@ -117,26 +118,28 @@ export function AppSidebar() {
           )}
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {filteredMenuItems.map((item) => (
-                <SidebarMenuItem key={item.titleKey}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === "/" || item.url === "/admin" || item.url === "/insurer" || item.url === "/wasplaats" || item.url === "/moskee" || item.url === "/familie"}
-                      className={({ isActive }) => 
-                        `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 mx-2 ${
+              {filteredMenuItems.map((item) => {
+                const isActive = location.pathname === item.url || 
+                  (item.url !== "/" && location.pathname.startsWith(item.url));
+                
+                return (
+                  <SidebarMenuItem key={item.titleKey}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.url}
+                        className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 mx-2 ${
                           isActive
                             ? "bg-white/10 backdrop-blur-xl text-white font-medium shadow-lg shadow-primary/20"
                             : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-transparent"
-                        } ${isCollapsed ? 'justify-center' : ''}`
-                      }
-                    >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
-                      {!isCollapsed && <span className="text-sm">{t(item.titleKey)}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                        } ${isCollapsed ? 'justify-center' : ''}`}
+                      >
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        {!isCollapsed && <span className="text-sm">{t(item.titleKey)}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -766,117 +766,162 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse delay-700" />
+      </div>
       
-      <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/95 shadow-2xl border-border/50">
-        <CardHeader className="text-center space-y-6 pb-8">
-          <div className="flex justify-end mb-2">
-            <LanguageSwitcher />
-          </div>
-          <div className="flex justify-center">
-            <img 
-              src={logoAuth} 
-              alt="JanazApp Logo" 
-              className="h-40 w-40 object-contain animate-fade-in"
-            />
-          </div>
-          <div className="space-y-2">
-            <CardDescription className="text-base">
-              {t("auth.tagline")}
-            </CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent className="pb-8">
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="login-email" className="text-sm font-medium">
-                {t("auth.email")}
-              </Label>
-              <Input
-                id="login-email"
-                type="email"
-                placeholder="naam@voorbeeld.nl"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="login-password" className="text-sm font-medium">
-                {t("auth.password")}
-              </Label>
-              <Input
-                id="login-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="h-11 bg-background/50 border-border/50 focus:border-primary transition-colors"
-              />
-            </div>
-            <Button 
-              type="submit" 
-              className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all" 
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t("auth.loggingIn")}
-                </>
-              ) : (
-                t("auth.signIn")
-              )}
-            </Button>
-
-            <div className="space-y-2 pt-4">
-              <Button
-                type="button"
-                variant="link"
-                className="w-full text-sm text-primary"
-                onClick={() => setShowResetDialog(true)}
-              >
-                {t("auth.forgotPassword")}
-              </Button>
-              
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+      <div className="w-full max-w-5xl relative">
+        <Card className="overflow-hidden bg-slate-800/40 backdrop-blur-xl border-slate-700/50 shadow-2xl">
+          <div className="grid md:grid-cols-2 gap-0">
+            {/* Left side - Decorative */}
+            <div className="hidden md:flex items-center justify-center p-12 bg-gradient-to-br from-primary/10 to-accent/10 relative overflow-hidden">
+              <div className="absolute inset-0 bg-grid-white/[0.02]" />
+              <div className="relative z-10 space-y-8 text-center">
+                <div className="w-64 h-64 mx-auto relative">
+                  {/* Decorative circles */}
+                  <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-pulse" />
+                  <div className="absolute inset-8 bg-accent/20 rounded-full blur-xl animate-pulse delay-300" />
+                  
+                  {/* Icon/illustration placeholder */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-40 h-40 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center backdrop-blur-sm border border-white/10">
+                      <svg className="w-20 h-20 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">{t("auth.or")}</span>
+                
+                <div className="space-y-3">
+                  <h2 className="text-2xl font-semibold text-white">{t("auth.tagline")}</h2>
+                  <p className="text-slate-300 max-w-sm mx-auto">
+                    Veilig, betrouwbaar en altijd beschikbaar voor uw behoeften
+                  </p>
                 </div>
+              </div>
             </div>
 
-            {showCaptcha && (
-              <SimpleCaptcha
-                onVerify={(token) => {
-                  setCaptchaToken(token);
-                  toast({
-                    title: "Verificatie succesvol",
-                    description: "U kunt nu opnieuw proberen in te loggen.",
-                  });
-                }}
-                className="mt-4"
-              />
-            )}
+            {/* Right side - Login form */}
+            <div className="p-8 md:p-12">
+              <div className="space-y-8">
+                {/* Logo */}
+                <div className="flex justify-end">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm border border-white/10 p-2">
+                    <img 
+                      src={logoAuth} 
+                      alt="JanazApp Logo" 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
 
-            <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => navigate("/register")}
-              >
-                {t("auth.registerHere")}
-              </Button>
+                {/* Language Switcher */}
+                <div className="flex justify-end -mt-4">
+                  <LanguageSwitcher />
+                </div>
+
+                {/* Header */}
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-bold text-white">
+                    {t("auth.welcome")}
+                  </h1>
+                  <p className="text-slate-400">
+                    {t("auth.loginToAccount")}
+                  </p>
+                </div>
+
+                {/* Login Form */}
+                <form onSubmit={handleLogin} className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="login-email" className="text-sm font-medium text-slate-300">
+                        {t("auth.email")}
+                      </Label>
+                      <Input
+                        id="login-email"
+                        type="email"
+                        placeholder="naam@voorbeeld.nl"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="h-12 bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-primary focus:ring-primary/20"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="login-password" className="text-sm font-medium text-slate-300">
+                        {t("auth.password")}
+                      </Label>
+                      <Input
+                        id="login-password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="h-12 bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-primary focus:ring-primary/20"
+                      />
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-medium shadow-lg shadow-primary/20 transition-all" 
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {t("auth.loggingIn")}
+                      </>
+                    ) : (
+                      t("auth.signIn")
+                    )}
+                  </Button>
+
+                  {showCaptcha && (
+                    <SimpleCaptcha
+                      onVerify={(token) => {
+                        setCaptchaToken(token);
+                        toast({
+                          title: "Verificatie succesvol",
+                          description: "U kunt nu opnieuw proberen in te loggen.",
+                        });
+                      }}
+                      className="mt-4"
+                    />
+                  )}
+
+                  <div className="space-y-4 pt-2">
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="w-full text-sm text-primary hover:text-primary/80 p-0"
+                      onClick={() => setShowResetDialog(true)}
+                    >
+                      {t("auth.forgotPassword")}
+                    </Button>
+
+                    <div className="text-center text-sm text-slate-400">
+                      {t("auth.noAccount")}{" "}
+                      <Button
+                        type="button"
+                        variant="link"
+                        className="text-primary hover:text-primary/80 p-0 h-auto font-medium"
+                        onClick={() => navigate("/register")}
+                      >
+                        {t("auth.register")}
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+        </Card>
+      </div>
 
       {/* Password Reset Dialog */}
       <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>

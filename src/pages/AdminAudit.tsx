@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { FileText, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface AuditEvent {
   id: string;
@@ -26,6 +27,7 @@ interface AuditEvent {
 }
 
 export default function AdminAudit() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [events, setEvents] = useState<AuditEvent[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<AuditEvent[]>([]);
@@ -102,9 +104,9 @@ export default function AdminAudit() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold flex items-center gap-2">
+        <h1 className="page-title flex items-center gap-2">
           <FileText className="h-6 w-6" />
-          Audit Log
+          {t("admin.audit.title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Bekijk alle kritieke acties in het systeem
@@ -113,13 +115,13 @@ export default function AdminAudit() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Zoeken</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.audit.searchLabel")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Zoek op event type, beschrijving..."
+              placeholder={t("placeholders.searchEventType")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -130,18 +132,18 @@ export default function AdminAudit() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Events ({filteredEvents.length})</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("admin.audit.eventsCount")} ({filteredEvents.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Tijd</TableHead>
-                <TableHead className="font-medium text-sm">Event</TableHead>
-                <TableHead className="font-medium text-sm">Beschrijving</TableHead>
-                <TableHead className="font-medium text-sm">Rol</TableHead>
-                <TableHead className="font-medium text-sm">Target</TableHead>
-                <TableHead className="font-medium text-sm">Reden</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.time")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.event")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.description")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.role")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.target")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.reason")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

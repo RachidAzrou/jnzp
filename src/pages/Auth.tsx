@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import logoAuth from "@/assets/logo-vertical-new.png";
 import logoJanazApp from "@/assets/logo-janazapp.png";
+import authBackground from "@/assets/auth-background.jpg";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
@@ -767,11 +768,14 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse delay-700" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative">
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img 
+          src={authBackground} 
+          alt="" 
+          className="w-full h-full object-cover"
+        />
       </div>
       
       <div className="w-full max-w-5xl relative">

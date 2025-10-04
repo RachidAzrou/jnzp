@@ -778,8 +778,8 @@ const Auth = () => {
         <Card className="overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200 shadow-2xl">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left side - Decorative */}
-            <div className="hidden md:flex items-center justify-center p-12 bg-gradient-to-br from-primary/5 to-accent/5 relative overflow-hidden">
-              <div className="absolute inset-0 bg-grid-slate-900/[0.02]">
+            <div className="hidden md:flex items-center justify-center p-12 bg-white relative overflow-hidden">
+              <div className="absolute inset-0">
                 {/* Logo in de linkerkant */}
                 <div className="flex items-center justify-center h-full">
                   <img 

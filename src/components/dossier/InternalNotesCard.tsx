@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Save, Edit2, Check, X } from "lucide-react";
+import { FileText, Edit2 } from "lucide-react";
 
 interface InternalNotesCardProps {
   dossierId: string;
@@ -60,87 +60,89 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
   };
 
   return (
-    <Card className="border-l-4 border-l-primary/30">
-      <CardHeader className="border-b bg-muted/30">
+    <Card>
+      <CardHeader className="border-b bg-background">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <FileText className="h-4 w-4 text-primary" />
-            </div>
-            Interne Notities
-          </CardTitle>
+          <div>
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              Interne Notities
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              Alleen zichtbaar voor het FD team
+            </p>
+          </div>
           {!isEditing && (
             <Button 
-              variant="outline" 
+              variant="ghost" 
               size="sm"
               onClick={() => setIsEditing(true)}
+              className="h-8 px-3"
             >
-              <Edit2 className="mr-2 h-3 w-3" />
+              <Edit2 className="mr-1.5 h-3.5 w-3.5" />
               Bewerken
             </Button>
           )}
         </div>
-        <p className="text-sm text-muted-foreground mt-1">
-          Alleen zichtbaar voor het FD team
-        </p>
       </CardHeader>
-      <CardContent className="pt-6">
+      <CardContent className="pt-4">
         {isEditing ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Textarea
               placeholder="Voeg interne notities toe over dit dossier..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              rows={8}
-              className="resize-none font-mono text-sm"
+              rows={6}
+              className="resize-none text-sm"
             />
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-muted-foreground">
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-xs text-muted-foreground">
                 {notes.length} karakters
-              </p>
+              </span>
               <div className="flex gap-2">
                 <Button 
                   variant="outline" 
                   size="sm"
                   onClick={handleCancel}
                   disabled={saving}
+                  className="h-8 px-3"
                 >
-                  <X className="mr-2 h-3 w-3" />
                   Annuleren
                 </Button>
                 <Button 
                   size="sm"
                   onClick={handleSave} 
                   disabled={saving || !hasChanges}
+                  className="h-8 px-3"
                 >
-                  <Check className="mr-2 h-3 w-3" />
                   {saving ? "Opslaan..." : "Opslaan"}
                 </Button>
               </div>
             </div>
           </div>
         ) : (
-          <div className="min-h-[120px]">
+          <div className="min-h-[100px]">
             {notes ? (
-              <div className="p-4 bg-muted/50 rounded-lg border">
-                <p className="text-sm whitespace-pre-wrap font-mono leading-relaxed">
+              <div className="prose prose-sm max-w-none">
+                <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed m-0">
                   {notes}
                 </p>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <FileText className="h-12 w-12 text-muted-foreground/30 mb-3" />
-                <p className="text-sm text-muted-foreground">
-                  Nog geen interne notities toegevoegd
-                </p>
-                <Button 
-                  variant="link" 
-                  size="sm"
-                  onClick={() => setIsEditing(true)}
-                  className="mt-2"
-                >
-                  Klik hier om notities toe te voegen
-                </Button>
+              <div className="flex items-center justify-center py-8 border-2 border-dashed rounded-sm">
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Geen notities
+                  </p>
+                  <Button 
+                    variant="link" 
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                    className="h-auto p-0 text-xs"
+                  >
+                    Notitie toevoegen
+                  </Button>
+                </div>
               </div>
             )}
           </div>

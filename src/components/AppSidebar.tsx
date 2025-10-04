@@ -35,8 +35,12 @@ export function AppSidebar() {
     { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin', 'org_admin', 'reviewer', 'support'] },
     { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin', 'org_admin'] },
     { titleKey: "navigation.organizations", url: "/admin/organizations", icon: Building2, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin', 'org_admin'] },
+    { titleKey: "navigation.dossiers", url: "/admin/dossiers", icon: FolderOpen, roles: ['platform_admin'] },
+    { titleKey: "navigation.documentReview", url: "/admin/documents", icon: FileText, roles: ['platform_admin'] },
     { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
+    { titleKey: "navigation.invoicesTitle", url: "/admin/invoices", icon: Receipt, roles: ['platform_admin'] },
+    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin', 'org_admin'] },
+    { titleKey: "navigation.config", url: "/admin/config", icon: Settings, roles: ['platform_admin'] },
     { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'support'] },
     
     // Org Admin

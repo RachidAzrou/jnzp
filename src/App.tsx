@@ -49,6 +49,8 @@ import AdminInvoices from "./pages/AdminInvoices";
 import AdminUsers from "./pages/AdminUsers";
 import AdminAudit from "./pages/AdminAudit";
 import AdminConfig from "./pages/AdminConfig";
+import AdminDossiers from "./pages/AdminDossiers";
+import AdminDocumentReview from "./pages/AdminDocumentReview";
 import TeamManagement from "./pages/TeamManagement";
 import Auth from "./pages/Auth";
 import Register from "./pages/Register";
@@ -354,6 +356,16 @@ const App = () => (
                           <Route path="/admin/config" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
                               <AdminConfig />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/dossiers" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminDossiers />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/documents" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminDocumentReview />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />

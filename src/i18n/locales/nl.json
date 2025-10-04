@@ -342,7 +342,53 @@
     "export": "Exporteren",
     "loading": "Laden...",
     "view": "Bekijken",
-    "noResults": "Geen resultaten"
+    "noResults": "Geen resultaten",
+    "add": "Toevoegen",
+    "submit": "Verzenden",
+    "download": "Downloaden",
+    "upload": "Uploaden",
+    "filters": "Filters",
+    "actions": "Acties",
+    "status": "Status",
+    "name": "Naam",
+    "type": "Type",
+    "email": "E-mail",
+    "role": "Rol",
+    "time": "Tijd",
+    "event": "Event",
+    "description": "Beschrijving",
+    "target": "Target",
+    "reason": "Reden",
+    "feature": "Feature",
+    "scope": "Scope",
+    "provider": "Provider",
+    "lastSync": "Laatste sync",
+    "errorMessage": "Foutmelding",
+    "invoiceNumber": "Factuurnummer",
+    "amount": "Bedrag",
+    "created": "Aangemaakt",
+    "organization": "Organisatie",
+    "contact": "Contact",
+    "requested": "Aangevraagd",
+    "city": "Stad",
+    "uploadDate": "Upload Datum",
+    "dossier": "Dossier",
+    "filename": "Bestandsnaam",
+    "documentType": "Document type",
+    "uploadedOn": "Geüpload op",
+    "dossierId": "Dossier ID",
+    "flow": "Flow",
+    "id": "ID",
+    "conversation": "Conversatie",
+    "dossierContext": "Dossier Context",
+    "invoicesOverview": "Facturen Overzicht",
+    "invoiceLines": "Factuurlijnen",
+    "statusActions": "Status & Acties",
+    "code": "Code",
+    "qty": "Aantal",
+    "price": "Prijs",
+    "period": "Periode",
+    "total": "Totaal"
   },
   "tasks": {
     "title": "Takenbeheer",
@@ -412,5 +458,95 @@
     "reviewer": "Reviewerportaal",
     "support": "Supportportaal",
     "user": "Gebruikersportaal"
+  },
+  "placeholders": {
+    "searchEventType": "Zoek op event type, beschrijving...",
+    "searchNameCity": "Zoek op naam, stad, email...",
+    "rejectionReason": "Reden voor afkeuring...",
+    "searchIdName": "Zoek op ID of naam...",
+    "newStatus": "Nieuwe status",
+    "overrideReason": "Reden voor override (verplicht)...",
+    "addNotes": "Voeg eventuele notities toe...",
+    "dataRemovalReason": "Bijvoorbeeld: Data kan niet worden verwijderd vanwege lopend onderzoek...",
+    "internalNotes": "Interne notities...",
+    "giveReason": "Geef een duidelijke reden op...",
+    "searchEmail": "Zoek op email...",
+    "otp": "123456",
+    "exampleEmail": "naam@voorbeeld.nl",
+    "searchDossierFile": "Zoek op dossier/naam/bestand...",
+    "typeAnswer": "Typ uw antwoord...",
+    "searchNameDossier": "Zoek op naam of dossier nummer...",
+    "searchInvoiceDossier": "Zoeken op nummer, dossier, overledene...",
+    "selectDossier": "Selecteer dossier",
+    "searchCatalog": "Zoek in catalogus...",
+    "customCode": "Bijv. CUSTOM_001",
+    "serviceDescription": "Beschrijving van dienst",
+    "searchCodeName": "Zoek op code of naam...",
+    "fullName": "Volledige naam",
+    "relationship": "bijv. Zoon, Dochter, Echtgenoot",
+    "phoneExample": "+31 6 12345678",
+    "language": "Nederlands",
+    "fullAddress": "Straat, nummer, postcode, plaats",
+    "addressDetails": "bijv. 3e verdieping, appartement 12",
+    "policyNumber": "Bijv. POL123456",
+    "chooseCompany": "Kies maatschappij",
+    "postalCodeExample": "1000",
+    "cityExample": "Brussel",
+    "countryExample": "België",
+    "organizationEmail": "info@organisatie.be",
+    "phoneExampleBE": "+32 xxx xx xx xx",
+    "vatExample": "BE0123456789",
+    "rejectionReasonLong": "Geef een duidelijke reden voor afwijzing (minimaal 8 tekens)...",
+    "explainApprovalRejection": "Leg uit waarom je de claim handmatig goedkeurt of afwijst...",
+    "explainInfoNeeded": "Leg uit welke informatie nodig is...",
+    "sepaExample": "Bv. SEPA-12345",
+    "typeMessage": "Typ uw bericht..."
+  },
+  "admin": {
+    "audit": {
+      "title": "Audit Log",
+      "searchLabel": "Zoeken",
+      "eventsCount": "Events"
+    },
+    "config": {
+      "title": "Configuratie",
+      "featureFlags": "Feature Flags"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "latestEvents": "Laatste Events",
+      "quickActions": "Snelkoppelingen"
+    },
+    "directory": {
+      "title": "Directory",
+      "organizationsCount": "Organisaties"
+    },
+    "documentReview": {
+      "title": "Document Beoordeling",
+      "toReview": "Te beoordelen"
+    },
+    "dossiers": {
+      "title": "Dossiers",
+      "searchFilter": "Zoeken & filteren",
+      "dossiersCount": "Dossiers"
+    },
+    "gdpr": {
+      "title": "GDPR Verzoeken"
+    },
+    "integrations": {
+      "title": "Integraties"
+    },
+    "invoices": {
+      "title": "Facturen",
+      "invoicesCount": "Facturen"
+    },
+    "organizations": {
+      "title": "Organisaties"
+    },
+    "users": {
+      "title": "Gebruikers",
+      "searchLabel": "Zoeken",
+      "usersCount": "Gebruikers"
+    }
   }
 }

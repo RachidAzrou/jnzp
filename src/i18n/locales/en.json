@@ -332,7 +332,53 @@
     "export": "Export",
     "loading": "Loading...",
     "view": "View",
-    "noResults": "No results"
+    "noResults": "No results",
+    "add": "Add",
+    "submit": "Submit",
+    "download": "Download",
+    "upload": "Upload",
+    "filters": "Filters",
+    "actions": "Actions",
+    "status": "Status",
+    "name": "Name",
+    "type": "Type",
+    "email": "Email",
+    "role": "Role",
+    "time": "Time",
+    "event": "Event",
+    "description": "Description",
+    "target": "Target",
+    "reason": "Reason",
+    "feature": "Feature",
+    "scope": "Scope",
+    "provider": "Provider",
+    "lastSync": "Last sync",
+    "errorMessage": "Error message",
+    "invoiceNumber": "Invoice number",
+    "amount": "Amount",
+    "created": "Created",
+    "organization": "Organization",
+    "contact": "Contact",
+    "requested": "Requested",
+    "city": "City",
+    "uploadDate": "Upload Date",
+    "dossier": "Dossier",
+    "filename": "Filename",
+    "documentType": "Document type",
+    "uploadedOn": "Uploaded on",
+    "dossierId": "Dossier ID",
+    "flow": "Flow",
+    "id": "ID",
+    "conversation": "Conversation",
+    "dossierContext": "Dossier Context",
+    "invoicesOverview": "Invoices Overview",
+    "invoiceLines": "Invoice Lines",
+    "statusActions": "Status & Actions",
+    "code": "Code",
+    "qty": "Qty",
+    "price": "Price",
+    "period": "Period",
+    "total": "Total"
   },
   "tasks": {
     "title": "Tasks Management",
@@ -353,8 +399,10 @@
     "settings": "Settings",
     "team": "Team",
     "logout": "Logout",
-    "adminDashboard": "Admin Dashboard",
+    "adminDashboard": "Dashboard",
     "directory": "Directory",
+    "documentReview": "Document Review",
+    "config": "Configuration",
     "organizations": "Organizations",
     "users": "Users",
     "integrations": "Integrations",
@@ -362,6 +410,7 @@
     "teamManagement": "Team Management",
     "tasks": "Tasks",
     "facturatie": "Invoicing",
+    "chat": "Messages",
     "insurer": "Insurer",
     "invoicesTitle": "Invoices",
     "reporting": "Reporting",
@@ -372,7 +421,6 @@
     "availability": "Availability",
     "family": "Family",
     "myDocuments": "My Documents",
-    "chat": "Chat",
     "portal": "portal"
   },
   "roles": {
@@ -400,5 +448,95 @@
     "reviewer": "Reviewer portal",
     "support": "Support portal",
     "user": "User portal"
+  },
+  "placeholders": {
+    "searchEventType": "Search by event type, description...",
+    "searchNameCity": "Search by name, city, email...",
+    "rejectionReason": "Reason for rejection...",
+    "searchIdName": "Search by ID or name...",
+    "newStatus": "New status",
+    "overrideReason": "Reason for override (required)...",
+    "addNotes": "Add any notes...",
+    "dataRemovalReason": "For example: Data cannot be removed due to ongoing investigation...",
+    "internalNotes": "Internal notes...",
+    "giveReason": "Give a clear reason...",
+    "searchEmail": "Search by email...",
+    "otp": "123456",
+    "exampleEmail": "name@example.com",
+    "searchDossierFile": "Search by dossier/name/file...",
+    "typeAnswer": "Type your answer...",
+    "searchNameDossier": "Search by name or dossier number...",
+    "searchInvoiceDossier": "Search by number, dossier, deceased...",
+    "selectDossier": "Select dossier",
+    "searchCatalog": "Search in catalog...",
+    "customCode": "E.g. CUSTOM_001",
+    "serviceDescription": "Service description",
+    "searchCodeName": "Search by code or name...",
+    "fullName": "Full name",
+    "relationship": "e.g. Son, Daughter, Spouse",
+    "phoneExample": "+1 555 123 4567",
+    "language": "English",
+    "fullAddress": "Street, number, postal code, city",
+    "addressDetails": "e.g. 3rd floor, apartment 12",
+    "policyNumber": "E.g. POL123456",
+    "chooseCompany": "Choose company",
+    "postalCodeExample": "1000",
+    "cityExample": "Brussels",
+    "countryExample": "Belgium",
+    "organizationEmail": "info@organization.com",
+    "phoneExampleBE": "+32 xxx xx xx xx",
+    "vatExample": "BE0123456789",
+    "rejectionReasonLong": "Give a clear reason for rejection (minimum 8 characters)...",
+    "explainApprovalRejection": "Explain why you manually approve or reject the claim...",
+    "explainInfoNeeded": "Explain what information is needed...",
+    "sepaExample": "E.g. SEPA-12345",
+    "typeMessage": "Type your message..."
+  },
+  "admin": {
+    "audit": {
+      "title": "Audit Log",
+      "searchLabel": "Search",
+      "eventsCount": "Events"
+    },
+    "config": {
+      "title": "Configuration",
+      "featureFlags": "Feature Flags"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "latestEvents": "Latest Events",
+      "quickActions": "Quick Actions"
+    },
+    "directory": {
+      "title": "Directory",
+      "organizationsCount": "Organizations"
+    },
+    "documentReview": {
+      "title": "Document Review",
+      "toReview": "To review"
+    },
+    "dossiers": {
+      "title": "Dossiers",
+      "searchFilter": "Search & filter",
+      "dossiersCount": "Dossiers"
+    },
+    "gdpr": {
+      "title": "GDPR Requests"
+    },
+    "integrations": {
+      "title": "Integrations"
+    },
+    "invoices": {
+      "title": "Invoices",
+      "invoicesCount": "Invoices"
+    },
+    "organizations": {
+      "title": "Organizations"
+    },
+    "users": {
+      "title": "Users",
+      "searchLabel": "Search",
+      "usersCount": "Users"
+    }
   }
 }

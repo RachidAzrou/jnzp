@@ -332,7 +332,53 @@
     "export": "Exporter",
     "loading": "Chargement...",
     "view": "Voir",
-    "noResults": "Aucun résultat"
+    "noResults": "Aucun résultat",
+    "add": "Ajouter",
+    "submit": "Soumettre",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "filters": "Filtres",
+    "actions": "Actions",
+    "status": "Statut",
+    "name": "Nom",
+    "type": "Type",
+    "email": "E-mail",
+    "role": "Rôle",
+    "time": "Heure",
+    "event": "Événement",
+    "description": "Description",
+    "target": "Cible",
+    "reason": "Raison",
+    "feature": "Fonctionnalité",
+    "scope": "Portée",
+    "provider": "Fournisseur",
+    "lastSync": "Dernière synchro",
+    "errorMessage": "Message d'erreur",
+    "invoiceNumber": "Numéro de facture",
+    "amount": "Montant",
+    "created": "Créé",
+    "organization": "Organisation",
+    "contact": "Contact",
+    "requested": "Demandé",
+    "city": "Ville",
+    "uploadDate": "Date de téléversement",
+    "dossier": "Dossier",
+    "filename": "Nom du fichier",
+    "documentType": "Type de document",
+    "uploadedOn": "Téléversé le",
+    "dossierId": "ID du dossier",
+    "flow": "Flux",
+    "id": "ID",
+    "conversation": "Conversation",
+    "dossierContext": "Contexte du dossier",
+    "invoicesOverview": "Aperçu des factures",
+    "invoiceLines": "Lignes de facture",
+    "statusActions": "Statut & Actions",
+    "code": "Code",
+    "qty": "Quantité",
+    "price": "Prix",
+    "period": "Période",
+    "total": "Total"
   },
   "tasks": {
     "title": "Gestion des tâches",
@@ -355,6 +401,8 @@
     "logout": "Se déconnecter",
     "adminDashboard": "Tableau de bord Admin",
     "directory": "Répertoire",
+    "documentReview": "Révision des documents",
+    "config": "Configuration",
     "organizations": "Organisations",
     "users": "Utilisateurs",
     "integrations": "Intégrations",
@@ -362,6 +410,7 @@
     "teamManagement": "Gestion d'équipe",
     "tasks": "Tâches",
     "facturatie": "Facturation",
+    "chat": "Messages",
     "insurer": "Assureur",
     "invoicesTitle": "Factures",
     "reporting": "Rapports",
@@ -372,7 +421,6 @@
     "availability": "Disponibilité",
     "family": "Famille",
     "myDocuments": "Mes Documents",
-    "chat": "Chat",
     "portal": "Portail"
   },
   "roles": {
@@ -400,5 +448,95 @@
     "reviewer": "Portail du réviseur",
     "support": "Portail du support",
     "user": "Portail de l'utilisateur"
+  },
+  "placeholders": {
+    "searchEventType": "Rechercher par type d'événement, description...",
+    "searchNameCity": "Rechercher par nom, ville, email...",
+    "rejectionReason": "Raison du rejet...",
+    "searchIdName": "Rechercher par ID ou nom...",
+    "newStatus": "Nouveau statut",
+    "overrideReason": "Raison de la modification (obligatoire)...",
+    "addNotes": "Ajoutez des notes éventuelles...",
+    "dataRemovalReason": "Par exemple : Les données ne peuvent pas être supprimées en raison d'une enquête en cours...",
+    "internalNotes": "Notes internes...",
+    "giveReason": "Donnez une raison claire...",
+    "searchEmail": "Rechercher par email...",
+    "otp": "123456",
+    "exampleEmail": "nom@exemple.fr",
+    "searchDossierFile": "Rechercher par dossier/nom/fichier...",
+    "typeAnswer": "Tapez votre réponse...",
+    "searchNameDossier": "Rechercher par nom ou numéro de dossier...",
+    "searchInvoiceDossier": "Rechercher par numéro, dossier, défunt...",
+    "selectDossier": "Sélectionnez un dossier",
+    "searchCatalog": "Rechercher dans le catalogue...",
+    "customCode": "Ex. CUSTOM_001",
+    "serviceDescription": "Description du service",
+    "searchCodeName": "Rechercher par code ou nom...",
+    "fullName": "Nom complet",
+    "relationship": "ex. Fils, Fille, Époux",
+    "phoneExample": "+32 4 12 34 56 78",
+    "language": "Français",
+    "fullAddress": "Rue, numéro, code postal, ville",
+    "addressDetails": "ex. 3e étage, appartement 12",
+    "policyNumber": "Ex. POL123456",
+    "chooseCompany": "Choisissez la compagnie",
+    "postalCodeExample": "1000",
+    "cityExample": "Bruxelles",
+    "countryExample": "Belgique",
+    "organizationEmail": "info@organisation.be",
+    "phoneExampleBE": "+32 xxx xx xx xx",
+    "vatExample": "BE0123456789",
+    "rejectionReasonLong": "Donnez une raison claire pour le rejet (minimum 8 caractères)...",
+    "explainApprovalRejection": "Expliquez pourquoi vous approuvez ou rejetez manuellement la demande...",
+    "explainInfoNeeded": "Expliquez quelle information est nécessaire...",
+    "sepaExample": "Ex. SEPA-12345",
+    "typeMessage": "Tapez votre message..."
+  },
+  "admin": {
+    "audit": {
+      "title": "Journal d'audit",
+      "searchLabel": "Rechercher",
+      "eventsCount": "Événements"
+    },
+    "config": {
+      "title": "Configuration",
+      "featureFlags": "Indicateurs de fonctionnalités"
+    },
+    "dashboard": {
+      "title": "Tableau de bord Admin",
+      "latestEvents": "Derniers événements",
+      "quickActions": "Actions rapides"
+    },
+    "directory": {
+      "title": "Répertoire",
+      "organizationsCount": "Organisations"
+    },
+    "documentReview": {
+      "title": "Révision des documents",
+      "toReview": "À réviser"
+    },
+    "dossiers": {
+      "title": "Dossiers",
+      "searchFilter": "Recherche & filtres",
+      "dossiersCount": "Dossiers"
+    },
+    "gdpr": {
+      "title": "Demandes RGPD"
+    },
+    "integrations": {
+      "title": "Intégrations"
+    },
+    "invoices": {
+      "title": "Factures",
+      "invoicesCount": "Factures"
+    },
+    "organizations": {
+      "title": "Organisations"
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "searchLabel": "Rechercher",
+      "usersCount": "Utilisateurs"
+    }
   }
 }

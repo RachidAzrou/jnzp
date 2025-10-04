@@ -166,8 +166,8 @@ const Dashboard = () => {
         {/* Welcome Header */}
         <div className="space-y-1">
           <p className="text-sm text-muted-foreground">{getCurrentDate()}</p>
-          <h1 className="text-2xl sm:text-3xl font-semibold">
-            {t("dashboard.welcome")} {userName}
+          <h1 className="page-title">
+            {t("dashboard.welcome")}, {userName}
           </h1>
         </div>
 
@@ -326,7 +326,7 @@ const Dashboard = () => {
                     onClick={() => navigate(`/dossiers/${dossier.id}`)}
                     className="ml-4"
                   >
-                    View
+                    {t("common.view")}
                   </Button>
                 </div>
               ))}

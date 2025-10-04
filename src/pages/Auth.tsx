@@ -778,7 +778,7 @@ const Auth = () => {
         />
       </div>
       
-      <div className="w-full max-w-5xl relative">
+      <div className="w-full max-w-6xl relative">
         <Card className="overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200 shadow-2xl">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left side - Decorative */}

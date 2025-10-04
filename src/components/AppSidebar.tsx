@@ -1,4 +1,4 @@
-import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, UserPlus } from "lucide-react";
+import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, UserPlus, Flag } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { NavLink } from "react-router-dom";
@@ -12,6 +12,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useUserRole, UserRole, useRolePortalName } from "@/hooks/useUserRole";
 import logoHorizontal from "@/assets/logo-horizontal.png";
@@ -29,19 +30,21 @@ export function AppSidebar() {
   const { role, loading } = useUserRole();
   const { t } = useTranslation();
   const rolePortalName = useRolePortalName(role);
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   const menuItems: MenuItem[] = [
-    // Platform Admin
-    { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin', 'org_admin', 'reviewer', 'support'] },
-    { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin', 'org_admin'] },
-    { titleKey: "navigation.organizations", url: "/admin/organizations", icon: Building2, roles: ['platform_admin', 'admin'] },
+    // Platform Admin - Alleen deze items voor platform_admin
+    { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin'] },
+    { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin'] },
+    { titleKey: "navigation.organizations", url: "/admin/organizations", icon: Building2, roles: ['platform_admin'] },
     { titleKey: "navigation.dossiers", url: "/admin/dossiers", icon: FolderOpen, roles: ['platform_admin'] },
     { titleKey: "navigation.documentReview", url: "/admin/documents", icon: FileText, roles: ['platform_admin'] },
     { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
     { titleKey: "navigation.invoicesTitle", url: "/admin/invoices", icon: Receipt, roles: ['platform_admin'] },
-    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin', 'org_admin'] },
-    { titleKey: "navigation.config", url: "/admin/config", icon: Settings, roles: ['platform_admin'] },
-    { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'support'] },
+    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin'] },
+    { titleKey: "navigation.config", url: "/admin/config", icon: Flag, roles: ['platform_admin'] },
+    { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin'] },
     
     // Org Admin
     { titleKey: "navigation.teamManagement", url: "/team", icon: UserPlus, roles: ['org_admin', 'admin', 'platform_admin'] },
@@ -99,14 +102,18 @@ export function AppSidebar() {
     <Sidebar className="border-r border-sidebar-border">
       <SidebarContent>
         <div className="px-6 py-6 border-b border-sidebar-border">
-          <img src={logoHorizontal} alt="JanazApp" className="h-8 brightness-0 invert" />
-          <p className="text-xs text-sidebar-foreground/70 mt-2 font-medium">{rolePortalName}</p>
+          <img src={logoHorizontal} alt="JanazApp" className={`h-8 brightness-0 invert transition-all ${isCollapsed ? 'hidden' : ''}`} />
+          {!isCollapsed && (
+            <p className="text-xs text-sidebar-foreground/70 mt-2 font-medium">{rolePortalName}</p>
+          )}
         </div>
         
         <SidebarGroup className="mt-6">
-          <SidebarGroupLabel className="px-6 text-sidebar-foreground/60 text-xs uppercase tracking-wider font-semibold mb-2">
-            Navigatie
-          </SidebarGroupLabel>
+          {!isCollapsed && (
+            <SidebarGroupLabel className="px-6 text-sidebar-foreground/60 text-xs uppercase tracking-wider font-semibold mb-2">
+              Navigatie
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {filteredMenuItems.map((item) => (
@@ -119,12 +126,12 @@ export function AppSidebar() {
                         `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-primary/10 backdrop-blur-xl border border-primary/20 text-white font-bold shadow-lg shadow-primary/10 mx-2 w-[calc(100%-1rem)]"
-                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 mx-3 w-fit"
-                        }`
+                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 mx-3"
+                        } ${isCollapsed ? 'justify-center' : ''}`
                       }
                     >
                       <item.icon className="h-5 w-5 flex-shrink-0" />
-                      <span className="text-sm">{t(item.titleKey)}</span>
+                      {!isCollapsed && <span className="text-sm">{t(item.titleKey)}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -135,7 +142,7 @@ export function AppSidebar() {
       </SidebarContent>
       
       <SidebarFooter className="border-t border-sidebar-border p-4 bg-sidebar-background/50">
-        <LanguageSwitcher />
+        {!isCollapsed && <LanguageSwitcher />}
       </SidebarFooter>
     </Sidebar>
   );

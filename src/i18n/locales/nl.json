@@ -311,6 +311,8 @@
     "adminDashboard": "Admin Dashboard",
     "directory": "Directory",
     "organizations": "Organisaties",
+    "documentReview": "Document Review",
+    "config": "Configuratie",
     "users": "Gebruikers",
     "integrations": "Integraties",
     "auditLog": "Audit Log",

@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   Building2, FileCheck, AlertCircle, Refrigerator, 
-  Activity, Receipt, Users, Flag 
+  Activity, Receipt, Users, FileText, FolderOpen
 } from "lucide-react";
 import { KPICard } from "@/components/KPICard";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -157,9 +158,9 @@ export default function AdminDashboard() {
           icon={Building2}
         />
         <KPICard
-          title="Feature Flags"
-          value="-"
-          icon={Flag}
+          title="Organisaties ter controle"
+          value={stats.pendingOrgs}
+          icon={Building2}
         />
         </div>
 
@@ -167,21 +168,33 @@ export default function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Recente Events</CardTitle>
+            <CardTitle className="text-lg font-medium">Laatste Events</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {alerts.length > 0 ? (
-                alerts.map((alert, idx) => (
-                  <div key={idx} className="flex items-start gap-2 text-sm">
-                    <span className="text-muted-foreground min-w-[50px]">{alert.time}</span>
-                    <span>{alert.message}</span>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">Geen recente events</p>
-              )}
-            </div>
+            {alerts.length > 0 ? (
+              <div className="overflow-hidden rounded-lg border">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="px-4 py-2 text-left font-medium">Tijd</th>
+                      <th className="px-4 py-2 text-left font-medium">Event</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {alerts.map((alert, idx) => (
+                      <tr key={idx} className="hover:bg-muted/30">
+                        <td className="px-4 py-2 text-muted-foreground whitespace-nowrap">
+                          {alert.time}
+                        </td>
+                        <td className="px-4 py-2">{alert.message}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Geen recente events</p>
+            )}
           </CardContent>
         </Card>
 
@@ -206,8 +219,17 @@ export default function AdminDashboard() {
                 className="justify-start"
                 onClick={() => navigate("/admin/dossiers")}
               >
-                <FileCheck className="mr-2 h-4 w-4" />
+                <FolderOpen className="mr-2 h-4 w-4" />
                 Dossiers
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start"
+                onClick={() => navigate("/admin/documents")}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Docs Review
               </Button>
               <Button 
                 variant="outline" 
@@ -231,19 +253,10 @@ export default function AdminDashboard() {
                 variant="outline" 
                 size="sm"
                 className="justify-start"
-                onClick={() => navigate("/admin/users")}
-              >
-                <Users className="mr-2 h-4 w-4" />
-                Gebruikers
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="justify-start"
                 onClick={() => navigate("/admin/audit")}
               >
-                <FileCheck className="mr-2 h-4 w-4" />
-                Audit Log
+                <FileText className="mr-2 h-4 w-4" />
+                Auditlog
               </Button>
             </div>
           </CardContent>

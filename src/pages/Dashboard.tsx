@@ -1,21 +1,21 @@
 import { FileText, CheckCircle2, Clock, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
-import { DossierProgressCard } from "@/components/DossierProgressCard";
+import { useNavigate } from "react-router-dom";
 
-interface DossierProgress {
-  dossier_id: string;
+interface DossierData {
+  id: string;
   display_id: string;
   deceased_name: string;
-  pipeline_type: string;
-  progress_pct: number;
-  next_step_label?: string;
-  current_main_key?: string;
+  flow: string;
+  status: string;
 }
 
 const Dashboard = () => {
-  const [dossierProgress, setDossierProgress] = useState<DossierProgress[]>([]);
+  const navigate = useNavigate();
+  const [dossiers, setDossiers] = useState<DossierData[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("");
   const [stats, setStats] = useState({
@@ -60,25 +60,13 @@ const Dashboard = () => {
         if (dossiersError) {
           console.error("Error fetching dossiers:", dossiersError);
         } else if (dossiersData) {
-          // For now, set progress to 0 for all dossiers
-          // In production, this would fetch from the view
-          const progress: DossierProgress[] = dossiersData.map(d => ({
-            dossier_id: d.id,
-            display_id: d.display_id || '',
-            deceased_name: d.deceased_name,
-            pipeline_type: d.flow,
-            progress_pct: 0,
-            next_step_label: 'Intake',
-            current_main_key: 'INTAKE',
-          }));
-          
-          setDossierProgress(progress);
+          setDossiers(dossiersData);
           
           // Calculate stats
           setStats({
-            totalActive: progress.length,
-            repatriation: progress.filter(d => d.pipeline_type === 'REP').length,
-            local: progress.filter(d => d.pipeline_type === 'LOC').length,
+            totalActive: dossiersData.length,
+            repatriation: dossiersData.filter(d => d.flow === 'REP').length,
+            local: dossiersData.filter(d => d.flow === 'LOC').length,
           });
         }
         
@@ -174,7 +162,7 @@ const Dashboard = () => {
             </p>
           </div>
 
-          {dossierProgress.length === 0 ? (
+          {dossiers.length === 0 ? (
             <Card className="border-border/40">
               <CardContent className="flex items-center justify-center py-12">
                 <div className="text-center space-y-2">
@@ -184,18 +172,27 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {dossierProgress.map((dossier) => (
-                <DossierProgressCard
-                  key={dossier.dossier_id}
-                  dossierId={dossier.dossier_id}
-                  displayId={dossier.display_id}
-                  deceasedName={dossier.deceased_name}
-                  pipelineType={dossier.pipeline_type}
-                  progressPct={dossier.progress_pct}
-                  nextStepLabel={dossier.next_step_label}
-                  currentMainKey={dossier.current_main_key}
-                />
+            <div className="grid grid-cols-1 gap-3">
+              {dossiers.map((dossier) => (
+                <Card 
+                  key={dossier.id} 
+                  className="cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => navigate(`/dossiers/${dossier.id}`)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold">{dossier.deceased_name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Ref: {dossier.display_id} • {dossier.flow === 'REP' ? 'Repatriëring' : 'Lokaal'}
+                        </p>
+                      </div>
+                      <Badge variant={dossier.flow === 'REP' ? 'default' : 'secondary'}>
+                        {dossier.status}
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}

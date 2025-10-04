@@ -51,6 +51,7 @@ export function AppSidebar() {
     // FD & Org Admin (niet voor platform_admin/admin - die hebben eigen menu)
     { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['funeral_director', 'org_admin'] },
+    { titleKey: "navigation.chat", url: "/fd/chat", icon: MessageSquare, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.tasks", url: "/taken", icon: CheckSquare, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.documents", url: "/documenten", icon: FileText, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.planning", url: "/planning", icon: Calendar, roles: ['funeral_director', 'org_admin'] },
@@ -58,6 +59,7 @@ export function AppSidebar() {
     
     // Insurer
     { titleKey: "navigation.dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },
+    { titleKey: "navigation.chat", url: "/insurer/chat", icon: MessageSquare, roles: ['insurer'] },
     { titleKey: "navigation.invoicesTitle", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
     { titleKey: "navigation.reporting", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
     

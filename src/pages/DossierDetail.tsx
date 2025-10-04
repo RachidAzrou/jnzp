@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -287,118 +288,104 @@ const DossierDetail = () => {
         </TabsList>
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+        <TabsContent value="overview" className="space-y-8">
+          <div className="grid gap-8 md:grid-cols-2">
             {/* Overledene */}
-            <Card>
-              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-                <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <User className="h-4 w-4 text-primary" />
-                  </div>
-                  Overledene
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 border-b pb-2">
+                <User className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-semibold">Overledene</h3>
+              </div>
+              <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Naam</p>
-                  <p className="font-medium">{dossier.deceased_name}</p>
+                  <Label className="text-muted-foreground">Naam</Label>
+                  <p className="font-medium mt-1">{dossier.deceased_name}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Geboortedatum</p>
-                    <p className="text-sm">{formatDate(dossier.deceased_dob)}</p>
+                    <Label className="text-muted-foreground">Geboortedatum</Label>
+                    <p className="mt-1">{formatDate(dossier.deceased_dob)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Overlijdensdatum</p>
-                    <p className="text-sm">{formatDate(dossier.date_of_death)}</p>
+                    <Label className="text-muted-foreground">Overlijdensdatum</Label>
+                    <p className="mt-1">{formatDate(dossier.date_of_death)}</p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Flow type</p>
-                  <FlowSelector 
-                    dossierId={id!} 
-                    currentFlow={dossier.flow} 
-                    onFlowChanged={fetchDossierData}
-                  />
+                  <Label className="text-muted-foreground">Flow type</Label>
+                  <div className="mt-1">
+                    <FlowSelector 
+                      dossierId={id!} 
+                      currentFlow={dossier.flow} 
+                      onFlowChanged={fetchDossierData}
+                    />
+                  </div>
                 </div>
                 {dossier.deceased_gender && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Geslacht</p>
-                    <p className="text-sm font-medium">
+                    <Label className="text-muted-foreground">Geslacht</Label>
+                    <p className="font-medium mt-1">
                       {dossier.deceased_gender === 'M' ? 'Man' : 'Vrouw'}
                     </p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Familie & Contact */}
-            <Card>
-              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-                <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Users className="h-4 w-4 text-primary" />
-                  </div>
-                  Familie & Contact
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {familyContacts.length > 0 ? (
-                  <div className="space-y-3">
-                    {familyContacts.map((contact) => (
-                      <div key={contact.id} className="p-3 bg-muted/50 rounded-lg">
-                        <p className="font-medium">{contact.name}</p>
-                        <p className="text-sm text-muted-foreground">{contact.relationship}</p>
-                        {contact.phone && (
-                          <p className="text-sm mt-1">{contact.phone}</p>
-                        )}
-                        {contact.email && (
-                          <p className="text-sm">{contact.email}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Geen contactpersonen</p>
-                )}
-              </CardContent>
-            </Card>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 border-b pb-2">
+                <Users className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-semibold">Familie & Contact</h3>
+              </div>
+              {familyContacts.length > 0 ? (
+                <div className="space-y-3">
+                  {familyContacts.map((contact) => (
+                    <div key={contact.id} className="p-4 border bg-muted/30">
+                      <p className="font-medium">{contact.name}</p>
+                      <p className="text-sm text-muted-foreground">{contact.relationship}</p>
+                      {contact.phone && (
+                        <p className="text-sm mt-1">{contact.phone}</p>
+                      )}
+                      {contact.email && (
+                        <p className="text-sm">{contact.email}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground py-4">Geen contactpersonen</p>
+              )}
+            </div>
           </div>
 
           {/* Document Status Summary */}
-          <Card>
-            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-              <CardTitle className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <FileText className="h-4 w-4 text-primary" />
-                </div>
-                Document Pakket Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-2xl font-bold text-green-600">
-                    {documents.filter(d => d.status === "APPROVED").length}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Goedgekeurd</p>
-                </div>
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-2xl font-bold text-orange-600">
-                    {documents.filter(d => d.status === "IN_REVIEW").length}
-                  </p>
-                  <p className="text-sm text-muted-foreground">In Review</p>
-                </div>
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-2xl font-bold text-red-600">
-                    {documents.filter(d => d.status === "REJECTED").length}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Afgekeurd</p>
-                </div>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 border-b pb-2">
+              <FileText className="h-5 w-5 text-muted-foreground" />
+              <h3 className="text-lg font-semibold">Document Pakket Status</h3>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center p-6 border bg-muted/30">
+                <p className="text-3xl font-bold text-green-600">
+                  {documents.filter(d => d.status === "APPROVED").length}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">Goedgekeurd</p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="text-center p-6 border bg-muted/30">
+                <p className="text-3xl font-bold text-orange-600">
+                  {documents.filter(d => d.status === "IN_REVIEW").length}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">In Review</p>
+              </div>
+              <div className="text-center p-6 border bg-muted/30">
+                <p className="text-3xl font-bold text-red-600">
+                  {documents.filter(d => d.status === "REJECTED").length}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">Afgekeurd</p>
+              </div>
+            </div>
+          </div>
 
           {/* Internal Notes */}
           <InternalNotesCard 
@@ -410,259 +397,248 @@ const DossierDetail = () => {
 
         {/* Documents Tab */}
         <TabsContent value="documents" className="space-y-4">
-          <Card>
-            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <FileText className="h-4 w-4 text-primary" />
-                  </div>
-                  Documenten
-                </CardTitle>
-                <DocumentUploadDialog 
-                  dossierId={id!} 
-                  onDocumentUploaded={fetchDossierData}
-                />
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b pb-2">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-semibold">Documenten</h3>
               </div>
-            </CardHeader>
-            <CardContent>
-              {documents.length > 0 ? (
-                <div className="space-y-3">
-                  {documents.map((doc) => (
-                    <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">{doc.file_name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {doc.doc_type.replace(/_/g, " ")} • {formatDateTime(doc.uploaded_at)}
-                          </p>
-                        </div>
+              <DocumentUploadDialog 
+                dossierId={id!} 
+                onDocumentUploaded={fetchDossierData}
+              />
+            </div>
+            {documents.length > 0 ? (
+              <div className="space-y-3">
+                {documents.map((doc) => (
+                  <div key={doc.id} className="flex items-center justify-between p-4 border bg-muted/30">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">{doc.file_name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {doc.doc_type.replace(/_/g, " ")} • {formatDateTime(doc.uploaded_at)}
+                        </p>
                       </div>
-                      <Badge 
-                        variant={getDocStatusColor(doc.status)}
-                        className={`min-w-[120px] justify-center ${
-                          getDocStatusColor(doc.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
-                        }`}
-                      >
-                        {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
-                        {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
-                        {getDocStatusLabel(doc.status)}
-                      </Badge>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground py-8">Geen documenten</p>
-              )}
-            </CardContent>
-          </Card>
+                    <Badge 
+                      variant={getDocStatusColor(doc.status)}
+                      className={`min-w-[120px] justify-center ${
+                        getDocStatusColor(doc.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
+                      }`}
+                    >
+                      {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
+                      {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
+                      {getDocStatusLabel(doc.status)}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">Geen documenten</p>
+            )}
+          </div>
         </TabsContent>
 
         {/* Stakeholders Tab */}
-        <TabsContent value="stakeholders" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+        <TabsContent value="stakeholders" className="space-y-8">
+          <div className="grid gap-8 md:grid-cols-2">
             {/* Moskee */}
-            <Card>
-              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-                <CardTitle>Moskee</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {mosqueService ? (
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Moskee</p>
-                      <p className="font-medium">{mosqueService.organizations?.name || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Status</p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 border-b pb-2">
+                <Building2 className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-semibold">Moskee</h3>
+              </div>
+              {mosqueService ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-muted-foreground">Moskee</Label>
+                    <p className="font-medium mt-1">{mosqueService.organizations?.name || "N/A"}</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Status</Label>
+                    <div className="mt-1">
                       <Badge>{mosqueService.status}</Badge>
                     </div>
-                    {mosqueService.prayer && (
-                      <div>
-                        <p className="text-sm text-muted-foreground">Gebed</p>
-                        <p className="font-medium">{mosqueService.prayer}</p>
-                      </div>
-                    )}
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Geen moskee dienst gepland</p>
-                )}
-              </CardContent>
-            </Card>
+                  {mosqueService.prayer && (
+                    <div>
+                      <Label className="text-muted-foreground">Gebed</Label>
+                      <p className="font-medium mt-1">{mosqueService.prayer}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground py-4">Geen moskee dienst gepland</p>
+              )}
+            </div>
 
             {/* Mortuarium */}
-            <Card>
-              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-                <CardTitle>Mortuarium</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {washService ? (
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Mortuarium</p>
-                      <p className="font-medium">{washService.organizations?.name || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Status</p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 border-b pb-2">
+                <Building2 className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-semibold">Mortuarium</h3>
+              </div>
+              {washService ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-muted-foreground">Mortuarium</Label>
+                    <p className="font-medium mt-1">{washService.organizations?.name || "N/A"}</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Status</Label>
+                    <div className="mt-1">
                       <Badge>{washService.status}</Badge>
                     </div>
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Geen mortuarium dienst gepland</p>
-                )}
-              </CardContent>
-            </Card>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground py-4">Geen mortuarium dienst gepland</p>
+              )}
+            </div>
 
             {/* Verzekeraar */}
-            <Card>
-              <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-                <CardTitle>Verzekeraar</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {claim ? (
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Verzekeraar</p>
-                      <p className="font-medium">{claim.organizations?.name || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Polisnummer</p>
-                      <p className="font-medium font-mono">{claim.policy_number}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Status</p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 border-b pb-2">
+                <Building2 className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-semibold">Verzekeraar</h3>
+              </div>
+              {claim ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-muted-foreground">Verzekeraar</Label>
+                    <p className="font-medium mt-1">{claim.organizations?.name || "N/A"}</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Polisnummer</Label>
+                    <p className="font-medium font-mono mt-1">{claim.policy_number}</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Status</Label>
+                    <div className="mt-1">
                       <Badge>{claim.status}</Badge>
                     </div>
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Geen verzekeraar gekoppeld</p>
-                )}
-              </CardContent>
-            </Card>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground py-4">Geen verzekeraar gekoppeld</p>
+              )}
+            </div>
           </div>
         </TabsContent>
 
         {/* Chat Tab */}
         <TabsContent value="chat" className="space-y-4">
-          <Card>
-            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-              <CardTitle>Communicatie met Familie</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="bg-muted/50 rounded-lg p-4 text-center">
-                  <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
-                    Chat functionaliteit komt binnenkort
-                  </p>
-                </div>
-                <Button className="w-full">
-                  <Send className="mr-2 h-4 w-4" />
-                  Start Chat
-                </Button>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 border-b pb-2">
+              <MessageSquare className="h-5 w-5 text-muted-foreground" />
+              <h3 className="text-lg font-semibold">Communicatie met Familie</h3>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-muted/30 border p-8 text-center">
+                <MessageSquare className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">
+                  Chat functionaliteit komt binnenkort
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <Button className="w-full">
+                <Send className="mr-2 h-4 w-4" />
+                Start Chat
+              </Button>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Financial Tab */}
         <TabsContent value="financial" className="space-y-4">
-          <Card>
-            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-              <div className="flex items-center justify-between">
-                <CardTitle>Facturen</CardTitle>
-                <Button>
-                  <DollarSign className="mr-2 h-4 w-4" />
-                  Nieuwe Factuur
-                </Button>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b pb-2">
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-semibold">Facturen</h3>
               </div>
-            </CardHeader>
-            <CardContent>
-              {invoices.length > 0 ? (
-                <div className="space-y-3">
-                  {invoices.map((invoice) => (
-                    <div key={invoice.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <p className="font-medium">{invoice.invoice_number || "Concept"}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {formatDate(invoice.created_at)}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">€{invoice.total}</p>
-                        <Badge variant="outline">{invoice.status}</Badge>
-                      </div>
+              <Button>
+                <DollarSign className="mr-2 h-4 w-4" />
+                Nieuwe Factuur
+              </Button>
+            </div>
+            {invoices.length > 0 ? (
+              <div className="space-y-3">
+                {invoices.map((invoice) => (
+                  <div key={invoice.id} className="flex items-center justify-between p-4 border bg-muted/30">
+                    <div>
+                      <p className="font-medium">{invoice.invoice_number || "Concept"}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatDate(invoice.created_at)}
+                      </p>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground py-8">Geen facturen</p>
-              )}
-            </CardContent>
-          </Card>
+                    <div className="text-right">
+                      <p className="font-medium">€{invoice.total}</p>
+                      <Badge variant="outline">{invoice.status}</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">Geen facturen</p>
+            )}
+          </div>
         </TabsContent>
 
         {/* Timeline Tab */}
         <TabsContent value="timeline" className="space-y-4">
-          <Card>
-            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Clock className="h-4 w-4 text-primary" />
-                  </div>
-                  Tijdlijn
-                </CardTitle>
-                <AddManualEventDialog 
-                  dossierId={id!}
-                  onEventAdded={fetchDossierData}
-                />
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b pb-2">
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-semibold">Tijdlijn</h3>
               </div>
-            </CardHeader>
-            <CardContent>
-              {(events.length > 0 || manualEvents.length > 0) ? (
-                <div className="space-y-4">
-                  {/* Combine and sort all events */}
-                  {[
-                    ...events.map(e => ({ ...e, type: 'system', time: e.created_at })),
-                    ...manualEvents.map(e => ({ ...e, type: 'manual', time: e.created_at }))
-                  ]
-                    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-                    .map((event, index, arr) => (
-                      <div key={`${event.type}-${event.id}`} className="flex gap-4">
-                        <div className="flex flex-col items-center">
-                          <div className={`h-3 w-3 rounded-full ${
-                            event.type === 'manual' ? 'bg-blue-500' : 'bg-primary'
-                          }`} />
-                          {index < arr.length - 1 && (
-                            <div className="w-0.5 flex-1 bg-border mt-1" />
-                          )}
-                        </div>
-                        <div className="flex-1 pb-4">
-                          {event.type === 'manual' ? (
-                            <>
-                              <p className="font-medium">{event.event_title}</p>
-                              {event.event_description && (
-                                <p className="text-sm mt-1">{event.event_description}</p>
-                              )}
-                              <Badge variant="outline" className="mt-1 text-xs">Handmatig toegevoegd</Badge>
-                            </>
-                          ) : (
-                            <p className="font-medium">{event.event_description}</p>
-                          )}
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {formatDateTime(event.time)}
-                          </p>
-                        </div>
+              <AddManualEventDialog 
+                dossierId={id!}
+                onEventAdded={fetchDossierData}
+              />
+            </div>
+            {(events.length > 0 || manualEvents.length > 0) ? (
+              <div className="space-y-4">
+                {/* Combine and sort all events */}
+                {[
+                  ...events.map(e => ({ ...e, type: 'system', time: e.created_at })),
+                  ...manualEvents.map(e => ({ ...e, type: 'manual', time: e.created_at }))
+                ]
+                  .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+                  .map((event, index, arr) => (
+                    <div key={`${event.type}-${event.id}`} className="flex gap-4">
+                      <div className="flex flex-col items-center">
+                        <div className={`h-3 w-3 rounded-full ${
+                          event.type === 'manual' ? 'bg-blue-500' : 'bg-primary'
+                        }`} />
+                        {index < arr.length - 1 && (
+                          <div className="w-0.5 flex-1 bg-border mt-1" />
+                        )}
                       </div>
-                    ))}
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground py-8">Geen gebeurtenissen</p>
-              )}
-            </CardContent>
-          </Card>
+                      <div className="flex-1 pb-4">
+                        {event.type === 'manual' ? (
+                          <>
+                            <p className="font-medium">{event.event_title}</p>
+                            {event.event_description && (
+                              <p className="text-sm mt-1">{event.event_description}</p>
+                            )}
+                            <Badge variant="outline" className="mt-1 text-xs">Handmatig toegevoegd</Badge>
+                          </>
+                        ) : (
+                          <p className="font-medium">{event.event_description}</p>
+                        )}
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {formatDateTime(event.time)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">Geen gebeurtenissen</p>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

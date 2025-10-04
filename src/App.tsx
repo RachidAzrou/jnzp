@@ -44,6 +44,11 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminDirectory from "./pages/AdminDirectory";
 import AdminOrganizations from "./pages/AdminOrganizations";
 import AdminGDPR from "./pages/AdminGDPR";
+import AdminIntegrations from "./pages/AdminIntegrations";
+import AdminInvoices from "./pages/AdminInvoices";
+import AdminUsers from "./pages/AdminUsers";
+import AdminAudit from "./pages/AdminAudit";
+import AdminConfig from "./pages/AdminConfig";
 import TeamManagement from "./pages/TeamManagement";
 import Auth from "./pages/Auth";
 import Register from "./pages/Register";
@@ -328,22 +333,27 @@ const App = () => (
                           } />
                           <Route path="/admin/integrations" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
-                              <AdminDashboard />
+                              <AdminIntegrations />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/invoices" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
-                              <FDFacturatie />
+                              <AdminInvoices />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/users" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
-                              <AdminDashboard />
+                              <AdminUsers />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/audit" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
-                              <AdminDashboard />
+                              <AdminAudit />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/config" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminConfig />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />

@@ -60,7 +60,8 @@ export function AppSidebar() {
     { titleKey: "navigation.facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
     
     // Mosque
-    { titleKey: "navigation.requests", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
+    { titleKey: "navigation.dashboard", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
+    { titleKey: "navigation.requests", url: "/moskee/aanvragen", icon: FolderOpen, roles: ['mosque'] },
     { titleKey: "navigation.availability", url: "/moskee/beschikbaarheid", icon: PiMosque, roles: ['mosque'] },
     
     // Family

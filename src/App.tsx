@@ -32,6 +32,7 @@ import Facturatie from "./pages/Facturatie";
 import FDFacturatie from "./pages/FDFacturatie";
 import DossierDetail from "./pages/DossierDetail";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
+import MoskeeAanvragen from "./pages/MoskeeAanvragen";
 import MoskeeAanvraag from "./pages/MoskeeAanvraag";
 import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
 import InsurerDashboard from "./pages/InsurerDashboard";
@@ -253,6 +254,11 @@ const App = () => (
                           <Route path="/moskee" element={
                             <RoleProtectedRoute allowedRoles={['mosque']}>
                               <MoskeeDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/moskee/aanvragen" element={
+                            <RoleProtectedRoute allowedRoles={['mosque']}>
+                              <MoskeeAanvragen />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/moskee/aanvraag/:id" element={

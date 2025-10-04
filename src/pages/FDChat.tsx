@@ -214,7 +214,7 @@ export default function FDChat() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate('/fd/chat')}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Terug

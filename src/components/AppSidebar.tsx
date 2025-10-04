@@ -34,10 +34,9 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
 
   const menuItems: MenuItem[] = [
-    // Platform Admin - Deze items voor platform_admin EN admin
+    // Platform Admin - Deze 9 pagina's voor platform_admin EN admin
     { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin', 'admin'] },
     { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.organizations", url: "/admin/organizations", icon: Building2, roles: ['platform_admin', 'admin'] },
     { titleKey: "navigation.dossiers", url: "/admin/dossiers", icon: FolderOpen, roles: ['platform_admin', 'admin'] },
     { titleKey: "navigation.documentReview", url: "/admin/documents", icon: FileText, roles: ['platform_admin', 'admin'] },
     { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin', 'admin'] },

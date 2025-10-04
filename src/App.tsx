@@ -144,10 +144,10 @@ const RoleBasedHome = () => {
   if (role === 'family') {
     return <Navigate to="/familie" replace />;
   }
-  if (role === 'platform_admin') {
+  if (role === 'platform_admin' || role === 'admin') {
     return <Navigate to="/admin" replace />;
   }
-  if (role === 'admin' || role === 'funeral_director' || role === 'org_admin') {
+  if (role === 'funeral_director' || role === 'org_admin') {
     return <Dashboard />;
   }
 

@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Check, Circle, ExternalLink } from "lucide-react";
+import { Check, Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface DossierProgressCardProps {
@@ -26,100 +25,99 @@ export function DossierProgressCard({
 }: DossierProgressCardProps) {
   const navigate = useNavigate();
 
-  const getPipelineBadgeColor = (type: string) => {
-    return type === 'REP' ? 'bg-blue-500' : 'bg-green-500';
-  };
-
-  const getStageIcon = (stageKey: string, currentKey?: string) => {
-    if (!currentKey) return <Circle className="w-3 h-3 text-muted-foreground" />;
-    
-    const stages = pipelineType === 'REP' 
-      ? ['INTAKE', 'RITUELE_WASSPLAATS', 'JANAZA_GEBED', 'REPATRIERING']
-      : ['INTAKE', 'RITUELE_WASSPLAATS', 'JANAZA_GEBED', 'BEGRAFENIS'];
-    
-    const currentIndex = stages.indexOf(currentKey);
-    const stageIndex = stages.indexOf(stageKey);
-    
-    if (stageIndex < currentIndex || progressPct === 100) {
-      return <Check className="w-4 h-4 text-primary" />;
-    } else if (stageIndex === currentIndex) {
-      return <div className="w-3 h-3 rounded-full bg-primary" />;
-    } else {
-      return <Circle className="w-3 h-3 text-muted-foreground" />;
-    }
-  };
-
-  const getStageLabel = (stageKey: string) => {
-    const labels: Record<string, string> = {
-      'INTAKE': 'Intake',
-      'RITUELE_WASSPLAATS': 'Rituele wassplaats',
-      'JANAZA_GEBED': 'Janaza gebed',
-      'REPATRIERING': 'Repatriëring',
-      'BEGRAFENIS': 'Begrafenis',
-    };
-    return labels[stageKey] || stageKey;
-  };
-
   const mainStages = pipelineType === 'REP'
-    ? ['INTAKE', 'RITUELE_WASSPLAATS', 'JANAZA_GEBED', 'REPATRIERING']
-    : ['INTAKE', 'RITUELE_WASSPLAATS', 'JANAZA_GEBED', 'BEGRAFENIS'];
+    ? [
+        { key: 'INTAKE', label: 'Intake' },
+        { key: 'RITUELE_WASSPLAATS', label: 'Rituele wassplaats' },
+        { key: 'JANAZA_GEBED', label: 'Janaza gebed' },
+        { key: 'REPATRIERING', label: 'Repatriëring' }
+      ]
+    : [
+        { key: 'INTAKE', label: 'Intake' },
+        { key: 'RITUELE_WASSPLAATS', label: 'Rituele wassplaats' },
+        { key: 'JANAZA_GEBED', label: 'Janaza gebed' },
+        { key: 'BEGRAFENIS', label: 'Begrafenis' }
+      ];
+
+  const getCurrentStageIndex = () => {
+    return mainStages.findIndex(stage => stage.key === currentMainKey);
+  };
+
+  const currentIndex = getCurrentStageIndex();
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-lg font-semibold">{deceasedName}</CardTitle>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Ref: {displayId}</span>
-              <Badge className={getPipelineBadgeColor(pipelineType)}>
+    <Card className="border-border/40">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg">{deceasedName}</CardTitle>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-sm text-muted-foreground">Ref: {displayId}</span>
+              <Badge variant="secondary" className="text-xs">
                 {pipelineType === 'REP' ? 'Repatriëring' : 'Lokaal'}
               </Badge>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(`/dossiers/${dossierId}`)}
-          >
-            <ExternalLink className="w-4 h-4" />
-          </Button>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-primary">{progressPct}%</div>
+            <div className="text-xs text-muted-foreground">Voortgang</div>
+          </div>
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
-        {/* Progress bar */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-muted-foreground">Voortgang</span>
-            <span className="font-semibold text-primary">{progressPct}%</span>
-          </div>
-          <Progress value={progressPct} className="h-2" />
-        </div>
-
-        {/* Main stages */}
-        <div className="space-y-3">
-          {mainStages.map((stageKey, index) => (
-            <div key={stageKey} className="flex items-center gap-3">
-              <div className="flex-shrink-0">
-                {getStageIcon(stageKey, currentMainKey)}
-              </div>
-              <div className="flex-1">
-                <div className={`text-sm ${
-                  currentMainKey === stageKey 
-                    ? 'font-semibold text-foreground' 
-                    : 'text-muted-foreground'
-                }`}>
-                  {getStageLabel(stageKey)}
+      <CardContent className="space-y-6">
+        {/* Horizontal Progress Bar */}
+        <div className="relative pt-8 pb-4">
+          {/* Background line */}
+          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-border -translate-y-1/2" />
+          
+          {/* Progress line */}
+          <div 
+            className="absolute top-1/2 left-0 h-0.5 bg-primary -translate-y-1/2 transition-all duration-500"
+            style={{ width: `${progressPct}%` }}
+          />
+          
+          {/* Stage indicators */}
+          <div className="relative flex justify-between">
+            {mainStages.map((stage, index) => {
+              const isCompleted = index < currentIndex || progressPct === 100;
+              const isCurrent = index === currentIndex;
+              const isPending = index > currentIndex && progressPct !== 100;
+              
+              return (
+                <div key={stage.key} className="flex flex-col items-center gap-2">
+                  {/* Circle indicator */}
+                  <div className={`
+                    relative z-10 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300
+                    ${isCompleted ? 'bg-primary border-primary' : ''}
+                    ${isCurrent ? 'bg-primary border-primary scale-125 shadow-lg shadow-primary/30' : ''}
+                    ${isPending ? 'bg-background border-border' : ''}
+                  `}>
+                    {isCompleted && !isCurrent && (
+                      <Check className="w-4 h-4 text-primary-foreground" />
+                    )}
+                    {isCurrent && (
+                      <div className="w-3 h-3 bg-primary-foreground rounded-full" />
+                    )}
+                  </div>
+                  
+                  {/* Stage label */}
+                  <div className="text-center max-w-[80px]">
+                    <div className={`text-xs font-medium ${
+                      isCurrent ? 'text-foreground' : 'text-muted-foreground'
+                    }`}>
+                      {stage.label}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              );
+            })}
+          </div>
         </div>
 
-        {/* Next step */}
+        {/* Next step info */}
         {nextStepLabel && progressPct < 100 && (
-          <div className="pt-3 border-t">
+          <div className="flex items-center justify-between pt-4 border-t">
             <div className="text-sm">
               <span className="text-muted-foreground">Volgende stap: </span>
               <span className="font-semibold text-foreground">{nextStepLabel}</span>
@@ -128,9 +126,10 @@ export function DossierProgressCard({
         )}
 
         {progressPct === 100 && (
-          <div className="pt-3 border-t">
+          <div className="flex items-center justify-center pt-4 border-t">
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              ✓ Afgerond
+              <Check className="w-3 h-3 mr-1" />
+              Afgerond
             </Badge>
           </div>
         )}

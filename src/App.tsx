@@ -24,6 +24,8 @@ import FamiliePolis from "./pages/FamiliePolis";
 import FamilieLocatie from "./pages/FamilieLocatie";
 import FamilieChat from "./pages/FamilieChat";
 import FDChat from "./pages/FDChat";
+import FDChatOverview from "./pages/FDChatOverview";
+import InsurerChatOverview from "./pages/InsurerChatOverview";
 import WasplaatsDashboard from "./pages/WasplaatsDashboard";
 import WasplaatsKoelcellen from "./pages/WasplaatsKoelcellen";
 import WasplaatsReservaties from "./pages/WasplaatsReservaties";
@@ -305,10 +307,15 @@ const App = () => (
                           } />
                           <Route path="/fd/chat" element={
                             <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'org_admin']}>
-                              <FDChat />
+                              <FDChatOverview />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/insurer/chat" element={
+                            <RoleProtectedRoute allowedRoles={['insurer']}>
+                              <InsurerChatOverview />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/insurer/chat/:dossierId" element={
                             <RoleProtectedRoute allowedRoles={['insurer']}>
                               <FDChat />
                             </RoleProtectedRoute>

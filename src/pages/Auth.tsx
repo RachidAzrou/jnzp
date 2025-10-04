@@ -785,7 +785,7 @@ const Auth = () => {
                   <img 
                     src={logoJanazApp} 
                     alt="JanazApp Logo" 
-                    className="w-64 h-auto object-contain"
+                    className="w-80 h-auto object-contain"
                   />
                 </div>
               </div>

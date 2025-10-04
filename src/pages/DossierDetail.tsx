@@ -8,12 +8,17 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   ArrowLeft, Star, AlertCircle, User, Users, FileText, 
-  Building2, Plane, MapPin, DollarSign, Clock, MessageSquare,
-  CheckCircle2, XCircle, Upload, Send, Zap
+  Building2, DollarSign, Clock, MessageSquare,
+  CheckCircle2, XCircle, Send
 } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
+import { FlowSelector } from "@/components/dossier/FlowSelector";
+import { StatusChanger } from "@/components/dossier/StatusChanger";
+import { InternalNotesCard } from "@/components/dossier/InternalNotesCard";
+import { DocumentUploadDialog } from "@/components/dossier/DocumentUploadDialog";
+import { AddManualEventDialog } from "@/components/dossier/AddManualEventDialog";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -28,12 +33,26 @@ const DossierDetail = () => {
   const [claim, setClaim] = useState<any>(null);
   const [familyContacts, setFamilyContacts] = useState<any[]>([]);
   const [invoices, setInvoices] = useState<any[]>([]);
+  const [manualEvents, setManualEvents] = useState<any[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (id) {
       fetchDossierData();
+      checkAdminStatus();
     }
   }, [id]);
+
+  const checkAdminStatus = async () => {
+    const { data } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
+      .in("role", ["admin", "org_admin"])
+      .maybeSingle();
+    
+    setIsAdmin(!!data);
+  };
 
   const fetchDossierData = async () => {
     setLoading(true);
@@ -93,6 +112,13 @@ const DossierDetail = () => {
       .eq("dossier_id", id)
       .order("created_at", { ascending: false });
 
+    // Fetch manual events
+    const { data: manualEventsData } = await supabase
+      .from("manual_events")
+      .select("*")
+      .eq("dossier_id", id)
+      .order("created_at", { ascending: false });
+
     setDossier(dossierData);
     setDocuments(docsData || []);
     setEvents(eventsData || []);
@@ -101,6 +127,7 @@ const DossierDetail = () => {
     setClaim(claimData);
     setFamilyContacts(familyData || []);
     setInvoices(invoicesData || []);
+    setManualEvents(manualEventsData || []);
     setLoading(false);
   };
 
@@ -222,18 +249,12 @@ const DossierDetail = () => {
           >
             {getStatusLabel(dossier.status)}
           </Badge>
-          {dossier.flow === "REP" && (
-            <Badge variant="outline" className="gap-1">
-              <Plane className="h-3 w-3" />
-              Repatriëring
-            </Badge>
-          )}
-          {dossier.flow === "LOC" && (
-            <Badge variant="outline" className="gap-1">
-              <MapPin className="h-3 w-3" />
-              Lokaal
-            </Badge>
-          )}
+          <StatusChanger 
+            dossierId={id!} 
+            currentStatus={dossier.status}
+            onStatusChanged={fetchDossierData}
+            isAdmin={isAdmin}
+          />
         </div>
       </div>
 
@@ -294,11 +315,21 @@ const DossierDetail = () => {
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Flow type</p>
-                  <p className="text-sm font-medium">
-                    {dossier.flow === "REP" ? "Repatriëring" : dossier.flow === "LOC" ? "Lokaal" : "Niet ingesteld"}
-                  </p>
+                  <p className="text-sm text-muted-foreground mb-1">Flow type</p>
+                  <FlowSelector 
+                    dossierId={id!} 
+                    currentFlow={dossier.flow} 
+                    onFlowChanged={fetchDossierData}
+                  />
                 </div>
+                {dossier.deceased_gender && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Geslacht</p>
+                    <p className="text-sm font-medium">
+                      {dossier.deceased_gender === 'M' ? 'Man' : 'Vrouw'}
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -369,37 +400,12 @@ const DossierDetail = () => {
             </CardContent>
           </Card>
 
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-              <CardTitle className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Zap className="h-4 w-4 text-primary" />
-                </div>
-                Snelle Acties
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <Button variant="outline" className="w-full">
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Document
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <Building2 className="mr-2 h-4 w-4" />
-                  Moskee Aanvraag
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Chat Familie
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <DollarSign className="mr-2 h-4 w-4" />
-                  Nieuwe Factuur
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Internal Notes */}
+          <InternalNotesCard 
+            dossierId={id!} 
+            initialNotes={dossier.internal_notes}
+            onNotesSaved={fetchDossierData}
+          />
         </TabsContent>
 
         {/* Documents Tab */}
@@ -413,10 +419,10 @@ const DossierDetail = () => {
                   </div>
                   Documenten
                 </CardTitle>
-                <Button>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Document
-                </Button>
+                <DocumentUploadDialog 
+                  dossierId={id!} 
+                  onDocumentUploaded={fetchDossierData}
+                />
               </div>
             </CardHeader>
             <CardContent>
@@ -601,32 +607,56 @@ const DossierDetail = () => {
         <TabsContent value="timeline" className="space-y-4">
           <Card>
             <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-transparent">
-              <CardTitle className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Clock className="h-4 w-4 text-primary" />
-                </div>
-                Tijdlijn
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Clock className="h-4 w-4 text-primary" />
+                  </div>
+                  Tijdlijn
+                </CardTitle>
+                <AddManualEventDialog 
+                  dossierId={id!}
+                  onEventAdded={fetchDossierData}
+                />
+              </div>
             </CardHeader>
             <CardContent>
-              {events.length > 0 ? (
+              {(events.length > 0 || manualEvents.length > 0) ? (
                 <div className="space-y-4">
-                  {events.map((event, index) => (
-                    <div key={event.id} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        <div className="h-3 w-3 rounded-full bg-primary" />
-                        {index < events.length - 1 && (
-                          <div className="w-0.5 flex-1 bg-border mt-1" />
-                        )}
+                  {/* Combine and sort all events */}
+                  {[
+                    ...events.map(e => ({ ...e, type: 'system', time: e.created_at })),
+                    ...manualEvents.map(e => ({ ...e, type: 'manual', time: e.created_at }))
+                  ]
+                    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+                    .map((event, index, arr) => (
+                      <div key={`${event.type}-${event.id}`} className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className={`h-3 w-3 rounded-full ${
+                            event.type === 'manual' ? 'bg-blue-500' : 'bg-primary'
+                          }`} />
+                          {index < arr.length - 1 && (
+                            <div className="w-0.5 flex-1 bg-border mt-1" />
+                          )}
+                        </div>
+                        <div className="flex-1 pb-4">
+                          {event.type === 'manual' ? (
+                            <>
+                              <p className="font-medium">{event.event_title}</p>
+                              {event.event_description && (
+                                <p className="text-sm mt-1">{event.event_description}</p>
+                              )}
+                              <Badge variant="outline" className="mt-1 text-xs">Handmatig toegevoegd</Badge>
+                            </>
+                          ) : (
+                            <p className="font-medium">{event.event_description}</p>
+                          )}
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {formatDateTime(event.time)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1 pb-4">
-                        <p className="font-medium">{event.event_description}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {formatDateTime(event.created_at)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               ) : (
                 <p className="text-center text-muted-foreground py-8">Geen gebeurtenissen</p>

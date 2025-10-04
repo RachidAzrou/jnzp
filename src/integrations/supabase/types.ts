@@ -468,6 +468,38 @@ export type Database = {
         }
         Relationships: []
       }
+      document_comments: {
+        Row: {
+          comment: string
+          created_at: string
+          document_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          document_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_comments_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           doc_type: Database["public"]["Enums"]["doc_type"]
@@ -608,11 +640,13 @@ export type Database = {
           created_at: string
           date_of_death: string | null
           deceased_dob: string | null
+          deceased_gender: string | null
           deceased_name: string
           display_id: string | null
           flow: Database["public"]["Enums"]["dossier_flow"]
           id: string
           insurer_org_id: string | null
+          internal_notes: string | null
           legal_hold: boolean
           ref_number: string
           require_doc_ref: string | null
@@ -624,11 +658,13 @@ export type Database = {
           created_at?: string
           date_of_death?: string | null
           deceased_dob?: string | null
+          deceased_gender?: string | null
           deceased_name: string
           display_id?: string | null
           flow?: Database["public"]["Enums"]["dossier_flow"]
           id?: string
           insurer_org_id?: string | null
+          internal_notes?: string | null
           legal_hold?: boolean
           ref_number: string
           require_doc_ref?: string | null
@@ -640,11 +676,13 @@ export type Database = {
           created_at?: string
           date_of_death?: string | null
           deceased_dob?: string | null
+          deceased_gender?: string | null
           deceased_name?: string
           display_id?: string | null
           flow?: Database["public"]["Enums"]["dossier_flow"]
           id?: string
           insurer_org_id?: string | null
+          internal_notes?: string | null
           legal_hold?: boolean
           ref_number?: string
           require_doc_ref?: string | null
@@ -1188,6 +1226,41 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      manual_events: {
+        Row: {
+          created_at: string
+          dossier_id: string
+          event_description: string | null
+          event_title: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dossier_id: string
+          event_description?: string | null
+          event_title: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dossier_id?: string
+          event_description?: string | null
+          event_title?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manual_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       medical_docs: {
         Row: {

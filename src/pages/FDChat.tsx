@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Download, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -41,6 +41,8 @@ export default function FDChat() {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -115,22 +117,43 @@ export default function FDChat() {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim()) return;
-    if (!dossier) return;
-
-    setSending(true);
+    if ((!newMessage.trim() && !selectedFile) || !dossier) return;
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Not authenticated");
+      setSending(true);
 
-      // Get user role
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/auth');
+        return;
+      }
+
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', session.user.id)
         .limit(1)
         .single();
+
+      let attachment_url = null;
+      let attachment_name = null;
+      let attachment_type = null;
+
+      // Upload file if selected
+      if (selectedFile) {
+        const fileExt = selectedFile.name.split('.').pop();
+        const fileName = `${dossier.id}/${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError, data: uploadData } = await supabase.storage
+          .from('dossier-documents')
+          .upload(fileName, selectedFile);
+
+        if (uploadError) throw uploadError;
+
+        attachment_url = uploadData.path;
+        attachment_name = selectedFile.name;
+        attachment_type = selectedFile.type;
+      }
 
       // Get last channel preference
       const { data: prefData } = await supabase
@@ -149,7 +172,10 @@ export default function FDChat() {
           sender_user_id: session.user.id,
           sender_role: roleData?.role || 'funeral_director',
           channel: targetChannel as any,
-          message: newMessage.trim(),
+          message: newMessage.trim() || (selectedFile ? `[Bijlage: ${selectedFile.name}]` : ''),
+          attachment_url,
+          attachment_name,
+          attachment_type,
         });
 
       if (insertError) throw insertError;
@@ -162,6 +188,7 @@ export default function FDChat() {
 
       // Reset form
       setNewMessage("");
+      setSelectedFile(null);
 
       toast({
         title: "Bericht verzonden",
@@ -176,6 +203,49 @@ export default function FDChat() {
       });
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "Bestand te groot",
+          description: "Maximale bestandsgrootte is 10MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      setSelectedFile(file);
+    }
+  };
+
+  const handleDownloadAttachment = async (url: string, name: string) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('dossier-documents')
+        .download(url);
+
+      if (error) throw error;
+
+      // Create download link
+      const blobUrl = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      toast({
+        title: "Fout",
+        description: "Bestand kon niet worden gedownload",
+        variant: "destructive",
+      });
     }
   };
 
@@ -212,12 +282,13 @@ export default function FDChat() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button
-          variant="ghost"
-          size="sm"
+          variant="outline"
+          size="default"
           onClick={() => navigate('/fd/chat')}
+          className="gap-2"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Terug
+          <ArrowLeft className="h-4 w-4" />
+          <span>Terug naar overzicht</span>
         </Button>
         <div>
           <h1 className="text-3xl font-bold">
@@ -283,20 +354,20 @@ export default function FDChat() {
                         </div>
                         <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
                         {msg.attachment_url && (
-                          <a
-                            href={msg.attachment_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-xs underline mt-1"
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="mt-2"
+                            onClick={() => handleDownloadAttachment(msg.attachment_url!, msg.attachment_name!)}
                           >
-                            <Paperclip className="h-3 w-3" />
+                            <Download className="h-3 w-3 mr-2" />
                             {msg.attachment_name}
                             {msg.attachment_type && (
-                              <span className="text-[10px] opacity-70">
-                                ({msg.attachment_type})
+                              <span className="text-[10px] ml-2 opacity-70">
+                                ({msg.attachment_type.split('/')[1]?.toUpperCase()})
                               </span>
                             )}
-                          </a>
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -308,6 +379,19 @@ export default function FDChat() {
 
             {/* Compose Box */}
             <div className="border-t pt-4 space-y-3">
+              {selectedFile && (
+                <div className="flex items-center gap-2 p-2 bg-muted rounded">
+                  <Paperclip className="h-4 w-4" />
+                  <span className="text-sm flex-1">{selectedFile.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedFile(null)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
               <div className="flex gap-2">
                 <Textarea
                   placeholder="Typ uw antwoord..."
@@ -323,9 +407,24 @@ export default function FDChat() {
                 />
               </div>
               <div className="flex gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileSelect}
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={sending}
+                >
+                  <Paperclip className="h-4 w-4 mr-2" />
+                  Bijlage
+                </Button>
                 <Button
                   onClick={handleSendMessage}
-                  disabled={sending || !newMessage.trim()}
+                  disabled={sending || (!newMessage.trim() && !selectedFile)}
                   className="flex-1"
                 >
                   {sending ? (

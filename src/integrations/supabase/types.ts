@@ -2637,6 +2637,10 @@ export type Database = {
         Args: { p_email: string }
         Returns: boolean
       }
+      is_thread_member: {
+        Args: { p_thread_id: string; p_user_id: string }
+        Returns: boolean
+      }
       log_admin_action: {
         Args: {
           p_action: string

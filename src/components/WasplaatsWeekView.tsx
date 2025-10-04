@@ -133,31 +133,34 @@ export function WasplaatsWeekView({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Weekoverzicht</CardTitle>
+    <Card className="border-0 shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-medium">Weekoverzicht</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="border p-2 bg-muted font-medium text-left min-w-[100px]">
+                <th className="border border-border p-3 bg-muted/50 font-medium text-sm text-left min-w-[100px] rounded-tl-lg">
                   Koelcel
                 </th>
-                {weekDays.map((day) => {
+                {weekDays.map((day, index) => {
                   const dayStr = format(day, "yyyy-MM-dd");
                   const isBlocked = dayBlocks.some((b) => b.date === dayStr);
                   const blockReason = dayBlocks.find((b) => b.date === dayStr)?.reason;
+                  const isLastDay = index === weekDays.length - 1;
 
                   return (
                     <th
                       key={dayStr}
-                      className="border p-2 bg-muted font-medium text-center min-w-[120px]"
+                      className={`border border-border p-3 bg-muted/50 font-medium text-center min-w-[120px] ${
+                        isLastDay ? 'rounded-tr-lg' : ''
+                      }`}
                     >
                       <div className="flex flex-col items-center gap-1">
-                        <span className="text-sm">
-                          {format(day, "EEE", { locale: nl })}
+                        <span className="text-sm font-semibold">
+                          {format(day, "EEEE", { locale: nl })}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {format(day, "d MMM", { locale: nl })}
@@ -165,10 +168,13 @@ export function WasplaatsWeekView({
                         {isBlocked && (
                           <HoverCard>
                             <HoverCardTrigger>
-                              <Ban className="h-4 w-4 text-destructive cursor-help" />
+                              <Badge variant="destructive" className="text-xs gap-1">
+                                <Ban className="h-3 w-3" />
+                                Geblokkeerd
+                              </Badge>
                             </HoverCardTrigger>
                             <HoverCardContent className="w-auto">
-                              <p className="text-sm font-medium">Geblokkeerd</p>
+                              <p className="text-sm font-medium">Reden</p>
                               <p className="text-xs text-muted-foreground">
                                 {blockReason}
                               </p>
@@ -182,67 +188,76 @@ export function WasplaatsWeekView({
               </tr>
             </thead>
             <tbody>
-              {coolCells.map((cell) => (
-                <tr key={cell.id} className="hover:bg-muted/50">
-                  <td className="border p-2 font-medium">{cell.label}</td>
-                  {weekDays.map((day) => {
-                    const dayStr = format(day, "yyyy-MM-dd");
-                    const { status, reservations: dayReservations, reservation } =
-                      getCellStatusForDay(cell.id, day);
+              {coolCells.map((cell, cellIndex) => {
+                const isLastRow = cellIndex === coolCells.length - 1;
+                
+                return (
+                  <tr key={cell.id} className="hover:bg-muted/30 transition-colors">
+                    <td className={`border border-border p-3 font-medium text-sm ${
+                      isLastRow ? 'rounded-bl-lg' : ''
+                    }`}>
+                      {cell.label}
+                    </td>
+                    {weekDays.map((day, dayIndex) => {
+                      const dayStr = format(day, "yyyy-MM-dd");
+                      const { status, reservations: dayReservations, reservation } =
+                        getCellStatusForDay(cell.id, day);
+                      const isLastDay = dayIndex === weekDays.length - 1;
 
-                    return (
-                      <td
-                        key={dayStr}
-                        className={`border p-2 transition-colors ${getStatusColor(
-                          status
-                        )}`}
-                        onClick={() => {
-                          if (reservation) {
-                            handleReservationClick(reservation.id);
-                          }
-                        }}
-                      >
-                        {status === "BLOCKED" ? (
-                          <div className="text-center">
-                            <Badge variant="secondary" className="text-xs bg-red-700 text-white border-0">
-                              Geblokkeerd
-                            </Badge>
-                          </div>
-                        ) : reservation ? (
-                          <div className="text-center">
-                            <Badge variant="secondary" className={`text-xs border-0 ${
-                              status === "FREE" ? "bg-green-600 text-white" :
-                              status === "PENDING" ? "bg-orange-600 text-white" :
-                              status === "CONFIRMED" ? "bg-blue-600 text-white" :
-                              status === "OCCUPIED" ? "bg-red-600 text-white" :
-                              status === "OUT_OF_SERVICE" ? "bg-gray-600 text-white" :
-                              "bg-gray-600 text-white"
-                            }`}>
-                              {getStatusLabel(status)}
-                            </Badge>
-                            <p className="text-xs mt-1 font-medium">
-                              {format(new Date(reservation.start_at), "HH:mm")}
-                              -
-                              {format(new Date(reservation.end_at), "HH:mm")}
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="text-center">
-                            <Badge variant="secondary" className={`text-xs border-0 ${
-                              status === "FREE" ? "bg-green-600 text-white" :
-                              status === "OCCUPIED" ? "bg-red-600 text-white" :
-                              status === "OUT_OF_SERVICE" ? "bg-gray-600 text-white" :
-                              "bg-gray-600 text-white"
-                            }`}>
-                              {getStatusLabel(status)}
-                            </Badge>
-                          </div>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
+                      return (
+                        <td
+                          key={dayStr}
+                          className={`border border-border p-3 transition-all ${getStatusColor(
+                            status
+                          )} ${isLastRow && isLastDay ? 'rounded-br-lg' : ''}`}
+                          onClick={() => {
+                            if (reservation) {
+                              handleReservationClick(reservation.id);
+                            }
+                          }}
+                        >
+                          {status === "BLOCKED" ? (
+                            <div className="flex flex-col items-center gap-1">
+                              <Badge variant="destructive" className="text-xs">
+                                Geblokkeerd
+                              </Badge>
+                            </div>
+                          ) : reservation ? (
+                            <div className="flex flex-col items-center gap-2">
+                              <Badge className={`text-xs shadow-sm ${
+                                status === "FREE" ? "bg-green-600 hover:bg-green-700 text-white border-0" :
+                                status === "PENDING" ? "bg-orange-600 hover:bg-orange-700 text-white border-0" :
+                                status === "CONFIRMED" ? "bg-blue-600 hover:bg-blue-700 text-white border-0" :
+                                status === "OCCUPIED" ? "bg-red-600 hover:bg-red-700 text-white border-0" :
+                                status === "OUT_OF_SERVICE" ? "bg-gray-600 hover:bg-gray-700 text-white border-0" :
+                                "bg-gray-600 hover:bg-gray-700 text-white border-0"
+                              }`}>
+                                {getStatusLabel(status)}
+                              </Badge>
+                              <div className="text-xs font-medium bg-background/80 px-2 py-1 rounded">
+                                {format(new Date(reservation.start_at), "HH:mm")}
+                                {" - "}
+                                {format(new Date(reservation.end_at), "HH:mm")}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex justify-center">
+                              <Badge className={`text-xs ${
+                                status === "FREE" ? "bg-green-600 hover:bg-green-700 text-white border-0" :
+                                status === "OCCUPIED" ? "bg-red-600 hover:bg-red-700 text-white border-0" :
+                                status === "OUT_OF_SERVICE" ? "bg-gray-600 hover:bg-gray-700 text-white border-0" :
+                                "bg-gray-600 hover:bg-gray-700 text-white border-0"
+                              }`}>
+                                {getStatusLabel(status)}
+                              </Badge>
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

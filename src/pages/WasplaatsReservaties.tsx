@@ -68,15 +68,15 @@ export default function WasplaatsReservaties() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Reservaties</h1>
-        <p className="text-muted-foreground mt-1">Bekijk alle koelcel reservaties</p>
+        <h1 className="text-2xl font-semibold">Reservaties</h1>
+        <p className="text-sm text-muted-foreground mt-1">Bekijk alle koelcel reservaties</p>
       </div>
 
-      <Card className="max-w-2xl">
-        <CardHeader>
-          <CardTitle>Reservering Aanmaken</CardTitle>
+      <Card className="max-w-2xl border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-medium">Reservering Aanmaken</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

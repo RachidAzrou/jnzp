@@ -194,15 +194,15 @@ export default function WasplaatsFacturatie() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Facturatie</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl font-semibold">Facturatie</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Beheer facturen voor wasplaatsdiensten
           </p>
         </div>
-        <Button onClick={() => setIsNewInvoiceDialogOpen(true)}>
+        <Button onClick={() => setIsNewInvoiceDialogOpen(true)} size="sm">
           <Plus className="h-4 w-4 mr-2" />
           Nieuwe Factuur
         </Button>
@@ -324,9 +324,9 @@ export default function WasplaatsFacturatie() {
         </DialogContent>
       </Dialog>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Facturen</CardTitle>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-medium">Facturen</CardTitle>
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -342,41 +342,41 @@ export default function WasplaatsFacturatie() {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Nummer</TableHead>
-                <TableHead>Dossier</TableHead>
-                <TableHead>Uitvaartondernemer</TableHead>
-                <TableHead>Datum</TableHead>
-                <TableHead className="text-right">Bedrag</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Acties</TableHead>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="font-medium text-sm">Nummer</TableHead>
+                <TableHead className="font-medium text-sm">Dossier</TableHead>
+                <TableHead className="font-medium text-sm">Uitvaartondernemer</TableHead>
+                <TableHead className="font-medium text-sm">Datum</TableHead>
+                <TableHead className="text-right font-medium text-sm">Bedrag</TableHead>
+                <TableHead className="font-medium text-sm">Status</TableHead>
+                <TableHead className="text-right font-medium text-sm">Acties</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredInvoices.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8 text-sm">
                     Geen facturen gevonden
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredInvoices.map((invoice) => (
-                  <TableRow key={invoice.id} className="hover:bg-muted/50">
-                    <TableCell className="font-medium">
-                      {invoice.invoice_number || '-'}
+                  <TableRow key={invoice.id} className="hover:bg-muted/30">
+                    <TableCell className="font-medium font-mono text-sm">
+                      {invoice.invoice_number || '—'}
                     </TableCell>
-                    <TableCell>{invoice.dossier?.display_id || '-'}</TableCell>
-                    <TableCell>{invoice.fd_organization?.name || '-'}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-sm">{invoice.dossier?.display_id || '—'}</TableCell>
+                    <TableCell className="text-sm">{invoice.fd_organization?.name || '—'}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
                       {invoice.issued_at
                         ? format(new Date(invoice.issued_at), "dd-MM-yyyy", { locale: nl })
                         : format(new Date(invoice.created_at), "dd-MM-yyyy", { locale: nl })}
                     </TableCell>
-                    <TableCell className="text-right font-medium">
+                    <TableCell className="text-right font-medium text-sm">
                       €{invoice.total.toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      <Badge className={statusColors[invoice.status] || ""}>
+                      <Badge className={`text-xs ${statusColors[invoice.status] || ""}`}>
                         {statusLabels[invoice.status] || invoice.status}
                       </Badge>
                     </TableCell>

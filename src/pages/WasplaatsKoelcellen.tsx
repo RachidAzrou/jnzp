@@ -218,16 +218,16 @@ export default function WasplaatsKoelcellen() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Koelcellen Beheer</h1>
-          <p className="text-muted-foreground mt-1">Beheer koelcellen en hun status</p>
+          <h1 className="text-2xl font-semibold">Koelcellen Beheer</h1>
+          <p className="text-sm text-muted-foreground mt-1">Beheer koelcellen en hun status</p>
         </div>
         
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button size="sm">
               <Plus className="h-4 w-4 mr-2" />
               Koelcel Toevoegen
             </Button>
@@ -298,32 +298,32 @@ export default function WasplaatsKoelcellen() {
         </Dialog>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Overzicht</CardTitle>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-medium">Overzicht</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left p-3">Cel</th>
-                  <th className="text-left p-3">Status</th>
-                  <th className="text-left p-3">Notitie</th>
-                  <th className="text-left p-3">Acties</th>
+                  <th className="text-left p-3 font-medium text-sm">Cel</th>
+                  <th className="text-left p-3 font-medium text-sm">Status</th>
+                  <th className="text-left p-3 font-medium text-sm">Notitie</th>
+                  <th className="text-left p-3 font-medium text-sm">Acties</th>
                 </tr>
               </thead>
               <tbody>
                 {coolCells.map((cell) => (
-                  <tr key={cell.id} className="border-b hover:bg-muted/50">
-                    <td className="p-3 font-medium">{cell.label}</td>
+                  <tr key={cell.id} className="border-b hover:bg-muted/30">
+                    <td className="p-3 font-medium text-sm">{cell.label}</td>
                     <td className="p-3">
                       <Badge className={statusColors[cell.status] || ""}>
                         {statusLabels[cell.status] || cell.status}
                       </Badge>
                     </td>
                     <td className="p-3 text-sm text-muted-foreground">
-                      {cell.out_of_service_note || "-"}
+                      {cell.out_of_service_note || "—"}
                     </td>
                     <td className="p-3">
                       <div className="flex gap-2 flex-wrap">

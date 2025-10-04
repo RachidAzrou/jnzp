@@ -1,5 +1,6 @@
 import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, UserPlus } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
+import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -56,7 +57,7 @@ export function AppSidebar() {
     
     // Mortuarium
     { titleKey: "navigation.dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
-    { titleKey: "navigation.coolCells", url: "/wasplaats/koelcellen", icon: FolderOpen, roles: ['wasplaats'] },
+    { titleKey: "navigation.coolCells", url: "/wasplaats/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['wasplaats'] },
     { titleKey: "navigation.facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
     
     // Mosque

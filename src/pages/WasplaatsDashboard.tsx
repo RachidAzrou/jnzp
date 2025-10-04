@@ -79,15 +79,18 @@ export default function WasplaatsDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Mortuarium Dashboard</h1>
+        <div>
+          <h1 className="text-2xl font-semibold">Mortuarium Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">Overzicht van koelcellen en reservaties</p>
+        </div>
         <div className="flex gap-2">
-          <Button onClick={() => navigate("/wasplaats/koelcellen")}>
+          <Button onClick={() => navigate("/wasplaats/koelcellen")} variant="outline" size="sm">
             <Calendar className="h-4 w-4 mr-2" />
             Koelcellen
           </Button>
-          <Button onClick={() => navigate("/wasplaats/reservaties/nieuw")} variant="default">
+          <Button onClick={() => navigate("/wasplaats/reservaties/nieuw")} size="sm">
             <Plus className="h-4 w-4 mr-2" />
             Nieuwe Reservatie
           </Button>
@@ -95,41 +98,41 @@ export default function WasplaatsDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Totaal Cellen</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Totaal Cellen</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{capacityStats.total}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Vrij</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Vrij</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-success">{capacityStats.free}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Gereserveerd</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Gereserveerd</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-warning">{capacityStats.reserved}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Bezet</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Bezet</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">{capacityStats.occupied}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Buiten Dienst</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Buiten Dienst</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-destructive">{capacityStats.outOfService}</div>

@@ -47,7 +47,7 @@ export function AppSidebar() {
     { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'admin'] },
     
     // Org Admin
-    { titleKey: "navigation.teamManagement", url: "/team", icon: UserPlus, roles: ['org_admin', 'admin', 'platform_admin'] },
+    { titleKey: "navigation.teamManagement", url: "/team", icon: UserPlus, roles: ['org_admin'] },
     
     // FD & Org Admin (niet voor platform_admin/admin - die hebben eigen menu)
     { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director', 'org_admin'] },
@@ -77,8 +77,8 @@ export function AppSidebar() {
     { titleKey: "navigation.myDocuments", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
     { titleKey: "navigation.chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
     
-    // Settings for all
-    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['admin', 'funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'platform_admin', 'org_admin', 'reviewer', 'support'] },
+    // Settings for all (platform_admin en admin hebben geen settings in sidebar)
+    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'org_admin', 'reviewer', 'support'] },
   ];
 
   const filteredMenuItems = menuItems.filter(item => 

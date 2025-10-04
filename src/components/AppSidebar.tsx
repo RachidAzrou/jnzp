@@ -122,7 +122,6 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
-                      end
                       className={({ isActive }) => 
                         `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 mx-2 ${
                           isActive

@@ -83,13 +83,25 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       return;
     }
 
-    // Log action
-    const userId = (await supabase.auth.getUser()).data.user?.id;
+    // Log action with organization context
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+
+    // Get user's organization and role
+    const { data: userRole } = await supabase
+      .from("user_roles")
+      .select("organization_id, role")
+      .eq("user_id", userId)
+      .single();
+
     await supabase.from("audit_events").insert({
       user_id: userId,
+      organization_id: userRole?.organization_id,
+      actor_role: userRole?.role,
       event_type: "DOSSIER_STATUS_OVERRIDE",
       target_type: "Dossier",
       target_id: dossierId,
+      dossier_id: dossierId,
       description: `Status gewijzigd van ${currentStatus} naar ${newStatus}`,
       reason,
       metadata: { from_status: currentStatus, to_status: newStatus },

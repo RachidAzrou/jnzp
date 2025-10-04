@@ -20,6 +20,7 @@ import { StatusChanger } from "@/components/dossier/StatusChanger";
 import { InternalNotesCard } from "@/components/dossier/InternalNotesCard";
 import { DocumentUploadDialog } from "@/components/dossier/DocumentUploadDialog";
 import { AddManualEventDialog } from "@/components/dossier/AddManualEventDialog";
+import { AuditLogTable } from "@/components/dossier/AuditLogTable";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -636,6 +637,11 @@ const DossierDetail = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Audit Log Section - Bottom of page */}
+      <div className="mt-8">
+        <AuditLogTable dossierId={id!} />
+      </div>
     </div>
   );
 };

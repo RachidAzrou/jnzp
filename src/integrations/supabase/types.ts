@@ -23,6 +23,7 @@ export type Database = {
           event_type: string
           id: string
           metadata: Json | null
+          organization_id: string | null
           payload_diff: Json | null
           reason: string | null
           target_id: string | null
@@ -37,6 +38,7 @@ export type Database = {
           event_type: string
           id?: string
           metadata?: Json | null
+          organization_id?: string | null
           payload_diff?: Json | null
           reason?: string | null
           target_id?: string | null
@@ -51,6 +53,7 @@ export type Database = {
           event_type?: string
           id?: string
           metadata?: Json | null
+          organization_id?: string | null
           payload_diff?: Json | null
           reason?: string | null
           target_id?: string | null
@@ -63,6 +66,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {

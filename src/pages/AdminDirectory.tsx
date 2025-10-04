@@ -190,21 +190,21 @@ export default function AdminDirectory() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Building2 className="h-8 w-8" />
+          <h1 className="text-2xl font-semibold flex items-center gap-2">
+            <Building2 className="h-6 w-6" />
             Directory Beheer
           </h1>
-          <p className="text-muted-foreground">Beheer organisaties, locaties en contacten</p>
+          <p className="text-sm text-muted-foreground mt-1">Beheer organisaties, locaties en contacten</p>
         </div>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-medium">Filters</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="relative">
@@ -289,39 +289,39 @@ export default function AdminDirectory() {
       </Card>
 
       {/* Organizations Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Organisaties ({filteredOrgs.length})</CardTitle>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-medium">Organisaties ({filteredOrgs.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Naam</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Stad</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Acties</TableHead>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="font-medium text-sm">Naam</TableHead>
+                <TableHead className="font-medium text-sm">Type</TableHead>
+                <TableHead className="font-medium text-sm">Status</TableHead>
+                <TableHead className="font-medium text-sm">Stad</TableHead>
+                <TableHead className="font-medium text-sm">Contact</TableHead>
+                <TableHead className="font-medium text-sm">Acties</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredOrgs.map((org) => (
-                <TableRow key={org.id}>
-                  <TableCell className="font-medium">{org.name}</TableCell>
-                  <TableCell>{getTypeLabel(org.type)}</TableCell>
+                <TableRow key={org.id} className="hover:bg-muted/30">
+                  <TableCell className="font-medium text-sm">{org.name}</TableCell>
+                  <TableCell className="text-sm">{getTypeLabel(org.type)}</TableCell>
                   <TableCell>{getStatusBadge(org.verification_status)}</TableCell>
-                  <TableCell>{org.city || "-"}</TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="text-sm">{org.city || "—"}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
                     {org.contact_email && <div>{org.contact_email}</div>}
-                    {org.contact_phone && <div className="text-muted-foreground">{org.contact_phone}</div>}
+                    {org.contact_phone && <div>{org.contact_phone}</div>}
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       {org.verification_status === "PENDING_VERIFICATION" && (
                         <Button
                           size="sm"
-                          variant="default"
+                          variant="outline"
                           onClick={() => handleVerify(org.id)}
                         >
                           <CheckCircle className="mr-1 h-4 w-4" />

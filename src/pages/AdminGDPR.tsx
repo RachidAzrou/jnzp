@@ -315,13 +315,13 @@ export default function AdminGDPR() {
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           <TopBar />
           <main className="flex-1 p-6 overflow-auto">
             <div className="max-w-6xl mx-auto space-y-6">
               <div>
-                <h1 className="text-3xl font-bold">GDPR Verzoeken</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-2xl font-semibold">GDPR Verzoeken</h1>
+                <p className="text-sm text-muted-foreground mt-1">
                   Beheer data export en verwijderingsverzoeken van gebruikers
                 </p>
               </div>

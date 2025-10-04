@@ -106,16 +106,15 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="flex flex-col gap-6 p-8 max-w-[1600px] mx-auto">
-        <div className="flex justify-between items-center">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Platform Admin Dashboard
-            </h1>
-            <p className="text-lg text-muted-foreground">Centraal overzicht van JanazApp</p>
-          </div>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-semibold">
+            Platform Admin Dashboard
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">Centraal overzicht van JanazApp</p>
         </div>
+      </div>
 
         {/* KPI Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -164,13 +163,13 @@ export default function AdminDashboard() {
         />
         </div>
 
-        {/* Alerts & Quick Actions */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
-            <CardTitle>Recente Events</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-8">
+      {/* Alerts & Quick Actions */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Recente Events</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="space-y-2">
               {alerts.length > 0 ? (
                 alerts.map((alert, idx) => (
@@ -186,14 +185,15 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-border/40 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="border-b border-border/40 bg-gradient-to-br from-primary/8 via-primary/4 to-transparent pb-5">
-            <CardTitle>Snelkoppelingen</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-8">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Snelkoppelingen</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="grid grid-cols-2 gap-2">
               <Button 
                 variant="outline" 
+                size="sm"
                 className="justify-start"
                 onClick={() => navigate("/admin/directory")}
               >
@@ -202,6 +202,7 @@ export default function AdminDashboard() {
               </Button>
               <Button 
                 variant="outline" 
+                size="sm"
                 className="justify-start"
                 onClick={() => navigate("/admin/dossiers")}
               >
@@ -210,6 +211,7 @@ export default function AdminDashboard() {
               </Button>
               <Button 
                 variant="outline" 
+                size="sm"
                 className="justify-start"
                 onClick={() => navigate("/admin/integrations")}
               >
@@ -218,6 +220,7 @@ export default function AdminDashboard() {
               </Button>
               <Button 
                 variant="outline" 
+                size="sm"
                 className="justify-start"
                 onClick={() => navigate("/admin/invoices")}
               >
@@ -226,6 +229,7 @@ export default function AdminDashboard() {
               </Button>
               <Button 
                 variant="outline" 
+                size="sm"
                 className="justify-start"
                 onClick={() => navigate("/admin/users")}
               >
@@ -234,6 +238,7 @@ export default function AdminDashboard() {
               </Button>
               <Button 
                 variant="outline" 
+                size="sm"
                 className="justify-start"
                 onClick={() => navigate("/admin/audit")}
               >
@@ -241,9 +246,8 @@ export default function AdminDashboard() {
                 Audit Log
               </Button>
             </div>
-            </CardContent>
-          </Card>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

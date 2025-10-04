@@ -217,46 +217,51 @@ const AdminOrganizations = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
-            Organisatiebeheer
-          </CardTitle>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold flex items-center gap-2">
+          <Building2 className="h-6 w-6" />
+          Organisatiebeheer
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">Beheer en controleer organisatieaanvragen</p>
+      </div>
+
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-medium">Organisaties</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Organisatie</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Aangevraagd</TableHead>
-                <TableHead>Acties</TableHead>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="font-medium text-sm">Organisatie</TableHead>
+                <TableHead className="font-medium text-sm">Type</TableHead>
+                <TableHead className="font-medium text-sm">Contact</TableHead>
+                <TableHead className="font-medium text-sm">Status</TableHead>
+                <TableHead className="font-medium text-sm">Aangevraagd</TableHead>
+                <TableHead className="font-medium text-sm">Acties</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {organizations.map((org) => (
-                <TableRow key={org.id}>
+                <TableRow key={org.id} className="hover:bg-muted/30">
                   <TableCell>
                     <div>
-                      <div className="font-medium">{org.name}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="font-medium text-sm">{org.name}</div>
+                      <div className="text-xs text-muted-foreground font-mono">
                         {org.registration_number}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{org.type}</TableCell>
+                  <TableCell className="text-sm">{org.type}</TableCell>
                   <TableCell>
                     <div className="text-sm">
                       <div>{org.contact_email}</div>
-                      <div className="text-muted-foreground">{org.contact_phone}</div>
+                      <div className="text-xs text-muted-foreground">{org.contact_phone}</div>
                     </div>
                   </TableCell>
                   <TableCell>{getStatusBadge(org.verification_status)}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
                     {new Date(org.requested_at).toLocaleDateString("nl-NL")}
                   </TableCell>
                   <TableCell>

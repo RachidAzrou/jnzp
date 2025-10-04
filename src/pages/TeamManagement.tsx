@@ -220,15 +220,15 @@ const TeamManagement = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <Card>
-        <CardHeader>
+    <div className="space-y-6">
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Teamleden</CardTitle>
-              <CardDescription>Beheer uw teamleden en uitnodigingen</CardDescription>
+              <CardTitle className="text-lg font-medium">Teamleden</CardTitle>
+              <CardDescription className="text-sm">Beheer uw teamleden en uitnodigingen</CardDescription>
             </div>
-            <Button onClick={() => setShowInviteDialog(true)}>
+            <Button onClick={() => setShowInviteDialog(true)} size="sm">
               <UserPlus className="mr-2 h-4 w-4" />
               Teamlid uitnodigen
             </Button>
@@ -237,19 +237,19 @@ const TeamManagement = () => {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Naam</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Rol</TableHead>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="font-medium text-sm">Naam</TableHead>
+                <TableHead className="font-medium text-sm">Email</TableHead>
+                <TableHead className="font-medium text-sm">Rol</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {teamMembers.map((member) => (
-                <TableRow key={member.id}>
-                  <TableCell>
+                <TableRow key={member.id} className="hover:bg-muted/30">
+                  <TableCell className="text-sm">
                     {member.first_name} {member.last_name}
                   </TableCell>
-                  <TableCell>{member.email}</TableCell>
+                  <TableCell className="text-sm">{member.email}</TableCell>
                   <TableCell>{getRoleBadge(member.role)}</TableCell>
                 </TableRow>
               ))}
@@ -258,34 +258,34 @@ const TeamManagement = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Actieve uitnodigingen</CardTitle>
-          <CardDescription>Uitnodigingslinks die nog geldig zijn</CardDescription>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-medium">Actieve uitnodigingen</CardTitle>
+          <CardDescription className="text-sm">Uitnodigingslinks die nog geldig zijn</CardDescription>
         </CardHeader>
         <CardContent>
           {invitations.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">
+            <p className="text-sm text-muted-foreground text-center py-4">
               Geen actieve uitnodigingen
             </p>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Rol</TableHead>
-                  <TableHead>Gebruikt</TableHead>
-                  <TableHead>Verloopt op</TableHead>
-                  <TableHead>Acties</TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="font-medium text-sm">Rol</TableHead>
+                  <TableHead className="font-medium text-sm">Gebruikt</TableHead>
+                  <TableHead className="font-medium text-sm">Verloopt op</TableHead>
+                  <TableHead className="font-medium text-sm">Acties</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {invitations.map((invite) => (
-                  <TableRow key={invite.id}>
+                  <TableRow key={invite.id} className="hover:bg-muted/30">
                     <TableCell>{getRoleBadge(invite.role)}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-sm">
                       {invite.current_uses} / {invite.max_uses}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
                       {new Date(invite.expires_at).toLocaleDateString("nl-NL")}
                     </TableCell>
                     <TableCell>

@@ -13,7 +13,9 @@ import { RiHandHeartLine } from "react-icons/ri";
 import { IoBusiness } from "react-icons/io5";
 import { Users } from "lucide-react";
 import logoAuth from "@/assets/logo-icon-new.png";
+import logoJanazApp from "@/assets/logo-janazapp.png";
 import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
@@ -73,7 +75,6 @@ const Register = () => {
     const code = searchParams.get("invite");
     if (code) {
       setInvitationCode(code);
-      // Don't force to details step - let user choose their flow
     }
   }, [navigate, searchParams, toast]);
 
@@ -222,30 +223,49 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-slate-100">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse delay-700" />
+      </div>
       
-      <Card className="w-full max-w-md relative backdrop-blur-sm bg-card/95 shadow-2xl border-border/50">
-        <CardHeader className="text-center space-y-4 pb-6">
-          <div className="flex justify-center">
-            <img 
-              src={logoAuth} 
-              alt="JanazApp Logo" 
-              className="h-16 w-16 object-contain animate-fade-in"
-            />
-          </div>
-          <div className="space-y-1">
-            <CardTitle className="text-xl">{t('register.title')}</CardTitle>
-            <CardDescription>
-              {t('register.subtitle')}
-            </CardDescription>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="pb-6">
-          {registrationStep === "role" ? (
+      <div className="w-full max-w-5xl relative">
+        <Card className="overflow-hidden bg-white/80 backdrop-blur-xl border-slate-200 shadow-2xl">
+          <div className="grid md:grid-cols-2 gap-0">
+            {/* Left side - Logo */}
+            <div className="hidden md:flex items-center justify-center p-12 bg-white relative overflow-hidden">
+              <div className="absolute inset-0">
+                <div className="flex items-center justify-center h-full">
+                  <img 
+                    src={logoJanazApp} 
+                    alt="JanazApp Logo" 
+                    className="w-64 h-auto object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Right side - Registration form */}
+            <div className="p-8 md:p-12 bg-white">
+              <div className="space-y-6">
+                {/* Language Switcher */}
+                <div className="flex justify-end">
+                  <LanguageSwitcher />
+                </div>
+
+                {/* Header */}
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-bold text-foreground">
+                    {t('register.title')}
+                  </h1>
+                  <p className="text-muted-foreground">
+                    {t('register.subtitle')}
+                  </p>
+                </div>
+
+                {/* Content Area */}
+                {registrationStep === "role" ? (
             <div className="space-y-4">
               {/* Progress Indicator */}
               <div className="flex items-center justify-center gap-2 mb-4">
@@ -632,13 +652,14 @@ const Register = () => {
                   <Button type="submit" className="w-full h-10 mt-4" disabled={loading}>
                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     {t('register.submitRequest')}
-                  </Button>
-                </form>
-              )}
+                   </Button>
+                 </form>
+               )}
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };

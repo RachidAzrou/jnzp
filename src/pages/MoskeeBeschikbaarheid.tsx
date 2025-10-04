@@ -276,19 +276,19 @@ export default function MoskeeBeschikbaarheid() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="min-h-screen bg-background p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Beschikbaarheid per gebed</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-2xl font-semibold">Beschikbaarheid per gebed</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           Beheer de beschikbaarheid van de moskee per gebedstijd
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
           <div className="flex justify-between items-center">
-            <CardTitle>Weekoverzicht</CardTitle>
-            <Button onClick={handleSave}>Opslaan</Button>
+            <CardTitle className="text-lg font-medium">Weekoverzicht</CardTitle>
+            <Button onClick={handleSave} size="sm">Opslaan</Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -296,14 +296,14 @@ export default function MoskeeBeschikbaarheid() {
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left p-3">Dag</th>
-                  <th className="text-center p-3">Fajr</th>
-                  <th className="text-center p-3">Dhuhr</th>
-                  <th className="text-center p-3">Asr</th>
-                  <th className="text-center p-3">Maghrib</th>
-                  <th className="text-center p-3">Isha</th>
-                  <th className="text-center p-3">Jumu'ah</th>
-                  <th className="text-center p-3">Overmacht</th>
+                  <th className="text-left p-3 font-medium text-sm">Dag</th>
+                  <th className="text-center p-3 font-medium text-sm">Fajr</th>
+                  <th className="text-center p-3 font-medium text-sm">Dhuhr</th>
+                  <th className="text-center p-3 font-medium text-sm">Asr</th>
+                  <th className="text-center p-3 font-medium text-sm">Maghrib</th>
+                  <th className="text-center p-3 font-medium text-sm">Isha</th>
+                  <th className="text-center p-3 font-medium text-sm">Jumu'ah</th>
+                  <th className="text-center p-3 font-medium text-sm">Overmacht</th>
                 </tr>
               </thead>
               <tbody>
@@ -314,8 +314,8 @@ export default function MoskeeBeschikbaarheid() {
                   const isFriday = day.getDay() === 5;
 
                   return (
-                    <tr key={dateStr} className="border-b hover:bg-muted/50">
-                      <td className="p-3 font-medium">
+                    <tr key={dateStr} className="border-b hover:bg-muted/30">
+                      <td className="p-3 font-medium text-sm">
                         {format(day, "EEE d MMM", { locale: nl })}
                       </td>
                       <td className="p-3">

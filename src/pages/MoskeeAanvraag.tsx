@@ -250,7 +250,7 @@ export default function MoskeeAanvraag() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="min-h-screen bg-background p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => navigate("/moskee")}>
@@ -258,10 +258,10 @@ export default function MoskeeAanvraag() {
           Terug
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl font-semibold">
             Aanvraag — Dossier {service.dossiers.display_id || service.dossiers.ref_number}
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Janāza-gebed (informeren/plannen)
           </p>
         </div>
@@ -269,32 +269,32 @@ export default function MoskeeAanvraag() {
 
       {/* Context Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Overledene & Context</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Overledene & Context</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
               <p className="text-sm text-muted-foreground">Naam</p>
-              <p className="font-medium">{service.dossiers.deceased_name || "—"}</p>
+              <p className="font-medium text-sm">{service.dossiers.deceased_name || "—"}</p>
             </div>
             {service.dossiers.date_of_death && (
               <div>
                 <p className="text-sm text-muted-foreground">Overlijdensdatum</p>
-                <p className="font-medium">
+                <p className="font-medium text-sm">
                   {format(new Date(service.dossiers.date_of_death), "d MMMM yyyy", { locale: nl })}
                 </p>
               </div>
             )}
             <div>
               <p className="text-sm text-muted-foreground">Dossier-ID</p>
-              <p className="font-medium font-mono">
+              <p className="font-medium font-mono text-sm">
                 {service.dossiers.display_id || service.dossiers.ref_number}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Type</p>
-              <Badge variant="outline">Janāza-gebed (informeren/plannen)</Badge>
+              <Badge variant="outline" className="text-xs">Janāza-gebed (informeren/plannen)</Badge>
             </div>
             {service.dossiers.legal_hold && (
               <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
@@ -309,14 +309,14 @@ export default function MoskeeAanvraag() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Gevraagd</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Gevraagd</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
               <p className="text-sm text-muted-foreground">Dag</p>
-              <p className="font-medium">
+              <p className="font-medium text-sm">
                 {service.requested_date
                   ? format(new Date(service.requested_date), "EEEE d MMMM", { locale: nl })
                   : "—"}
@@ -324,13 +324,13 @@ export default function MoskeeAanvraag() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Gebed</p>
-              <p className="font-medium">
+              <p className="font-medium text-sm">
                 {service.prayer ? prayerLabels[service.prayer] : "—"}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Status</p>
-              <Badge>
+              <Badge className="text-xs">
                 {service.status === "OPEN"
                   ? "Open"
                   : service.status === "CONFIRMED"
@@ -352,30 +352,30 @@ export default function MoskeeAanvraag() {
 
       {/* Action Buttons */}
       {service.status === "OPEN" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Acties</CardTitle>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Acties</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-wrap gap-3">
-              <Button onClick={handleConfirm} size="lg" className="bg-green-600 hover:bg-green-700">
-                <Check className="h-5 w-5 mr-2" />
+              <Button onClick={handleConfirm} size="sm" className="bg-green-600 hover:bg-green-700">
+                <Check className="h-4 w-4 mr-2" />
                 Bevestigen
               </Button>
               <Button
                 onClick={() => setShowDeclineForm(!showDeclineForm)}
                 variant="destructive"
-                size="lg"
+                size="sm"
               >
-                <X className="h-5 w-5 mr-2" />
+                <X className="h-4 w-4 mr-2" />
                 Niet mogelijk
               </Button>
               <Button
                 onClick={() => setShowProposalForm(!showProposalForm)}
                 variant="outline"
-                size="lg"
+                size="sm"
               >
-                <RefreshCw className="h-5 w-5 mr-2" />
+                <RefreshCw className="h-4 w-4 mr-2" />
                 Ander gebed voorstellen
               </Button>
             </div>

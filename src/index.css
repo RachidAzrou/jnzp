@@ -148,4 +148,9 @@ All colors MUST be HSL.
   button {
     @apply transition-all duration-200;
   }
+  
+  /* Consistent page titles */
+  .page-title {
+    @apply text-2xl font-semibold;
+  }
 }

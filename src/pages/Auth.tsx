@@ -16,6 +16,7 @@ import { checkDeviceTrust } from "@/utils/deviceTrust";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import logoAuth from "@/assets/logo-vertical-new.png";
+import logoJanazApp from "@/assets/logo-janazapp.png";
 
 type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
@@ -778,28 +779,14 @@ const Auth = () => {
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left side - Decorative */}
             <div className="hidden md:flex items-center justify-center p-12 bg-gradient-to-br from-primary/5 to-accent/5 relative overflow-hidden">
-              <div className="absolute inset-0 bg-grid-slate-900/[0.02]" />
-              <div className="relative z-10 space-y-8 text-center">
-                <div className="w-64 h-64 mx-auto relative">
-                  {/* Decorative circles */}
-                  <div className="absolute inset-0 bg-primary/10 rounded-full blur-2xl animate-pulse" />
-                  <div className="absolute inset-8 bg-accent/10 rounded-full blur-xl animate-pulse delay-300" />
-                  
-                  {/* Icon/illustration placeholder */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-40 h-40 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center backdrop-blur-sm border border-primary/20">
-                      <svg className="w-20 h-20 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <h2 className="text-2xl font-semibold text-foreground">{t("auth.tagline")}</h2>
-                  <p className="text-muted-foreground max-w-sm mx-auto">
-                    Veilig, betrouwbaar en altijd beschikbaar voor uw behoeften
-                  </p>
+              <div className="absolute inset-0 bg-grid-slate-900/[0.02]">
+                {/* Logo in de linkerkant */}
+                <div className="flex items-center justify-center h-full">
+                  <img 
+                    src={logoJanazApp} 
+                    alt="JanazApp Logo" 
+                    className="w-64 h-auto object-contain"
+                  />
                 </div>
               </div>
             </div>
@@ -807,19 +794,8 @@ const Auth = () => {
             {/* Right side - Login form */}
             <div className="p-8 md:p-12 bg-white">
               <div className="space-y-8">
-                {/* Logo */}
-                <div className="flex justify-end">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm border border-primary/20 p-2">
-                    <img 
-                      src={logoAuth} 
-                      alt="JanazApp Logo" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                </div>
-
                 {/* Language Switcher */}
-                <div className="flex justify-end -mt-4">
+                <div className="flex justify-end">
                   <LanguageSwitcher />
                 </div>
 
@@ -829,7 +805,7 @@ const Auth = () => {
                     {t("auth.welcome")}
                   </h1>
                   <p className="text-muted-foreground">
-                    {t("auth.loginToAccount")}
+                    Centraal platform voor uitvaartzorg
                   </p>
                 </div>
 

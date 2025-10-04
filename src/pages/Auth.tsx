@@ -789,7 +789,7 @@ const Auth = () => {
                   <img 
                     src={logoJanazApp} 
                     alt="JanazApp Logo" 
-                    className="w-64 lg:w-96 h-auto object-contain animate-fade-in"
+                    className="w-64 lg:w-96 h-auto object-contain"
                   />
                 </div>
               </div>

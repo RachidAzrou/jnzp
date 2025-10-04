@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Edit2 } from "lucide-react";
 
 interface InternalNotesCardProps {
   dossierId: string;
@@ -60,60 +59,50 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
   };
 
   return (
-    <Card>
-      <CardHeader className="border-b bg-background">
+    <div className="border-t pt-6">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              Interne Notities
-            </CardTitle>
-            <p className="text-xs text-muted-foreground mt-1">
+            <Label className="text-base font-semibold">Interne Notities</Label>
+            <p className="text-sm text-muted-foreground mt-1">
               Alleen zichtbaar voor het FD team
             </p>
           </div>
           {!isEditing && (
             <Button 
-              variant="ghost" 
+              variant="outline" 
               size="sm"
               onClick={() => setIsEditing(true)}
-              className="h-8 px-3"
             >
-              <Edit2 className="mr-1.5 h-3.5 w-3.5" />
               Bewerken
             </Button>
           )}
         </div>
-      </CardHeader>
-      <CardContent className="pt-4">
+
         {isEditing ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
             <Textarea
               placeholder="Voeg interne notities toe over dit dossier..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              rows={6}
-              className="resize-none text-sm"
+              rows={8}
+              className="resize-none"
             />
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-xs text-muted-foreground">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">
                 {notes.length} karakters
               </span>
               <div className="flex gap-2">
                 <Button 
                   variant="outline" 
-                  size="sm"
                   onClick={handleCancel}
                   disabled={saving}
-                  className="h-8 px-3"
                 >
                   Annuleren
                 </Button>
                 <Button 
-                  size="sm"
                   onClick={handleSave} 
                   disabled={saving || !hasChanges}
-                  className="h-8 px-3"
                 >
                   {saving ? "Opslaan..." : "Opslaan"}
                 </Button>
@@ -121,33 +110,26 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
             </div>
           </div>
         ) : (
-          <div className="min-h-[100px]">
+          <div className="min-h-[120px] p-4 bg-muted/30 border">
             {notes ? (
-              <div className="prose prose-sm max-w-none">
-                <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed m-0">
-                  {notes}
-                </p>
-              </div>
+              <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                {notes}
+              </p>
             ) : (
-              <div className="flex items-center justify-center py-8 border-2 border-dashed rounded-sm">
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Geen notities
-                  </p>
-                  <Button 
-                    variant="link" 
-                    size="sm"
-                    onClick={() => setIsEditing(true)}
-                    className="h-auto p-0 text-xs"
-                  >
-                    Notitie toevoegen
-                  </Button>
-                </div>
+              <div className="flex items-center justify-center h-full">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                  className="text-muted-foreground"
+                >
+                  Klik om notities toe te voegen
+                </Button>
               </div>
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -21,6 +21,7 @@ import { InternalNotesCard } from "@/components/dossier/InternalNotesCard";
 import { DocumentUploadDialog } from "@/components/dossier/DocumentUploadDialog";
 import { AddManualEventDialog } from "@/components/dossier/AddManualEventDialog";
 import { AuditLogTable } from "@/components/dossier/AuditLogTable";
+import { DossierProgressCard } from "@/components/DossierProgressCard";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -37,6 +38,7 @@ const DossierDetail = () => {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [manualEvents, setManualEvents] = useState<any[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [progress, setProgress] = useState<any>(null);
 
   useEffect(() => {
     if (id) {
@@ -121,6 +123,17 @@ const DossierDetail = () => {
       .eq("dossier_id", id)
       .order("created_at", { ascending: false });
 
+    // For now, set mock progress data until we have the database view
+    const mockProgress = dossierData ? {
+      dossier_id: dossierData.id,
+      display_id: dossierData.display_id || '',
+      deceased_name: dossierData.deceased_name,
+      pipeline_type: dossierData.flow,
+      progress_pct: 25,
+      next_step_label: 'Rituele wassplaats',
+      current_main_key: 'INTAKE',
+    } : null;
+
     setDossier(dossierData);
     setDocuments(docsData || []);
     setEvents(eventsData || []);
@@ -130,6 +143,7 @@ const DossierDetail = () => {
     setFamilyContacts(familyData || []);
     setInvoices(invoicesData || []);
     setManualEvents(manualEventsData || []);
+    setProgress(mockProgress);
     setLoading(false);
   };
 
@@ -254,6 +268,19 @@ const DossierDetail = () => {
           />
         </div>
       </div>
+
+      {/* Progress Card */}
+      {progress && (
+        <DossierProgressCard
+          dossierId={progress.dossier_id}
+          displayId={progress.display_id}
+          deceasedName={progress.deceased_name}
+          pipelineType={progress.pipeline_type}
+          progressPct={progress.progress_pct}
+          nextStepLabel={progress.next_step_label}
+          currentMainKey={progress.current_main_key}
+        />
+      )}
 
       {/* Legal Hold Warning */}
       {dossier.legal_hold && (

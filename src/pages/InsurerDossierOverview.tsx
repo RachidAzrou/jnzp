@@ -367,14 +367,12 @@ export default function InsurerDossierOverview() {
           </TabsContent>
 
           <TabsContent value="claim">
-            <Card className="border-0 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-medium flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-muted-foreground" />
-                  Claim Status
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
+            <div className="space-y-6">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-muted-foreground" />
+                <Label className="text-base font-semibold">Claim Status</Label>
+              </div>
+              <div className="space-y-6">
                 {dossier.claims ? (
                   <>
                     <div className="space-y-4">
@@ -441,24 +439,21 @@ export default function InsurerDossierOverview() {
                               value={overrideReason}
                               onChange={(e) => setOverrideReason(e.target.value)}
                               rows={3}
-                              className="mt-2"
                             />
                           </div>
                           <div className="flex gap-2">
                             <Button
-                              className="flex-1 bg-success hover:bg-success/90"
                               onClick={() => handleOverrideClaim('MANUAL_APPROVED')}
-                              disabled={!overrideReason.trim()}
+                              className="flex-1"
                             >
-                              Goedkeuren (Override)
+                              Goedkeuren
                             </Button>
                             <Button
-                              className="flex-1"
-                              variant="destructive"
                               onClick={() => handleOverrideClaim('MANUAL_REJECTED')}
-                              disabled={!overrideReason.trim()}
+                              variant="destructive"
+                              className="flex-1"
                             >
-                              Afwijzen (Override)
+                              Afwijzen
                             </Button>
                           </div>
                         </div>
@@ -468,8 +463,8 @@ export default function InsurerDossierOverview() {
                 ) : (
                   <p className="text-muted-foreground">Geen claim informatie beschikbaar</p>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="tijdlijn">

@@ -191,8 +191,8 @@ export default function InsurerDossierOverview() {
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Dossier {dossier.ref_number}</h1>
-            <p className="text-muted-foreground mt-1">Details van het dossier</p>
+            <h1 className="text-2xl font-semibold">Dossier {dossier.ref_number}</h1>
+            <p className="text-sm text-muted-foreground mt-1">Details van het dossier</p>
           </div>
           <div className="flex gap-2">
             <Button
@@ -222,9 +222,9 @@ export default function InsurerDossierOverview() {
 
           <TabsContent value="overzicht" className="space-y-6">
             {/* Basis info */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Basis Informatie</CardTitle>
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-medium">Basis Informatie</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -253,16 +253,16 @@ export default function InsurerDossierOverview() {
             </Card>
 
             {/* Document Package */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Documenten pakket</CardTitle>
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-medium">Documenten pakket</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead className="font-medium text-sm">Type</TableHead>
+                      <TableHead className="font-medium text-sm">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -276,9 +276,9 @@ export default function InsurerDossierOverview() {
                       }[docType];
 
                       return (
-                        <TableRow key={docType}>
-                          <TableCell>{typeLabel}</TableCell>
-                          <TableCell>{doc ? getDocumentStatusBadge(doc.status) : <Badge variant="secondary">Pending</Badge>}</TableCell>
+                        <TableRow key={docType} className="hover:bg-muted/30">
+                          <TableCell className="text-sm">{typeLabel}</TableCell>
+                          <TableCell>{doc ? getDocumentStatusBadge(doc.status) : <Badge variant="secondary" className="text-xs">Pending</Badge>}</TableCell>
                         </TableRow>
                       );
                     })}
@@ -288,9 +288,9 @@ export default function InsurerDossierOverview() {
             </Card>
 
             {/* Planning */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Planning (inzage)</CardTitle>
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-medium">Planning (inzage)</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -341,9 +341,9 @@ export default function InsurerDossierOverview() {
             </Card>
 
             {/* Updates/Timeline */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Updates</CardTitle>
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-medium">Updates</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -367,10 +367,10 @@ export default function InsurerDossierOverview() {
           </TabsContent>
 
           <TabsContent value="claim">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-medium flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-muted-foreground" />
                   Claim Status
                 </CardTitle>
               </CardHeader>

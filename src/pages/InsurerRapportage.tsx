@@ -167,8 +167,8 @@ Achterstallig (>30d),${stats?.invoices.overdue}`;
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Rapportage</h1>
-            <p className="text-muted-foreground mt-1">Overzicht van claims, facturen en doorlooptijden</p>
+            <h1 className="text-2xl font-semibold">Rapportage</h1>
+            <p className="text-sm text-muted-foreground mt-1">Overzicht van claims, facturen en doorlooptijden</p>
           </div>
           <div className="flex gap-2">
             <Select value={periodFilter} onValueChange={setPeriodFilter}>
@@ -240,38 +240,38 @@ Achterstallig (>30d),${stats?.invoices.overdue}`;
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Claims Overzicht</CardTitle>
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-medium">Claims Overzicht</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Metric</TableHead>
-                    <TableHead className="text-right">Waarde</TableHead>
+                    <TableHead className="font-medium text-sm">Metric</TableHead>
+                    <TableHead className="text-right font-medium text-sm">Waarde</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>Totaal Claims</TableCell>
-                    <TableCell className="text-right font-medium">{stats?.claims.total}</TableCell>
+                  <TableRow className="hover:bg-muted/30">
+                    <TableCell className="text-sm">Totaal Claims</TableCell>
+                    <TableCell className="text-right text-sm font-medium">{stats?.claims.total}</TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>Goedgekeurd</TableCell>
+                  <TableRow className="hover:bg-muted/30">
+                    <TableCell className="text-sm">Goedgekeurd</TableCell>
                     <TableCell className="text-right">
-                      <Badge variant="default">{stats?.claims.approved}</Badge>
+                      <Badge variant="default" className="text-xs">{stats?.claims.approved}</Badge>
                     </TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>Afgewezen</TableCell>
+                  <TableRow className="hover:bg-muted/30">
+                    <TableCell className="text-sm">Afgewezen</TableCell>
                     <TableCell className="text-right">
-                      <Badge variant="destructive">{stats?.claims.rejected}</Badge>
+                      <Badge variant="destructive" className="text-xs">{stats?.claims.rejected}</Badge>
                     </TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>Goedkeuringspercentage</TableCell>
-                    <TableCell className="text-right font-medium">
+                  <TableRow className="hover:bg-muted/30">
+                    <TableCell className="text-sm">Goedkeuringspercentage</TableCell>
+                    <TableCell className="text-right text-sm font-medium">
                       {stats?.claims.total && stats.claims.total > 0
                         ? ((stats.claims.approved / stats.claims.total) * 100).toFixed(1)
                         : 0}%
@@ -282,17 +282,17 @@ Achterstallig (>30d),${stats?.invoices.overdue}`;
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Facturen Overzicht</CardTitle>
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-medium">Facturen Overzicht</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Aantal</TableHead>
-                    <TableHead className="text-right">Bedrag</TableHead>
+                    <TableHead className="font-medium text-sm">Status</TableHead>
+                    <TableHead className="text-right font-medium text-sm">Aantal</TableHead>
+                    <TableHead className="text-right font-medium text-sm">Bedrag</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

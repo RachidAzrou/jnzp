@@ -148,30 +148,30 @@ export default function InsurerDossierDocuments() {
       <TopBar />
       <div className="container mx-auto p-6 space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Dossier {dossier.ref_number} - Documenten</h1>
-          <p className="text-muted-foreground mt-1">Bekijk en beoordeel documenten</p>
+          <h1 className="text-2xl font-semibold">Dossier {dossier.ref_number} - Documenten</h1>
+          <p className="text-sm text-muted-foreground mt-1">Bekijk en beoordeel documenten</p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Document List */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Minimumpakket</CardTitle>
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-medium">Minimumpakket</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actie</TableHead>
+                    <TableHead className="font-medium text-sm">Type</TableHead>
+                    <TableHead className="font-medium text-sm">Status</TableHead>
+                    <TableHead className="font-medium text-sm">Actie</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {dossier.documents && dossier.documents.length > 0 ? (
                     dossier.documents.map((doc) => (
-                      <TableRow key={doc.id}>
-                        <TableCell>{getDocumentTypeLabel(doc.doc_type)}</TableCell>
+                      <TableRow key={doc.id} className="hover:bg-muted/30">
+                        <TableCell className="text-sm">{getDocumentTypeLabel(doc.doc_type)}</TableCell>
                         <TableCell>{getDocumentStatusBadge(doc.status)}</TableCell>
                         <TableCell>
                           <Button
@@ -186,7 +186,7 @@ export default function InsurerDossierDocuments() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center text-muted-foreground">
+                      <TableCell colSpan={3} className="text-center text-sm text-muted-foreground py-8">
                         Geen documenten beschikbaar
                       </TableCell>
                     </TableRow>
@@ -197,9 +197,9 @@ export default function InsurerDossierDocuments() {
           </Card>
 
           {/* Review Panel */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Review / Comment (optioneel)</CardTitle>
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-medium">Review / Comment (optioneel)</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {selectedDoc ? (

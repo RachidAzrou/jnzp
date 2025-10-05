@@ -403,6 +403,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "dossiers": "Dossiers",
+    "incomingRequests": "Inkomende Aanvragen",
     "planning": "Planning",
     "documents": "Documenten",
     "invoices": "Facturatie",
@@ -419,7 +420,8 @@
     "teamManagement": "Teambeheer",
     "tasks": "Taken",
     "facturatie": "Facturatie",
-    "chat": "Berichten",
+  "chat": "Berichten",
+  "incomingRequests": "Inkomende Aanvragen",
     "insurer": "Verzekeraar",
     "invoicesTitle": "Facturen",
     "reporting": "Rapportage",

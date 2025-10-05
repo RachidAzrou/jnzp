@@ -5,3 +5,12 @@ verify_jwt = false
 
 [functions.whatsapp-webhook]
 verify_jwt = false
+
+[functions.handle-fd-request]
+verify_jwt = false
+
+[functions.get-available-fds]
+verify_jwt = false
+
+[functions.create-fd-request]
+verify_jwt = false

@@ -41,6 +41,7 @@ import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
 import InsurerDashboard from "./pages/InsurerDashboard";
 import InsurerDossierOverview from "./pages/InsurerDossierOverview";
 import InsurerDossierDocuments from "./pages/InsurerDossierDocuments";
+import InsurerDossiers from "./pages/InsurerDossiers";
 import InsurerInvoices from "./pages/InsurerInvoices";
 import InsurerRapportage from "./pages/InsurerRapportage";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -289,6 +290,11 @@ const App = () => (
                           <Route path="/insurer" element={
                             <RoleProtectedRoute allowedRoles={['insurer']}>
                               <InsurerDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/insurer/dossiers" element={
+                            <RoleProtectedRoute allowedRoles={['insurer']}>
+                              <InsurerDossiers />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/insurer/dossier/:id" element={

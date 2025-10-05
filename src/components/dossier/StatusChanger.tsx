@@ -136,21 +136,17 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     const notifiableStatuses = ["DOCS_VERIFIED", "PLANNING", "READY_FOR_TRANSPORT", "ARCHIVED"];
     if (notifiableStatuses.includes(newStatus)) {
       try {
-        await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-notification`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            },
-            body: JSON.stringify({
-              dossierId,
-              triggerEvent: `STATUS_${newStatus}`,
-              recipientType: "FAMILY",
-            }),
-          }
-        );
+        const { error: notifError } = await supabase.functions.invoke("send-notification", {
+          body: {
+            dossierId,
+            triggerEvent: `STATUS_${newStatus}`,
+            recipientType: "FAMILY",
+          },
+        });
+        
+        if (notifError) {
+          console.error("Error sending notification:", notifError);
+        }
       } catch (notifError) {
         console.error("Error sending notification:", notifError);
         // Don't block the status change if notification fails

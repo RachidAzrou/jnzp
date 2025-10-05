@@ -57,6 +57,7 @@ import AdminAudit from "./pages/AdminAudit";
 import AdminConfig from "./pages/AdminConfig";
 import AdminDossiers from "./pages/AdminDossiers";
 import AdminDocumentReview from "./pages/AdminDocumentReview";
+import AdminNotificationTemplates from "./pages/AdminNotificationTemplates";
 import TeamManagement from "./pages/TeamManagement";
 import FDIncomingRequests from "./pages/FDIncomingRequests";
 import Auth from "./pages/Auth";
@@ -404,6 +405,11 @@ const App = () => (
                           <Route path="/admin/config" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
                               <AdminConfig />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/admin/notifications" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                              <AdminNotificationTemplates />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/dossiers" element={

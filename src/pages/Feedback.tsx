@@ -62,27 +62,18 @@ export default function Feedback() {
     try {
       setSubmitting(true);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/submit-feedback`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token,
-            rating,
-            comment: comment.trim() || undefined,
-            familyName: familyName.trim() || undefined,
-            whatsappPhone: whatsappPhone.trim() || undefined,
-          }),
-        }
-      );
+      const { data, error } = await supabase.functions.invoke("submit-feedback", {
+        body: {
+          token,
+          rating,
+          comment: comment.trim() || undefined,
+          familyName: familyName.trim() || undefined,
+          whatsappPhone: whatsappPhone.trim() || undefined,
+        },
+      });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to submit feedback");
+      if (error) {
+        throw new Error(error.message || "Failed to submit feedback");
       }
 
       setSubmitted(true);

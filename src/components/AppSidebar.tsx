@@ -1,4 +1,4 @@
-import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, Flag, Monitor } from "lucide-react";
+import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, Flag, Monitor, Bell } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { HiOutlineInboxIn } from "react-icons/hi";
@@ -45,6 +45,7 @@ export function AppSidebar() {
     { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin', 'admin'] },
     { titleKey: "navigation.invoicesTitle", url: "/admin/invoices", icon: Receipt, roles: ['platform_admin', 'admin'] },
     { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin', 'admin'] },
+    { titleKey: "navigation.notifications", url: "/admin/notifications", icon: Bell, roles: ['platform_admin', 'admin'] },
     { titleKey: "navigation.config", url: "/admin/config", icon: Flag, roles: ['platform_admin', 'admin'] },
     { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'admin'] },
     

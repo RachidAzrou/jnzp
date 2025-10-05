@@ -7,6 +7,7 @@ import {
   Activity, Receipt, Users, FileText, FolderOpen
 } from "lucide-react";
 import { KPICard } from "@/components/KPICard";
+import { NotificationLog } from "@/components/admin/NotificationLog";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -263,6 +264,9 @@ export default function AdminDashboard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Notification Log */}
+        <NotificationLog />
       </div>
     </div>
   );

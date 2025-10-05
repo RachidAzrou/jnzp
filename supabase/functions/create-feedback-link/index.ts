@@ -75,25 +75,27 @@ const handler = async (req: Request): Promise<Response> => {
         .single();
 
       if (familyContact && commPrefs?.whatsapp_phone) {
-        // Send feedback request notification
-        await fetch(`${supabaseUrl}/functions/v1/send-notification`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${supabaseKey}`,
-          },
-          body: JSON.stringify({
-            dossierId,
-            triggerEvent: "FEEDBACK_REQUEST",
-            recipientType: "FAMILY",
-            customData: {
-              feedback_url: feedbackUrl,
-              family_name: familyContact.name || "Familie",
-              deceased_name: dossier?.deceased_name || "",
-              fd_name: fdOrg?.name || "",
+        // Send feedback request notification using supabase.functions.invoke
+        const { error: notifError } = await supabase.functions.invoke(
+          "send-notification",
+          {
+            body: {
+              dossierId,
+              triggerEvent: "FEEDBACK_REQUEST",
+              recipientType: "FAMILY",
+              customData: {
+                feedback_url: feedbackUrl,
+                family_name: familyContact.name || "Familie",
+                deceased_name: dossier?.deceased_name || "",
+                fd_name: fdOrg?.name || "",
+              },
             },
-          }),
-        });
+          }
+        );
+
+        if (notifError) {
+          console.error("Error sending notification:", notifError);
+        }
       }
     }
 

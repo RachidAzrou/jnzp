@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { MessageSquare, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -31,25 +32,15 @@ export function SendFeedbackButton({ dossierId }: SendFeedbackButtonProps) {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-feedback-link`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            dossierId,
-            sendWhatsApp,
-          }),
-        }
-      );
+      const { data, error } = await supabase.functions.invoke("create-feedback-link", {
+        body: {
+          dossierId,
+          sendWhatsApp,
+        },
+      });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to create feedback link");
+      if (error) {
+        throw new Error(error.message || "Failed to create feedback link");
       }
 
       setFeedbackUrl(data.feedbackUrl);

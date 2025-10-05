@@ -29,11 +29,13 @@ interface TaskDialogProps {
 export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProps) {
   const [loading, setLoading] = useState(false);
   const [columns, setColumns] = useState<any[]>([]);
+  const [dossiers, setDossiers] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     priority: 'MEDIUM',
     column_id: '',
+    dossier_id: '',
     due_date: undefined as Date | undefined,
     labels: [] as string[]
   });
@@ -42,12 +44,14 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
   useEffect(() => {
     if (open) {
       fetchColumns();
+      fetchDossiers();
       if (task) {
         setFormData({
           title: task.title || '',
           description: task.description || '',
           priority: task.priority || 'MEDIUM',
           column_id: task.column_id || '',
+          dossier_id: task.dossier_id || '',
           due_date: task.due_date ? new Date(task.due_date) : undefined,
           labels: task.labels || []
         });
@@ -72,12 +76,25 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
     }
   };
 
+  const fetchDossiers = async () => {
+    const { data } = await supabase
+      .from('dossiers')
+      .select('id, ref_number, deceased_name, display_id')
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    if (data) {
+      setDossiers(data);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       title: '',
       description: '',
       priority: 'MEDIUM',
       column_id: columns[0]?.id || '',
+      dossier_id: '',
       due_date: undefined,
       labels: []
     });
@@ -88,6 +105,15 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
       toast({
         title: "Titel vereist",
         description: "Voer een titel in voor de taak",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!formData.dossier_id) {
+      toast({
+        title: "Dossier vereist",
+        description: "Koppel de taak aan een dossier",
         variant: "destructive"
       });
       return;
@@ -115,6 +141,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
             description: formData.description,
             priority: formData.priority,
             column_id: formData.column_id,
+            dossier_id: formData.dossier_id,
             due_date: formData.due_date?.toISOString().split('T')[0],
             labels: formData.labels
           })
@@ -122,27 +149,48 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
 
         if (error) throw error;
 
+        // Log activity
+        await supabase.from('task_activities' as any).insert({
+          task_id: task.id,
+          user_id: user.id,
+          type: 'UPDATED',
+          meta: { changes: 'Updated task details' }
+        });
+
         toast({
           title: "Taak bijgewerkt",
           description: "De taak is succesvol bijgewerkt"
         });
       } else {
         // Create new task
-        const { error } = await supabase
+        const { data: newTask, error } = await supabase
           .from('kanban_tasks' as any)
           .insert({
             board_id: boardId,
             org_id: userRole.organization_id,
             column_id: formData.column_id,
+            dossier_id: formData.dossier_id,
             title: formData.title,
             description: formData.description,
             priority: formData.priority,
             reporter_id: user.id,
             due_date: formData.due_date?.toISOString().split('T')[0],
             labels: formData.labels
-          });
+          })
+          .select()
+          .single();
 
         if (error) throw error;
+
+        // Log activity
+        if (newTask && 'id' in newTask) {
+          await supabase.from('task_activities' as any).insert({
+            task_id: (newTask as any).id,
+            user_id: user.id,
+            type: 'CREATED',
+            meta: { title: formData.title }
+          });
+        }
 
         toast({
           title: "Taak aangemaakt",
@@ -188,6 +236,25 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
               placeholder="Voeg details toe..."
               rows={4}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Dossier *</Label>
+            <Select
+              value={formData.dossier_id}
+              onValueChange={(value) => setFormData({ ...formData, dossier_id: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecteer een dossier" />
+              </SelectTrigger>
+              <SelectContent>
+                {dossiers.map((dossier) => (
+                  <SelectItem key={dossier.id} value={dossier.id}>
+                    {dossier.display_id || dossier.ref_number} - {dossier.deceased_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

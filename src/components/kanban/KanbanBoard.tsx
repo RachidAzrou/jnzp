@@ -43,13 +43,15 @@ interface KanbanBoardProps {
   searchQuery: string;
   priorityFilter: string;
   assigneeFilter: string;
+  onTaskClick?: (task: Task) => void;
 }
 
 export function KanbanBoard({
   boardId,
   searchQuery,
   priorityFilter,
-  assigneeFilter
+  assigneeFilter,
+  onTaskClick
 }: KanbanBoardProps) {
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -165,6 +167,10 @@ export function KanbanBoard({
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
 
+    const oldColumnId = task.column_id;
+    const targetColumn = columns.find((c) => c.id === targetColumnId);
+    const oldColumn = columns.find((c) => c.id === oldColumnId);
+
     // Optimistic update
     setTasks((current) =>
       current.map((t) =>
@@ -173,25 +179,47 @@ export function KanbanBoard({
     );
 
     try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
       const { error } = await supabase
-        .from('kanban_tasks' as any)
+        .from("kanban_tasks" as any)
         .update({
           column_id: targetColumnId,
-          position: 0 // Simplified positioning
+          position: 0, // Simplified positioning
         })
-        .eq('id', taskId);
+        .eq("id", taskId);
 
       if (error) throw error;
 
+      // Log activity
+      const activityType = targetColumn?.is_done
+        ? "CLOSED"
+        : oldColumn?.is_done
+        ? "REOPENED"
+        : "MOVED";
+
+      await supabase.from("task_activities" as any).insert({
+        task_id: taskId,
+        user_id: user.id,
+        type: activityType,
+        meta: {
+          from_column: oldColumn?.label || oldColumnId,
+          to_column: targetColumn?.label || targetColumnId,
+        },
+      });
+
       toast({
         title: "Taak verplaatst",
-        description: "De taak is succesvol verplaatst"
+        description: "De taak is succesvol verplaatst",
       });
     } catch (error: any) {
       toast({
         title: "Fout",
         description: "Kon taak niet verplaatsen",
-        variant: "destructive"
+        variant: "destructive",
       });
       // Rollback
       fetchBoardData();
@@ -263,6 +291,7 @@ export function KanbanBoard({
               key={column.id}
               column={column}
               tasks={tasksByColumn[column.id] || []}
+              onTaskClick={onTaskClick}
             />
           ))}
       </div>

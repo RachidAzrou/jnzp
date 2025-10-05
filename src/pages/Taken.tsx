@@ -7,6 +7,7 @@ import { Plus, Filter, Search, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
 import { TaskDialog } from "@/components/kanban/TaskDialog";
+import { TaskDetailDialog } from "@/components/kanban/TaskDetailDialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -26,6 +27,7 @@ const Taken = () => {
   const [board, setBoard] = useState<Board | null>(null);
   const [loading, setLoading] = useState(true);
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
@@ -179,6 +181,7 @@ const Taken = () => {
         searchQuery={searchQuery}
         priorityFilter={priorityFilter}
         assigneeFilter={assigneeFilter}
+        onTaskClick={(task) => setSelectedTask(task)}
       />
 
       {/* Task Dialog */}
@@ -187,6 +190,19 @@ const Taken = () => {
         open={isTaskDialogOpen}
         onOpenChange={setIsTaskDialogOpen}
       />
+
+      {/* Task Detail Dialog */}
+      {selectedTask && (
+        <TaskDetailDialog
+          task={selectedTask}
+          open={!!selectedTask}
+          onOpenChange={(open) => !open && setSelectedTask(null)}
+          onUpdate={() => {
+            setSelectedTask(null);
+            fetchBoard();
+          }}
+        />
+      )}
     </div>
   );
 };

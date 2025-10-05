@@ -28,9 +28,10 @@ interface Task {
 interface KanbanColumnProps {
   column: Column;
   tasks: Task[];
+  onTaskClick?: (task: Task) => void;
 }
 
-export function KanbanColumn({ column, tasks }: KanbanColumnProps) {
+export function KanbanColumn({ column, tasks, onTaskClick }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   });
@@ -61,7 +62,11 @@ export function KanbanColumn({ column, tasks }: KanbanColumnProps) {
         </CardHeader>
         <CardContent className="space-y-2 min-h-[200px]">
           {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
+            <TaskCard 
+              key={task.id} 
+              task={task} 
+              onClick={() => onTaskClick?.(task)}
+            />
           ))}
           {tasks.length === 0 && (
             <div className="text-center py-8 text-sm text-muted-foreground">

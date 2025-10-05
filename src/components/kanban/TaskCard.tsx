@@ -26,9 +26,10 @@ interface Task {
 
 interface TaskCardProps {
   task: Task;
+  onClick?: () => void;
 }
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, onClick }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: task.id,
@@ -74,6 +75,7 @@ export function TaskCard({ task }: TaskCardProps) {
       style={style}
       {...listeners}
       {...attributes}
+      onClick={onClick}
       className={`cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow ${
         isDragging ? 'opacity-50' : ''
       }`}

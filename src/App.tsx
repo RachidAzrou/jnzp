@@ -38,6 +38,8 @@ import MoskeeDashboard from "./pages/MoskeeDashboard";
 import MoskeeAanvragen from "./pages/MoskeeAanvragen";
 import MoskeeAanvraag from "./pages/MoskeeAanvraag";
 import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
+import MoskeePubiekScherm from "./pages/MoskeePubiekScherm";
+import PublicJanazaScreen from "./pages/PublicJanazaScreen";
 import InsurerDashboard from "./pages/InsurerDashboard";
 import InsurerDossierOverview from "./pages/InsurerDossierOverview";
 import InsurerDossierDocuments from "./pages/InsurerDossierDocuments";
@@ -287,6 +289,12 @@ const App = () => (
                               <MoskeeBeschikbaarheid />
                             </RoleProtectedRoute>
                           } />
+                          <Route path="/moskee/publiek-scherm" element={
+                            <RoleProtectedRoute allowedRoles={['mosque']}>
+                              <MoskeePubiekScherm />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/screen/:mosqueSlug" element={<PublicJanazaScreen />} />
                           <Route path="/insurer" element={
                             <RoleProtectedRoute allowedRoles={['insurer']}>
                               <InsurerDashboard />

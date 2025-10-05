@@ -1774,6 +1774,7 @@ export type Database = {
           rejection_reason: string | null
           requested_at: string | null
           requested_by: string | null
+          slug: string | null
           type: Database["public"]["Enums"]["org_type"]
           updated_at: string
           vat_number: string | null
@@ -1795,6 +1796,7 @@ export type Database = {
           rejection_reason?: string | null
           requested_at?: string | null
           requested_by?: string | null
+          slug?: string | null
           type: Database["public"]["Enums"]["org_type"]
           updated_at?: string
           vat_number?: string | null
@@ -1816,6 +1818,7 @@ export type Database = {
           rejection_reason?: string | null
           requested_at?: string | null
           requested_by?: string | null
+          slug?: string | null
           type?: Database["public"]["Enums"]["org_type"]
           updated_at?: string
           vat_number?: string | null

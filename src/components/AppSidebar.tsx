@@ -1,4 +1,4 @@
-import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, UserPlus, Flag } from "lucide-react";
+import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, UserPlus, Flag, Monitor } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { NavLink, useLocation } from "react-router-dom";
@@ -75,6 +75,7 @@ export function AppSidebar() {
     { titleKey: "navigation.dashboard", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
     { titleKey: "navigation.requests", url: "/moskee/aanvragen", icon: FolderOpen, roles: ['mosque'] },
     { titleKey: "navigation.availability", url: "/moskee/beschikbaarheid", icon: PiMosque, roles: ['mosque'] },
+    { titleKey: "navigation.publicScreen", url: "/moskee/publiek-scherm", icon: Monitor, roles: ['mosque'] },
     
     // Family
     { titleKey: "navigation.dashboard", url: "/familie", icon: LayoutDashboard, roles: ['family'] },

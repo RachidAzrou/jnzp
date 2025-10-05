@@ -91,14 +91,13 @@ export default function MoskeePubiekScherm() {
 
   const handleOpenScreen = () => {
     if (publicUrl) {
-      // Open in new window with fullscreen mode
-      const newWindow = window.open(publicUrl, "_blank", "width=1920,height=1080");
-      if (newWindow) {
-        // Request fullscreen when window is loaded
-        newWindow.addEventListener("load", () => {
-          newWindow.document.documentElement.requestFullscreen?.();
-        });
-      }
+      // Open in new tab/window
+      window.open(publicUrl, "_blank");
+      
+      toast({
+        title: "Publiek scherm geopend",
+        description: "Druk op F11 in het nieuwe venster voor volledig scherm",
+      });
     }
   };
 

@@ -13,8 +13,10 @@ import { useNavigate } from "react-router-dom";
 import { KPICard } from "@/components/KPICard";
 import { Database } from "@/integrations/supabase/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { useTranslation } from "react-i18next";
 
 export default function InsurerDashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -170,21 +172,21 @@ export default function InsurerDashboard() {
     <div className="min-h-screen bg-background">
       <div className="space-y-6 p-8 max-w-[1600px] mx-auto">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold">Verzekeraar Dashboard</h1>
+          <h1 className="text-2xl font-semibold">{t("insurer.dashboard.title")}</h1>
           <div className="flex gap-2">
             <Button
               variant="outline"
               onClick={() => navigate("/insurer/facturen")}
             >
               <Receipt className="mr-2 h-4 w-4" />
-              Facturen
+              {t("insurer.dashboard.invoices")}
             </Button>
             <Button
               variant="outline"
               onClick={() => navigate("/insurer/rapportage")}
             >
               <FileBarChart className="mr-2 h-4 w-4" />
-              Rapporten
+              {t("insurer.dashboard.reports")}
             </Button>
           </div>
         </div>

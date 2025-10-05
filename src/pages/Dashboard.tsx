@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface DossierData {
   id: string;
@@ -14,6 +15,7 @@ interface DossierData {
 }
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [dossiers, setDossiers] = useState<DossierData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,12 +84,12 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="flex flex-col items-center gap-3">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          <p className="text-sm text-muted-foreground">Laden...</p>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="flex flex-col items-center gap-3">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+          </div>
         </div>
-      </div>
     );
   }
 
@@ -107,7 +109,7 @@ const Dashboard = () => {
         <div className="space-y-1">
           <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-            Welkom terug, {userName}
+            {t("dashboard.welcomeBack")}, {userName}
           </h1>
         </div>
 
@@ -116,39 +118,39 @@ const Dashboard = () => {
           <Card className="border-border/40">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Totaal actief
+                {t("dashboard.totalActive")}
               </CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalActive}</div>
-              <p className="text-xs text-muted-foreground mt-1">Actieve dossiers</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("dashboard.activeDossiers")}</p>
             </CardContent>
           </Card>
 
           <Card className="border-border/40">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Repatriëring
+                {t("dashboard.repatriation")}
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.repatriation}</div>
-              <p className="text-xs text-muted-foreground mt-1">Lopende repatriëringen</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("dashboard.ongoingRepatriations")}</p>
             </CardContent>
           </Card>
 
           <Card className="border-border/40">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Lokaal
+                {t("dashboard.local")}
               </CardTitle>
               <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.local}</div>
-              <p className="text-xs text-muted-foreground mt-1">Lokale uitvaarten</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("dashboard.localFunerals")}</p>
             </CardContent>
           </Card>
         </div>
@@ -156,9 +158,9 @@ const Dashboard = () => {
         {/* Active Dossiers with Progress */}
         <div className="space-y-3 sm:space-y-4">
           <div>
-            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">Actieve dossiers</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">{t("dashboard.activeFiles")}</h2>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Overzicht van lopende dossiers en hun voortgang
+              {t("dashboard.filesProgress")}
             </p>
           </div>
 
@@ -167,7 +169,7 @@ const Dashboard = () => {
               <CardContent className="flex items-center justify-center py-8 sm:py-12">
                 <div className="text-center space-y-2">
                   <Clock className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-muted-foreground" />
-                  <p className="text-sm sm:text-base text-muted-foreground">Geen actieve dossiers</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">{t("dashboard.noActiveDossiers")}</p>
                 </div>
               </CardContent>
             </Card>

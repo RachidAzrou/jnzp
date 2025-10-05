@@ -717,7 +717,7 @@ const Auth = () => {
                     className="h-11"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Minimaal 12 tekens
+                    {t("auth.minCharacters")}
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -820,9 +820,9 @@ const Auth = () => {
                   <h1 className="text-3xl font-bold text-foreground">
                     {t("auth.welcome")}
                   </h1>
-                  <p className="text-muted-foreground">
-                    Centraal platform voor uitvaartzorg
-                  </p>
+                <p className="text-muted-foreground">
+                  {t("auth.platformDescription")}
+                </p>
                 </div>
 
                 {/* Login Form */}
@@ -877,10 +877,10 @@ const Auth = () => {
                     <SimpleCaptcha
                       onVerify={(token) => {
                         setCaptchaToken(token);
-                        toast({
-                          title: "Verificatie succesvol",
-                          description: "U kunt nu opnieuw proberen in te loggen.",
-                        });
+                    toast({
+                      title: t("auth.verificationSuccessful"),
+                      description: t("auth.canLoginAgain"),
+                    });
                       }}
                       className="mt-4"
                     />
@@ -956,7 +956,7 @@ const Auth = () => {
                     {t("common.loading")}
                   </>
                 ) : (
-                  "Verstuur reset-link"
+                  t("auth.sendResetLink")
                 )}
               </Button>
             </div>

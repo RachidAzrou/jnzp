@@ -190,7 +190,7 @@ const Planning = () => {
     <div className="min-h-screen bg-background p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Planning</h1>
+        <h1 className="text-2xl font-semibold">{t("planning.title")}</h1>
       </div>
 
       {/* Filter Section */}
@@ -199,9 +199,9 @@ const Planning = () => {
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Zoek op dossier nummer of naam..."
-                value={searchDossier}
+                <Input
+                  placeholder={t("planning.searchPlaceholder")}
+                  value={searchDossier}
                 onChange={(e) => {
                   setSearchDossier(e.target.value);
                   setSearchName(e.target.value);
@@ -217,7 +217,7 @@ const Planning = () => {
                   setSearchName("");
                 }}
               >
-                Reset
+                {t("common.reset")}
               </Button>
             )}
           </div>
@@ -232,19 +232,19 @@ const Planning = () => {
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <MdOutlineShower className="h-5 w-5 text-muted-foreground" />
-                  Mortuarium Planning
+                  {t("planning.mortuariumPlanning")}
                 </CardTitle>
               </div>
               <Button size="sm" variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
-                Nieuwe afspraak
+                {t("planning.newAppointment")}
               </Button>
             </div>
           </CardHeader>
           <CardContent>
             {filteredWasplaatsServices.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">Geen mortuarium afspraken gepland</p>
+                <p className="text-sm text-muted-foreground">{t("planning.noMortuariumAppointments")}</p>
               </div>
             ) : (
               <div className="hidden md:block">
@@ -296,7 +296,7 @@ const Planning = () => {
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <PiMosque className="h-5 w-5 text-muted-foreground" />
-                  Moskee Planning
+                  {t("planning.mosquePlanning")}
                 </CardTitle>
               </div>
               <Button size="sm" variant="outline">
@@ -308,7 +308,7 @@ const Planning = () => {
           <CardContent>
             {filteredMosqueServices.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">Geen moskee ceremonies gepland</p>
+                <p className="text-sm text-muted-foreground">{t("planning.noMosqueCeremonies")}</p>
               </div>
             ) : (
               <div className="hidden md:block">
@@ -356,19 +356,19 @@ const Planning = () => {
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Plane className="h-5 w-5 text-muted-foreground" />
-                  Vlucht Planning
+                  {t("planning.flightPlanning")}
                 </CardTitle>
               </div>
               <Button size="sm" variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
-                Nieuwe vlucht
+                {t("planning.newFlight")}
               </Button>
             </div>
           </CardHeader>
           <CardContent>
             {filteredFlights.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">Geen vluchten gepland</p>
+                <p className="text-sm text-muted-foreground">{t("planning.noFlights")}</p>
               </div>
             ) : (
               <div className="hidden md:block">

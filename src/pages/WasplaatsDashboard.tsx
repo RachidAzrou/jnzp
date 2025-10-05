@@ -9,6 +9,7 @@ import { nl } from "date-fns/locale";
 import { WasplaatsWeekView } from "@/components/WasplaatsWeekView";
 import { WasplaatsDayView } from "@/components/WasplaatsDayView";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "react-i18next";
 
 type CoolCell = {
   id: string;
@@ -32,6 +33,7 @@ type DayBlock = {
 };
 
 export default function WasplaatsDashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [coolCells, setCoolCells] = useState<CoolCell[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -75,24 +77,24 @@ export default function WasplaatsDashboard() {
   };
 
   if (loading) {
-    return <div className="p-6">Laden...</div>;
+    return <div className="p-6">{t("common.loading")}</div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold">Mortuarium Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">Overzicht van koelcellen en reservaties</p>
+          <h1 className="text-2xl font-semibold">{t("wasplaats.dashboard.title")}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{t("wasplaats.dashboard.subtitle")}</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={() => navigate("/wasplaats/koelcellen")} variant="outline" size="sm">
             <Calendar className="h-4 w-4 mr-2" />
-            Koelcellen
+            {t("wasplaats.dashboard.coolCells")}
           </Button>
           <Button onClick={() => navigate("/wasplaats/reservaties/nieuw")} size="sm">
             <Plus className="h-4 w-4 mr-2" />
-            Nieuwe Reservatie
+            {t("wasplaats.dashboard.newReservation")}
           </Button>
         </div>
       </div>

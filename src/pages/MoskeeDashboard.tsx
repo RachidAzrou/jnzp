@@ -13,6 +13,7 @@ import { KPICard } from "@/components/KPICard";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
 
 type MosqueService = {
   id: string;
@@ -51,6 +52,7 @@ const prayerLabels: Record<string, string> = {
 };
 
 export default function MoskeeDashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [services, setServices] = useState<MosqueService[]>([]);
@@ -228,7 +230,7 @@ export default function MoskeeDashboard() {
     });
 
   if (loading) {
-    return <div className="p-6">Laden...</div>;
+    return <div className="p-6">{t("common.loading")}</div>;
   }
 
   return (
@@ -237,14 +239,14 @@ export default function MoskeeDashboard() {
         {/* Header */}
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-semibold">Moskee Dashboard</h1>
+            <h1 className="text-2xl font-semibold">{t("mosque.dashboard.title")}</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Overzicht van janāza-aanvragen en planning
+              {t("mosque.dashboard.subtitle")}
             </p>
           </div>
           <div className="flex gap-2">
             <Button onClick={() => navigate("/moskee/beschikbaarheid")} variant="outline" size="sm">
-              Beschikbaarheid
+              {t("mosque.dashboard.availability")}
             </Button>
           </div>
         </div>
@@ -252,22 +254,22 @@ export default function MoskeeDashboard() {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <KPICard
-            title="Openstaande aanvragen"
+            title={t("mosque.dashboard.openRequests")}
             value={openRequests}
             icon={AlertCircle}
           />
           <KPICard
-            title="Vandaag geplande janāza's"
+            title={t("mosque.dashboard.todayPrayers")}
             value={todayPrayers}
             icon={Calendar}
           />
           <KPICard
-            title="Geblokkeerde dagen"
+            title={t("mosque.dashboard.blockedDays")}
             value={blockedDays}
             icon={X}
           />
           <KPICard
-            title="Deze week"
+            title={t("mosque.dashboard.thisWeek")}
             value={thisWeekCount}
             icon={Clock}
           />
@@ -277,11 +279,11 @@ export default function MoskeeDashboard() {
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium">Actieve aanvragen</CardTitle>
+              <CardTitle className="text-lg font-medium">{t("mosque.dashboard.activeRequests")}</CardTitle>
               <div className="relative w-64">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Zoeken..."
+                  placeholder={t("common.search")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-8"

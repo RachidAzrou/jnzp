@@ -225,67 +225,7 @@ const Planning = () => {
       </Card>
 
       <div className="grid gap-6">
-        {/* Mosque Services Section */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <PiMosque className="h-5 w-5 text-muted-foreground" />
-                  Moskee Planning
-                </CardTitle>
-              </div>
-              <Button size="sm" variant="outline">
-                <Plus className="mr-2 h-4 w-4" />
-                Nieuwe afspraak
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {filteredMosqueServices.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">Geen moskee ceremonies gepland</p>
-              </div>
-            ) : (
-              <div className="hidden md:block">
-                <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Dossier</TableHead>
-                    <TableHead>Naam</TableHead>
-                    <TableHead>Moskee</TableHead>
-                    <TableHead>Datum & Tijd</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Notities</TableHead>
-                    <TableHead>Acties</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredMosqueServices.map((service) => (
-                    <TableRow key={service.id} className="hover:bg-muted/30">
-                      <TableCell className="font-medium font-mono text-sm">
-                        {service.dossier_ref}
-                      </TableCell>
-                      <TableCell className="text-sm">{service.deceased_name}</TableCell>
-                      <TableCell className="text-sm">{service.mosque_name}</TableCell>
-                      <TableCell className="text-sm">{formatDateTime(service.service_date)}</TableCell>
-                      <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
-                        {service.notes || "-"}
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="outline" size="sm">{t("common.view")}</Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Mortuarium Services Section */}
+        {/* Mortuarium Services Section - FIRST */}
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
@@ -349,7 +289,67 @@ const Planning = () => {
           </CardContent>
         </Card>
 
-        {/* Flights Section */}
+        {/* Mosque Services Section - SECOND */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <PiMosque className="h-5 w-5 text-muted-foreground" />
+                  Moskee Planning
+                </CardTitle>
+              </div>
+              <Button size="sm" variant="outline">
+                <Plus className="mr-2 h-4 w-4" />
+                Nieuwe afspraak
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {filteredMosqueServices.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-sm text-muted-foreground">Geen moskee ceremonies gepland</p>
+              </div>
+            ) : (
+              <div className="hidden md:block">
+                <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Dossier</TableHead>
+                    <TableHead>Naam</TableHead>
+                    <TableHead>Moskee</TableHead>
+                    <TableHead>Datum & Tijd</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Notities</TableHead>
+                    <TableHead>Acties</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredMosqueServices.map((service) => (
+                    <TableRow key={service.id} className="hover:bg-muted/30">
+                      <TableCell className="font-medium font-mono text-sm">
+                        {service.dossier_ref}
+                      </TableCell>
+                      <TableCell className="text-sm">{service.deceased_name}</TableCell>
+                      <TableCell className="text-sm">{service.mosque_name}</TableCell>
+                      <TableCell className="text-sm">{formatDateTime(service.service_date)}</TableCell>
+                      <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
+                        {service.notes || "-"}
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="outline" size="sm">{t("common.view")}</Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Flights Section - THIRD */}
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">

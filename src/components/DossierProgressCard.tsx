@@ -76,13 +76,13 @@ export function DossierProgressCard({
                 {/* Stage indicator */}
                 <div className={`
                   relative z-10 flex items-center justify-center rounded-full transition-all duration-300
-                  ${status === 'done' ? 'w-10 h-10 bg-primary' : ''}
-                  ${status === 'current' ? 'w-10 h-10 bg-primary ring-4 ring-primary/20' : ''}
-                  ${status === 'todo' ? 'w-10 h-10 bg-muted border-2 border-border' : ''}
+                  ${status === 'done' ? 'w-7 h-7 bg-primary' : ''}
+                  ${status === 'current' ? 'w-7 h-7 bg-primary ring-4 ring-primary/20' : ''}
+                  ${status === 'todo' ? 'w-7 h-7 bg-muted border-2 border-border' : ''}
                 `}>
-                  {status === 'done' && <Check className="w-5 h-5 text-primary-foreground" />}
-                  {status === 'current' && <Circle className="w-4 h-4 text-primary-foreground fill-primary-foreground" />}
-                  {status === 'todo' && <Circle className="w-4 h-4 text-muted-foreground" />}
+                  {status === 'done' && <Check className="w-3.5 h-3.5 text-primary-foreground" />}
+                  {status === 'current' && <Circle className="w-3 h-3 text-primary-foreground fill-primary-foreground" />}
+                  {status === 'todo' && <Circle className="w-3 h-3 text-muted-foreground" />}
                 </div>
 
                 {/* Stage label */}

@@ -23,6 +23,7 @@ import { AddManualEventDialog } from "@/components/dossier/AddManualEventDialog"
 import { AuditLogTable } from "@/components/dossier/AuditLogTable";
 import { DossierProgressCard } from "@/components/DossierProgressCard";
 import { DossierComments } from "@/components/dossier/DossierComments";
+import { QRCodeGenerator } from "@/components/qr/QRCodeGenerator";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -253,6 +254,10 @@ const DossierDetail = () => {
           <p className="text-xl text-muted-foreground">{dossier.deceased_name}</p>
         </div>
         <div className="flex items-center gap-2">
+          <QRCodeGenerator 
+            dossierId={id!}
+            displayId={dossier.display_id || dossier.ref_number}
+          />
           <Badge 
             variant={getStatusColor(dossier.status)} 
             className={`text-sm px-3 py-1 min-w-[140px] justify-center ${

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -25,14 +26,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Loader2 } from "lucide-react";
 import { z } from "zod";
 
-// Validation schema
+// Validation schema - errors are shown via translation keys
 const dossierSchema = z.object({
-  first_name: z.string().trim().min(1, "Voornaam is verplicht").max(100),
-  last_name: z.string().trim().min(1, "Achternaam is verplicht").max(100),
+  first_name: z.string().trim().min(1).max(100),
+  last_name: z.string().trim().min(1).max(100),
   flow: z.union([z.literal("LOC"), z.literal("REP")]),
-  place_of_death: z.string().trim().min(1, "Plaats overlijden is verplicht").max(200),
-  contact_name: z.string().trim().min(1, "Naam contactpersoon is verplicht").max(100),
-  relationship: z.string().trim().min(1, "Relatie is verplicht").max(50),
+  place_of_death: z.string().trim().min(1).max(200),
+  contact_name: z.string().trim().min(1).max(100),
+  relationship: z.string().trim().min(1).max(50),
   has_insurance: z.union([z.literal("yes"), z.literal("no"), z.literal("unknown")]),
   destination: z.string().trim().max(200).optional(),
   mosque: z.string().trim().max(200).optional(),
@@ -48,6 +49,7 @@ export function CreateDossierDialog() {
   const [errors, setErrors] = useState<Partial<Record<keyof DossierFormData, string>>>({});
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState<DossierFormData>({
     first_name: "",
@@ -82,7 +84,7 @@ export function CreateDossierDialog() {
 
       // Get current user and organization
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Niet ingelogd");
+      if (!user) throw new Error(t("createDossier.notifications.notAuthenticated"));
 
       // Get user's FD organization
       const { data: userRole } = await (supabase as any)
@@ -93,7 +95,7 @@ export function CreateDossierDialog() {
         .single();
 
       if (!userRole?.organization_id) {
-        throw new Error("Geen uitvaartorganisatie gevonden");
+        throw new Error(t("createDossier.notifications.noOrganization"));
       }
 
       const fdOrgId = userRole.organization_id;
@@ -171,8 +173,8 @@ export function CreateDossierDialog() {
       });
 
       toast({
-        title: "✅ Dossier aangemaakt",
-        description: `Dossier ${dossier.display_id || refNumber} is succesvol aangemaakt`,
+        title: t("createDossier.notifications.success"),
+        description: t("createDossier.notifications.successDescription", { displayId: dossier.display_id || refNumber }),
       });
 
       // Reset form and close dialog
@@ -206,14 +208,14 @@ export function CreateDossierDialog() {
         });
         setErrors(fieldErrors);
         toast({
-          title: "Validatiefout",
-          description: "Controleer de ingevulde velden",
+          title: t("createDossier.notifications.validationError"),
+          description: t("createDossier.notifications.validationErrorDescription"),
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Fout",
-          description: error.message || "Kon dossier niet aanmaken",
+          title: t("createDossier.notifications.error"),
+          description: error.message || t("createDossier.notifications.errorDescription"),
           variant: "destructive",
         });
       }
@@ -227,14 +229,14 @@ export function CreateDossierDialog() {
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
-          Nieuw dossier
+          {t("createDossier.button")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Nieuw dossier aanmaken</DialogTitle>
+          <DialogTitle>{t("createDossier.title")}</DialogTitle>
           <DialogDescription>
-            Maak handmatig een nieuw dossier aan met minimale gegevens
+            {t("createDossier.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -243,33 +245,33 @@ export function CreateDossierDialog() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="first_name">
-                Voornaam <span className="text-destructive">*</span>
+                {t("createDossier.firstName")} <span className="text-destructive">{t("createDossier.required")}</span>
               </Label>
               <Input
                 id="first_name"
                 value={formData.first_name}
                 onChange={(e) => handleInputChange("first_name", e.target.value)}
-                placeholder="Ahmed"
+                placeholder={t("createDossier.placeholders.firstName")}
                 className={errors.first_name ? "border-destructive" : ""}
               />
               {errors.first_name && (
-                <p className="text-xs text-destructive">{errors.first_name}</p>
+                <p className="text-xs text-destructive">{t("createDossier.validation.firstNameRequired")}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="last_name">
-                Achternaam <span className="text-destructive">*</span>
+                {t("createDossier.lastName")} <span className="text-destructive">{t("createDossier.required")}</span>
               </Label>
               <Input
                 id="last_name"
                 value={formData.last_name}
                 onChange={(e) => handleInputChange("last_name", e.target.value)}
-                placeholder="Hassan"
+                placeholder={t("createDossier.placeholders.lastName")}
                 className={errors.last_name ? "border-destructive" : ""}
               />
               {errors.last_name && (
-                <p className="text-xs text-destructive">{errors.last_name}</p>
+                <p className="text-xs text-destructive">{t("createDossier.validation.lastNameRequired")}</p>
               )}
             </div>
           </div>
@@ -277,7 +279,7 @@ export function CreateDossierDialog() {
           {/* Type uitvaart */}
           <div className="space-y-2">
             <Label htmlFor="flow">
-              Type uitvaart <span className="text-destructive">*</span>
+              {t("createDossier.flowType")} <span className="text-destructive">{t("createDossier.required")}</span>
             </Label>
             <Select
               value={formData.flow}
@@ -287,8 +289,8 @@ export function CreateDossierDialog() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="LOC">Lokale begrafenis</SelectItem>
-                <SelectItem value="REP">Repatriëring</SelectItem>
+                <SelectItem value="LOC">{t("createDossier.flow.local")}</SelectItem>
+                <SelectItem value="REP">{t("createDossier.flow.repatriation")}</SelectItem>
               </SelectContent>
             </Select>
             {errors.flow && <p className="text-xs text-destructive">{errors.flow}</p>}
@@ -428,11 +430,11 @@ export function CreateDossierDialog() {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Annuleren
+              {t("createDossier.buttons.cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Dossier aanmaken
+              {t("createDossier.buttons.create")}
             </Button>
           </DialogFooter>
         </form>

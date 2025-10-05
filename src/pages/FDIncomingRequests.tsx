@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import { nl } from "date-fns/locale";
+import { nl, fr, enUS } from "date-fns/locale";
 import { CheckCircle, XCircle, Clock, MapPin, User, Phone, Calendar } from "lucide-react";
 import {
   Dialog,
@@ -45,6 +46,15 @@ export default function FDIncomingRequests() {
   const [showDeclineDialog, setShowDeclineDialog] = useState(false);
   const [processing, setProcessing] = useState(false);
   const { toast } = useToast();
+  const { t, i18n } = useTranslation();
+
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case "fr": return fr;
+      case "en": return enUS;
+      default: return nl;
+    }
+  };
 
   useEffect(() => {
     fetchRequests();
@@ -80,8 +90,8 @@ export default function FDIncomingRequests() {
     } catch (error: any) {
       console.error("Error fetching requests:", error);
       toast({
-        title: "Fout",
-        description: "Kon aanvragen niet laden",
+        title: t("fdRequests.errors.error"),
+        description: t("fdRequests.errors.loadFailed"),
         variant: "destructive",
       });
     } finally {
@@ -105,8 +115,8 @@ export default function FDIncomingRequests() {
           
           if (payload.eventType === "INSERT") {
             toast({
-              title: "🔔 Nieuwe aanvraag",
-              description: "Er is een nieuwe dossieraanvraag binnengekomen",
+              title: t("fdRequests.notifications.newRequest"),
+              description: t("fdRequests.notifications.newRequestDescription"),
             });
           }
         }
@@ -133,8 +143,8 @@ export default function FDIncomingRequests() {
 
       if ((data as any)?.success) {
         toast({
-          title: "✅ Aanvraag geaccepteerd",
-          description: "Het dossier is nu aan u toegewezen",
+          title: t("fdRequests.notifications.accepted"),
+          description: t("fdRequests.notifications.acceptedDescription"),
         });
         fetchRequests();
       } else {
@@ -143,8 +153,8 @@ export default function FDIncomingRequests() {
     } catch (error: any) {
       console.error("Error accepting request:", error);
       toast({
-        title: "Fout",
-        description: error.message || "Kon aanvraag niet accepteren",
+        title: t("fdRequests.errors.error"),
+        description: error.message || t("fdRequests.errors.acceptFailed"),
         variant: "destructive",
       });
     } finally {
@@ -155,8 +165,8 @@ export default function FDIncomingRequests() {
   const handleDecline = async () => {
     if (!selectedRequest || !declineReason.trim()) {
       toast({
-        title: "Reden vereist",
-        description: "Geef een reden op voor de weigering",
+        title: t("fdRequests.notifications.reasonRequired"),
+        description: t("fdRequests.notifications.reasonRequiredDescription"),
         variant: "destructive",
       });
       return;
@@ -177,8 +187,8 @@ export default function FDIncomingRequests() {
 
       if ((data as any)?.success) {
         toast({
-          title: "Aanvraag geweigerd",
-          description: "De familie wordt geïnformeerd",
+          title: t("fdRequests.notifications.declined"),
+          description: t("fdRequests.notifications.declinedDescription"),
         });
         setShowDeclineDialog(false);
         setDeclineReason("");
@@ -190,8 +200,8 @@ export default function FDIncomingRequests() {
     } catch (error: any) {
       console.error("Error declining request:", error);
       toast({
-        title: "Fout",
-        description: error.message || "Kon aanvraag niet weigeren",
+        title: t("fdRequests.errors.error"),
+        description: error.message || t("fdRequests.errors.declineFailed"),
         variant: "destructive",
       });
     } finally {
@@ -200,11 +210,11 @@ export default function FDIncomingRequests() {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: any; label: string; icon: any }> = {
-      PENDING: { variant: "default", label: "In afwachting", icon: Clock },
-      ACCEPTED: { variant: "success", label: "Geaccepteerd", icon: CheckCircle },
-      DECLINED: { variant: "destructive", label: "Geweigerd", icon: XCircle },
-      EXPIRED: { variant: "secondary", label: "Verlopen", icon: Clock },
+    const variants: Record<string, { variant: any; labelKey: string; icon: any }> = {
+      PENDING: { variant: "default", labelKey: "fdRequests.status.pending", icon: Clock },
+      ACCEPTED: { variant: "success", labelKey: "fdRequests.status.accepted", icon: CheckCircle },
+      DECLINED: { variant: "destructive", labelKey: "fdRequests.status.declined", icon: XCircle },
+      EXPIRED: { variant: "secondary", labelKey: "fdRequests.status.expired", icon: Clock },
     };
 
     const config = variants[status] || variants.PENDING;
@@ -213,7 +223,7 @@ export default function FDIncomingRequests() {
     return (
       <Badge variant={config.variant as any} className="gap-1">
         <Icon className="h-3 w-3" />
-        {config.label}
+        {t(config.labelKey)}
       </Badge>
     );
   };
@@ -226,10 +236,10 @@ export default function FDIncomingRequests() {
       <div className="container mx-auto p-4 sm:p-6 space-y-4">
         <div className="space-y-1">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-            Inkomende Aanvragen
+            {t("fdRequests.title")}
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Laden...
+            {t("fdRequests.loading")}
           </p>
         </div>
       </div>
@@ -241,17 +251,17 @@ export default function FDIncomingRequests() {
       {/* Header */}
       <div className="space-y-1">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-          Inkomende Aanvragen
+          {t("fdRequests.title")}
         </h1>
         <p className="text-xs sm:text-sm text-muted-foreground">
-          {pendingRequests.length} nieuwe aanvra{pendingRequests.length === 1 ? "ag" : "gen"}
+          {pendingRequests.length} {t("fdRequests.newRequests")}{pendingRequests.length === 1 ? t("fdRequests.newRequest") : t("fdRequests.newRequestsPlural")}
         </p>
       </div>
 
       {/* Pending Requests */}
       {pendingRequests.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-lg sm:text-xl font-semibold">Nieuwe aanvragen</h2>
+          <h2 className="text-lg sm:text-xl font-semibold">{t("fdRequests.newRequestsSection")}</h2>
           {pendingRequests.map((request) => (
             <Card
               key={request.id}
@@ -264,7 +274,7 @@ export default function FDIncomingRequests() {
                       {request.dossier.deceased_name}
                     </CardTitle>
                     <CardDescription className="text-xs sm:text-sm">
-                      Dossier {request.dossier.display_id}
+                      {t("fdRequests.dossier")} {request.dossier.display_id}
                     </CardDescription>
                   </div>
                   {getStatusBadge(request.status)}
@@ -275,15 +285,15 @@ export default function FDIncomingRequests() {
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="h-4 w-4 flex-shrink-0" />
                     <span className="truncate">
-                      {request.dossier.flow === "LOC" ? "Lokaal" : "Repatriëring"}
+                      {request.dossier.flow === "LOC" ? t("fdRequests.local") : t("fdRequests.repatriation")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="h-4 w-4 flex-shrink-0" />
                     <span className="truncate">
                       {request.dossier.date_of_death
-                        ? format(new Date(request.dossier.date_of_death), "d MMM yyyy", { locale: nl })
-                        : "Onbekend"}
+                        ? format(new Date(request.dossier.date_of_death), "d MMM yyyy", { locale: getDateLocale() })
+                        : t("fdRequests.unknown")}
                     </span>
                   </div>
                   {request.dossier.family_contacts?.[0] && (
@@ -307,8 +317,8 @@ export default function FDIncomingRequests() {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" />
                   <span>
-                    Verloopt op{" "}
-                    {format(new Date(request.expires_at), "HH:mm", { locale: nl })}
+                    {t("fdRequests.expiresAt")}{" "}
+                    {format(new Date(request.expires_at), "HH:mm", { locale: getDateLocale() })}
                   </span>
                 </div>
 
@@ -319,7 +329,7 @@ export default function FDIncomingRequests() {
                     className="flex-1 min-h-[44px]"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    Accepteren
+                    {t("fdRequests.acceptButton")}
                   </Button>
                   <Button
                     variant="outline"
@@ -331,7 +341,7 @@ export default function FDIncomingRequests() {
                     className="flex-1 min-h-[44px]"
                   >
                     <XCircle className="h-4 w-4 mr-2" />
-                    Weigeren
+                    {t("fdRequests.declineButton")}
                   </Button>
                 </div>
               </CardContent>
@@ -343,7 +353,7 @@ export default function FDIncomingRequests() {
       {/* Processed Requests */}
       {processedRequests.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-lg sm:text-xl font-semibold">Verwerkte aanvragen</h2>
+          <h2 className="text-lg sm:text-xl font-semibold">{t("fdRequests.processedRequestsSection")}</h2>
           {processedRequests.map((request) => (
             <Card key={request.id} className="opacity-60">
               <CardHeader className="pb-3">
@@ -353,7 +363,7 @@ export default function FDIncomingRequests() {
                       {request.dossier.deceased_name}
                     </CardTitle>
                     <CardDescription className="text-xs sm:text-sm">
-                      Dossier {request.dossier.display_id}
+                      {t("fdRequests.dossier")} {request.dossier.display_id}
                     </CardDescription>
                   </div>
                   {getStatusBadge(request.status)}
@@ -367,7 +377,7 @@ export default function FDIncomingRequests() {
       {requests.length === 0 && (
         <Card>
           <CardContent className="pt-6 text-center text-muted-foreground">
-            <p className="text-sm sm:text-base">Geen aanvragen op dit moment</p>
+            <p className="text-sm sm:text-base">{t("fdRequests.noRequests")}</p>
           </CardContent>
         </Card>
       )}
@@ -376,17 +386,17 @@ export default function FDIncomingRequests() {
       <Dialog open={showDeclineDialog} onOpenChange={setShowDeclineDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Aanvraag weigeren</DialogTitle>
+            <DialogTitle>{t("fdRequests.declineDialog.title")}</DialogTitle>
             <DialogDescription>
-              Geef aan waarom u deze aanvraag weigert. De familie wordt hiervan op de hoogte gesteld.
+              {t("fdRequests.declineDialog.description")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="reason">Reden</Label>
+              <Label htmlFor="reason">{t("fdRequests.declineDialog.reasonLabel")}</Label>
               <Textarea
                 id="reason"
-                placeholder="Bijv. Geen capaciteit, buiten werkgebied, etc."
+                placeholder={t("fdRequests.declineDialog.reasonPlaceholder")}
                 value={declineReason}
                 onChange={(e) => setDeclineReason(e.target.value)}
                 rows={4}
@@ -403,7 +413,7 @@ export default function FDIncomingRequests() {
               }}
               className="min-h-[44px]"
             >
-              Annuleren
+              {t("fdRequests.declineDialog.cancelButton")}
             </Button>
             <Button
               onClick={handleDecline}
@@ -411,7 +421,7 @@ export default function FDIncomingRequests() {
               variant="destructive"
               className="min-h-[44px]"
             >
-              Weigeren
+              {t("fdRequests.declineDialog.confirmButton")}
             </Button>
           </DialogFooter>
         </DialogContent>

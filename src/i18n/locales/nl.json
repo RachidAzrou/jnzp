@@ -552,5 +552,127 @@
       "searchLabel": "Zoeken",
       "usersCount": "Gebruikers"
     }
+  },
+  "fdRequests": {
+    "title": "Inkomende Aanvragen",
+    "loading": "Laden...",
+    "newRequests": "nieuwe aanvra",
+    "newRequest": "ag",
+    "newRequestsPlural": "gen",
+    "newRequestsSection": "Nieuwe aanvragen",
+    "processedRequestsSection": "Verwerkte aanvragen",
+    "noRequests": "Geen aanvragen op dit moment",
+    "acceptButton": "Accepteren",
+    "declineButton": "Weigeren",
+    "expiresAt": "Verloopt op",
+    "dossier": "Dossier",
+    "local": "Lokaal",
+    "repatriation": "Repatriëring",
+    "unknown": "Onbekend",
+    "declineDialog": {
+      "title": "Aanvraag weigeren",
+      "description": "Geef aan waarom u deze aanvraag weigert. De familie wordt hiervan op de hoogte gesteld.",
+      "reasonLabel": "Reden",
+      "reasonPlaceholder": "Bijv. Geen capaciteit, buiten werkgebied, etc.",
+      "cancelButton": "Annuleren",
+      "confirmButton": "Weigeren"
+    },
+    "notifications": {
+      "newRequest": "🔔 Nieuwe aanvraag",
+      "newRequestDescription": "Er is een nieuwe dossieraanvraag binnengekomen",
+      "accepted": "✅ Aanvraag geaccepteerd",
+      "acceptedDescription": "Het dossier is nu aan u toegewezen",
+      "declined": "Aanvraag geweigerd",
+      "declinedDescription": "De familie wordt geïnformeerd",
+      "reasonRequired": "Reden vereist",
+      "reasonRequiredDescription": "Geef een reden op voor de weigering"
+    },
+    "errors": {
+      "loadFailed": "Kon aanvragen niet laden",
+      "acceptFailed": "Kon aanvraag niet accepteren",
+      "declineFailed": "Kon aanvraag niet weigeren",
+      "error": "Fout"
+    },
+    "status": {
+      "pending": "In afwachting",
+      "accepted": "Geaccepteerd",
+      "declined": "Geweigerd",
+      "expired": "Verlopen"
+    }
+  },
+  "createDossier": {
+    "button": "Nieuw dossier",
+    "title": "Nieuw dossier aanmaken",
+    "description": "Maak handmatig een nieuw dossier aan met minimale gegevens",
+    "firstName": "Voornaam",
+    "lastName": "Achternaam",
+    "flowType": "Type uitvaart",
+    "placeOfDeath": "Plaats overlijden",
+    "contactName": "Naam contactpersoon",
+    "relationship": "Relatie",
+    "insurance": "Verzekering",
+    "destination": "Bestemming",
+    "mosque": "Moskee",
+    "cemetery": "Begraafplaats",
+    "notes": "Opmerkingen",
+    "optionalInfo": "Optionele informatie",
+    "required": "*",
+    "flow": {
+      "local": "Lokale begrafenis",
+      "repatriation": "Repatriëring"
+    },
+    "insuranceOptions": {
+      "yes": "Ja",
+      "no": "Nee",
+      "unknown": "Onbekend"
+    },
+    "placeholders": {
+      "firstName": "Ahmed",
+      "lastName": "Hassan",
+      "placeOfDeath": "Amsterdam UMC",
+      "contactName": "Mohammed Hassan",
+      "relationship": "Zoon",
+      "destination": "Marokko",
+      "mosque": "El Noor Moskee",
+      "cemetery": "Islamitische begraafplaats Amsterdam",
+      "notes": "Extra notities..."
+    },
+    "buttons": {
+      "cancel": "Annuleren",
+      "create": "Dossier aanmaken"
+    },
+    "notifications": {
+      "success": "✅ Dossier aangemaakt",
+      "successDescription": "Dossier {displayId} is succesvol aangemaakt",
+      "validationError": "Validatiefout",
+      "validationErrorDescription": "Controleer de ingevulde velden",
+      "error": "Fout",
+      "errorDescription": "Kon dossier niet aanmaken",
+      "notAuthenticated": "Niet ingelogd",
+      "noOrganization": "Geen uitvaartorganisatie gevonden"
+    },
+    "validation": {
+      "firstNameRequired": "Voornaam is verplicht",
+      "lastNameRequired": "Achternaam is verplicht",
+      "placeOfDeathRequired": "Plaats overlijden is verplicht",
+      "contactNameRequired": "Naam contactpersoon is verplicht",
+      "relationshipRequired": "Relatie is verplicht"
+    }
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Oeps! Pagina niet gevonden",
+    "returnHome": "Terug naar Home"
+  },
+  "mortuarium": {
+    "adHoc": {
+      "title": "Ad-hoc Dossier Aanmaken",
+      "description": "Maak snel een nieuw dossier aan met koelcel-toewijzing en uitvaartondernemer",
+      "dossierSection": "Dossier",
+      "fdSection": "Uitvaartondernemer",
+      "name": "Naam:",
+      "dateOfDeath": "Overlijdensdatum:",
+      "notes": "Notities:"
+    }
   }
 }

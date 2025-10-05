@@ -540,5 +540,127 @@
       "searchLabel": "Rechercher",
       "usersCount": "Utilisateurs"
     }
+  },
+  "fdRequests": {
+    "title": "Demandes Entrantes",
+    "loading": "Chargement...",
+    "newRequests": "nouvelle demande",
+    "newRequest": "",
+    "newRequestsPlural": "s",
+    "newRequestsSection": "Nouvelles demandes",
+    "processedRequestsSection": "Demandes traitées",
+    "noRequests": "Aucune demande pour le moment",
+    "acceptButton": "Accepter",
+    "declineButton": "Refuser",
+    "expiresAt": "Expire à",
+    "dossier": "Dossier",
+    "local": "Local",
+    "repatriation": "Rapatriement",
+    "unknown": "Inconnu",
+    "declineDialog": {
+      "title": "Refuser la demande",
+      "description": "Indiquez pourquoi vous refusez cette demande. La famille en sera informée.",
+      "reasonLabel": "Raison",
+      "reasonPlaceholder": "Par ex. Pas de capacité, hors zone de travail, etc.",
+      "cancelButton": "Annuler",
+      "confirmButton": "Refuser"
+    },
+    "notifications": {
+      "newRequest": "🔔 Nouvelle demande",
+      "newRequestDescription": "Une nouvelle demande de dossier est arrivée",
+      "accepted": "✅ Demande acceptée",
+      "acceptedDescription": "Le dossier vous est maintenant attribué",
+      "declined": "Demande refusée",
+      "declinedDescription": "La famille sera informée",
+      "reasonRequired": "Raison requise",
+      "reasonRequiredDescription": "Veuillez fournir une raison pour le refus"
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger les demandes",
+      "acceptFailed": "Impossible d'accepter la demande",
+      "declineFailed": "Impossible de refuser la demande",
+      "error": "Erreur"
+    },
+    "status": {
+      "pending": "En attente",
+      "accepted": "Accepté",
+      "declined": "Refusé",
+      "expired": "Expiré"
+    }
+  },
+  "createDossier": {
+    "button": "Nouveau dossier",
+    "title": "Créer un nouveau dossier",
+    "description": "Créer manuellement un nouveau dossier avec des données minimales",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "flowType": "Type de funérailles",
+    "placeOfDeath": "Lieu de décès",
+    "contactName": "Nom du contact",
+    "relationship": "Relation",
+    "insurance": "Assurance",
+    "destination": "Destination",
+    "mosque": "Mosquée",
+    "cemetery": "Cimetière",
+    "notes": "Remarques",
+    "optionalInfo": "Informations optionnelles",
+    "required": "*",
+    "flow": {
+      "local": "Inhumation locale",
+      "repatriation": "Rapatriement"
+    },
+    "insuranceOptions": {
+      "yes": "Oui",
+      "no": "Non",
+      "unknown": "Inconnu"
+    },
+    "placeholders": {
+      "firstName": "Ahmed",
+      "lastName": "Hassan",
+      "placeOfDeath": "Amsterdam UMC",
+      "contactName": "Mohammed Hassan",
+      "relationship": "Fils",
+      "destination": "Maroc",
+      "mosque": "Mosquée El Noor",
+      "cemetery": "Cimetière islamique Amsterdam",
+      "notes": "Notes supplémentaires..."
+    },
+    "buttons": {
+      "cancel": "Annuler",
+      "create": "Créer le dossier"
+    },
+    "notifications": {
+      "success": "✅ Dossier créé",
+      "successDescription": "Le dossier {displayId} a été créé avec succès",
+      "validationError": "Erreur de validation",
+      "validationErrorDescription": "Vérifiez les champs remplis",
+      "error": "Erreur",
+      "errorDescription": "Impossible de créer le dossier",
+      "notAuthenticated": "Non connecté",
+      "noOrganization": "Aucune organisation funéraire trouvée"
+    },
+    "validation": {
+      "firstNameRequired": "Le prénom est requis",
+      "lastNameRequired": "Le nom est requis",
+      "placeOfDeathRequired": "Le lieu de décès est requis",
+      "contactNameRequired": "Le nom du contact est requis",
+      "relationshipRequired": "La relation est requise"
+    }
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Oups! Page non trouvée",
+    "returnHome": "Retour à l'accueil"
+  },
+  "mortuarium": {
+    "adHoc": {
+      "title": "Créer un dossier ad-hoc",
+      "description": "Créez rapidement un nouveau dossier avec attribution de cellule froide et entrepreneur de pompes funèbres",
+      "dossierSection": "Dossier",
+      "fdSection": "Entrepreneur de pompes funèbres",
+      "name": "Nom:",
+      "dateOfDeath": "Date de décès:",
+      "notes": "Remarques:"
+    }
   }
 }

@@ -540,5 +540,127 @@
       "searchLabel": "Search",
       "usersCount": "Users"
     }
+  },
+  "fdRequests": {
+    "title": "Incoming Requests",
+    "loading": "Loading...",
+    "newRequests": "new request",
+    "newRequest": "",
+    "newRequestsPlural": "s",
+    "newRequestsSection": "New requests",
+    "processedRequestsSection": "Processed requests",
+    "noRequests": "No requests at this time",
+    "acceptButton": "Accept",
+    "declineButton": "Decline",
+    "expiresAt": "Expires at",
+    "dossier": "Dossier",
+    "local": "Local",
+    "repatriation": "Repatriation",
+    "unknown": "Unknown",
+    "declineDialog": {
+      "title": "Decline request",
+      "description": "Indicate why you are declining this request. The family will be notified.",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "E.g. No capacity, outside work area, etc.",
+      "cancelButton": "Cancel",
+      "confirmButton": "Decline"
+    },
+    "notifications": {
+      "newRequest": "🔔 New request",
+      "newRequestDescription": "A new dossier request has arrived",
+      "accepted": "✅ Request accepted",
+      "acceptedDescription": "The dossier is now assigned to you",
+      "declined": "Request declined",
+      "declinedDescription": "The family will be informed",
+      "reasonRequired": "Reason required",
+      "reasonRequiredDescription": "Please provide a reason for the decline"
+    },
+    "errors": {
+      "loadFailed": "Could not load requests",
+      "acceptFailed": "Could not accept request",
+      "declineFailed": "Could not decline request",
+      "error": "Error"
+    },
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "expired": "Expired"
+    }
+  },
+  "createDossier": {
+    "button": "New dossier",
+    "title": "Create new dossier",
+    "description": "Manually create a new dossier with minimal data",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "flowType": "Funeral type",
+    "placeOfDeath": "Place of death",
+    "contactName": "Contact name",
+    "relationship": "Relationship",
+    "insurance": "Insurance",
+    "destination": "Destination",
+    "mosque": "Mosque",
+    "cemetery": "Cemetery",
+    "notes": "Notes",
+    "optionalInfo": "Optional information",
+    "required": "*",
+    "flow": {
+      "local": "Local burial",
+      "repatriation": "Repatriation"
+    },
+    "insuranceOptions": {
+      "yes": "Yes",
+      "no": "No",
+      "unknown": "Unknown"
+    },
+    "placeholders": {
+      "firstName": "Ahmed",
+      "lastName": "Hassan",
+      "placeOfDeath": "Amsterdam UMC",
+      "contactName": "Mohammed Hassan",
+      "relationship": "Son",
+      "destination": "Morocco",
+      "mosque": "El Noor Mosque",
+      "cemetery": "Islamic cemetery Amsterdam",
+      "notes": "Additional notes..."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "create": "Create dossier"
+    },
+    "notifications": {
+      "success": "✅ Dossier created",
+      "successDescription": "Dossier {displayId} was created successfully",
+      "validationError": "Validation error",
+      "validationErrorDescription": "Check the filled fields",
+      "error": "Error",
+      "errorDescription": "Could not create dossier",
+      "notAuthenticated": "Not logged in",
+      "noOrganization": "No funeral organization found"
+    },
+    "validation": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "placeOfDeathRequired": "Place of death is required",
+      "contactNameRequired": "Contact name is required",
+      "relationshipRequired": "Relationship is required"
+    }
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Oops! Page not found",
+    "returnHome": "Return to Home"
+  },
+  "mortuarium": {
+    "adHoc": {
+      "title": "Create ad-hoc dossier",
+      "description": "Quickly create a new dossier with cool cell assignment and funeral director",
+      "dossierSection": "Dossier",
+      "fdSection": "Funeral director",
+      "name": "Name:",
+      "dateOfDeath": "Date of death:",
+      "notes": "Notes:"
+    }
   }
 }

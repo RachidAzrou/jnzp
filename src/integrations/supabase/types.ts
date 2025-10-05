@@ -68,13 +68,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "audit_events_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       captcha_verifications: {
@@ -3129,15 +3122,7 @@ export type Database = {
           target_type?: string | null
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "audit_events_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {

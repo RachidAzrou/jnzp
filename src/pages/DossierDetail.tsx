@@ -125,19 +125,8 @@ const DossierDetail = () => {
       .eq("dossier_id", id)
       .order("created_at", { ascending: false });
 
-    // For now, set mock progress data until we have the database view
-    const mockProgress = dossierData ? {
-      dossier_id: dossierData.id,
-      display_id: dossierData.display_id || '',
-      deceased_name: dossierData.deceased_name,
-      pipeline_type: dossierData.flow,
-      progress_pct: 25,
-      next_step_label: 'Rituele wassplaats',
-      current_main_key: 'INTAKE',
-    } : null;
-
+    // Set all fetched data
     setDossier(dossierData);
-    setDocuments(docsData || []);
     setEvents(eventsData || []);
     setMosqueService(mosqueData);
     setWashService(washData);
@@ -145,7 +134,7 @@ const DossierDetail = () => {
     setFamilyContacts(familyData || []);
     setInvoices(invoicesData || []);
     setManualEvents(manualEventsData || []);
-    setProgress(mockProgress);
+    setProgress(null); // Remove mock progress data
     setLoading(false);
   };
 

@@ -49,23 +49,24 @@ export default function FamiliePolis() {
 
       const dossierId = dossiers[0].id;
 
-      // Mock polis check - in production this would call an external API
-      const mockResult = {
-        is_covered: true,
-        num_travelers: 2,
+      // TODO: In production this would call an external API to verify the policy
+      // For now we just save the policy information
+      const polisData = {
+        dossier_id: dossierId,
         polis_number: formData.polis_number,
         insurer_name: formData.insurer_name,
-        dossier_id: dossierId
+        is_covered: false, // Will be determined by actual API call
+        num_travelers: 0
       };
 
       // Save to database
       const { error } = await supabase
         .from('polis_checks')
-        .insert(mockResult);
+        .insert(polisData);
 
       if (error) throw error;
 
-      setCheckResult(mockResult);
+      setCheckResult(polisData);
       toast({
         title: "Polis gecontroleerd",
         description: "De polis is succesvol gecontroleerd en opgeslagen"

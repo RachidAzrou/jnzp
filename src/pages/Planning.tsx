@@ -21,76 +21,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 
-// Mock data for demonstration
-const mockMosqueServices = [
-  {
-    id: "m1",
-    dossier_ref: "A009",
-    deceased_name: "Mohammed Aziz",
-    mosque_name: "El Noor Moskee",
-    service_date: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(), // +4 hours
-    status: "CONFIRMED",
-    notes: "Familie verwacht 50+ personen"
-  },
-  {
-    id: "m2",
-    dossier_ref: "A014",
-    deceased_name: "Aisha Rachid",
-    mosque_name: "Tawheed Moskee",
-    service_date: new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString(), // tomorrow
-    status: "PENDING",
-    notes: "Bevestiging afwachten"
-  }
-];
-
-const mockWasplaatsServices = [
-  {
-    id: "w1",
-    dossier_ref: "A007",
-    deceased_name: "Amina Radi",
-    facility_name: "Mortuarium Amsterdam",
-    scheduled_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // +2 hours
-    status: "CONFIRMED",
-    cool_cell: "Cel 3",
-    notes: "Rituele wassing door familie"
-  },
-  {
-    id: "w2",
-    dossier_ref: "A012",
-    deceased_name: "Hassan El-Mansouri",
-    facility_name: "Mortuarium Rotterdam",
-    scheduled_at: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(), // +6 hours
-    status: "PENDING",
-    cool_cell: "Cel 1",
-    notes: ""
-  }
-];
-
-const mockFlights = [
-  {
-    id: "f1",
-    dossier_ref: "A010",
-    deceased_name: "Omar Ziani",
-    carrier: "Turkish Airlines",
-    flight_number: "TK1952",
-    depart_at: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(), // +12 hours
-    arrive_at: new Date(Date.now() + 16 * 60 * 60 * 1000).toISOString(), // +16 hours
-    reservation_ref: "TK-9384KL",
-    air_waybill: "235-8847-2931"
-  },
-  {
-    id: "f2",
-    dossier_ref: "A008",
-    deceased_name: "Karima Benali",
-    carrier: "Royal Air Maroc",
-    flight_number: "AT725",
-    depart_at: new Date(Date.now() + 36 * 60 * 60 * 1000).toISOString(), // day after tomorrow
-    arrive_at: new Date(Date.now() + 39 * 60 * 60 * 1000).toISOString(),
-    reservation_ref: "RAM-7721QP",
-    air_waybill: ""
-  }
-];
-
 const Planning = () => {
   const { t } = useTranslation();
   const [mosqueServices, setMosqueServices] = useState<any[]>([]);
@@ -107,14 +37,106 @@ const Planning = () => {
   }, []);
 
   const fetchData = async () => {
-    // For MVP, use mock data to demonstrate the UI
-    // In production, fetch from Supabase
-    setTimeout(() => {
-      setMosqueServices(mockMosqueServices);
-      setWasplaatsServices(mockWasplaatsServices);
-      setFlights(mockFlights);
+    try {
+      setLoading(true);
+
+      // Fetch mosque services with dossier info
+      const { data: mosqueData, error: mosqueError } = await supabase
+        .from("janaz_services")
+        .select(`
+          *,
+          dossier:dossiers!inner(
+            display_id,
+            deceased_name
+          )
+        `)
+        .order("service_date", { ascending: true });
+
+      if (mosqueError) throw mosqueError;
+
+      // Fetch wasplaats/mortuarium reservations with dossier info
+      const { data: wasplaatsData, error: wasplaatsError } = await supabase
+        .from("cool_cell_reservations")
+        .select(`
+          *,
+          dossier:dossiers!inner(
+            display_id,
+            deceased_name
+          ),
+          cool_cell:cool_cells(
+            label
+          ),
+          facility:organizations!cool_cell_reservations_facility_org_id_fkey(
+            name
+          )
+        `)
+        .order("start_at", { ascending: true });
+
+      if (wasplaatsError) throw wasplaatsError;
+
+      // Fetch flights with repatriation and dossier info
+      const { data: flightsData, error: flightsError } = await supabase
+        .from("flights")
+        .select(`
+          *,
+          repatriation:repatriations!inner(
+            dossier:dossiers!inner(
+              display_id,
+              deceased_name
+            )
+          )
+        `)
+        .order("depart_at", { ascending: true });
+
+      if (flightsError) throw flightsError;
+
+      // Transform data to match component expectations
+      const transformedMosque = (mosqueData || []).map(service => ({
+        id: service.id,
+        dossier_ref: service.dossier?.display_id,
+        deceased_name: service.dossier?.deceased_name,
+        mosque_name: service.mosque_name,
+        service_date: service.service_date,
+        status: service.status,
+        notes: service.notes
+      }));
+
+      const transformedWasplaats = (wasplaatsData || []).map(service => ({
+        id: service.id,
+        dossier_ref: service.dossier?.display_id,
+        deceased_name: service.dossier?.deceased_name,
+        facility_name: service.facility?.name,
+        scheduled_at: service.start_at,
+        status: service.status,
+        cool_cell: service.cool_cell?.label,
+        notes: service.note
+      }));
+
+      const transformedFlights = (flightsData || []).map(flight => ({
+        id: flight.id,
+        dossier_ref: flight.repatriation?.dossier?.display_id,
+        deceased_name: flight.repatriation?.dossier?.deceased_name,
+        carrier: flight.carrier,
+        flight_number: flight.carrier, // You may need to add flight_number to the flights table
+        depart_at: flight.depart_at,
+        arrive_at: flight.arrive_at,
+        reservation_ref: flight.reservation_ref,
+        air_waybill: flight.air_waybill
+      }));
+
+      setMosqueServices(transformedMosque);
+      setWasplaatsServices(transformedWasplaats);
+      setFlights(transformedFlights);
+    } catch (error: any) {
+      console.error("Error fetching planning data:", error);
+      toast({
+        title: "Fout bij ophalen planning",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   const getServiceStatusBadge = (status: string) => {

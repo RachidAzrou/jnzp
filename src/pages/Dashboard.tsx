@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FDReviewsCard } from "@/components/FDReviewsCard";
+import OnboardingWizard from "@/components/OnboardingWizard";
 
 interface DossierData {
   id: string;
@@ -21,6 +22,8 @@ const Dashboard = () => {
   const [dossiers, setDossiers] = useState<DossierData[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("");
+  const [organizationId, setOrganizationId] = useState<string | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [stats, setStats] = useState({
     totalActive: 0,
     repatriation: 0,
@@ -44,6 +47,32 @@ const Dashboard = () => {
           
           if (profile) {
             setUserName(`${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user.email || '');
+          }
+
+          // Fetch user's organization and onboarding status
+          const { data: roleData } = await supabase
+            .from("user_roles")
+            .select("organization_id")
+            .eq("user_id", user.id)
+            .single();
+
+          if (roleData?.organization_id) {
+            setOrganizationId(roleData.organization_id);
+
+            // Check onboarding status (simplified to avoid type issues)
+            try {
+              const onboardingResponse: any = await supabase
+                .from("organization_onboarding" as any)
+                .select("completed")
+                .eq("organization_id", roleData.organization_id)
+                .maybeSingle();
+
+              if (onboardingResponse?.data?.completed !== undefined) {
+                setShowOnboarding(!onboardingResponse.data.completed);
+              }
+            } catch (e) {
+              // Ignore onboarding check errors
+            }
           }
         }
 
@@ -113,6 +142,14 @@ const Dashboard = () => {
             {t("dashboard.welcomeBack")}, {userName}
           </h1>
         </div>
+
+        {/* Onboarding Wizard */}
+        {showOnboarding && organizationId && (
+          <OnboardingWizard
+            organizationId={organizationId}
+            onComplete={() => setShowOnboarding(false)}
+          />
+        )}
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">

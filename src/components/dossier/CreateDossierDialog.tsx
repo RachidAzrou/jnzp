@@ -158,6 +158,33 @@ export function CreateDossierDialog() {
         },
       });
 
+      // Get user's organization for webhook
+      const { data: orgData } = await supabase
+        .from("user_roles")
+        .select("organization_id")
+        .eq("user_id", user.id)
+        .single();
+
+      // Trigger webhook for dossier creation
+      if (orgData?.organization_id) {
+        try {
+          await supabase.functions.invoke("trigger-webhook", {
+            body: {
+              event_type: "DOSSIER_CREATED",
+              dossier_id: dossier.id,
+              organization_id: orgData.organization_id,
+              metadata: {
+                flow: validatedData.flow,
+                deceased_name: deceasedName,
+                created_by: user.id,
+              },
+            },
+          });
+        } catch (webhookError) {
+          console.error("Error triggering webhook:", webhookError);
+        }
+      }
+
       // Create audit log
       await supabase.from("audit_events").insert({
         user_id: user.id,

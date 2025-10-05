@@ -164,6 +164,28 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       .eq("user_id", userId)
       .single();
 
+    // Trigger webhook for status change
+    if (userRole?.organization_id) {
+      try {
+        await supabase.functions.invoke("trigger-webhook", {
+          body: {
+            event_type: "DOSSIER_STATUS_CHANGED",
+            dossier_id: dossierId,
+            organization_id: userRole.organization_id,
+            metadata: {
+              from_status: currentStatus,
+              to_status: newStatus,
+              reason,
+              changed_by: userId,
+            },
+          },
+        });
+      } catch (webhookError) {
+        console.error("Error triggering webhook:", webhookError);
+        // Don't block status change if webhook fails
+      }
+    }
+
     await supabase.from("audit_events").insert({
       user_id: userId,
       organization_id: userRole?.organization_id,

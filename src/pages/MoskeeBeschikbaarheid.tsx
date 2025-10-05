@@ -18,8 +18,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-type DayAvailability = {
-  date: string;
+type WeeklyAvailability = {
+  day_of_week: number; // 0=Sunday, 1=Monday, ..., 6=Saturday
   fajr: boolean;
   dhuhr: boolean;
   asr: boolean;
@@ -37,7 +37,7 @@ type DayBlock = {
 export default function MoskeeBeschikbaarheid() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [availability, setAvailability] = useState<Record<string, DayAvailability>>({});
+  const [availability, setAvailability] = useState<Record<number, WeeklyAvailability>>({});
   const [dayBlocks, setDayBlocks] = useState<DayBlock[]>([]);
   const [loading, setLoading] = useState(true);
   const [blockDate, setBlockDate] = useState<string>("");
@@ -50,18 +50,35 @@ export default function MoskeeBeschikbaarheid() {
 
   const fetchData = async () => {
     try {
-      const start = startOfWeek(new Date(), { weekStartsOn: 1 });
-      const weekDates = Array.from({ length: 7 }, (_, i) => format(addDays(start, i), "yyyy-MM-dd"));
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session?.user.id) {
+        throw new Error("Niet ingelogd");
+      }
 
-      // Fetch availability
+      // Get mosque org
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("organization_id")
+        .eq("user_id", sessionData.session.user.id)
+        .limit(1)
+        .maybeSingle();
+
+      if (!roleData?.organization_id) {
+        throw new Error("Geen moskee organisatie gevonden");
+      }
+
+      // Fetch weekly availability
       const { data: availData, error: availError } = await supabase
-        .from("mosque_availability")
+        .from("mosque_weekly_availability")
         .select("*")
-        .in("date", weekDates);
+        .eq("mosque_org_id", roleData.organization_id);
 
       if (availError) throw availError;
 
-      // Fetch day blocks
+      // Fetch upcoming day blocks (next 7 days)
+      const start = startOfWeek(new Date(), { weekStartsOn: 1 });
+      const weekDates = Array.from({ length: 7 }, (_, i) => format(addDays(start, i), "yyyy-MM-dd"));
+      
       const { data: blocksData, error: blocksError } = await supabase
         .from("mosque_day_blocks")
         .select("*")
@@ -69,14 +86,14 @@ export default function MoskeeBeschikbaarheid() {
 
       if (blocksError) throw blocksError;
 
-      const availMap: Record<string, DayAvailability> = {};
-      weekDates.forEach((date) => {
-        const existing = availData?.find((a) => a.date === date);
-        const dayOfWeek = new Date(date).getDay();
+      // Create availability map for all days of week (0-6)
+      const availMap: Record<number, WeeklyAvailability> = {};
+      for (let dayOfWeek = 0; dayOfWeek <= 6; dayOfWeek++) {
+        const existing = availData?.find((a) => a.day_of_week === dayOfWeek);
         const isFriday = dayOfWeek === 5;
 
-        availMap[date] = existing || {
-          date,
+        availMap[dayOfWeek] = existing || {
+          day_of_week: dayOfWeek,
           fajr: true,
           dhuhr: true,
           asr: true,
@@ -84,7 +101,7 @@ export default function MoskeeBeschikbaarheid() {
           isha: true,
           jumuah: isFriday ? true : null,
         };
-      });
+      }
 
       setAvailability(availMap);
       setDayBlocks(blocksData || []);
@@ -101,14 +118,14 @@ export default function MoskeeBeschikbaarheid() {
   };
 
   const togglePrayer = (
-    date: string,
+    dayOfWeek: number,
     prayer: "fajr" | "dhuhr" | "asr" | "maghrib" | "isha" | "jumuah"
   ) => {
     setAvailability((prev) => ({
       ...prev,
-      [date]: {
-        ...prev[date],
-        [prayer]: !prev[date][prayer],
+      [dayOfWeek]: {
+        ...prev[dayOfWeek],
+        [prayer]: !prev[dayOfWeek][prayer],
       },
     }));
   };
@@ -134,7 +151,7 @@ export default function MoskeeBeschikbaarheid() {
 
       const updates = Object.values(availability).map((day) => ({
         mosque_org_id: roleData.organization_id,
-        date: day.date,
+        day_of_week: day.day_of_week,
         fajr: day.fajr,
         dhuhr: day.dhuhr,
         asr: day.asr,
@@ -144,8 +161,8 @@ export default function MoskeeBeschikbaarheid() {
       }));
 
       const { error } = await supabase
-        .from("mosque_availability")
-        .upsert(updates, { onConflict: "mosque_org_id,date" });
+        .from("mosque_weekly_availability")
+        .upsert(updates, { onConflict: "mosque_org_id,day_of_week" });
 
       if (error) throw error;
 
@@ -153,16 +170,16 @@ export default function MoskeeBeschikbaarheid() {
       await supabase.from("audit_events").insert({
         event_type: "mosque.availability.update",
         user_id: sessionData.session.user.id,
-        description: "Moskee beschikbaarheid bijgewerkt",
+        description: "Moskee wekelijkse beschikbaarheid bijgewerkt",
         metadata: {
           updates: updates.length,
-          dates: updates.map(u => u.date),
+          days: updates.map(u => u.day_of_week),
         },
       });
 
       toast({
         title: "Opgeslagen",
-        description: "Beschikbaarheid is bijgewerkt",
+        description: "Wekelijkse beschikbaarheid is bijgewerkt",
       });
     } catch (error: any) {
       console.error("Error saving availability:", error);
@@ -262,9 +279,14 @@ export default function MoskeeBeschikbaarheid() {
     }
   };
 
-  const getWeekDays = () => {
-    const start = startOfWeek(new Date(), { weekStartsOn: 1 });
-    return Array.from({ length: 7 }, (_, i) => addDays(start, i));
+  const getDayNames = () => {
+    // Returns array of day objects: Sunday (0) to Saturday (6)
+    // But we want to display Monday-Sunday, so we rotate
+    const dayNames = ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"];
+    return [1, 2, 3, 4, 5, 6, 0].map((dayOfWeek) => ({
+      dayOfWeek,
+      name: dayNames[dayOfWeek],
+    }));
   };
 
   const isDateBlocked = (date: string) => {
@@ -278,16 +300,16 @@ export default function MoskeeBeschikbaarheid() {
   return (
     <div className="min-h-screen bg-background p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Beschikbaarheid per gebed</h1>
+        <h1 className="text-2xl font-semibold">Wekelijkse beschikbaarheid per gebed</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Beheer de beschikbaarheid van de moskee per gebedstijd
+          Stel de standaard beschikbaarheid per dag van de week in. Dit geldt voor alle weken.
         </p>
       </div>
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-lg font-medium">Weekoverzicht</CardTitle>
+            <CardTitle className="text-lg font-medium">Standaard beschikbaarheid</CardTitle>
             <Button onClick={handleSave} size="sm">Opslaan</Button>
           </div>
         </CardHeader>
@@ -307,23 +329,20 @@ export default function MoskeeBeschikbaarheid() {
                 </tr>
               </thead>
               <tbody>
-                {getWeekDays().map((day) => {
-                  const dateStr = format(day, "yyyy-MM-dd");
-                  const dayAvail = availability[dateStr];
-                  const blocked = isDateBlocked(dateStr);
-                  const isFriday = day.getDay() === 5;
+                {getDayNames().map(({ dayOfWeek, name }) => {
+                  const dayAvail = availability[dayOfWeek];
+                  const isFriday = dayOfWeek === 5;
 
                   return (
-                    <tr key={dateStr} className="border-b hover:bg-muted/30">
+                    <tr key={dayOfWeek} className="border-b hover:bg-muted/30">
                       <td className="p-3 font-medium text-sm">
-                        {format(day, "EEE d MMM", { locale: nl })}
+                        {name}
                       </td>
                       <td className="p-3">
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.fajr}
-                            onCheckedChange={() => togglePrayer(dateStr, "fajr")}
-                            disabled={!!blocked}
+                            onCheckedChange={() => togglePrayer(dayOfWeek, "fajr")}
                           />
                         </div>
                       </td>
@@ -331,8 +350,7 @@ export default function MoskeeBeschikbaarheid() {
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.dhuhr}
-                            onCheckedChange={() => togglePrayer(dateStr, "dhuhr")}
-                            disabled={!!blocked}
+                            onCheckedChange={() => togglePrayer(dayOfWeek, "dhuhr")}
                           />
                         </div>
                       </td>
@@ -340,8 +358,7 @@ export default function MoskeeBeschikbaarheid() {
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.asr}
-                            onCheckedChange={() => togglePrayer(dateStr, "asr")}
-                            disabled={!!blocked}
+                            onCheckedChange={() => togglePrayer(dayOfWeek, "asr")}
                           />
                         </div>
                       </td>
@@ -349,8 +366,7 @@ export default function MoskeeBeschikbaarheid() {
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.maghrib}
-                            onCheckedChange={() => togglePrayer(dateStr, "maghrib")}
-                            disabled={!!blocked}
+                            onCheckedChange={() => togglePrayer(dayOfWeek, "maghrib")}
                           />
                         </div>
                       </td>
@@ -358,8 +374,7 @@ export default function MoskeeBeschikbaarheid() {
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.isha}
-                            onCheckedChange={() => togglePrayer(dateStr, "isha")}
-                            disabled={!!blocked}
+                            onCheckedChange={() => togglePrayer(dayOfWeek, "isha")}
                           />
                         </div>
                       </td>
@@ -368,71 +383,17 @@ export default function MoskeeBeschikbaarheid() {
                           {isFriday && dayAvail?.jumuah !== null ? (
                             <Switch
                               checked={dayAvail?.jumuah || false}
-                              onCheckedChange={() => togglePrayer(dateStr, "jumuah")}
-                              disabled={!!blocked}
+                              onCheckedChange={() => togglePrayer(dayOfWeek, "jumuah")}
                             />
                           ) : (
                             <span className="text-muted-foreground text-xs">—</span>
                           )}
                         </div>
                       </td>
-                      <td className="p-3">
-                        <div className="flex items-center justify-center gap-2">
-                          {blocked ? (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleUnblockDay(blocked.id)}
-                              title={`Reden: ${blocked.reason}`}
-                            >
-                              <X className="h-4 w-4 text-red-500" />
-                            </Button>
-                          ) : (
-                            <Dialog open={dialogOpen && blockDate === dateStr} onOpenChange={(open) => {
-                              setDialogOpen(open);
-                              if (open) setBlockDate(dateStr);
-                            }}>
-                              <DialogTrigger asChild>
-                                <Button size="sm" variant="outline">
-                                  Blokkeren
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Dag blokkeren (overmacht)</DialogTitle>
-                                  <DialogDescription>
-                                    Blokkeer deze dag voor alle gebeden. Reden is verplicht.
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                  <div>
-                                    <p className="text-sm font-medium mb-2">
-                                      Dag: {format(day, "EEEE d MMMM", { locale: nl })}
-                                    </p>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium">
-                                      Reden (min. 8 tekens)
-                                    </label>
-                                    <Textarea
-                                      value={blockReason}
-                                      onChange={(e) => setBlockReason(e.target.value)}
-                                      placeholder="Bijvoorbeeld: Overmacht (brandalarm), Sluiting Eid-gebed, Renovatie..."
-                                      rows={3}
-                                    />
-                                  </div>
-                                  <Button
-                                    onClick={handleBlockDay}
-                                    className="w-full"
-                                    disabled={blockReason.trim().length < 8}
-                                  >
-                                    Bevestig blokkade
-                                  </Button>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                          )}
-                        </div>
+                      <td className="p-3 text-center">
+                        <span className="text-xs text-muted-foreground">
+                          Zie hieronder ↓
+                        </span>
                       </td>
                     </tr>
                   );

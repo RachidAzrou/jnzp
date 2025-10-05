@@ -1579,6 +1579,48 @@ export type Database = {
           },
         ]
       }
+      mosque_weekly_availability: {
+        Row: {
+          asr: boolean
+          created_at: string
+          day_of_week: number
+          dhuhr: boolean
+          fajr: boolean
+          id: string
+          isha: boolean
+          jumuah: boolean | null
+          maghrib: boolean
+          mosque_org_id: string
+          updated_at: string
+        }
+        Insert: {
+          asr?: boolean
+          created_at?: string
+          day_of_week: number
+          dhuhr?: boolean
+          fajr?: boolean
+          id?: string
+          isha?: boolean
+          jumuah?: boolean | null
+          maghrib?: boolean
+          mosque_org_id: string
+          updated_at?: string
+        }
+        Update: {
+          asr?: boolean
+          created_at?: string
+          day_of_week?: number
+          dhuhr?: boolean
+          fajr?: boolean
+          id?: string
+          isha?: boolean
+          jumuah?: boolean | null
+          maghrib?: boolean
+          mosque_org_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string

@@ -106,51 +106,54 @@ export default function PublicJanazaScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-8">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold mb-4">{mosque.name}</h1>
-        <div className="text-2xl text-gray-300 mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white p-8 overflow-hidden">
+      {/* Header met moskee info */}
+      <div className="text-center mb-16 border-b border-gray-700 pb-8">
+        <h1 className="text-6xl font-bold mb-6 tracking-wide">{mosque.name}</h1>
+        <div className="text-3xl text-emerald-300 mb-3 font-arabic" style={{ fontFamily: 'Traditional Arabic, serif' }}>
           إِنَّا لِلّهِ وَإِنَّـا إِلَيْهِ رَاجِعونَ
         </div>
-        <p className="text-lg text-gray-400">
+        <p className="text-xl text-gray-300 italic">
           Voorwaar, wij behoren Allah toe en tot Hem keren wij terug
         </p>
       </div>
 
       {/* Upcoming Janaza Prayers */}
       {services?.upcoming && services.upcoming.length > 0 && (
-        <div className="mb-12">
-          <h2 className="text-3xl font-semibold mb-6 text-center border-b border-gray-700 pb-4">
-            🕌 Aankomende Janaza-gebeden
+        <div className="mb-16">
+          <h2 className="text-4xl font-semibold mb-8 text-center pb-6 flex items-center justify-center gap-4">
+            <span className="text-5xl">🕌</span>
+            <span>Aankomende Janaza-gebeden</span>
           </h2>
-          <div className="grid gap-6 max-w-5xl mx-auto">
+          <div className="grid gap-8 max-w-6xl mx-auto">
             {services.upcoming.map((service) => (
               <Card
                 key={service.id}
-                className="bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600 shadow-2xl"
+                className="bg-gradient-to-br from-gray-800/90 via-gray-800/80 to-gray-900/90 border-2 border-emerald-700/30 shadow-2xl backdrop-blur"
               >
-                <CardContent className="p-8">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-4xl">🕊️</span>
-                        <h3 className="text-3xl font-bold text-white">
+                <CardContent className="p-10">
+                  {/* Overledene info */}
+                  <div className="mb-6 pb-6 border-b border-gray-700/50">
+                    <div className="flex items-start gap-4">
+                      <span className="text-5xl">🕊️</span>
+                      <div className="flex-1">
+                        <h3 className="text-4xl font-bold text-white mb-3">
                           {service.dossier?.deceased_name || "Onbekend"}
                         </h3>
+                        {service.dossier?.deceased_dob && (
+                          <p className="text-2xl text-emerald-200">
+                            Leeftijd: {getAge(service.dossier.deceased_dob)} jaar
+                          </p>
+                        )}
                       </div>
-                      {service.dossier?.deceased_dob && (
-                        <p className="text-xl text-gray-300 ml-12">
-                          📅 Leeftijd: {getAge(service.dossier.deceased_dob)} jaar
-                        </p>
-                      )}
                     </div>
                   </div>
 
-                  <div className="border-t border-gray-600 pt-4 mt-4 space-y-3">
-                    <div className="flex items-center gap-3 text-xl">
-                      <span className="text-2xl">📅</span>
-                      <span className="font-medium">
+                  {/* Tijd en locatie info */}
+                  <div className="space-y-4 mb-6">
+                    <div className="flex items-center gap-4 text-2xl bg-gray-900/50 p-4 rounded-lg">
+                      <span className="text-3xl">📅</span>
+                      <span className="font-semibold text-white">
                         {new Date(service.confirmed_slot!).toLocaleDateString("nl-NL", {
                           weekday: "long",
                           day: "numeric",
@@ -159,29 +162,30 @@ export default function PublicJanazaScreen() {
                         })}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-xl">
-                      <span className="text-2xl">🕒</span>
-                      <span className="font-medium">
+                    <div className="flex items-center gap-4 text-2xl bg-gray-900/50 p-4 rounded-lg">
+                      <span className="text-3xl">🕒</span>
+                      <span className="font-semibold text-white">
                         {new Date(service.confirmed_slot!).toLocaleTimeString("nl-NL", {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-xl">
-                      <span className="text-2xl">📍</span>
-                      <span className="font-medium">{mosque.name}</span>
+                    <div className="flex items-center gap-4 text-2xl bg-gray-900/50 p-4 rounded-lg">
+                      <span className="text-3xl">📍</span>
+                      <span className="font-semibold text-white">{mosque.name}</span>
                     </div>
                     {service.note && (
-                      <div className="flex items-start gap-3 text-lg text-gray-300 mt-4">
+                      <div className="flex items-start gap-4 text-xl text-emerald-200 bg-emerald-950/30 p-4 rounded-lg border border-emerald-800/30">
                         <span className="text-2xl">💬</span>
                         <span className="italic">{service.note}</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="border-t border-gray-600 pt-4 mt-6 text-center">
-                    <p className="text-lg text-gray-300">
+                  {/* Dua */}
+                  <div className="border-t border-emerald-700/30 pt-6 text-center">
+                    <p className="text-2xl text-emerald-100 italic">
                       🤲 Moge Allah {getPronoun(service.dossier?.deceased_gender)} genadig zijn
                     </p>
                   </div>
@@ -194,36 +198,40 @@ export default function PublicJanazaScreen() {
 
       {/* Recent Janaza Prayers */}
       {services?.recent && services.recent.length > 0 && (
-        <div>
-          <h2 className="text-2xl font-semibold mb-6 text-center border-b border-gray-700 pb-4 text-gray-300">
+        <div className="border-t-4 border-gray-800 pt-12">
+          <h2 className="text-3xl font-semibold mb-8 text-center pb-4 text-gray-400">
             Afgelopen Janaza-gebeden (laatste 3 dagen)
           </h2>
-          <div className="grid gap-4 max-w-5xl mx-auto">
+          <div className="grid gap-4 max-w-6xl mx-auto">
             {services.recent.map((service) => (
               <Card
                 key={service.id}
-                className="bg-gray-800/50 border-gray-700"
+                className="bg-gray-800/40 border-gray-700/50 hover:bg-gray-800/60 transition-colors"
               >
                 <CardContent className="p-6">
                   <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="text-xl font-semibold text-white">
-                        {service.dossier?.deceased_name || "Onbekend"}
-                      </h3>
-                      {service.dossier?.deceased_dob && (
-                        <p className="text-sm text-gray-400">
-                          Leeftijd: {getAge(service.dossier.deceased_dob)} jaar
-                        </p>
-                      )}
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl opacity-60">🕊️</span>
+                      <div>
+                        <h3 className="text-2xl font-semibold text-gray-200">
+                          {service.dossier?.deceased_name || "Onbekend"}
+                        </h3>
+                        {service.dossier?.deceased_dob && (
+                          <p className="text-lg text-gray-400">
+                            Leeftijd: {getAge(service.dossier.deceased_dob)} jaar
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-300">
+                      <p className="text-lg font-medium text-gray-300">
                         {new Date(service.confirmed_slot!).toLocaleDateString("nl-NL", {
+                          weekday: "short",
                           day: "numeric",
                           month: "short",
                         })}
                       </p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-lg text-gray-400">
                         {new Date(service.confirmed_slot!).toLocaleTimeString("nl-NL", {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -241,17 +249,26 @@ export default function PublicJanazaScreen() {
       {/* No services */}
       {(!services?.upcoming || services.upcoming.length === 0) &&
         (!services?.recent || services.recent.length === 0) && (
-          <div className="text-center py-20">
-            <p className="text-2xl text-gray-400">
+          <div className="text-center py-32">
+            <div className="text-8xl mb-8 opacity-20">🕌</div>
+            <p className="text-3xl text-gray-400 mb-4">
               Momenteel geen Janaza-gebeden gepland
+            </p>
+            <p className="text-xl text-gray-500">
+              إِنَّا لِلّهِ وَإِنَّـا إِلَيْهِ رَاجِعونَ
             </p>
           </div>
         )}
 
       {/* Footer */}
-      <div className="text-center mt-16 text-gray-500 text-sm">
-        <p>Dit scherm vernieuwt automatisch elke minuut</p>
-        <p className="mt-2">JanazApp - {new Date().toLocaleString("nl-NL")}</p>
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 to-transparent pt-8 pb-6 text-center">
+        <div className="flex items-center justify-center gap-4 text-gray-500 text-base">
+          <span>⟳ Auto-refresh elke minuut</span>
+          <span>•</span>
+          <span>JanazApp</span>
+          <span>•</span>
+          <span>{new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}</span>
+        </div>
       </div>
     </div>
   );

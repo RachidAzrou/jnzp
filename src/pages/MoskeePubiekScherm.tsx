@@ -91,7 +91,14 @@ export default function MoskeePubiekScherm() {
 
   const handleOpenScreen = () => {
     if (publicUrl) {
-      window.open(publicUrl, "_blank", "fullscreen=yes");
+      // Open in new window with fullscreen mode
+      const newWindow = window.open(publicUrl, "_blank", "width=1920,height=1080");
+      if (newWindow) {
+        // Request fullscreen when window is loaded
+        newWindow.addEventListener("load", () => {
+          newWindow.document.documentElement.requestFullscreen?.();
+        });
+      }
     }
   };
 
@@ -149,14 +156,23 @@ export default function MoskeePubiekScherm() {
               </Button>
             </div>
 
-            <div className="border-t pt-4">
-              <h3 className="font-medium mb-2">Tips voor gebruik:</h3>
-              <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                <li>Open de URL in fullscreen mode (F11) op een TV of beamer</li>
-                <li>Het scherm vernieuwt automatisch elke 60 seconden</li>
-                <li>Enkel bevestigde Janaza-gebeden worden getoond</li>
-                <li>Gebeden van de afgelopen 3 dagen worden ook getoond</li>
-              </ul>
+            <div className="border-t pt-4 space-y-4">
+              <div>
+                <h3 className="font-medium mb-2">Tips voor gebruik:</h3>
+                <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                  <li>Klik op "Open publiek scherm" voor automatische fullscreen weergave</li>
+                  <li>Of open de URL handmatig en druk op F11 voor fullscreen</li>
+                  <li>Het scherm vernieuwt automatisch elke 60 seconden</li>
+                  <li>Enkel bevestigde Janaza-gebeden worden getoond</li>
+                  <li>Gebeden van de afgelopen 3 dagen worden ook getoond</li>
+                </ul>
+              </div>
+              
+              <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                  💡 Let op: Voor beste resultaten gebruik je een dedicated display device (TV, beamer, kiosk) in landscape mode.
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>

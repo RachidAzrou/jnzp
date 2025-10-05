@@ -299,17 +299,17 @@ export function CreateDossierDialog() {
           {/* Plaats overlijden */}
           <div className="space-y-2">
             <Label htmlFor="place_of_death">
-              Plaats overlijden <span className="text-destructive">*</span>
+              {t("createDossier.placeOfDeath")} <span className="text-destructive">{t("createDossier.required")}</span>
             </Label>
             <Input
               id="place_of_death"
               value={formData.place_of_death}
               onChange={(e) => handleInputChange("place_of_death", e.target.value)}
-              placeholder="Amsterdam UMC"
+              placeholder={t("createDossier.placeholders.placeOfDeath")}
               className={errors.place_of_death ? "border-destructive" : ""}
             />
             {errors.place_of_death && (
-              <p className="text-xs text-destructive">{errors.place_of_death}</p>
+              <p className="text-xs text-destructive">{t("createDossier.validation.placeOfDeathRequired")}</p>
             )}
           </div>
 
@@ -317,33 +317,33 @@ export function CreateDossierDialog() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="contact_name">
-                Naam contactpersoon <span className="text-destructive">*</span>
+                {t("createDossier.contactName")} <span className="text-destructive">{t("createDossier.required")}</span>
               </Label>
               <Input
                 id="contact_name"
                 value={formData.contact_name}
                 onChange={(e) => handleInputChange("contact_name", e.target.value)}
-                placeholder="Mohammed Hassan"
+                placeholder={t("createDossier.placeholders.contactName")}
                 className={errors.contact_name ? "border-destructive" : ""}
               />
               {errors.contact_name && (
-                <p className="text-xs text-destructive">{errors.contact_name}</p>
+                <p className="text-xs text-destructive">{t("createDossier.validation.contactNameRequired")}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="relationship">
-                Relatie <span className="text-destructive">*</span>
+                {t("createDossier.relationship")} <span className="text-destructive">{t("createDossier.required")}</span>
               </Label>
               <Input
                 id="relationship"
                 value={formData.relationship}
                 onChange={(e) => handleInputChange("relationship", e.target.value)}
-                placeholder="Zoon"
+                placeholder={t("createDossier.placeholders.relationship")}
                 className={errors.relationship ? "border-destructive" : ""}
               />
               {errors.relationship && (
-                <p className="text-xs text-destructive">{errors.relationship}</p>
+                <p className="text-xs text-destructive">{t("createDossier.validation.relationshipRequired")}</p>
               )}
             </div>
           </div>
@@ -351,7 +351,7 @@ export function CreateDossierDialog() {
           {/* Verzekering */}
           <div className="space-y-2">
             <Label htmlFor="has_insurance">
-              Verzekering <span className="text-destructive">*</span>
+              {t("createDossier.insurance")} <span className="text-destructive">{t("createDossier.required")}</span>
             </Label>
             <Select
               value={formData.has_insurance}
@@ -361,9 +361,9 @@ export function CreateDossierDialog() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="yes">Ja</SelectItem>
-                <SelectItem value="no">Nee</SelectItem>
-                <SelectItem value="unknown">Onbekend</SelectItem>
+                <SelectItem value="yes">{t("createDossier.insuranceOptions.yes")}</SelectItem>
+                <SelectItem value="no">{t("createDossier.insuranceOptions.no")}</SelectItem>
+                <SelectItem value="unknown">{t("createDossier.insuranceOptions.unknown")}</SelectItem>
               </SelectContent>
             </Select>
             {errors.has_insurance && (
@@ -373,16 +373,16 @@ export function CreateDossierDialog() {
 
           {/* Optionele velden */}
           <div className="pt-4 border-t">
-            <p className="text-sm font-medium mb-3">Optionele informatie</p>
+            <p className="text-sm font-medium mb-3">{t("createDossier.optionalInfo")}</p>
 
             {formData.flow === "REP" && (
               <div className="space-y-2 mb-3">
-                <Label htmlFor="destination">Bestemming</Label>
+                <Label htmlFor="destination">{t("createDossier.destination")}</Label>
                 <Input
                   id="destination"
                   value={formData.destination}
                   onChange={(e) => handleInputChange("destination", e.target.value)}
-                  placeholder="Marokko"
+                  placeholder={t("createDossier.placeholders.destination")}
                 />
               </div>
             )}
@@ -390,34 +390,34 @@ export function CreateDossierDialog() {
             {formData.flow === "LOC" && (
               <>
                 <div className="space-y-2 mb-3">
-                  <Label htmlFor="mosque">Moskee</Label>
+                  <Label htmlFor="mosque">{t("createDossier.mosque")}</Label>
                   <Input
                     id="mosque"
                     value={formData.mosque}
                     onChange={(e) => handleInputChange("mosque", e.target.value)}
-                    placeholder="El Noor Moskee"
+                    placeholder={t("createDossier.placeholders.mosque")}
                   />
                 </div>
 
                 <div className="space-y-2 mb-3">
-                  <Label htmlFor="cemetery">Begraafplaats</Label>
+                  <Label htmlFor="cemetery">{t("createDossier.cemetery")}</Label>
                   <Input
                     id="cemetery"
                     value={formData.cemetery}
                     onChange={(e) => handleInputChange("cemetery", e.target.value)}
-                    placeholder="Islamitische begraafplaats Amsterdam"
+                    placeholder={t("createDossier.placeholders.cemetery")}
                   />
                 </div>
               </>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="notes">Opmerkingen</Label>
+              <Label htmlFor="notes">{t("createDossier.notes")}</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => handleInputChange("notes", e.target.value)}
-                placeholder="Extra notities..."
+                placeholder={t("createDossier.placeholders.notes")}
                 rows={3}
               />
             </div>

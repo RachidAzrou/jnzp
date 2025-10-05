@@ -656,11 +656,66 @@
     "adHoc": {
       "title": "Créer un dossier ad-hoc",
       "description": "Créez rapidement un nouveau dossier avec attribution de cellule froide et entrepreneur de pompes funèbres",
+      "step1": "Dossier",
+      "step2": "Entrepreneur",
+      "step3": "Cellule",
+      "step4": "Confirmation",
       "dossierSection": "Dossier",
       "fdSection": "Entrepreneur de pompes funèbres",
+      "coolCellSection": "Cellule froide",
       "name": "Nom:",
       "dateOfDeath": "Date de décès:",
-      "notes": "Remarques:"
+      "notes": "Remarques:",
+      "deceasedName": "Nom du défunt",
+      "deceasedNamePlaceholder": "Nom complet",
+      "dateOfDeathLabel": "Date du décès",
+      "notesLabel": "Remarques",
+      "notesPlaceholder": "Par ex. La famille attend demain",
+      "fdMode": "Choisissez comment ajouter l'entrepreneur",
+      "newFD": "Nouvel entrepreneur",
+      "existingFD": "Entrepreneur existant",
+      "selectExistingFD": "Sélectionner entrepreneur",
+      "selectFD": "Sélectionner un entrepreneur",
+      "noFDsAvailable": "Aucun entrepreneur disponible",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+32 xxx xx xx xx",
+      "selectCoolCell": "Sélectionner une cellule froide",
+      "startTime": "Heure de début",
+      "endTime": "Heure de fin",
+      "allocationNote": "Note d'attribution",
+      "allocationNotePlaceholder": "Par ex. Cérémonie prévue le...",
+      "sendInvite": "Envoyer une invitation",
+      "generateQR": "Générer un QR code",
+      "viewDossier": "Voir le dossier",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "create": "Créer",
+      "creating": "Création en cours...",
+      "validation": {
+        "nameRequired": "Le nom est requis",
+        "dateRequired": "La date est requise",
+        "fdEmailRequired": "L'e-mail est requis pour un nouvel entrepreneur",
+        "fdFirstNameRequired": "Le prénom est requis",
+        "fdLastNameRequired": "Le nom est requis",
+        "fdSelectionRequired": "Sélectionnez un entrepreneur",
+        "coolCellRequired": "Sélectionnez une cellule froide"
+      },
+      "notifications": {
+        "success": "Dossier créé!",
+        "successDescription": "Le dossier a été créé avec succès et la cellule froide a été attribuée",
+        "error": "Erreur",
+        "errorDescription": "Une erreur s'est produite lors de la création du dossier"
+      },
+      "cellStatus": {
+        "free": "Disponible",
+        "occupied": "Occupé"
+      },
+      "newLabel": "Nouveau:",
+      "existingLabel": "Existant:",
+      "period": "Période:"
     }
   }
 }

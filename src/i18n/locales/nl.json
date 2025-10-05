@@ -668,11 +668,66 @@
     "adHoc": {
       "title": "Ad-hoc Dossier Aanmaken",
       "description": "Maak snel een nieuw dossier aan met koelcel-toewijzing en uitvaartondernemer",
+      "step1": "Dossier",
+      "step2": "Uitvaartondernemer",
+      "step3": "Koelcel",
+      "step4": "Bevestiging",
       "dossierSection": "Dossier",
       "fdSection": "Uitvaartondernemer",
+      "coolCellSection": "Koelcel",
       "name": "Naam:",
       "dateOfDeath": "Overlijdensdatum:",
-      "notes": "Notities:"
+      "notes": "Notities:",
+      "deceasedName": "Naam overledene",
+      "deceasedNamePlaceholder": "Volledige naam",
+      "dateOfDeathLabel": "Datum overlijden",
+      "notesLabel": "Notities",
+      "notesPlaceholder": "Bijv. Familie verwacht morgen",
+      "fdMode": "Kies hoe u de uitvaartondernemer wilt toevoegen",
+      "newFD": "Nieuwe uitvaartondernemer",
+      "existingFD": "Bestaande uitvaartondernemer",
+      "selectExistingFD": "Selecteer uitvaartondernemer",
+      "selectFD": "Selecteer een uitvaartondernemer",
+      "noFDsAvailable": "Geen uitvaartondernemers beschikbaar",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "phone": "Telefoon",
+      "phonePlaceholder": "+31 6 12345678",
+      "selectCoolCell": "Selecteer een koelcel",
+      "startTime": "Starttijd",
+      "endTime": "Eindtijd",
+      "allocationNote": "Notitie bij toewijzing",
+      "allocationNotePlaceholder": "Bijv. Ceremonie gepland op...",
+      "sendInvite": "Uitnodiging versturen",
+      "generateQR": "QR-code genereren",
+      "viewDossier": "Bekijk dossier",
+      "previous": "Vorige",
+      "next": "Volgende",
+      "create": "Aanmaken",
+      "creating": "Bezig met aanmaken...",
+      "validation": {
+        "nameRequired": "Naam is verplicht",
+        "dateRequired": "Datum is verplicht",
+        "fdEmailRequired": "E-mail is verplicht voor nieuwe uitvaartondernemer",
+        "fdFirstNameRequired": "Voornaam is verplicht",
+        "fdLastNameRequired": "Achternaam is verplicht",
+        "fdSelectionRequired": "Selecteer een uitvaartondernemer",
+        "coolCellRequired": "Selecteer een koelcel"
+      },
+      "notifications": {
+        "success": "Dossier aangemaakt!",
+        "successDescription": "Het dossier is succesvol aangemaakt en de koelcel is toegewezen",
+        "error": "Fout",
+        "errorDescription": "Er is een fout opgetreden bij het aanmaken van het dossier"
+      },
+      "cellStatus": {
+        "free": "Beschikbaar",
+        "occupied": "Bezet"
+      },
+      "newLabel": "Nieuw:",
+      "existingLabel": "Bestaand:",
+      "period": "Periode:"
     }
   }
 }

@@ -656,11 +656,66 @@
     "adHoc": {
       "title": "Create ad-hoc dossier",
       "description": "Quickly create a new dossier with cool cell assignment and funeral director",
+      "step1": "Dossier",
+      "step2": "Funeral Director",
+      "step3": "Cool Cell",
+      "step4": "Confirmation",
       "dossierSection": "Dossier",
       "fdSection": "Funeral director",
+      "coolCellSection": "Cool cell",
       "name": "Name:",
       "dateOfDeath": "Date of death:",
-      "notes": "Notes:"
+      "notes": "Notes:",
+      "deceasedName": "Deceased name",
+      "deceasedNamePlaceholder": "Full name",
+      "dateOfDeathLabel": "Date of death",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "E.g. Family expects tomorrow",
+      "fdMode": "Choose how to add the funeral director",
+      "newFD": "New funeral director",
+      "existingFD": "Existing funeral director",
+      "selectExistingFD": "Select funeral director",
+      "selectFD": "Select a funeral director",
+      "noFDsAvailable": "No funeral directors available",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone",
+      "phonePlaceholder": "+44 xxx xxx xxxx",
+      "selectCoolCell": "Select a cool cell",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "allocationNote": "Allocation note",
+      "allocationNotePlaceholder": "E.g. Ceremony scheduled on...",
+      "sendInvite": "Send invitation",
+      "generateQR": "Generate QR code",
+      "viewDossier": "View dossier",
+      "previous": "Previous",
+      "next": "Next",
+      "create": "Create",
+      "creating": "Creating...",
+      "validation": {
+        "nameRequired": "Name is required",
+        "dateRequired": "Date is required",
+        "fdEmailRequired": "Email is required for new funeral director",
+        "fdFirstNameRequired": "First name is required",
+        "fdLastNameRequired": "Last name is required",
+        "fdSelectionRequired": "Select a funeral director",
+        "coolCellRequired": "Select a cool cell"
+      },
+      "notifications": {
+        "success": "Dossier created!",
+        "successDescription": "The dossier was successfully created and the cool cell was assigned",
+        "error": "Error",
+        "errorDescription": "An error occurred while creating the dossier"
+      },
+      "cellStatus": {
+        "free": "Available",
+        "occupied": "Occupied"
+      },
+      "newLabel": "New:",
+      "existingLabel": "Existing:",
+      "period": "Period:"
     }
   }
 }

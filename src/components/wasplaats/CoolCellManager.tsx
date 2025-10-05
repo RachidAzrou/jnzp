@@ -68,7 +68,7 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
         .order('label');
 
       if (error) throw error;
-      setCells(data || []);
+      setCells((data as any) || []);
     } catch (error: any) {
       toast({
         title: "Fout",
@@ -277,9 +277,13 @@ function CoolCellDialog({
   onSave: (data: any) => void;
   onClose: () => void;
 }) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    label: string;
+    status: 'FREE' | 'RESERVED' | 'OCCUPIED' | 'OUT_OF_SERVICE';
+    out_of_service_note: string;
+  }>({
     label: cell?.label || '',
-    status: cell?.status || 'FREE',
+    status: (cell?.status as any) || 'FREE',
     out_of_service_note: cell?.out_of_service_note || ''
   });
 
@@ -305,7 +309,7 @@ function CoolCellDialog({
           <Label>Status</Label>
           <Select
             value={formData.status}
-            onValueChange={(value) => setFormData({ ...formData, status: value })}
+            onValueChange={(value: any) => setFormData({ ...formData, status: value })}
           >
             <SelectTrigger>
               <SelectValue />

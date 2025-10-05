@@ -1959,6 +1959,53 @@ export type Database = {
           },
         ]
       }
+      organization_onboarding: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          organization_id: string
+          step_basic_info: boolean
+          step_integrations: boolean
+          step_preferences: boolean
+          step_team_setup: boolean
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          organization_id: string
+          step_basic_info?: boolean
+          step_integrations?: boolean
+          step_preferences?: boolean
+          step_team_setup?: boolean
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          organization_id?: string
+          step_basic_info?: boolean
+          step_integrations?: boolean
+          step_preferences?: boolean
+          step_team_setup?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_onboarding_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_verification_docs: {
         Row: {
           document_type: string

@@ -26,12 +26,16 @@ export default function PublicJanazaScreen() {
   const { data: services, refetch } = useQuery({
     queryKey: ["public-janaza-services", mosque?.id],
     queryFn: async () => {
-      if (!mosque?.id) return { upcoming: [], recent: [] };
+      if (!mosque?.id) return [];
 
       const now = new Date();
-      const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+      now.setHours(0, 0, 0, 0); // Start of today
+      
+      const fourDaysLater = new Date(now);
+      fourDaysLater.setDate(fourDaysLater.getDate() + 4);
+      fourDaysLater.setHours(23, 59, 59, 999); // End of 4 days from now
 
-      const { data: upcoming, error: upcomingError } = await supabase
+      const { data, error } = await supabase
         .from("mosque_services")
         .select(`
           *,
@@ -44,34 +48,11 @@ export default function PublicJanazaScreen() {
         .eq("mosque_org_id", mosque.id)
         .eq("status", "CONFIRMED")
         .gte("confirmed_slot", now.toISOString())
-        .order("confirmed_slot", { ascending: true })
-        .limit(10);
+        .lte("confirmed_slot", fourDaysLater.toISOString())
+        .order("confirmed_slot", { ascending: true });
 
-      if (upcomingError) throw upcomingError;
-
-      const { data: recent, error: recentError } = await supabase
-        .from("mosque_services")
-        .select(`
-          *,
-          dossier:dossiers(
-            deceased_name,
-            deceased_dob,
-            deceased_gender
-          )
-        `)
-        .eq("mosque_org_id", mosque.id)
-        .eq("status", "CONFIRMED")
-        .lt("confirmed_slot", now.toISOString())
-        .gte("confirmed_slot", threeDaysAgo.toISOString())
-        .order("confirmed_slot", { ascending: false })
-        .limit(5);
-
-      if (recentError) throw recentError;
-
-      return {
-        upcoming: upcoming || [],
-        recent: recent || [],
-      };
+      if (error) throw error;
+      return data || [];
     },
     enabled: !!mosque?.id,
     refetchInterval: 60000, // Auto-refresh every 60 seconds
@@ -118,15 +99,15 @@ export default function PublicJanazaScreen() {
         </p>
       </div>
 
-      {/* Upcoming Janaza Prayers */}
-      {services?.upcoming && services.upcoming.length > 0 && (
+      {/* Janaza Prayers - Komende 4 dagen */}
+      {services && services.length > 0 && (
         <div className="mb-16">
           <h2 className="text-4xl font-semibold mb-8 text-center pb-6 flex items-center justify-center gap-4">
             <span className="text-5xl">🕌</span>
-            <span>Aankomende Janaza-gebeden</span>
+            <span>Janaza-gebeden (komende 4 dagen)</span>
           </h2>
           <div className="grid gap-8 max-w-6xl mx-auto">
-            {services.upcoming.map((service) => (
+            {services.map((service) => (
               <Card
                 key={service.id}
                 className="bg-gradient-to-br from-gray-800/90 via-gray-800/80 to-gray-900/90 border-2 border-emerald-700/30 shadow-2xl backdrop-blur"
@@ -196,69 +177,18 @@ export default function PublicJanazaScreen() {
         </div>
       )}
 
-      {/* Recent Janaza Prayers */}
-      {services?.recent && services.recent.length > 0 && (
-        <div className="border-t-4 border-gray-800 pt-12">
-          <h2 className="text-3xl font-semibold mb-8 text-center pb-4 text-gray-400">
-            Afgelopen Janaza-gebeden (laatste 3 dagen)
-          </h2>
-          <div className="grid gap-4 max-w-6xl mx-auto">
-            {services.recent.map((service) => (
-              <Card
-                key={service.id}
-                className="bg-gray-800/40 border-gray-700/50 hover:bg-gray-800/60 transition-colors"
-              >
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl opacity-60">🕊️</span>
-                      <div>
-                        <h3 className="text-2xl font-semibold text-gray-200">
-                          {service.dossier?.deceased_name || "Onbekend"}
-                        </h3>
-                        {service.dossier?.deceased_dob && (
-                          <p className="text-lg text-gray-400">
-                            Leeftijd: {getAge(service.dossier.deceased_dob)} jaar
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-medium text-gray-300">
-                        {new Date(service.confirmed_slot!).toLocaleDateString("nl-NL", {
-                          weekday: "short",
-                          day: "numeric",
-                          month: "short",
-                        })}
-                      </p>
-                      <p className="text-lg text-gray-400">
-                        {new Date(service.confirmed_slot!).toLocaleTimeString("nl-NL", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      {/* No services */}
+      {(!services || services.length === 0) && (
+        <div className="text-center py-32">
+          <div className="text-8xl mb-8 opacity-20">🕌</div>
+          <p className="text-3xl text-gray-400 mb-4">
+            Momenteel geen Janaza-gebeden gepland voor de komende 4 dagen
+          </p>
+          <p className="text-xl text-gray-500">
+            إِنَّا لِلّهِ وَإِنَّـا إِلَيْهِ رَاجِعونَ
+          </p>
         </div>
       )}
-
-      {/* No services */}
-      {(!services?.upcoming || services.upcoming.length === 0) &&
-        (!services?.recent || services.recent.length === 0) && (
-          <div className="text-center py-32">
-            <div className="text-8xl mb-8 opacity-20">🕌</div>
-            <p className="text-3xl text-gray-400 mb-4">
-              Momenteel geen Janaza-gebeden gepland
-            </p>
-            <p className="text-xl text-gray-500">
-              إِنَّا لِلّهِ وَإِنَّـا إِلَيْهِ رَاجِعونَ
-            </p>
-          </div>
-        )}
 
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 to-transparent pt-8 pb-6 text-center">

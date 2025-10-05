@@ -279,6 +279,7 @@ const DossierDetail = () => {
           progressPct={progress.progress_pct}
           nextStepLabel={progress.next_step_label}
           currentMainKey={progress.current_main_key}
+          events={events}
         />
       )}
 

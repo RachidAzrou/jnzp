@@ -223,8 +223,10 @@ const Instellingen = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="space-y-6 max-w-[1200px] mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold">{t("settings.title")}</h1>
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+            {t("settings.title")}
+          </h1>
         </div>
 
         <div className="grid gap-6">

@@ -159,8 +159,10 @@ const Documenten = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Documenten</h1>
+      <div className="space-y-1">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+          Documentenbeheer
+        </h1>
       </div>
 
       {/* Stats Cards */}

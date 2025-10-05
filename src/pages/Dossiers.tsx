@@ -154,8 +154,10 @@ const Dossiers = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="space-y-6 max-w-[1600px] mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold">{t("dossiers.allFiles")}</h1>
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+            Dossierbeheer
+          </h1>
         </div>
 
         {/* Search Bar */}

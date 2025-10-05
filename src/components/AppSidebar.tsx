@@ -104,7 +104,7 @@ export function AppSidebar() {
     <Sidebar className="border-r border-sidebar-border">
       <SidebarContent>
         <div className="px-6 py-6 flex flex-col items-center justify-center">
-          <img src={logoHorizontal} alt="JanazApp" className={`h-8 brightness-0 invert transition-all ${isCollapsed ? 'hidden' : ''}`} />
+          <img src={logoHorizontal} alt="JanazApp" className={`h-12 brightness-0 invert transition-all ${isCollapsed ? 'hidden' : ''}`} />
           {!isCollapsed && (
             <p className="text-xs text-sidebar-foreground/70 mt-2 font-medium text-center">{rolePortalName}</p>
           )}

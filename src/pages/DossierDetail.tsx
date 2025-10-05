@@ -22,6 +22,7 @@ import { DocumentUploadDialog } from "@/components/dossier/DocumentUploadDialog"
 import { AddManualEventDialog } from "@/components/dossier/AddManualEventDialog";
 import { AuditLogTable } from "@/components/dossier/AuditLogTable";
 import { DossierProgressCard } from "@/components/DossierProgressCard";
+import { DossierNotes } from "@/components/dossier/DossierNotes";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -372,6 +373,12 @@ const DossierDetail = () => {
             dossierId={id!} 
             initialNotes={dossier.internal_notes}
             onNotesSaved={fetchDossierData}
+          />
+
+          {/* Dossier Notes/Comments */}
+          <DossierNotes
+            dossierId={id!}
+            organizationId={dossier.assigned_fd_org_id}
           />
         </TabsContent>
 

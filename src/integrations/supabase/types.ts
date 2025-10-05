@@ -62,13 +62,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "audit_events_dossier_id_fkey"
-            columns: ["dossier_id"]
-            isOneToOne: false
-            referencedRelation: "dossiers"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "audit_events_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -2887,13 +2880,6 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "audit_events_dossier_id_fkey"
-            columns: ["dossier_id"]
-            isOneToOne: false
-            referencedRelation: "dossiers"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "audit_events_user_id_fkey"
             columns: ["user_id"]

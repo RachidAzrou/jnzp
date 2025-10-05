@@ -69,7 +69,6 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
-        <NotificationPanel />
         <NotificationBell />
         
         <DropdownMenu>

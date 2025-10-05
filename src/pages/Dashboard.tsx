@@ -102,17 +102,17 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
+      <div className="space-y-4 sm:space-y-6 p-3 sm:p-4 lg:p-8 max-w-[1600px] mx-auto pb-safe">
         {/* Welcome Header */}
         <div className="space-y-1">
-          <p className="text-sm text-muted-foreground">{getCurrentDate()}</p>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+          <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
             Welkom terug, {userName}
           </h1>
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <Card className="border-border/40">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -154,40 +154,40 @@ const Dashboard = () => {
         </div>
 
         {/* Active Dossiers with Progress */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Actieve dossiers</h2>
-            <p className="text-muted-foreground">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">Actieve dossiers</h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
               Overzicht van lopende dossiers en hun voortgang
             </p>
           </div>
 
           {dossiers.length === 0 ? (
             <Card className="border-border/40">
-              <CardContent className="flex items-center justify-center py-12">
+              <CardContent className="flex items-center justify-center py-8 sm:py-12">
                 <div className="text-center space-y-2">
-                  <Clock className="w-12 h-12 mx-auto text-muted-foreground" />
-                  <p className="text-muted-foreground">Geen actieve dossiers</p>
+                  <Clock className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-muted-foreground" />
+                  <p className="text-sm sm:text-base text-muted-foreground">Geen actieve dossiers</p>
                 </div>
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-2 sm:gap-3">
               {dossiers.map((dossier) => (
                 <Card 
                   key={dossier.id} 
-                  className="cursor-pointer hover:shadow-md transition-shadow"
+                  className="cursor-pointer hover:shadow-md active:scale-[0.98] transition-all touch-manipulation"
                   onClick={() => navigate(`/dossiers/${dossier.id}`)}
                 >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-semibold">{dossier.deceased_name}</h3>
-                        <p className="text-sm text-muted-foreground">
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex items-start sm:items-center justify-between gap-2 flex-col sm:flex-row">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm sm:text-base truncate">{dossier.deceased_name}</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground truncate">
                           Ref: {dossier.display_id} • {dossier.flow === 'REP' ? 'Repatriëring' : 'Lokaal'}
                         </p>
                       </div>
-                      <Badge variant={dossier.flow === 'REP' ? 'default' : 'secondary'}>
+                      <Badge variant={dossier.flow === 'REP' ? 'default' : 'secondary'} className="text-xs flex-shrink-0">
                         {dossier.status}
                       </Badge>
                     </div>

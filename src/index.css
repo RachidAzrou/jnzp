@@ -119,11 +119,19 @@ All colors MUST be HSL.
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent text size adjustment on mobile */
+    -webkit-text-size-adjust: 100%;
+    /* Improve touch responsiveness */
+    touch-action: manipulation;
   }
 
   /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
+    /* Better mobile scroll behavior */
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Enhanced focus styles for accessibility */
@@ -137,20 +145,35 @@ All colors MUST be HSL.
   }
 
   th {
-    @apply text-left font-semibold text-sm text-muted-foreground px-4 py-3;
+    @apply text-left font-semibold text-sm text-muted-foreground px-2 sm:px-4 py-2 sm:py-3;
   }
 
   td {
-    @apply px-4 py-3 text-sm;
+    @apply px-2 sm:px-4 py-2 sm:py-3 text-sm;
   }
 
-  /* Better button transitions */
+  /* Better button transitions with mobile-friendly touch targets */
   button {
     @apply transition-all duration-200;
+    /* Ensure minimum touch target size for mobile */
+    min-height: 44px;
+    min-width: 44px;
   }
   
-  /* Consistent page titles */
+  /* Consistent page titles - responsive */
   .page-title {
-    @apply text-2xl font-semibold;
+    @apply text-xl sm:text-2xl lg:text-3xl font-semibold;
+  }
+
+  /* Mobile-friendly form inputs */
+  input, textarea, select {
+    @apply text-base; /* Prevent zoom on iOS */
+    /* Improve touch targets */
+    min-height: 44px;
+  }
+
+  /* Improve mobile card interactions */
+  .mobile-card-tap {
+    @apply active:scale-[0.98] transition-transform duration-150;
   }
 }

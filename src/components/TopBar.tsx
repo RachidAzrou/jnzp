@@ -54,10 +54,10 @@ export function TopBar() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 px-6 shadow-sm">
-      <SidebarTrigger className="h-9 w-9" />
+    <header className="sticky top-0 z-10 flex h-14 sm:h-16 items-center gap-2 sm:gap-4 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 px-3 sm:px-6 shadow-sm">
+      <SidebarTrigger className="h-10 w-10 sm:h-9 sm:w-9 flex-shrink-0" />
       
-      <div className="flex-1 flex items-center gap-4">
+      <div className="flex-1 flex items-center gap-2 sm:gap-4 overflow-hidden">
         <div className="relative w-full max-w-md hidden sm:block">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -68,7 +68,7 @@ export function TopBar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
         <NotificationPanel />
         <NotificationBell />
         
@@ -76,28 +76,28 @@ export function TopBar() {
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              className="flex items-center gap-2 rounded-lg border border-input/50 px-3 py-2 h-10 hover:bg-accent/50 hover:border-accent transition-all"
+              className="flex items-center gap-2 rounded-lg border border-input/50 px-2 sm:px-3 py-2 h-10 hover:bg-accent/50 hover:border-accent transition-all min-w-[44px]"
             >
-              <User className="h-4 w-4" />
-              <div className="hidden md:flex flex-col items-start">
-                <span className="text-sm font-medium leading-none">{userEmail || t("roles.user")}</span>
-                <span className="text-xs text-muted-foreground mt-1">{roleDisplayName}</span>
+              <User className="h-4 w-4 flex-shrink-0" />
+              <div className="hidden lg:flex flex-col items-start overflow-hidden">
+                <span className="text-sm font-medium leading-none truncate max-w-[120px]">{userEmail || t("roles.user")}</span>
+                <span className="text-xs text-muted-foreground mt-1 truncate max-w-[120px]">{roleDisplayName}</span>
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-card border-border shadow-lg">
+          <DropdownMenuContent align="end" className="w-56 bg-card border-border shadow-lg z-50">
             <DropdownMenuLabel className="font-medium">{t("navigation.settings")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem 
               onClick={() => navigate("/instellingen")}
-              className="cursor-pointer focus:bg-accent/50"
+              className="cursor-pointer focus:bg-accent/50 min-h-[44px]"
             >
               <Settings className="mr-2 h-4 w-4" />
               {t("navigation.settings")}
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={handleLogout} 
-              className="text-destructive cursor-pointer focus:bg-destructive/10 focus:text-destructive"
+              className="text-destructive cursor-pointer focus:bg-destructive/10 focus:text-destructive min-h-[44px]"
             >
               <LogOut className="mr-2 h-4 w-4" />
               {t("navigation.logout")}

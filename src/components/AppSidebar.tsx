@@ -104,18 +104,18 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar className="border-r border-sidebar-border">
+    <Sidebar className="border-r border-sidebar-border" collapsible="icon">
       <SidebarContent>
-        <div className="px-6 py-6 flex flex-col items-center justify-center">
-          <img src={logoHorizontal} alt="JanazApp" className={`h-12 brightness-0 invert transition-all ${isCollapsed ? 'hidden' : ''}`} />
+        <div className="px-4 sm:px-6 py-4 sm:py-6 flex flex-col items-center justify-center">
+          <img src={logoHorizontal} alt="JanazApp" className={`h-10 sm:h-12 brightness-0 invert transition-all ${isCollapsed ? 'hidden' : ''}`} />
           {!isCollapsed && (
             <p className="text-xs text-sidebar-foreground/70 mt-2 font-medium text-center">{rolePortalName}</p>
           )}
         </div>
         
-        <SidebarGroup className="mt-6">
+        <SidebarGroup className="mt-4 sm:mt-6">
           {!isCollapsed && (
-            <SidebarGroupLabel className="px-6 text-sidebar-foreground/60 text-xs uppercase tracking-wider font-semibold mb-2">
+            <SidebarGroupLabel className="px-4 sm:px-6 text-sidebar-foreground/60 text-xs uppercase tracking-wider font-semibold mb-2">
               Navigatie
             </SidebarGroupLabel>
           )}
@@ -130,14 +130,14 @@ export function AppSidebar() {
                     <SidebarMenuButton asChild>
                       <NavLink
                         to={item.url}
-                        className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 mx-2 ${
+                        className={`flex items-center gap-3 px-3 sm:px-4 py-3 sm:py-2.5 rounded-xl transition-all duration-300 mx-2 min-h-[44px] active:scale-95 ${
                           isActive
                             ? "bg-white/10 backdrop-blur-xl text-white font-bold shadow-lg shadow-primary/20"
-                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-transparent"
+                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-transparent active:bg-white/5"
                         } ${isCollapsed ? 'justify-center' : ''}`}
                       >
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
-                        {!isCollapsed && <span className="text-sm">{t(item.titleKey)}</span>}
+                        <item.icon className="h-5 w-5 sm:h-5 sm:w-5 flex-shrink-0" />
+                        {!isCollapsed && <span className="text-sm sm:text-sm">{t(item.titleKey)}</span>}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -148,7 +148,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-4 bg-sidebar-background/50">
+      <SidebarFooter className="p-3 sm:p-4 bg-sidebar-background/50">
         {!isCollapsed && <LanguageSwitcher />}
       </SidebarFooter>
     </Sidebar>

@@ -150,9 +150,9 @@ const Taken = () => {
     <div className="container mx-auto p-6 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{board.name}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">Taken</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Sleep taken tussen kolommen om de status te wijzigen
           </p>
         </div>

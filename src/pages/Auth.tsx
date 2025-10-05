@@ -756,13 +756,24 @@ const Auth = () => {
     console.log("Pending session:", pendingSession);
     
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
-        <TwoFactorVerification 
-          onVerified={handle2FAVerified}
-          onCancel={handle2FACancel}
-          nonce={pendingSession?.nonce || ""}
-          userId={pending2FAUserId || undefined}
-        />
+      <div className="min-h-screen flex items-center justify-center p-4 relative">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img 
+            src={authBackground} 
+            alt="" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="relative z-10">
+          <TwoFactorVerification 
+            onVerified={handle2FAVerified}
+            onCancel={handle2FACancel}
+            nonce={pendingSession?.nonce || ""}
+            userId={pending2FAUserId || undefined}
+          />
+        </div>
       </div>
     );
   }

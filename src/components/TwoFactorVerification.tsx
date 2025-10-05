@@ -253,7 +253,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
   console.log("TwoFactorVerification render - nonce:", nonce);
 
   return (
-    <Card className="w-full max-w-md mx-auto relative z-10">
+    <Card className="w-full max-w-md mx-auto bg-white/80 backdrop-blur-xl border-slate-200 shadow-2xl">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
           <TbAuth2Fa className="h-12 w-12 text-primary" />

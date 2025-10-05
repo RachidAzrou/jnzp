@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { NotificationPanel } from "@/components/NotificationPanel";
+import { NotificationBell } from "@/components/NotificationBell";
 import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,
@@ -69,6 +70,7 @@ export function TopBar() {
 
       <div className="flex items-center gap-3">
         <NotificationPanel />
+        <NotificationBell />
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

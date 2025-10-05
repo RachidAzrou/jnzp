@@ -61,9 +61,9 @@ export function DossierProgressCard({
       {/* Timeline */}
       <div className="relative">
         {/* Progress line */}
-        <div className="absolute top-5 left-0 right-0 h-0.5 bg-border" />
+        <div className="absolute top-3.5 left-0 right-0 h-0.5 bg-border" />
         <div 
-          className="absolute top-5 left-0 h-0.5 bg-primary transition-all duration-500"
+          className="absolute top-3.5 left-0 h-0.5 bg-primary transition-all duration-500"
           style={{ width: `${progressPct}%` }}
         />
 

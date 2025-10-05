@@ -166,6 +166,71 @@
     "yes": "Yes",
     "no": "No"
   },
+  "advisory": {
+    "notReady": "Not ready yet",
+    "confirmAndProceed": "Confirm and proceed",
+    "checklistPrompt": "Check that you have:",
+    "advisoryNote": "This is an advisory. You can proceed without having completed everything.",
+    "docsVerified": {
+      "title": "Documents verified?",
+      "message": "Are you sure all required documents have been checked and approved?",
+      "checklist": [
+        "Death certificate uploaded and verified",
+        "Family ID received",
+        "Insurance documents complete",
+        "Other relevant documents present"
+      ]
+    },
+    "planningReady": {
+      "title": "Planning ready?",
+      "message": "Check that all planning steps are completed before proceeding.",
+      "checklist": [
+        "Washing scheduled (date/time confirmed)",
+        "Janāza prayer confirmed at mosque",
+        "Cemetery or flight confirmed",
+        "Family informed about planning"
+      ]
+    },
+    "readyForTransport": {
+      "title": "Ready for transport?",
+      "message": "Verify that everything is ready for transport.",
+      "checklist": [
+        "All ceremonies completed",
+        "Transport documents complete",
+        "Destination confirmed",
+        "Escorts arranged"
+      ]
+    },
+    "archiveDossier": {
+      "title": "Close dossier?",
+      "message": "You are about to archive this dossier. This will automatically activate the feedback flow to the family via WhatsApp.",
+      "checklist": [
+        "All services have been performed",
+        "All invoices have been uploaded",
+        "No pending actions",
+        "Family is satisfied with the service"
+      ]
+    }
+  },
+  "externalInvoice": {
+    "upload": "Upload external invoice",
+    "uploadButton": "Upload",
+    "cancel": "Cancel",
+    "supplier": "Supplier",
+    "supplierPlaceholder": "E.g. Al-Noor Mortuary",
+    "description": "Description",
+    "descriptionPlaceholder": "E.g. Cold cell 3 days + washing",
+    "amount": "Amount (optional)",
+    "file": "Invoice file",
+    "dialogTitle": "Upload external invoice",
+    "dialogDescription": "Upload an invoice from a third party (mortuary, mosque, cargo, etc.)",
+    "uploadSuccess": "Invoice uploaded",
+    "uploadSuccessDesc": "External invoice from {supplier} has been added",
+    "uploadError": "Upload error",
+    "incompleteData": "Incomplete data",
+    "incompleteDataDesc": "Fill in all required fields and select a file",
+    "noInsurer": "This dossier has no insurer"
+  },
   "planning": {
     "title": "Planning",
     "overview": "Overview of scheduled funerals and transports",

@@ -639,6 +639,7 @@ export type Database = {
       }
       dossiers: {
         Row: {
+          advisory_checks: Json | null
           assigned_fd_org_id: string | null
           created_at: string
           date_of_death: string | null
@@ -657,6 +658,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          advisory_checks?: Json | null
           assigned_fd_org_id?: string | null
           created_at?: string
           date_of_death?: string | null
@@ -675,6 +677,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          advisory_checks?: Json | null
           assigned_fd_org_id?: string | null
           created_at?: string
           date_of_death?: string | null
@@ -781,6 +784,54 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fd_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          dossier_id: string
+          family_name: string | null
+          fd_org_id: string
+          id: string
+          rating: number
+          whatsapp_phone: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          dossier_id: string
+          family_name?: string | null
+          fd_org_id: string
+          id?: string
+          rating: number
+          whatsapp_phone?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          dossier_id?: string
+          family_name?: string | null
+          fd_org_id?: string
+          id?: string
+          rating?: number
+          whatsapp_phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fd_reviews_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fd_reviews_fd_org_id_fkey"
+            columns: ["fd_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -1081,12 +1132,15 @@ export type Database = {
         Row: {
           created_at: string
           dossier_id: string
+          external_file_name: string | null
+          external_file_url: string | null
           facility_org_id: string
           fd_org_id: string
           id: string
           insurer_notes: string | null
           invoice_number: string | null
           invoice_type: string | null
+          is_external: boolean | null
           issued_at: string | null
           needs_info_reason: string | null
           notes: string | null
@@ -1097,17 +1151,21 @@ export type Database = {
           subtotal: number
           total: number
           updated_at: string
+          uploaded_by: string | null
           vat: number
         }
         Insert: {
           created_at?: string
           dossier_id: string
+          external_file_name?: string | null
+          external_file_url?: string | null
           facility_org_id: string
           fd_org_id: string
           id?: string
           insurer_notes?: string | null
           invoice_number?: string | null
           invoice_type?: string | null
+          is_external?: boolean | null
           issued_at?: string | null
           needs_info_reason?: string | null
           notes?: string | null
@@ -1118,17 +1176,21 @@ export type Database = {
           subtotal?: number
           total?: number
           updated_at?: string
+          uploaded_by?: string | null
           vat?: number
         }
         Update: {
           created_at?: string
           dossier_id?: string
+          external_file_name?: string | null
+          external_file_url?: string | null
           facility_org_id?: string
           fd_org_id?: string
           id?: string
           insurer_notes?: string | null
           invoice_number?: string | null
           invoice_type?: string | null
+          is_external?: boolean | null
           issued_at?: string | null
           needs_info_reason?: string | null
           notes?: string | null
@@ -1139,6 +1201,7 @@ export type Database = {
           subtotal?: number
           total?: number
           updated_at?: string
+          uploaded_by?: string | null
           vat?: number
         }
         Relationships: [

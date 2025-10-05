@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Edit } from "lucide-react";
+import { AdvisoryDialog } from "./AdvisoryDialog";
 
 interface StatusChangerProps {
   dossierId: string;
@@ -56,6 +57,59 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   const [open, setOpen] = useState(false);
   const [newStatus, setNewStatus] = useState(currentStatus);
   const [reason, setReason] = useState("");
+  const [showAdvisory, setShowAdvisory] = useState(false);
+  const [advisoryConfig, setAdvisoryConfig] = useState<{
+    title: string;
+    message: string;
+    checklistItems: string[];
+  } | null>(null);
+
+  const getAdvisoryForStatus = (status: string) => {
+    const advisories: Record<string, { title: string; message: string; checklistItems: string[] }> = {
+      DOCS_VERIFIED: {
+        title: "Documenten geverifieerd?",
+        message: "Ben je zeker dat alle benodigde documenten zijn gecontroleerd en goedgekeurd?",
+        checklistItems: [
+          "Overlijdensakte geüpload en gecontroleerd",
+          "Identiteitsbewijs familie ontvangen",
+          "Verzekeringsdocumenten compleet",
+          "Andere relevante documenten aanwezig"
+        ]
+      },
+      PLANNING: {
+        title: "Planning gereed?",
+        message: "Controleer of alle planningsstappen zijn voltooid voordat je doorgaat.",
+        checklistItems: [
+          "Wassing ingepland (datum/tijd bevestigd)",
+          "Janāza-gebed bevestigd bij moskee",
+          "Begraafplaats of vlucht bevestigd",
+          "Familie geïnformeerd over planning"
+        ]
+      },
+      READY_FOR_TRANSPORT: {
+        title: "Klaar voor transport?",
+        message: "Verifieer dat alles gereed is voor het transport.",
+        checklistItems: [
+          "Alle ceremoniën afgerond",
+          "Transportdocumenten compleet",
+          "Bestemming bevestigd",
+          "Begeleiders geregeld"
+        ]
+      },
+      ARCHIVED: {
+        title: "Dossier afsluiten?",
+        message: "Je staat op het punt dit dossier te archiveren. Dit activeert automatisch de feedbackflow naar de familie via WhatsApp.",
+        checklistItems: [
+          "Alle diensten zijn uitgevoerd",
+          "Alle facturen zijn geüpload",
+          "Geen openstaande acties meer",
+          "Familie is tevreden met de dienstverlening"
+        ]
+      }
+    };
+    
+    return advisories[status] || null;
+  };
 
   const handleStatusChange = async () => {
     if (!reason.trim()) {
@@ -66,6 +120,19 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       });
       return;
     }
+
+    // Check if advisory is needed
+    const advisory = getAdvisoryForStatus(newStatus);
+    if (advisory && !isAdmin) {
+      setAdvisoryConfig(advisory);
+      setShowAdvisory(true);
+      return;
+    }
+
+    await performStatusChange();
+  };
+
+  const performStatusChange = async () => {
 
     const { error } = await supabase
       .from("dossiers")
@@ -121,12 +188,28 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     });
 
     setOpen(false);
+    setShowAdvisory(false);
     setReason("");
     onStatusChanged();
   };
 
+  const handleAdvisoryConfirm = async () => {
+    await performStatusChange();
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <AdvisoryDialog
+        open={showAdvisory}
+        onOpenChange={setShowAdvisory}
+        title={advisoryConfig?.title || ""}
+        message={advisoryConfig?.message || ""}
+        checklistItems={advisoryConfig?.checklistItems || []}
+        onConfirm={handleAdvisoryConfirm}
+        onCancel={() => setShowAdvisory(false)}
+      />
+
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           <Edit className="mr-2 h-4 w-4" />
@@ -177,5 +260,6 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
         </DialogFooter>
       </DialogContent>
     </Dialog>
+    </>
   );
 }

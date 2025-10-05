@@ -24,6 +24,7 @@ import { AuditLogTable } from "@/components/dossier/AuditLogTable";
 import { DossierProgressCard } from "@/components/DossierProgressCard";
 import { DossierComments } from "@/components/dossier/DossierComments";
 import { QRCodeGenerator } from "@/components/qr/QRCodeGenerator";
+import { ExternalInvoiceUpload } from "@/components/dossier/ExternalInvoiceUpload";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -566,25 +567,54 @@ const DossierDetail = () => {
                 <DollarSign className="h-5 w-5 text-muted-foreground" />
                 <h3 className="text-lg font-semibold">Facturen</h3>
               </div>
-              <Button>
-                <DollarSign className="mr-2 h-4 w-4" />
-                Nieuwe Factuur
-              </Button>
+              <div className="flex gap-2">
+                <ExternalInvoiceUpload dossierId={id!} onUploaded={fetchDossierData} />
+                <Button onClick={() => navigate(`/fd/facturatie?dossier=${id}`)}>
+                  <DollarSign className="mr-2 h-4 w-4" />
+                  Nieuwe Interne Factuur
+                </Button>
+              </div>
             </div>
             {invoices.length > 0 ? (
               <div className="space-y-3">
                 {invoices.map((invoice) => (
-                  <div key={invoice.id} className="flex items-center justify-between p-4 border bg-muted/30">
-                    <div>
-                      <p className="font-medium">{invoice.invoice_number || "Concept"}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {formatDate(invoice.created_at)}
-                      </p>
+                  <div key={invoice.id} className="p-4 border bg-muted/30 space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{invoice.invoice_number || "Concept"}</p>
+                          {invoice.is_external && (
+                            <Badge variant="secondary" className="text-xs">
+                              Extern
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {formatDate(invoice.created_at)}
+                        </p>
+                        {invoice.notes && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {invoice.notes}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium">€{Number(invoice.total).toFixed(2)}</p>
+                        <Badge variant="outline" className="mt-1">{invoice.status}</Badge>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-medium">€{invoice.total}</p>
-                      <Badge variant="outline">{invoice.status}</Badge>
-                    </div>
+                    {invoice.is_external && invoice.external_file_url && (
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(invoice.external_file_url, '_blank')}
+                        >
+                          <FileText className="mr-2 h-3 w-3" />
+                          Bekijk bestand
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

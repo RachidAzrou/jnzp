@@ -166,6 +166,71 @@
     "yes": "Oui",
     "no": "Non"
   },
+  "advisory": {
+    "notReady": "Pas encore prêt",
+    "confirmAndProceed": "Confirmer et continuer",
+    "checklistPrompt": "Vérifiez que vous avez :",
+    "advisoryNote": "Ceci est un conseil. Vous pouvez continuer sans tout avoir complété.",
+    "docsVerified": {
+      "title": "Documents vérifiés ?",
+      "message": "Êtes-vous sûr que tous les documents requis ont été vérifiés et approuvés ?",
+      "checklist": [
+        "Acte de décès téléchargé et vérifié",
+        "Pièce d'identité de la famille reçue",
+        "Documents d'assurance complets",
+        "Autres documents pertinents présents"
+      ]
+    },
+    "planningReady": {
+      "title": "Planification prête ?",
+      "message": "Vérifiez que toutes les étapes de planification sont terminées avant de continuer.",
+      "checklist": [
+        "Lavage planifié (date/heure confirmée)",
+        "Prière Janāza confirmée à la mosquée",
+        "Cimetière ou vol confirmé",
+        "Famille informée de la planification"
+      ]
+    },
+    "readyForTransport": {
+      "title": "Prêt pour le transport ?",
+      "message": "Vérifiez que tout est prêt pour le transport.",
+      "checklist": [
+        "Toutes les cérémonies terminées",
+        "Documents de transport complets",
+        "Destination confirmée",
+        "Accompagnateurs organisés"
+      ]
+    },
+    "archiveDossier": {
+      "title": "Clôturer le dossier ?",
+      "message": "Vous êtes sur le point d'archiver ce dossier. Cela activera automatiquement le processus de feedback vers la famille via WhatsApp.",
+      "checklist": [
+        "Tous les services ont été effectués",
+        "Toutes les factures ont été téléchargées",
+        "Aucune action en attente",
+        "La famille est satisfaite du service"
+      ]
+    }
+  },
+  "externalInvoice": {
+    "upload": "Télécharger une facture externe",
+    "uploadButton": "Télécharger",
+    "cancel": "Annuler",
+    "supplier": "Fournisseur",
+    "supplierPlaceholder": "Ex. Mortuaire Al-Noor",
+    "description": "Description",
+    "descriptionPlaceholder": "Ex. Cellule froide 3 jours + lavage",
+    "amount": "Montant (optionnel)",
+    "file": "Fichier de facture",
+    "dialogTitle": "Télécharger une facture externe",
+    "dialogDescription": "Téléchargez une facture d'un tiers (mortuaire, mosquée, cargo, etc.)",
+    "uploadSuccess": "Facture téléchargée",
+    "uploadSuccessDesc": "Facture externe de {supplier} a été ajoutée",
+    "uploadError": "Erreur lors du téléchargement",
+    "incompleteData": "Données incomplètes",
+    "incompleteDataDesc": "Remplissez tous les champs obligatoires et sélectionnez un fichier",
+    "noInsurer": "Ce dossier n'a pas d'assureur"
+  },
   "planning": {
     "title": "Planification",
     "overview": "Aperçu des funérailles et transports planifiés",

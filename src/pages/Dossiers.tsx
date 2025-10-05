@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
+import { CreateDossierDialog } from "@/components/dossier/CreateDossierDialog";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -153,11 +154,14 @@ const Dossiers = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="space-y-6 max-w-[1600px] mx-auto">
-        {/* Header */}
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-            Dossierbeheer
-          </h1>
+        {/* Header with Create Button */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+              Dossierbeheer
+            </h1>
+          </div>
+          <CreateDossierDialog />
         </div>
 
         {/* Search Bar */}

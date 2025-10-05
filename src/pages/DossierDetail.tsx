@@ -367,6 +367,16 @@ const DossierDetail = () => {
             </div>
           </div>
 
+          {/* Internal Notes */}
+          <InternalNotesCard 
+            dossierId={id!} 
+            initialNotes={dossier.internal_notes}
+            onNotesSaved={fetchDossierData}
+          />
+        </TabsContent>
+
+        {/* Documents Tab */}
+        <TabsContent value="documents" className="space-y-4">
           {/* Document Status Summary */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 border-b pb-2">
@@ -395,16 +405,6 @@ const DossierDetail = () => {
             </div>
           </div>
 
-          {/* Internal Notes */}
-          <InternalNotesCard 
-            dossierId={id!} 
-            initialNotes={dossier.internal_notes}
-            onNotesSaved={fetchDossierData}
-          />
-        </TabsContent>
-
-        {/* Documents Tab */}
-        <TabsContent value="documents" className="space-y-4">
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b pb-2">
               <div className="flex items-center gap-2">

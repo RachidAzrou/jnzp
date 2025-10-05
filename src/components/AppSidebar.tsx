@@ -28,6 +28,7 @@ type MenuItem = {
 };
 
 export function AppSidebar() {
+  // Fixed: UserPlus icon replaced with HiOutlineInboxIn
   const { role, loading } = useUserRole();
   const { t } = useTranslation();
   const rolePortalName = useRolePortalName(role);

@@ -514,6 +514,8 @@
     "integrations": "Integrations",
     "auditLog": "Audit Log",
     "notifications": "Notifications",
+    "webhooks": "Webhooks",
+    "reports": "Reports",
     "teamManagement": "Team Management",
     "tasks": "Tasks",
     "facturatie": "Invoicing",

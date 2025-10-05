@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, FileText } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ExternalInvoiceUploadProps {
   dossierId: string;
@@ -23,6 +24,7 @@ interface ExternalInvoiceUploadProps {
 
 export function ExternalInvoiceUpload({ dossierId, onUploaded }: ExternalInvoiceUploadProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -33,8 +35,8 @@ export function ExternalInvoiceUpload({ dossierId, onUploaded }: ExternalInvoice
   const handleUpload = async () => {
     if (!file || !description.trim() || !supplier.trim()) {
       toast({
-        title: "Incomplete gegevens",
-        description: "Vul alle verplichte velden in en selecteer een bestand",
+        title: t("externalInvoice.incompleteData"),
+        description: t("externalInvoice.incompleteDataDesc"),
         variant: "destructive",
       });
       return;
@@ -64,8 +66,8 @@ export function ExternalInvoiceUpload({ dossierId, onUploaded }: ExternalInvoice
 
       if (!dossier?.insurer_org_id) {
         toast({
-          title: "Fout",
-          description: "Dit dossier heeft geen verzekeraar",
+          title: t("externalInvoice.uploadError"),
+          description: t("externalInvoice.noInsurer"),
           variant: "destructive",
         });
         return;
@@ -120,8 +122,8 @@ export function ExternalInvoiceUpload({ dossierId, onUploaded }: ExternalInvoice
       });
 
       toast({
-        title: "Factuur geüpload",
-        description: `Externe factuur van ${supplier} is toegevoegd`,
+        title: t("externalInvoice.uploadSuccess"),
+        description: t("externalInvoice.uploadSuccessDesc", { supplier }),
       });
 
       setOpen(false);
@@ -133,7 +135,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploaded }: ExternalInvoice
     } catch (error: any) {
       console.error("Error uploading external invoice:", error);
       toast({
-        title: "Fout bij uploaden",
+        title: t("externalInvoice.uploadError"),
         description: error.message,
         variant: "destructive",
       });
@@ -147,33 +149,33 @@ export function ExternalInvoiceUpload({ dossierId, onUploaded }: ExternalInvoice
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           <FileText className="mr-2 h-4 w-4" />
-          Externe factuur uploaden
+          {t("externalInvoice.upload")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Externe factuur uploaden</DialogTitle>
+          <DialogTitle>{t("externalInvoice.dialogTitle")}</DialogTitle>
           <DialogDescription>
-            Upload een factuur van een derde partij (mortuarium, moskee, cargo, etc.)
+            {t("externalInvoice.dialogDescription")}
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="supplier">Leverancier *</Label>
+            <Label htmlFor="supplier">{t("externalInvoice.supplier")} *</Label>
             <Input
               id="supplier"
-              placeholder="Bijv. Mortuarium Al-Noor"
+              placeholder={t("externalInvoice.supplierPlaceholder")}
               value={supplier}
               onChange={(e) => setSupplier(e.target.value)}
             />
           </div>
 
           <div>
-            <Label htmlFor="description">Omschrijving *</Label>
+            <Label htmlFor="description">{t("externalInvoice.description")} *</Label>
             <Textarea
               id="description"
-              placeholder="Bijv. Koelcel 3 dagen + wassing"
+              placeholder={t("externalInvoice.descriptionPlaceholder")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
@@ -181,7 +183,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploaded }: ExternalInvoice
           </div>
 
           <div>
-            <Label htmlFor="amount">Bedrag (optioneel)</Label>
+            <Label htmlFor="amount">{t("externalInvoice.amount")}</Label>
             <Input
               id="amount"
               type="number"
@@ -193,7 +195,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploaded }: ExternalInvoice
           </div>
 
           <div>
-            <Label htmlFor="file">Factuurbestand *</Label>
+            <Label htmlFor="file">{t("externalInvoice.file")} *</Label>
             <Input
               id="file"
               type="file"
@@ -210,18 +212,18 @@ export function ExternalInvoiceUpload({ dossierId, onUploaded }: ExternalInvoice
 
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={uploading}>
-            Annuleren
+            {t("externalInvoice.cancel")}
           </Button>
           <Button onClick={handleUpload} disabled={uploading}>
             {uploading ? (
               <>
                 <Upload className="mr-2 h-4 w-4 animate-pulse" />
-                Uploaden...
+                {t("externalInvoice.uploadButton")}...
               </>
             ) : (
               <>
                 <Upload className="mr-2 h-4 w-4" />
-                Uploaden
+                {t("externalInvoice.uploadButton")}
               </>
             )}
           </Button>

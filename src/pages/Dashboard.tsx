@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FDReviewsCard } from "@/components/FDReviewsCard";
 
 interface DossierData {
   id: string;
@@ -154,6 +155,9 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Reviews Card */}
+        <FDReviewsCard />
 
         {/* Active Dossiers with Progress */}
         <div className="space-y-3 sm:space-y-4">

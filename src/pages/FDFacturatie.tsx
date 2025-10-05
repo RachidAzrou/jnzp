@@ -510,6 +510,7 @@ export default function FDFacturatie() {
                   <TableHead>Datum</TableHead>
                   <TableHead className="text-right">Bedrag</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead>Actie</TableHead>
                 </TableRow>
               </TableHeader>
@@ -538,7 +539,7 @@ export default function FDFacturatie() {
                 ))}
                 {filteredInvoices.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       Geen facturen gevonden
                     </TableCell>
                   </TableRow>

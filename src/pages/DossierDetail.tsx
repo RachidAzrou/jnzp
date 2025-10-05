@@ -112,7 +112,7 @@ const DossierDetail = () => {
       .select("*")
       .eq("dossier_id", id);
 
-    // Fetch invoices
+    // Fetch invoices (including external)
     const { data: invoicesData } = await supabase
       .from("invoices")
       .select("*")

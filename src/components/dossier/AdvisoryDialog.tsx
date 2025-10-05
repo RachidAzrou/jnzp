@@ -9,6 +9,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AlertCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface AdvisoryDialogProps {
   open: boolean;
@@ -29,6 +30,8 @@ export function AdvisoryDialog({
   onConfirm,
   onCancel,
 }: AdvisoryDialogProps) {
+  const { t } = useTranslation();
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-md">
@@ -42,7 +45,9 @@ export function AdvisoryDialog({
             
             {checklistItems && checklistItems.length > 0 && (
               <div className="bg-muted/50 rounded-lg p-3 space-y-2">
-                <p className="text-sm font-medium text-foreground">Controleer of je het volgende hebt:</p>
+                <p className="text-sm font-medium text-foreground">
+                  {t("advisory.checklistPrompt")}
+                </p>
                 <ul className="space-y-1 text-sm">
                   {checklistItems.map((item, index) => (
                     <li key={index} className="flex items-start gap-2">
@@ -55,16 +60,16 @@ export function AdvisoryDialog({
             )}
             
             <p className="text-xs text-muted-foreground italic">
-              Dit is een advies. Je kunt doorgaan zonder alles te hebben voltooid.
+              {t("advisory.advisoryNote")}
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onCancel}>
-            Nog niet klaar
+            {t("advisory.notReady")}
           </AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm}>
-            Bevestigen en doorgaan
+            {t("advisory.confirmAndProceed")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

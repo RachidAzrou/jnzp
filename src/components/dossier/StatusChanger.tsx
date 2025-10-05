@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Edit } from "lucide-react";
 import { AdvisoryDialog } from "./AdvisoryDialog";
+import { useTranslation } from "react-i18next";
 
 interface StatusChangerProps {
   dossierId: string;
@@ -54,6 +55,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdmin = false }: StatusChangerProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [newStatus, setNewStatus] = useState(currentStatus);
   const [reason, setReason] = useState("");
@@ -67,44 +69,24 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   const getAdvisoryForStatus = (status: string) => {
     const advisories: Record<string, { title: string; message: string; checklistItems: string[] }> = {
       DOCS_VERIFIED: {
-        title: "Documenten geverifieerd?",
-        message: "Ben je zeker dat alle benodigde documenten zijn gecontroleerd en goedgekeurd?",
-        checklistItems: [
-          "Overlijdensakte geüpload en gecontroleerd",
-          "Identiteitsbewijs familie ontvangen",
-          "Verzekeringsdocumenten compleet",
-          "Andere relevante documenten aanwezig"
-        ]
+        title: t("advisory.docsVerified.title"),
+        message: t("advisory.docsVerified.message"),
+        checklistItems: t("advisory.docsVerified.checklist", { returnObjects: true }) as string[]
       },
       PLANNING: {
-        title: "Planning gereed?",
-        message: "Controleer of alle planningsstappen zijn voltooid voordat je doorgaat.",
-        checklistItems: [
-          "Wassing ingepland (datum/tijd bevestigd)",
-          "Janāza-gebed bevestigd bij moskee",
-          "Begraafplaats of vlucht bevestigd",
-          "Familie geïnformeerd over planning"
-        ]
+        title: t("advisory.planningReady.title"),
+        message: t("advisory.planningReady.message"),
+        checklistItems: t("advisory.planningReady.checklist", { returnObjects: true }) as string[]
       },
       READY_FOR_TRANSPORT: {
-        title: "Klaar voor transport?",
-        message: "Verifieer dat alles gereed is voor het transport.",
-        checklistItems: [
-          "Alle ceremoniën afgerond",
-          "Transportdocumenten compleet",
-          "Bestemming bevestigd",
-          "Begeleiders geregeld"
-        ]
+        title: t("advisory.readyForTransport.title"),
+        message: t("advisory.readyForTransport.message"),
+        checklistItems: t("advisory.readyForTransport.checklist", { returnObjects: true }) as string[]
       },
       ARCHIVED: {
-        title: "Dossier afsluiten?",
-        message: "Je staat op het punt dit dossier te archiveren. Dit activeert automatisch de feedbackflow naar de familie via WhatsApp.",
-        checklistItems: [
-          "Alle diensten zijn uitgevoerd",
-          "Alle facturen zijn geüpload",
-          "Geen openstaande acties meer",
-          "Familie is tevreden met de dienstverlening"
-        ]
+        title: t("advisory.archiveDossier.title"),
+        message: t("advisory.archiveDossier.message"),
+        checklistItems: t("advisory.archiveDossier.checklist", { returnObjects: true }) as string[]
       }
     };
     

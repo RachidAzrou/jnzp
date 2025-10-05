@@ -389,8 +389,12 @@ export function TaskDetailDialog({
 
                   <div>
                     <Label>Dossier</Label>
-                    <p className="text-sm mt-2">
-                      {task.dossier_id || "Niet gekoppeld"}
+                    <p className="text-sm mt-2 font-mono text-muted-foreground">
+                      {task.dossier_id ? (
+                        <span className="text-foreground">{task.dossier_id.substring(0, 8)}...</span>
+                      ) : (
+                        "Niet gekoppeld"
+                      )}
                     </p>
                   </div>
                 </div>

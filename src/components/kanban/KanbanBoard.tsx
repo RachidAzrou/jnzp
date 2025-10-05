@@ -171,6 +171,9 @@ export function KanbanBoard({
     const targetColumn = columns.find((c) => c.id === targetColumnId);
     const oldColumn = columns.find((c) => c.id === oldColumnId);
 
+    // Check if we're moving to a different column
+    if (oldColumnId === targetColumnId) return;
+
     // Optimistic update
     setTasks((current) =>
       current.map((t) =>
@@ -184,36 +187,38 @@ export function KanbanBoard({
       } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
+      // Update task column
       const { error } = await supabase
         .from("kanban_tasks" as any)
         .update({
           column_id: targetColumnId,
-          position: 0, // Simplified positioning
+          position: 0,
         })
         .eq("id", taskId);
 
       if (error) throw error;
 
-      // Log activity
-      const activityType = targetColumn?.is_done
-        ? "CLOSED"
-        : oldColumn?.is_done
-        ? "REOPENED"
-        : "MOVED";
+      // Determine activity type based on column transitions
+      let activityType = "MOVED";
+      if (targetColumn?.is_done && !oldColumn?.is_done) {
+        activityType = "CLOSED";
+      } else if (!targetColumn?.is_done && oldColumn?.is_done) {
+        activityType = "REOPENED";
+      }
 
+      // Log activity
       await supabase.from("task_activities" as any).insert({
         task_id: taskId,
         user_id: user.id,
         type: activityType,
         meta: {
-          from_column: oldColumn?.label || oldColumnId,
-          to_column: targetColumn?.label || targetColumnId,
+          from_column: oldColumn?.label || "Onbekend",
+          to_column: targetColumn?.label || "Onbekend",
         },
       });
 
       toast({
-        title: "Taak verplaatst",
-        description: "De taak is succesvol verplaatst",
+        title: activityType === "CLOSED" ? "Taak afgesloten" : activityType === "REOPENED" ? "Taak heropend" : "Taak verplaatst",
       });
     } catch (error: any) {
       toast({
@@ -221,7 +226,7 @@ export function KanbanBoard({
         description: "Kon taak niet verplaatsen",
         variant: "destructive",
       });
-      // Rollback
+      // Rollback on error
       fetchBoardData();
     }
   };

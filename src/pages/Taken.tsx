@@ -80,7 +80,38 @@ const Taken = () => {
           .single();
 
         if (createError) throw createError;
-        boardData = newBoard;
+        boardData = newBoard as any;
+
+        // Create default columns: Te doen, Bezig, Afgesloten
+        if (boardData && (boardData as any).id) {
+          const { error: columnsError } = await supabase
+            .from('task_board_columns' as any)
+            .insert([
+              {
+                board_id: (boardData as any).id,
+                key: 'TE_DOEN',
+                label: 'Te doen',
+                order_idx: 1,
+                is_done: false,
+              },
+              {
+                board_id: (boardData as any).id,
+                key: 'BEZIG',
+                label: 'Bezig',
+                order_idx: 2,
+                is_done: false,
+              },
+              {
+                board_id: (boardData as any).id,
+                key: 'AFGESLOTEN',
+                label: 'Afgesloten',
+                order_idx: 3,
+                is_done: true,
+              },
+            ]);
+
+          if (columnsError) throw columnsError;
+        }
       }
 
       setBoard(boardData as any);

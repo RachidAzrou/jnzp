@@ -51,13 +51,12 @@ export function DossierProgressCard({
   // Map events to main stages based on event_type or metadata
   const getEventsForStage = (stageKey: string, nextStageKey?: string) => {
     // Filter events that belong between this stage and the next
-    // For now, we'll use simple mapping based on event_type
     const stageEventMapping: Record<string, string[]> = {
-      'INTAKE': ['intake_started', 'intake_completed', 'documents_requested', 'documents_received'],
-      'RITUELE_WASSPLAATS': ['wash_scheduled', 'wash_in_progress', 'wash_completed'],
-      'JANAZA_GEBED': ['janaza_scheduled', 'janaza_in_progress', 'janaza_completed'],
-      'REPATRIERING': ['repatriation_started', 'flight_booked', 'documents_prepared', 'repatriation_completed'],
-      'BEGRAFENIS': ['burial_scheduled', 'burial_in_progress', 'burial_completed'],
+      'INTAKE': ['VALIDATIE_POLIS', 'DOCS_OK', 'BEGRAAFPLAATS_GEKOZEN'],
+      'RITUELE_WASSPLAATS': ['KOELCEL_GEBOEKT', 'WASSING_GEPLAND', 'WASSING_AFGEROND'],
+      'JANAZA_GEBED': ['MOSKEE_BEVESTIGD', 'GEBEDSTIJD_GEPLAND', 'ROUWCIRCULAIRE_VERZONDEN'],
+      'REPATRIERING': ['FLIGHT_GEBOEKT', 'DOCUMENTEN_GEREED', 'REPATRIERING_AFGEROND'],
+      'BEGRAFENIS': ['PERK_GEBOEKT', 'BEGRAFENIS_AFGEROND', 'NAZORG_AFGESLOTEN'],
     };
 
     const relevantEventTypes = stageEventMapping[stageKey] || [];

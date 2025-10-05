@@ -283,22 +283,6 @@ const DossierDetail = () => {
         />
       )}
 
-      {/* Legal Hold Warning */}
-      {dossier.legal_hold && (
-        <Card className="border-destructive">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
-              <div>
-                <h4 className="font-semibold text-destructive">Legal Hold Actief</h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {dossier.require_doc_ref || "Parketvrijgave afwachten"}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">

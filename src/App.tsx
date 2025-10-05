@@ -167,11 +167,15 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Public routes without sidebar */}
           <Route path="/auth" element={<Auth />} />
           <Route path="/register" element={<Register />} />
           <Route path="/qr-scan/:token" element={<QRScan />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/screen/:mosqueSlug" element={<PublicJanazaScreen />} />
+          
+          {/* Protected routes with sidebar */}
           <Route
             path="/*"
             element={
@@ -294,7 +298,6 @@ const App = () => (
                               <MoskeePubiekScherm />
                             </RoleProtectedRoute>
                           } />
-                          <Route path="/screen/:mosqueSlug" element={<PublicJanazaScreen />} />
                           <Route path="/insurer" element={
                             <RoleProtectedRoute allowedRoles={['insurer']}>
                               <InsurerDashboard />

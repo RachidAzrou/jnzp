@@ -1,4 +1,8 @@
-import { Check, Circle } from "lucide-react";
+import { Check } from "lucide-react";
+import { LuFilePen } from "react-icons/lu";
+import { MdOutlineShower } from "react-icons/md";
+import { PiMosque, PiFlowerTulip } from "react-icons/pi";
+import { TbPlaneDeparture } from "react-icons/tb";
 
 interface DossierProgressCardProps {
   dossierId: string;
@@ -52,10 +56,12 @@ export function DossierProgressCard({
   const getEventsForStage = (stageKey: string, nextStageKey?: string) => {
     // Filter events that belong between this stage and the next
     const stageEventMapping: Record<string, string[]> = {
-      'INTAKE': ['VALIDATIE_POLIS', 'DOCS_OK', 'BEGRAAFPLAATS_GEKOZEN'],
+      'INTAKE': pipelineType === 'REP' 
+        ? ['VALIDATIE_POLIS', 'DOCS_OK', 'LAND_BESTEMMING_BEKEND']
+        : ['VALIDATIE_POLIS', 'DOCS_OK', 'BEGRAAFPLAATS_GEKOZEN'],
       'RITUELE_WASSPLAATS': ['KOELCEL_GEBOEKT', 'WASSING_GEPLAND', 'WASSING_AFGEROND'],
       'JANAZA_GEBED': ['MOSKEE_BEVESTIGD', 'GEBEDSTIJD_GEPLAND', 'ROUWCIRCULAIRE_VERZONDEN'],
-      'REPATRIERING': ['FLIGHT_GEBOEKT', 'DOCUMENTEN_GEREED', 'REPATRIERING_AFGEROND'],
+      'REPATRIERING': ['DOCUMENTEN_OK', 'TICKETS_GEBOEKT', 'TRANSPORT_REGELD', 'LUCHTHAVEN_OK', 'REPATRIERING_AFGEROND'],
       'BEGRAFENIS': ['PERK_GEBOEKT', 'BEGRAFENIS_AFGEROND', 'NAZORG_AFGESLOTEN'],
     };
 
@@ -66,6 +72,17 @@ export function DossierProgressCard({
   const mainStages = pipelineType === 'REP'
     ? ['INTAKE', 'RITUELE_WASSPLAATS', 'JANAZA_GEBED', 'REPATRIERING']
     : ['INTAKE', 'RITUELE_WASSPLAATS', 'JANAZA_GEBED', 'BEGRAFENIS'];
+
+  const getStageIcon = (stageKey: string) => {
+    const iconMap: Record<string, React.ReactNode> = {
+      'INTAKE': <LuFilePen className="w-4 h-4" />,
+      'RITUELE_WASSPLAATS': <MdOutlineShower className="w-4 h-4" />,
+      'JANAZA_GEBED': <PiMosque className="w-4 h-4" />,
+      'REPATRIERING': <TbPlaneDeparture className="w-4 h-4" />,
+      'BEGRAFENIS': <PiFlowerTulip className="w-4 h-4" />,
+    };
+    return iconMap[stageKey];
+  };
 
   return (
     <div className="space-y-3">
@@ -96,13 +113,11 @@ export function DossierProgressCard({
                 <div className="flex flex-col items-center w-full gap-2">
                   <div className={`
                     relative z-10 flex items-center justify-center rounded-full transition-all duration-300
-                    ${status === 'done' ? 'w-7 h-7 bg-primary' : ''}
-                    ${status === 'current' ? 'w-7 h-7 bg-primary ring-4 ring-primary/20' : ''}
-                    ${status === 'todo' ? 'w-7 h-7 bg-muted border-2 border-border' : ''}
+                    ${status === 'done' ? 'w-10 h-10 bg-primary text-primary-foreground' : ''}
+                    ${status === 'current' ? 'w-10 h-10 bg-primary text-primary-foreground ring-4 ring-primary/20' : ''}
+                    ${status === 'todo' ? 'w-10 h-10 bg-muted text-muted-foreground border-2 border-border' : ''}
                   `}>
-                    {status === 'done' && <Check className="w-3.5 h-3.5 text-primary-foreground" />}
-                    {status === 'current' && <Circle className="w-3 h-3 text-primary-foreground fill-primary-foreground" />}
-                    {status === 'todo' && <Circle className="w-3 h-3 text-muted-foreground" />}
+                    {getStageIcon(stageKey)}
                   </div>
 
                   {/* Stage label */}
@@ -115,11 +130,11 @@ export function DossierProgressCard({
 
                   {/* Sub-events for this stage */}
                   {stageEvents.length > 0 && (
-                    <div className="flex flex-col items-center gap-1.5 mt-2">
-                      {stageEvents.map((event, eventIndex) => (
-                        <div key={event.id} className="flex items-center gap-1">
-                          <Circle className="w-2 h-2 text-muted-foreground/50 fill-muted-foreground/50" />
-                          <span className="text-[10px] text-muted-foreground">
+                    <div className="flex flex-col items-start gap-1 mt-3 ml-2">
+                      {stageEvents.map((event) => (
+                        <div key={event.id} className="flex items-center gap-1.5">
+                          <Check className="w-2.5 h-2.5 text-primary" />
+                          <span className="text-[11px] text-muted-foreground">
                             {event.event_description}
                           </span>
                         </div>

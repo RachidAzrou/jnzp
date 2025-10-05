@@ -53,35 +53,31 @@ export default function FDIncomingRequests() {
 
   const fetchRequests = async () => {
     try {
-      // Use raw query to avoid TypeScript errors before migration completes
-      const query = `
-        SELECT 
-          fr.*,
-          json_build_object(
-            'display_id', d.display_id,
-            'deceased_name', d.deceased_name,
-            'flow', d.flow,
-            'date_of_death', d.date_of_death,
-            'family_contacts', (
-              SELECT json_agg(json_build_object('name', name, 'phone', phone, 'relationship', relationship))
-              FROM family_contacts WHERE dossier_id = d.id
+      setLoading(true);
+      
+      // Fetch FD requests with dossier and family contact information
+      const { data, error } = await (supabase as any)
+        .from("fd_requests")
+        .select(`
+          *,
+          dossier:dossiers!inner(
+            display_id,
+            deceased_name,
+            flow,
+            date_of_death,
+            family_contacts(
+              name,
+              phone,
+              relationship
             )
-          ) as dossier
-        FROM fd_requests fr
-        LEFT JOIN dossiers d ON d.id = fr.dossier_id
-        ORDER BY fr.created_at DESC
-      `;
-      
-      const { data, error } = await supabase.rpc('custom_query' as any, { query_text: query }) as any;
-      
-      // Fallback to direct table query
-      if (error) {
-        const fallbackData = await (supabase as any).from("fd_requests").select("*").order("created_at", { ascending: false });
-        setRequests(fallbackData.data || []);
-      } else {
-        setRequests(data || []);
-      }
-    } catch (error) {
+          )
+        `)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setRequests(data || []);
+    } catch (error: any) {
       console.error("Error fetching requests:", error);
       toast({
         title: "Fout",

@@ -39,7 +39,13 @@ serve(async (req) => {
 
       // Notify family via WhatsApp
       if (result?.success && result?.dossier_id) {
-        await notifyFamilyAcceptance(supabaseClient, result.dossier_id, result.fd_org_id);
+        const { data: fdOrg } = await supabaseClient
+          .from("organizations")
+          .select("name")
+          .eq("id", result.fd_org_id)
+          .single();
+
+        await notifyFamilyAcceptance(supabaseClient, result.dossier_id, fdOrg?.name);
       }
     } else {
       const { data, error } = await supabaseClient.rpc("decline_fd_request", {
@@ -75,28 +81,21 @@ serve(async (req) => {
   }
 });
 
-async function notifyFamilyAcceptance(supabaseClient: any, dossierId: string, fdOrgId: string) {
+async function notifyFamilyAcceptance(supabaseClient: any, dossierId: string, fdOrgName: string) {
   try {
-    // Get FD organization name
-    const { data: fdOrg } = await supabaseClient
-      .from("organizations")
-      .select("name")
-      .eq("id", fdOrgId)
-      .single();
-
     // Get family WhatsApp number
     const { data: commPrefs } = await supabaseClient
       .from("dossier_communication_preferences")
       .select("whatsapp_phone")
       .eq("dossier_id", dossierId)
-      .single();
+      .maybeSingle();
 
     if (!commPrefs?.whatsapp_phone) {
       console.log("No WhatsApp number found for dossier", dossierId);
       return;
     }
 
-    const message = `Goed nieuws — ${fdOrg?.name || "De uitvaartondernemer"} heeft uw dossier aanvaard.\nZe nemen vandaag nog contact met u op.\nUw dossier is nu actief in Janazapp.\n🕊️ Moge Allah de overledene genadig zijn.`;
+    const message = `Goed nieuws — ${fdOrgName || "De uitvaartondernemer"} heeft uw dossier aanvaard.\nZe nemen vandaag nog contact met u op.\nUw dossier is nu actief in Janazapp.\n🕊️ Moge Allah de overledene genadig zijn.`;
 
     // Send WhatsApp message (implementation depends on your WhatsApp provider)
     console.log("Would send WhatsApp message to", commPrefs.whatsapp_phone, ":", message);
@@ -121,7 +120,7 @@ async function notifyFamilyDecline(supabaseClient: any, dossierId: string) {
       .from("dossier_communication_preferences")
       .select("whatsapp_phone")
       .eq("dossier_id", dossierId)
-      .single();
+      .maybeSingle();
 
     if (!commPrefs?.whatsapp_phone) {
       console.log("No WhatsApp number found for dossier", dossierId);

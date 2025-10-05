@@ -23,18 +23,17 @@ serve(async (req) => {
     const { data: fdOrgs, error } = await supabaseClient
       .from("available_fd_organizations")
       .select("*")
-      .order("active_dossiers", { ascending: true })
+      .order("active_dossier_count", { ascending: true })
       .limit(5);
 
     if (error) throw error;
 
     // Format for WhatsApp display
-    const fdList = fdOrgs.map((fd, index) => ({
+    const fdList = (fdOrgs || []).map((fd, index) => ({
       number: index + 1,
       id: fd.id,
       name: fd.name,
-      city: fd.city,
-      active_dossiers: fd.active_dossiers,
+      active_dossiers: fd.active_dossier_count || 0,
     }));
 
     return new Response(

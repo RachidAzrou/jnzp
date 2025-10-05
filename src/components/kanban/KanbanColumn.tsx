@@ -41,10 +41,10 @@ export function KanbanColumn({ column, tasks, onTaskClick }: KanbanColumnProps) 
   return (
     <div
       ref={setNodeRef}
-      className={`flex-shrink-0 w-80 ${isOver ? 'ring-2 ring-primary' : ''}`}
+      className={`flex flex-col h-full ${isOver ? 'ring-2 ring-primary' : ''}`}
     >
-      <Card className={isOver ? 'bg-accent/50' : ''}>
-        <CardHeader className="pb-3">
+      <Card className={`flex flex-col h-full ${isOver ? 'bg-accent/50' : ''}`}>
+        <CardHeader className="pb-3 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold">{column.label}</h3>
@@ -60,7 +60,7 @@ export function KanbanColumn({ column, tasks, onTaskClick }: KanbanColumnProps) 
             )}
           </div>
         </CardHeader>
-        <CardContent className="space-y-2 min-h-[200px]">
+        <CardContent className="flex-1 space-y-2 min-h-[400px] overflow-y-auto">
           {tasks.map((task) => (
             <TaskCard 
               key={task.id} 

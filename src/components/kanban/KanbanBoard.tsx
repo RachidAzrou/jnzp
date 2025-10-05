@@ -288,7 +288,7 @@ export function KanbanBoard({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
         {columns
           .sort((a, b) => a.order_idx - b.order_idx)
           .map((column) => (

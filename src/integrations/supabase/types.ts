@@ -1210,6 +1210,92 @@ export type Database = {
           },
         ]
       }
+      kanban_tasks: {
+        Row: {
+          assignee_id: string | null
+          board_id: string
+          column_id: string
+          created_at: string
+          description: string | null
+          dossier_id: string | null
+          due_date: string | null
+          id: string
+          is_archived: boolean
+          labels: string[] | null
+          org_id: string
+          position: number
+          priority: Database["public"]["Enums"]["task_priority"]
+          reporter_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          board_id: string
+          column_id: string
+          created_at?: string
+          description?: string | null
+          dossier_id?: string | null
+          due_date?: string | null
+          id?: string
+          is_archived?: boolean
+          labels?: string[] | null
+          org_id: string
+          position?: number
+          priority?: Database["public"]["Enums"]["task_priority"]
+          reporter_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          board_id?: string
+          column_id?: string
+          created_at?: string
+          description?: string | null
+          dossier_id?: string | null
+          due_date?: string | null
+          id?: string
+          is_archived?: boolean
+          labels?: string[] | null
+          org_id?: string
+          position?: number
+          priority?: Database["public"]["Enums"]["task_priority"]
+          reporter_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kanban_tasks_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "task_boards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kanban_tasks_column_id_fkey"
+            columns: ["column_id"]
+            isOneToOne: false
+            referencedRelation: "task_board_columns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kanban_tasks_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kanban_tasks_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       login_attempts: {
         Row: {
           created_at: string
@@ -2108,6 +2194,158 @@ export type Database = {
           },
         ]
       }
+      task_activities: {
+        Row: {
+          action: string
+          created_at: string
+          from_value: string | null
+          id: string
+          metadata: Json | null
+          task_id: string
+          to_value: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          from_value?: string | null
+          id?: string
+          metadata?: Json | null
+          task_id: string
+          to_value?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          from_value?: string | null
+          id?: string
+          metadata?: Json | null
+          task_id?: string
+          to_value?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_activities_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "kanban_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_board_columns: {
+        Row: {
+          board_id: string
+          created_at: string
+          id: string
+          is_done: boolean
+          key: string
+          label: string
+          order_idx: number
+          wip_limit: number | null
+        }
+        Insert: {
+          board_id: string
+          created_at?: string
+          id?: string
+          is_done?: boolean
+          key: string
+          label: string
+          order_idx: number
+          wip_limit?: number | null
+        }
+        Update: {
+          board_id?: string
+          created_at?: string
+          id?: string
+          is_done?: boolean
+          key?: string
+          label?: string
+          order_idx?: number
+          wip_limit?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_board_columns_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "task_boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_boards: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          org_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string
+          org_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          org_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_boards_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          is_deleted: boolean
+          task_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          task_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          task_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "kanban_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_priority_audit: {
         Row: {
           actor_user_id: string
@@ -2145,6 +2383,35 @@ export type Database = {
             columns: ["task_id"]
             isOneToOne: false
             referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_watchers: {
+        Row: {
+          created_at: string
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_watchers_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "kanban_tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -2893,6 +3160,7 @@ export type Database = {
       priority_source: "AUTO" | "MANUAL"
       reservation_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
       service_status: "PENDING" | "CONFIRMED" | "COMPLETED" | "FAILED"
+      task_priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT"
       task_status: "OPEN" | "IN_PROGRESS" | "DONE" | "CANCELLED"
       task_type:
         | "DOC_REUPLOAD_REQUEST"
@@ -3123,6 +3391,7 @@ export const Constants = {
       priority_source: ["AUTO", "MANUAL"],
       reservation_status: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],
       service_status: ["PENDING", "CONFIRMED", "COMPLETED", "FAILED"],
+      task_priority: ["LOW", "MEDIUM", "HIGH", "URGENT"],
       task_status: ["OPEN", "IN_PROGRESS", "DONE", "CANCELLED"],
       task_type: [
         "DOC_REUPLOAD_REQUEST",

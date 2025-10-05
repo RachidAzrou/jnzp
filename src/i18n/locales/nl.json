@@ -222,6 +222,47 @@
       ]
     }
   },
+  "feedback": {
+    "title": "Uw feedback",
+    "description": "We stellen uw mening zeer op prijs. Deel uw ervaring met onze dienstverlening.",
+    "ratingLabel": "Hoe beoordeelt u onze dienstverlening?",
+    "selectRating": "Selecteer eerst een beoordeling",
+    "ratingRequired": "Beoordeling vereist",
+    "excellent": "Uitstekend",
+    "good": "Goed",
+    "average": "Gemiddeld",
+    "belowAverage": "Onder gemiddeld",
+    "poor": "Slecht",
+    "commentLabel": "Opmerking (optioneel)",
+    "commentPlaceholder": "Vertel ons meer over uw ervaring...",
+    "nameLabel": "Uw naam (optioneel)",
+    "namePlaceholder": "Bijv. Familie Jansen",
+    "nameOptional": "Alleen uw voornaam wordt getoond bij de uitvaartondernemer",
+    "whatsappLabel": "WhatsApp nummer (optioneel)",
+    "whatsappOptional": "Voor eventueel contact",
+    "submit": "Verzenden",
+    "submitting": "Verzenden...",
+    "thankYou": "Bedankt voor uw feedback",
+    "submittedSuccess": "Uw feedback is ontvangen. We waarderen uw tijd.",
+    "submitError": "Fout bij verzenden",
+    "invalidToken": "Ongeldige feedback link",
+    "invalidTokenDesc": "Deze link is niet meer geldig of is al gebruikt.",
+    "requestFeedback": "Vraag feedback",
+    "requestFeedbackTitle": "Feedback aanvragen",
+    "requestFeedbackDesc": "Stuur een feedbackverzoek naar de familie via WhatsApp of genereer een link.",
+    "chooseMethod": "Kies hoe u de feedback wilt versturen:",
+    "sendViaWhatsApp": "Verstuur via WhatsApp",
+    "createLinkOnly": "Genereer alleen link",
+    "sending": "Verzenden...",
+    "sentViaWhatsApp": "Verzonden via WhatsApp",
+    "sentViaWhatsAppDesc": "Het feedbackverzoek is verstuurd naar de familie.",
+    "linkCreated": "Link aangemaakt",
+    "linkCreatedDesc": "U kunt de link nu kopiëren en delen.",
+    "generatedLink": "Gegenereerde link",
+    "linkCopied": "Link gekopieerd",
+    "linkCopiedDesc": "De link is naar uw klembord gekopieerd.",
+    "createError": "Fout bij aanmaken"
+  },
   "externalInvoice": {
     "upload": "Externe factuur uploaden",
     "uploadButton": "Uploaden",
@@ -396,6 +437,9 @@
     "unset": "Niet Ingesteld"
   },
   "common": {
+    "close": "Sluiten"
+  },
+  "commonOld": {
     "save": "Opslaan",
     "cancel": "Annuleren",
     "delete": "Verwijderen",

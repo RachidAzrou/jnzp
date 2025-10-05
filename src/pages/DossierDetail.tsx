@@ -25,6 +25,7 @@ import { DossierProgressCard } from "@/components/DossierProgressCard";
 import { DossierComments } from "@/components/dossier/DossierComments";
 import { QRCodeGenerator } from "@/components/qr/QRCodeGenerator";
 import { ExternalInvoiceUpload } from "@/components/dossier/ExternalInvoiceUpload";
+import { SendFeedbackButton } from "@/components/dossier/SendFeedbackButton";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -262,6 +263,9 @@ const DossierDetail = () => {
             onStatusChanged={fetchDossierData}
             isAdmin={isAdmin}
           />
+          {dossier.status === "ARCHIVED" && (
+            <SendFeedbackButton dossierId={id!} />
+          )}
         </div>
       </div>
 

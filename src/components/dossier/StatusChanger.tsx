@@ -132,6 +132,31 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       return;
     }
 
+    // Send notification to family if status changed to specific states
+    const notifiableStatuses = ["DOCS_VERIFIED", "PLANNING", "READY_FOR_TRANSPORT", "ARCHIVED"];
+    if (notifiableStatuses.includes(newStatus)) {
+      try {
+        await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-notification`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({
+              dossierId,
+              triggerEvent: `STATUS_${newStatus}`,
+              recipientType: "FAMILY",
+            }),
+          }
+        );
+      } catch (notifError) {
+        console.error("Error sending notification:", notifError);
+        // Don't block the status change if notification fails
+      }
+    }
+
     // Log action with organization context
     const { data: userData } = await supabase.auth.getUser();
     const userId = userData.user?.id;

@@ -866,6 +866,44 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_tokens: {
+        Row: {
+          created_at: string
+          dossier_id: string
+          expires_at: string
+          id: string
+          token: string
+          used: boolean
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          dossier_id: string
+          expires_at?: string
+          id?: string
+          token: string
+          used?: boolean
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          dossier_id?: string
+          expires_at?: string
+          id?: string
+          token?: string
+          used?: boolean
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_tokens_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flights: {
         Row: {
           air_waybill: string | null
@@ -1673,6 +1711,108 @@ export type Database = {
           jumuah?: boolean | null
           maghrib?: boolean
           mosque_org_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notification_log: {
+        Row: {
+          channel: string
+          created_at: string
+          delivered_at: string | null
+          dossier_id: string | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          recipient_contact: string
+          recipient_type: string
+          sent_at: string | null
+          status: string
+          template_id: string | null
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          delivered_at?: string | null
+          dossier_id?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          recipient_contact: string
+          recipient_type: string
+          sent_at?: string | null
+          status?: string
+          template_id?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          delivered_at?: string | null
+          dossier_id?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          recipient_contact?: string
+          recipient_type?: string
+          sent_at?: string | null
+          status?: string
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_log_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_log_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "notification_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_templates: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          is_active: boolean
+          recipient_type: string
+          subject: string | null
+          template_en: string | null
+          template_fr: string | null
+          template_nl: string
+          trigger_event: string
+          updated_at: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          recipient_type: string
+          subject?: string | null
+          template_en?: string | null
+          template_fr?: string | null
+          template_nl: string
+          trigger_event: string
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          recipient_type?: string
+          subject?: string | null
+          template_en?: string | null
+          template_fr?: string | null
+          template_nl?: string
+          trigger_event?: string
           updated_at?: string
         }
         Relationships: []
@@ -3044,6 +3184,10 @@ export type Database = {
       }
       encrypt_field: {
         Args: { p_data: string; p_key?: string }
+        Returns: string
+      }
+      generate_feedback_token: {
+        Args: Record<PropertyKey, never>
         Returns: string
       }
       generate_invitation_code: {

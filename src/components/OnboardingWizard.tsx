@@ -70,7 +70,7 @@ export default function OnboardingWizard({ organizationId, onComplete }: Onboard
 
       toast({
         title: t('common.success'),
-        description: "Onboarding completed! 🎉",
+        description: t('onboarding.onboardingComplete'),
       });
 
       if (onComplete) {
@@ -81,31 +81,31 @@ export default function OnboardingWizard({ organizationId, onComplete }: Onboard
     fetchOnboarding();
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{t('common.loading')}</div>;
 
   const steps = [
     {
       key: 'step_basic_info',
-      title: "Basic Information",
-      description: "Complete your organization profile",
+      title: t('onboarding.basicInfo'),
+      description: t('onboarding.basicInfoDesc'),
       completed: onboarding?.step_basic_info,
     },
     {
       key: 'step_team_setup',
-      title: "Team Setup",
-      description: "Invite team members",
+      title: t('onboarding.teamSetup'),
+      description: t('onboarding.teamSetupDesc'),
       completed: onboarding?.step_team_setup,
     },
     {
       key: 'step_integrations',
-      title: "Integrations",
-      description: "Connect external services",
+      title: t('onboarding.integrations'),
+      description: t('onboarding.integrationsDesc'),
       completed: onboarding?.step_integrations,
     },
     {
       key: 'step_preferences',
-      title: "Preferences",
-      description: "Configure your settings",
+      title: t('onboarding.preferences'),
+      description: t('onboarding.preferencesDesc'),
       completed: onboarding?.step_preferences,
     },
   ];
@@ -119,10 +119,10 @@ export default function OnboardingWizard({ organizationId, onComplete }: Onboard
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CheckCircle2 className="h-5 w-5 text-primary" />
-            Onboarding Complete!
+            {t('onboarding.onboardingComplete')}
           </CardTitle>
           <CardDescription>
-            Your organization is fully set up and ready to use JanazApp.
+            {t('onboarding.fullySetup')}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -132,13 +132,13 @@ export default function OnboardingWizard({ organizationId, onComplete }: Onboard
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Welcome to JanazApp</CardTitle>
+        <CardTitle>{t('onboarding.welcomeTitle')}</CardTitle>
         <CardDescription>
-          Complete these steps to get started
+          {t('onboarding.completeSteps')}
         </CardDescription>
         <Progress value={progress} className="mt-4" />
         <p className="text-sm text-muted-foreground mt-2">
-          {completedSteps} of {steps.length} steps completed
+          {completedSteps} {t('common.of')} {steps.length} {t('onboarding.stepsCompleted')}
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -163,7 +163,7 @@ export default function OnboardingWizard({ organizationId, onComplete }: Onboard
               size="sm"
               onClick={() => updateStep(step.key, !step.completed)}
             >
-              {step.completed ? "Undo" : "Complete"}
+              {step.completed ? t('onboarding.undo') : t('onboarding.complete')}
             </Button>
           </div>
         ))}

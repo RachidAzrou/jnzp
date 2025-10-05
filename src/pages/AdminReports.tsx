@@ -122,21 +122,21 @@ export default function AdminReports() {
   };
 
   if (loading) {
-    return <div className="p-8">Loading reports...</div>;
+    return <div className="p-8">{t('reports.loadingReports')}</div>;
   }
 
   return (
     <div className="container mx-auto py-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Advanced Reporting</h1>
-        <p className="text-muted-foreground">Analytics and SLA metrics</p>
+        <h1 className="text-3xl font-bold">{t('reports.title')}</h1>
+        <p className="text-muted-foreground">{t('reports.description')}</p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Dossiers</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('reports.totalDossiers')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -146,7 +146,7 @@ export default function AdminReports() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('reports.active')}</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -156,7 +156,7 @@ export default function AdminReports() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('reports.completed')}</CardTitle>
             <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -166,7 +166,7 @@ export default function AdminReports() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">SLA Breaches</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('reports.slaBreaches')}</CardTitle>
             <AlertTriangle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
@@ -177,16 +177,16 @@ export default function AdminReports() {
 
       <Tabs defaultValue="trends" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="trends">Trends</TabsTrigger>
-          <TabsTrigger value="distribution">Distribution</TabsTrigger>
-          <TabsTrigger value="sla">SLA Performance</TabsTrigger>
+          <TabsTrigger value="trends">{t('reports.trends')}</TabsTrigger>
+          <TabsTrigger value="distribution">{t('reports.distribution')}</TabsTrigger>
+          <TabsTrigger value="sla">{t('reports.slaPerformance')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="trends" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Dossiers Created (Last 30 Days)</CardTitle>
-              <CardDescription>Daily trend of new dossiers</CardDescription>
+              <CardTitle>{t('reports.dossiersCreated')}</CardTitle>
+              <CardDescription>{t('reports.dailyTrend')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -203,14 +203,14 @@ export default function AdminReports() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Performance Metrics</CardTitle>
+              <CardTitle>{t('reports.performanceMetrics')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">Avg Processing Time</span>
+                  <span className="text-sm font-medium">{t('reports.avgProcessingTime')}</span>
                   <span className="text-sm text-muted-foreground">
-                    {metrics.avgProcessingHours.toFixed(1)} hours
+                    {metrics.avgProcessingHours.toFixed(1)} {t('reports.hours')}
                   </span>
                 </div>
                 <div className="w-full bg-secondary h-2 rounded-full">
@@ -227,8 +227,8 @@ export default function AdminReports() {
         <TabsContent value="distribution" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Status Distribution</CardTitle>
-              <CardDescription>Current dossier status breakdown</CardDescription>
+              <CardTitle>{t('reports.statusDistribution')}</CardTitle>
+              <CardDescription>{t('reports.currentBreakdown')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -257,17 +257,17 @@ export default function AdminReports() {
         <TabsContent value="sla" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>SLA Breach Report</CardTitle>
-              <CardDescription>Dossiers exceeding SLA thresholds</CardDescription>
+              <CardTitle>{t('reports.slaBreachReport')}</CardTitle>
+              <CardDescription>{t('reports.exceedingThresholds')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Dossier ID</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Processing Hours</TableHead>
-                    <TableHead>Breach Type</TableHead>
+                    <TableHead>{t('reports.dossierId')}</TableHead>
+                    <TableHead>{t('common.status')}</TableHead>
+                    <TableHead>{t('reports.processingHours')}</TableHead>
+                    <TableHead>{t('reports.breachType')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -283,11 +283,11 @@ export default function AdminReports() {
                         <TableCell>
                           {item.docs_sla_breach && (
                             <Badge variant="destructive" className="mr-1">
-                              Docs
+                              {t('reports.docs')}
                             </Badge>
                           )}
                           {item.completion_sla_breach && (
-                            <Badge variant="destructive">Completion</Badge>
+                            <Badge variant="destructive">{t('reports.completion')}</Badge>
                           )}
                         </TableCell>
                       </TableRow>
@@ -295,7 +295,7 @@ export default function AdminReports() {
                   {slaData.filter((item: any) => item.docs_sla_breach || item.completion_sla_breach).length === 0 && (
                     <TableRow>
                       <TableCell colSpan={4} className="text-center text-muted-foreground">
-                        No SLA breaches - excellent performance! 🎉
+                        {t('reports.excellentPerformance')}
                       </TableCell>
                     </TableRow>
                   )}

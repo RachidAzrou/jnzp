@@ -459,7 +459,9 @@
     "scope": "Portée",
     "provider": "Fournisseur",
     "success": "Succès",
-    "error": "Erreur"
+    "error": "Erreur",
+    "of": "de",
+    "create": "Créer"
   },
   "onboarding": {
     "welcomeTitle": "Bienvenue sur JanazApp",
@@ -504,7 +506,8 @@
     "webhookDisabled": "Webhook désactivé",
     "webhookDeleted": "Webhook supprimé",
     "testWebhook": "Tester le Webhook",
-    "fillRequired": "Remplissez tous les champs requis"
+    "fillRequired": "Remplissez tous les champs requis",
+    "errorLoading": "Erreur lors du chargement des webhooks"
   },
   "reports": {
     "title": "Rapports Avancés",

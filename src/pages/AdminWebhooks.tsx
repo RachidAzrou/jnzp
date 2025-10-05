@@ -69,8 +69,8 @@ export default function AdminWebhooks() {
 
     if (error) {
       toast({
-        title: "Error",
-        description: "Failed to load webhooks",
+        title: t('common.error'),
+        description: t('webhooks.errorLoading'),
         variant: "destructive",
       });
       return;
@@ -104,8 +104,8 @@ export default function AdminWebhooks() {
   const createWebhook = async () => {
     if (!orgId || !newWebhook.name || !newWebhook.url || newWebhook.events.length === 0) {
       toast({
-        title: "Error",
-        description: "Please fill all required fields",
+        title: t('common.error'),
+        description: t('webhooks.fillRequired'),
         variant: "destructive",
       });
       return;
@@ -121,14 +121,14 @@ export default function AdminWebhooks() {
 
     if (error) {
       toast({
-        title: "Error",
+        title: t('common.error'),
         description: error.message,
         variant: "destructive",
       });
       return;
     }
 
-    toast({ title: "Success", description: "Webhook created" });
+    toast({ title: t('common.success'), description: t('webhooks.webhookCreated') });
     setDialogOpen(false);
     setNewWebhook({ name: '', url: '', events: [], secret: crypto.randomUUID() });
     if (orgId) fetchWebhooks(orgId);
@@ -141,11 +141,14 @@ export default function AdminWebhooks() {
       .eq('id', id);
 
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: t('common.error'), description: error.message, variant: "destructive" });
       return;
     }
 
-    toast({ title: "Success", description: `Webhook ${!isActive ? 'enabled' : 'disabled'}` });
+    toast({ 
+      title: t('common.success'), 
+      description: `${t('webhooks.webhook')} ${!isActive ? t('webhooks.webhookEnabled') : t('webhooks.webhookDisabled')}` 
+    });
     if (orgId) fetchWebhooks(orgId);
   };
 
@@ -153,11 +156,11 @@ export default function AdminWebhooks() {
     const { error } = await supabase.from('webhooks' as any).delete().eq('id', id);
 
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: t('common.error'), description: error.message, variant: "destructive" });
       return;
     }
 
-    toast({ title: "Success", description: "Webhook deleted" });
+    toast({ title: t('common.success'), description: t('webhooks.webhookDeleted') });
     if (orgId) fetchWebhooks(orgId);
   };
 
@@ -177,13 +180,13 @@ export default function AdminWebhooks() {
       });
 
       toast({
-        title: response.ok ? "Success" : "Failed",
-        description: `Test webhook returned ${response.status}`,
+        title: response.ok ? t('common.success') : t('common.error'),
+        description: `${t('webhooks.testWebhook')} returned ${response.status}`,
         variant: response.ok ? "default" : "destructive",
       });
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: t('common.error'),
         description: error.message,
         variant: "destructive",
       });
@@ -191,33 +194,33 @@ export default function AdminWebhooks() {
   };
 
   if (loading) {
-    return <div className="p-8">Loading...</div>;
+    return <div className="p-8">{t('common.loading')}</div>;
   }
 
   return (
     <div className="container mx-auto py-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Webhooks</h1>
-          <p className="text-muted-foreground">Configure external integrations</p>
+          <h1 className="text-3xl font-bold">{t('webhooks.title')}</h1>
+          <p className="text-muted-foreground">{t('webhooks.description')}</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              New Webhook
+              {t('webhooks.newWebhook')}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Create Webhook</DialogTitle>
+              <DialogTitle>{t('webhooks.createWebhook')}</DialogTitle>
               <DialogDescription>
-                Configure a webhook to receive events from JanazApp
+                {t('webhooks.createWebhookDesc')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>Name</Label>
+                <Label>{t('webhooks.name')}</Label>
                 <Input
                   value={newWebhook.name}
                   onChange={(e) => setNewWebhook({ ...newWebhook, name: e.target.value })}
@@ -225,7 +228,7 @@ export default function AdminWebhooks() {
                 />
               </div>
               <div>
-                <Label>URL</Label>
+                <Label>{t('webhooks.url')}</Label>
                 <Input
                   value={newWebhook.url}
                   onChange={(e) => setNewWebhook({ ...newWebhook, url: e.target.value })}
@@ -233,11 +236,11 @@ export default function AdminWebhooks() {
                 />
               </div>
               <div>
-                <Label>Secret (auto-generated)</Label>
+                <Label>{t('webhooks.secret')}</Label>
                 <Input value={newWebhook.secret} disabled />
               </div>
               <div>
-                <Label>Events</Label>
+                <Label>{t('webhooks.events')}</Label>
                 <div className="space-y-2 mt-2">
                   {AVAILABLE_EVENTS.map((event) => (
                     <div key={event} className="flex items-center space-x-2">
@@ -258,8 +261,8 @@ export default function AdminWebhooks() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-              <Button onClick={createWebhook}>Create</Button>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>{t('common.cancel')}</Button>
+              <Button onClick={createWebhook}>{t('common.create')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -267,18 +270,18 @@ export default function AdminWebhooks() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Active Webhooks</CardTitle>
-          <CardDescription>Manage your webhook endpoints</CardDescription>
+          <CardTitle>{t('webhooks.activeWebhooks')}</CardTitle>
+          <CardDescription>{t('webhooks.manageEndpoints')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>URL</TableHead>
-                <TableHead>Events</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('webhooks.name')}</TableHead>
+                <TableHead>{t('webhooks.url')}</TableHead>
+                <TableHead>{t('webhooks.events')}</TableHead>
+                <TableHead>{t('webhooks.status')}</TableHead>
+                <TableHead>{t('webhooks.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -324,7 +327,7 @@ export default function AdminWebhooks() {
               {webhooks.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-muted-foreground">
-                    No webhooks configured
+                    {t('webhooks.noWebhooks')}
                   </TableCell>
                 </TableRow>
               )}
@@ -335,17 +338,17 @@ export default function AdminWebhooks() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Deliveries</CardTitle>
-          <CardDescription>Last 50 webhook deliveries</CardDescription>
+          <CardTitle>{t('webhooks.recentDeliveries')}</CardTitle>
+          <CardDescription>{t('webhooks.last50Deliveries')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Webhook</TableHead>
-                <TableHead>Event</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Time</TableHead>
+                <TableHead>{t('webhooks.webhook')}</TableHead>
+                <TableHead>{t('webhooks.event')}</TableHead>
+                <TableHead>{t('webhooks.status')}</TableHead>
+                <TableHead>{t('webhooks.time')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -372,7 +375,7 @@ export default function AdminWebhooks() {
               {deliveries.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center text-muted-foreground">
-                    No deliveries yet
+                    {t('webhooks.noDeliveries')}
                   </TableCell>
                 </TableRow>
               )}

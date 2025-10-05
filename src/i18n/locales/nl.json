@@ -445,7 +445,9 @@
     "cancel": "Annuleren",
     "delete": "Verwijderen",
     "confirm": "Bevestigen",
-    "edit": "Bewerken"
+    "edit": "Bewerken",
+    "of": "van",
+    "create": "Aanmaken"
   },
   "onboarding": {
     "welcomeTitle": "Welkom bij JanazApp",
@@ -490,7 +492,8 @@
     "webhookDisabled": "Webhook uitgeschakeld",
     "webhookDeleted": "Webhook verwijderd",
     "testWebhook": "Test Webhook",
-    "fillRequired": "Vul alle verplichte velden in"
+    "fillRequired": "Vul alle verplichte velden in",
+    "errorLoading": "Fout bij het laden van webhooks"
   },
   "reports": {
     "title": "Geavanceerde Rapportage",

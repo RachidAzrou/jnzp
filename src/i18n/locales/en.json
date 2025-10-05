@@ -459,7 +459,9 @@
     "scope": "Scope",
     "provider": "Provider",
     "success": "Success",
-    "error": "Error"
+    "error": "Error",
+    "of": "of",
+    "create": "Create"
   },
   "onboarding": {
     "welcomeTitle": "Welcome to JanazApp",
@@ -504,7 +506,8 @@
     "webhookDisabled": "Webhook disabled",
     "webhookDeleted": "Webhook deleted",
     "testWebhook": "Test Webhook",
-    "fillRequired": "Please fill all required fields"
+    "fillRequired": "Please fill all required fields",
+    "errorLoading": "Error loading webhooks"
   },
   "reports": {
     "title": "Advanced Reporting",

@@ -174,6 +174,11 @@ const App = () => (
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/screen/:mosqueSlug" element={<PublicJanazaScreen />} />
+          <Route path="/moskee/publiek-scherm" element={
+            <ProtectedRoute>
+              <MoskeePubiekScherm />
+            </ProtectedRoute>
+          } />
           
           {/* Protected routes with sidebar */}
           <Route
@@ -291,11 +296,6 @@ const App = () => (
                           <Route path="/moskee/beschikbaarheid" element={
                             <RoleProtectedRoute allowedRoles={['mosque']}>
                               <MoskeeBeschikbaarheid />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/moskee/publiek-scherm" element={
-                            <RoleProtectedRoute allowedRoles={['mosque']}>
-                              <MoskeePubiekScherm />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/insurer" element={

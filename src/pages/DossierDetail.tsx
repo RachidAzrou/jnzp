@@ -26,6 +26,7 @@ import { DossierComments } from "@/components/dossier/DossierComments";
 import { QRCodeGenerator } from "@/components/qr/QRCodeGenerator";
 import { ExternalInvoiceUpload } from "@/components/dossier/ExternalInvoiceUpload";
 import { SendFeedbackButton } from "@/components/dossier/SendFeedbackButton";
+import { ActivateDossierButton } from "@/components/dossier/ActivateDossierButton";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -48,8 +49,39 @@ const DossierDetail = () => {
     if (id) {
       fetchDossierData();
       checkAdminStatus();
+      handleAutoTransitions();
     }
   }, [id]);
+
+  const handleAutoTransitions = async () => {
+    const { data: dossierData } = await supabase
+      .from("dossiers")
+      .select("status")
+      .eq("id", id)
+      .single();
+
+    // Auto-transition: created → intake_in_progress on first open
+    if (dossierData?.status === "created" as any) {
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+
+      await supabase
+        .from("dossiers")
+        .update({ status: "intake_in_progress" as any })
+        .eq("id", id);
+
+      await supabase.from("dossier_events").insert({
+        dossier_id: id,
+        event_type: "STATUS_AUTO_CHANGED",
+        event_description: "Status automatisch gewijzigd: Aangemaakt → Intake lopend (dossier geopend)",
+        created_by: userId,
+        metadata: { auto_transition: true },
+      });
+
+      // Refresh data after auto-transition
+      fetchDossierData();
+    }
+  };
 
   const checkAdminStatus = async () => {
     const { data } = await supabase
@@ -243,6 +275,11 @@ const DossierDetail = () => {
             Dossier {dossier.display_id || dossier.ref_number}
           </h1>
           <p className="text-xl text-muted-foreground">{dossier.deceased_name}</p>
+          {dossier.status === "archived" && (
+            <Badge variant="secondary" className="text-xs">
+              ⚠️ Alleen-lezen (gearchiveerd)
+            </Badge>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <QRCodeGenerator 
@@ -257,13 +294,23 @@ const DossierDetail = () => {
           >
             {getStatusLabel(dossier.status)}
           </Badge>
-          <StatusChanger 
-            dossierId={id!} 
-            currentStatus={dossier.status}
-            onStatusChanged={fetchDossierData}
-            isAdmin={isAdmin}
-          />
-          {dossier.status === "ARCHIVED" && (
+          {dossier.status === "intake_in_progress" && (
+            <ActivateDossierButton
+              dossierId={id!}
+              currentStatus={dossier.status}
+              flow={dossier.flow}
+              onActivated={fetchDossierData}
+            />
+          )}
+          {dossier.status !== "archived" && (
+            <StatusChanger 
+              dossierId={id!} 
+              currentStatus={dossier.status}
+              onStatusChanged={fetchDossierData}
+              isAdmin={isAdmin}
+            />
+          )}
+          {dossier.status === "archived" && (
             <SendFeedbackButton dossierId={id!} />
           )}
         </div>

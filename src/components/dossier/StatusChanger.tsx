@@ -102,7 +102,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   };
 
   const handleStatusChange = async () => {
-    if (!reason.trim()) {
+    if (!reason.trim() && newStatus !== currentStatus) {
       toast({
         title: "Reden vereist",
         description: "Geef een reden voor de statuswijziging",
@@ -111,9 +111,25 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       return;
     }
 
-    // Check if advisory is needed
+    // Special confirmation for archiving
+    if (newStatus === "archived" && !isAdmin) {
+      setAdvisoryConfig({
+        title: "⚠️ Dossier Archiveren - Bevestiging Vereist",
+        message: "Let op: Na archivering wordt het dossier alleen-lezen en ontvangt de familie automatisch een WhatsApp-verzoek voor beoordeling.",
+        checklistItems: [
+          "✅ Alle facturen zijn verzameld en ingediend",
+          "✅ Uitvoering is volledig afgerond",
+          "✅ Familie is geïnformeerd over afronding",
+          "⚠️ Dit dossier wordt permanent alleen-lezen"
+        ]
+      });
+      setShowAdvisory(true);
+      return;
+    }
+
+    // Check if advisory is needed for other statuses
     const advisory = getAdvisoryForStatus(newStatus);
-    if (advisory && !isAdmin) {
+    if (advisory && !isAdmin && newStatus !== "archived") {
       setAdvisoryConfig(advisory);
       setShowAdvisory(true);
       return;
@@ -123,6 +139,14 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   };
 
   const performStatusChange = async () => {
+    // Auto-close tasks when moving to settlement
+    if (newStatus === "settlement") {
+      await supabase
+        .from("kanban_tasks")
+        .update({ column_id: (await getClosedColumnId()) })
+        .eq("dossier_id", dossierId)
+        .neq("column_id", (await getClosedColumnId()));
+    }
 
     const { error } = await supabase
       .from("dossiers")
@@ -138,6 +162,15 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
         variant: "destructive",
       });
       return;
+    }
+
+    // Invoice reminder for settlement status
+    if (newStatus === "settlement") {
+      toast({
+        title: "⚠️ Herinnering: Facturen uploaden",
+        description: "Vergeet niet alle facturen (intern + extern) te uploaden voor archivering.",
+        duration: 8000,
+      });
     }
 
     // Send notification to family if status changed to specific states
@@ -228,6 +261,15 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
 
   const handleAdvisoryConfirm = async () => {
     await performStatusChange();
+  };
+
+  const getClosedColumnId = async () => {
+    const { data } = await supabase
+      .from("task_board_columns")
+      .select("id")
+      .eq("label", "Afgesloten")
+      .maybeSingle();
+    return data?.id;
   };
 
   return (

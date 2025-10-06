@@ -241,7 +241,8 @@ const Auth = () => {
           .from("user_roles")
           .select("role, organization_id")
           .eq("user_id", data.user.id)
-          .single();
+          .not('organization_id', 'is', null)
+          .maybeSingle();
 
         if (roleData?.organization_id) {
           const { data: orgData } = await supabase

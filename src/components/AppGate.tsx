@@ -31,10 +31,9 @@ export const AppGate = ({ children }: AppGateProps) => {
           // Get all professional roles for this user that have an organization
           const { data: userRoles, error } = await supabase
             .from('user_roles')
-            .select('role, organization_id')
+            .select('organization_id')
             .eq('user_id', session.user.id)
-            .not('organization_id', 'is', null)
-            .in('role', ['funeral_director', 'org_admin', 'wasplaats', 'mosque', 'insurer']);
+            .not('organization_id', 'is', null);
 
           if (error) {
             console.error('[AppGate] Error fetching user roles:', error);

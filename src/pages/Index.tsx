@@ -17,6 +17,13 @@ const Index = () => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       
+      // Force logout if user has no role (e.g. after cleanup)
+      if (session && !loading && !role) {
+        await supabase.auth.signOut();
+        navigate("/auth");
+        return;
+      }
+      
       if (!session) {
         navigate("/auth");
         return;

@@ -323,8 +323,9 @@ export default function AdminDirectory() {
                       {org.verification_status === "PENDING_VERIFICATION" && (
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant="default"
                           onClick={() => handleVerify(org.id)}
+                          className="bg-success hover:bg-success/90"
                         >
                           <CheckCircle className="mr-1 h-4 w-4" />
                           Verifiëren
@@ -333,11 +334,11 @@ export default function AdminDirectory() {
                       {org.verification_status === "ACTIVE" && (
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant="destructive"
                           onClick={() => handleDeactivate(org.id)}
                         >
                           <XCircle className="mr-1 h-4 w-4" />
-                          Deactiveren
+                          Intrekken
                         </Button>
                       )}
                     </div>

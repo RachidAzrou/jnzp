@@ -30,12 +30,14 @@ export const AppGate = ({ children }: AppGateProps) => {
         const professionalRoles = ['funeral_director', 'org_admin', 'wasplaats', 'mosque', 'insurer'];
         
         if (professionalRoles.includes(role)) {
-          const { data: userRole } = await supabase
+          const { data: userRoles } = await supabase
             .from('user_roles')
             .select('organization_id')
             .eq('user_id', session.user.id)
             .not('organization_id', 'is', null)
-            .maybeSingle();
+            .limit(1);
+
+          const userRole = userRoles?.[0];
 
           if (userRole?.organization_id) {
             const { data: org } = await supabase

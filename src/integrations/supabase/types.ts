@@ -3448,8 +3448,16 @@ export type Database = {
         Args: { p_email: string }
         Returns: boolean
       }
+      is_admin_or_platform_admin: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       is_allowed_role: {
         Args: { p_role: Database["public"]["Enums"]["app_role"] }
+        Returns: boolean
+      }
+      is_org_admin_for: {
+        Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
       is_thread_member: {

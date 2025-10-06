@@ -52,26 +52,34 @@ const Dashboard = () => {
           // Fetch user's organization and onboarding status
           const { data: roleData } = await supabase
             .from("user_roles")
-            .select("organization_id")
+            .select("organization_id, role")
             .eq("user_id", user.id)
             .single();
 
           if (roleData?.organization_id) {
             setOrganizationId(roleData.organization_id);
 
-            // Check onboarding status (simplified to avoid type issues)
-            try {
-              const onboardingResponse: any = await supabase
-                .from("organization_onboarding" as any)
-                .select("completed")
-                .eq("organization_id", roleData.organization_id)
-                .maybeSingle();
+            // Only show onboarding for professional roles (not family)
+            const professionalRoles = ["funeral_director", "mosque", "wasplaats", "insurer", "org_admin", "admin"];
+            if (professionalRoles.includes(roleData.role)) {
+              // Check onboarding status
+              try {
+                const onboardingResponse: any = await supabase
+                  .from("organization_onboarding" as any)
+                  .select("completed")
+                  .eq("organization_id", roleData.organization_id)
+                  .maybeSingle();
 
-              if (onboardingResponse?.data?.completed !== undefined) {
-                setShowOnboarding(!onboardingResponse.data.completed);
+                if (onboardingResponse?.data?.completed !== undefined) {
+                  setShowOnboarding(!onboardingResponse.data.completed);
+                } else {
+                  // No onboarding record exists yet, show onboarding for first time
+                  setShowOnboarding(true);
+                }
+              } catch (e) {
+                // If no onboarding record exists, show it
+                setShowOnboarding(true);
               }
-            } catch (e) {
-              // Ignore onboarding check errors
             }
           }
         }

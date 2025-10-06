@@ -225,6 +225,43 @@ const Auth = () => {
           user_agent: navigator.userAgent,
         });
 
+        // Check if user's organization is approved (for professional users)
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role, organization_id")
+          .eq("user_id", data.user.id)
+          .single();
+
+        if (roleData?.organization_id) {
+          const { data: orgData } = await supabase
+            .from("organizations")
+            .select("verification_status")
+            .eq("id", roleData.organization_id)
+            .single();
+
+          if (orgData?.verification_status === "PENDING_VERIFICATION") {
+            await supabase.auth.signOut();
+            toast({
+              title: "Account nog niet actief",
+              description: "Uw aanvraag wordt nog beoordeeld. U ontvangt een e-mail zodra uw account is goedgekeurd.",
+              variant: "destructive",
+            });
+            setLoading(false);
+            return;
+          }
+
+          if (orgData?.verification_status === "REJECTED") {
+            await supabase.auth.signOut();
+            toast({
+              title: "Aanvraag afgewezen",
+              description: "Uw aanvraag is afgewezen. Neem contact op voor meer informatie.",
+              variant: "destructive",
+            });
+            setLoading(false);
+            return;
+          }
+        }
+
         // Check if user requires 2FA AND has it enabled
         const { data: requires2FA } = await supabase.rpc('user_requires_2fa', {
           user_id: data.user.id
@@ -468,9 +505,12 @@ const Auth = () => {
         });
       }
 
+      // Sign out immediately to prevent auto-login
+      await supabase.auth.signOut();
+
       toast({
         title: "Aanvraag ingediend",
-        description: "Uw aanvraag wordt beoordeeld. U ontvangt bericht zodra uw account is goedgekeurd.",
+        description: "Uw aanvraag wordt beoordeeld. U ontvangt een e-mail zodra uw account is goedgekeurd of afgewezen.",
       });
 
       setEmail("");

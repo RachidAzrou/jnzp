@@ -36,6 +36,7 @@ interface Organization {
   contact_email: string;
   contact_phone: string;
   requested_at: string;
+  requested_by: string | null;
 }
 
 const AdminOrganizations = () => {
@@ -93,9 +94,31 @@ const AdminOrganizations = () => {
         p_metadata: { org_name: selectedOrg.name },
       });
 
+      // Send email notification to the requester
+      if (selectedOrg.requested_by) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("first_name, id")
+          .eq("id", selectedOrg.requested_by)
+          .single();
+
+        const { data: { user } } = await supabase.auth.admin.getUserById(selectedOrg.requested_by);
+
+        if (user?.email && profile?.first_name) {
+          await supabase.functions.invoke('send-org-decision-email', {
+            body: {
+              email: user.email,
+              firstName: profile.first_name,
+              organizationName: selectedOrg.name,
+              decision: 'approved',
+            },
+          });
+        }
+      }
+
       toast({
         title: "Organisatie goedgekeurd",
-        description: `${selectedOrg.name} is geactiveerd.`,
+        description: `${selectedOrg.name} is geactiveerd en aanvrager is per e-mail geïnformeerd.`,
       });
 
       fetchOrganizations();
@@ -142,9 +165,32 @@ const AdminOrganizations = () => {
         p_metadata: { org_name: selectedOrg.name },
       });
 
+      // Send email notification to the requester
+      if (selectedOrg.requested_by) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("first_name, id")
+          .eq("id", selectedOrg.requested_by)
+          .single();
+
+        const { data: { user } } = await supabase.auth.admin.getUserById(selectedOrg.requested_by);
+
+        if (user?.email && profile?.first_name) {
+          await supabase.functions.invoke('send-org-decision-email', {
+            body: {
+              email: user.email,
+              firstName: profile.first_name,
+              organizationName: selectedOrg.name,
+              decision: 'rejected',
+              rejectionReason: rejectionReason,
+            },
+          });
+        }
+      }
+
       toast({
         title: "Organisatie afgewezen",
-        description: `${selectedOrg.name} is afgewezen.`,
+        description: `${selectedOrg.name} is afgewezen en aanvrager is per e-mail geïnformeerd.`,
       });
 
       fetchOrganizations();

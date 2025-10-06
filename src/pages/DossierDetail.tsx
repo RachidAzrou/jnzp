@@ -28,6 +28,7 @@ import { ExternalInvoiceUpload } from "@/components/dossier/ExternalInvoiceUploa
 import { SendFeedbackButton } from "@/components/dossier/SendFeedbackButton";
 import { ActivateDossierButton } from "@/components/dossier/ActivateDossierButton";
 import ReleaseDossierDialog from "@/components/dossier/ReleaseDossierDialog";
+import FDManagementCard from "@/components/dossier/FDManagementCard";
 import { MoreVertical } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -46,6 +47,7 @@ const DossierDetail = () => {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [manualEvents, setManualEvents] = useState<any[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [progress, setProgress] = useState<any>(null);
   const [releaseDialogOpen, setReleaseDialogOpen] = useState(false);
 
@@ -88,14 +90,17 @@ const DossierDetail = () => {
   };
 
   const checkAdminStatus = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+    
     const { data } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
-      .in("role", ["admin", "org_admin"])
+      .eq("user_id", userId)
       .maybeSingle();
     
-    setIsAdmin(!!data);
+    setIsAdmin(data?.role === "admin" || data?.role === "org_admin");
+    setUserRole(data?.role || null);
   };
 
   const fetchDossierData = async () => {
@@ -317,18 +322,20 @@ const DossierDetail = () => {
           {dossier.status === "archived" && (
             <SendFeedbackButton dossierId={id!} />
           )}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setReleaseDialogOpen(true)}>
-                Dossier vrijgeven
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {userRole === "funeral_director" && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setReleaseDialogOpen(true)}>
+                  Dossier vrijgeven
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
 
@@ -371,6 +378,15 @@ const DossierDetail = () => {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-8">
+          {/* FD Management Card for Familie users */}
+          {userRole === "family" && (
+            <FDManagementCard
+              dossierId={id!}
+              assignedFdOrgId={dossier.assigned_fd_org_id}
+              assignmentStatus={dossier.assignment_status}
+            />
+          )}
+          
           <div className="grid gap-8 md:grid-cols-2">
             {/* Overledene */}
             <div className="space-y-4">

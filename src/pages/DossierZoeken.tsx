@@ -104,8 +104,13 @@ export default function DossierZoeken() {
   };
 
   const maskName = (name: string): string => {
-    const parts = name.split(" ");
-    if (parts.length === 1) return name.charAt(0) + ". " + name.slice(1);
+    if (!name) return "Verborgen";
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) {
+      // Single name: show first letter + rest
+      return name.charAt(0) + ". " + name.slice(1);
+    }
+    // Multiple parts: show first letter of first part + rest
     return parts[0].charAt(0) + ". " + parts.slice(1).join(" ");
   };
 
@@ -158,7 +163,7 @@ export default function DossierZoeken() {
                       {result.display_id}
                     </span>
                     <span className="text-sm font-normal text-muted-foreground">
-                      {result.flow === "LOC" ? "Lokaal" : "Repatriëring"}
+                      {result.flow === "LOC" ? "Lokaal" : result.flow === "REP" ? "Repatriëring" : "Type onbekend"}
                     </span>
                   </CardTitle>
                   <CardDescription>
@@ -173,9 +178,13 @@ export default function DossierZoeken() {
                       <Alert className="mb-4">
                         <AlertCircle className="h-4 w-4" />
                         <AlertDescription>
-                          Dit dossier is momenteel niet gekoppeld aan een uitvaartonderneming.
+                          Dit dossier is momenteel niet gekoppeld aan een uitvaartonderneming. U kunt dit dossier claimen.
                         </AlertDescription>
                       </Alert>
+                      <div className="space-y-2 mb-4 p-3 bg-muted/50 rounded border">
+                        <p className="text-sm"><strong>Status:</strong> {result.status?.replace(/_/g, " ") || "Onbekend"}</p>
+                        <p className="text-sm"><strong>Dossiernummer:</strong> {result.display_id}</p>
+                      </div>
                       <Button onClick={() => setClaimDialogOpen(true)} className="w-full">
                         Dossier claimen
                       </Button>
@@ -186,7 +195,7 @@ export default function DossierZoeken() {
                     <Alert>
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription>
-                        Dit dossier is gekoppeld aan een andere uitvaartonderneming.
+                        Dit dossier is gekoppeld aan een andere uitvaartonderneming en kan niet worden geclaimd.
                       </AlertDescription>
                     </Alert>
                   )}
@@ -195,7 +204,7 @@ export default function DossierZoeken() {
                     <Alert>
                       <Clock className="h-4 w-4" />
                       <AlertDescription>
-                        Er is een claim in behandeling. Wachten op familiebevestiging.
+                        Er is al een claim in behandeling voor dit dossier. Wacht op familiebevestiging.
                       </AlertDescription>
                     </Alert>
                   )}

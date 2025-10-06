@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +22,15 @@ export default function FDManagementCard({
   const [releaseDialogOpen, setReleaseDialogOpen] = useState(false);
   const [releasing, setReleasing] = useState(false);
   const [approvingClaim, setApprovingClaim] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setCurrentUserId(data.user?.id || null);
+    };
+    fetchCurrentUser();
+  }, []);
 
   const { data: fdOrg } = useQuery({
     queryKey: ["fd-org", assignedFdOrgId],
@@ -85,6 +94,11 @@ export default function FDManagementCard({
   };
 
   const handleApproveClaim = async (claimId: string, approved: boolean) => {
+    if (!currentUserId) {
+      toast.error("Gebruiker niet ingelogd");
+      return;
+    }
+    
     setApprovingClaim(claimId);
     try {
       const { data, error } = await supabase.rpc("approve_dossier_claim", {

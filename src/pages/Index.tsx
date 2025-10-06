@@ -31,8 +31,8 @@ const Index = () => {
             .from('user_roles')
             .select('organization_id')
             .eq('user_id', session.user.id)
-            .eq('role', role)
-            .single();
+            .not('organization_id', 'is', null)
+            .maybeSingle();
 
           if (userRole?.organization_id) {
             const { data: org } = await supabase
@@ -51,6 +51,12 @@ const Index = () => {
                 return;
               }
             }
+          } else {
+            // Professional user without organization - should not happen normally
+            // But if it does, sign them out
+            await supabase.auth.signOut();
+            navigate("/auth");
+            return;
           }
         }
       }

@@ -403,7 +403,7 @@ const Instellingen = () => {
         </Card>
 
         {/* 2FA Settings - Only for professional users */}
-        {role && ['funeral_director', 'org_admin', 'admin', 'platform_admin', 'wasplaats', 'mosque', 'insurer'].includes(role) && (
+        {role && ['funeral_director', 'org_admin', 'platform_admin', 'wasplaats', 'mosque', 'insurer'].includes(role) && (
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg">

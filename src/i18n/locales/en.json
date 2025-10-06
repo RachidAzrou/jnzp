@@ -195,7 +195,7 @@
       "title": "Ready for transport?",
       "message": "Verify that everything is ready for transport.",
       "checklist": [
-        "All ceremonies completed",
+        "All Janaza (prayer services) completed",
         "Transport documents complete",
         "Destination confirmed",
         "Escorts arranged"
@@ -908,7 +908,7 @@
     "newAppointment": "New appointment",
     "newFlight": "New flight",
     "noMortuariumAppointments": "No mortuary appointments scheduled",
-    "noMosqueCeremonies": "No mosque ceremonies scheduled",
+    "noMosqueCeremonies": "No Janaza (prayer services) scheduled",
     "noFlights": "No flights scheduled",
     "location": "Location",
     "dateTime": "Date & Time",
@@ -1034,7 +1034,7 @@
       "startTime": "Start time",
       "endTime": "End time",
       "allocationNote": "Allocation note",
-      "allocationNotePlaceholder": "E.g. Ceremony scheduled on...",
+      "allocationNotePlaceholder": "E.g. Janaza (prayer service) scheduled on...",
       "sendInvite": "Send invitation",
       "generateQR": "Generate QR code",
       "viewDossier": "View dossier",

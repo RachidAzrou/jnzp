@@ -3276,6 +3276,10 @@ export type Database = {
         Args: { p_email: string }
         Returns: boolean
       }
+      is_allowed_role: {
+        Args: { p_role: Database["public"]["Enums"]["app_role"] }
+        Returns: boolean
+      }
       is_thread_member: {
         Args: { p_thread_id: string; p_user_id: string }
         Returns: boolean

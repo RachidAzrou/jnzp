@@ -25,61 +25,52 @@ export const AppGate = ({ children }: AppGateProps) => {
         return;
       }
 
-      // Only check org status for professional roles
-      if (session.user && !loading && role) {
-        const professionalRoles = ['funeral_director', 'org_admin', 'wasplaats', 'mosque', 'insurer'];
-        
-        // Skip org check for platform_admin
-        if (role === 'platform_admin') {
-          setIsCheckingOrg(false);
-          return;
-        }
-        
-        if (professionalRoles.includes(role)) {
-          try {
-            const { data: userRoles, error } = await supabase
-              .from('user_roles')
-              .select('organization_id')
-              .eq('user_id', session.user.id)
-              .eq('role', role)
-              .not('organization_id', 'is', null)
-              .limit(1);
+      // Check ALL user roles to find one with an organization
+      if (session.user && !loading) {
+        try {
+          // Get all professional roles for this user that have an organization
+          const { data: userRoles, error } = await supabase
+            .from('user_roles')
+            .select('role, organization_id')
+            .eq('user_id', session.user.id)
+            .not('organization_id', 'is', null)
+            .in('role', ['funeral_director', 'org_admin', 'wasplaats', 'mosque', 'insurer']);
 
-            if (error) {
-              console.error('[AppGate] Error fetching user roles:', error);
+          if (error) {
+            console.error('[AppGate] Error fetching user roles:', error);
+            setIsCheckingOrg(false);
+            return;
+          }
+
+          // If user has any professional role with organization, check that org
+          const professionalRole = userRoles?.[0];
+
+          if (professionalRole?.organization_id) {
+            const { data: org, error: orgError } = await supabase
+              .from('organizations')
+              .select('verification_status, name, rejection_reason')
+              .eq('id', professionalRole.organization_id)
+              .single();
+
+            if (orgError) {
+              console.error('[AppGate] Error fetching org:', orgError);
               setIsCheckingOrg(false);
               return;
             }
 
-            const userRole = userRoles?.[0];
+            if (org) {
+              setOrgStatus(org.verification_status);
+              setOrgName(org.name);
+              setRejectionReason(org.rejection_reason || "");
 
-            if (userRole?.organization_id) {
-              const { data: org, error: orgError } = await supabase
-                .from('organizations')
-                .select('verification_status, name, rejection_reason')
-                .eq('id', userRole.organization_id)
-                .single();
-
-              if (orgError) {
-                console.error('[AppGate] Error fetching org:', orgError);
-                setIsCheckingOrg(false);
-                return;
-              }
-
-              if (org) {
-                setOrgStatus(org.verification_status);
-                setOrgName(org.name);
-                setRejectionReason(org.rejection_reason || "");
-
-                // If not ACTIVE, sign out
-                if (org.verification_status !== 'ACTIVE') {
-                  await supabase.auth.signOut();
-                }
+              // If not ACTIVE, sign out
+              if (org.verification_status !== 'ACTIVE') {
+                await supabase.auth.signOut();
               }
             }
-          } catch (err) {
-            console.error('[AppGate] Exception:', err);
           }
+        } catch (err) {
+          console.error('[AppGate] Exception:', err);
         }
       }
 
@@ -93,7 +84,7 @@ export const AppGate = ({ children }: AppGateProps) => {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, role, loading]);
+  }, [navigate, loading]);
 
   // Show loading while checking
   if (loading || isCheckingOrg) {

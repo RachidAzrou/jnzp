@@ -56,6 +56,8 @@ export function TopBar() {
   useEffect(() => {
     if (role === 'platform_admin' || role === 'org_admin') {
       setUserType('Admin');
+    } else if (role === 'family') {
+      setUserType('Familie');
     } else if (role) {
       setUserType('Medewerker');
     }

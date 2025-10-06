@@ -1,4 +1,4 @@
-import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, Flag, Monitor, Bell, Webhook, TrendingUp, Star } from "lucide-react";
+import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, Flag, Monitor, Bell, Webhook, TrendingUp, Star, Search } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { HiOutlineInboxIn } from "react-icons/hi";
@@ -56,6 +56,7 @@ export function AppSidebar() {
     // FD & Org Admin (niet voor platform_admin/admin - die hebben eigen menu)
     { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['funeral_director', 'org_admin'] },
+    { titleKey: "navigation.searchDossiers", url: "/dossiers/zoeken", icon: Search, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.incomingRequests", url: "/fd/incoming-requests", icon: HiOutlineInboxIn, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.chat", url: "/fd/chat", icon: MessageSquare, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.tasks", url: "/taken", icon: CheckSquare, roles: ['funeral_director', 'org_admin'] },

@@ -27,6 +27,9 @@ import { QRCodeGenerator } from "@/components/qr/QRCodeGenerator";
 import { ExternalInvoiceUpload } from "@/components/dossier/ExternalInvoiceUpload";
 import { SendFeedbackButton } from "@/components/dossier/SendFeedbackButton";
 import { ActivateDossierButton } from "@/components/dossier/ActivateDossierButton";
+import ReleaseDossierDialog from "@/components/dossier/ReleaseDossierDialog";
+import { MoreVertical } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -44,6 +47,7 @@ const DossierDetail = () => {
   const [manualEvents, setManualEvents] = useState<any[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [progress, setProgress] = useState<any>(null);
+  const [releaseDialogOpen, setReleaseDialogOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -313,8 +317,30 @@ const DossierDetail = () => {
           {dossier.status === "archived" && (
             <SendFeedbackButton dossierId={id!} />
           )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setReleaseDialogOpen(true)}>
+                Dossier vrijgeven
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
+
+      <ReleaseDossierDialog
+        open={releaseDialogOpen}
+        onOpenChange={setReleaseDialogOpen}
+        dossierId={id!}
+        dossierDisplayId={dossier.display_id || dossier.ref_number}
+        onSuccess={() => {
+          navigate("/dossiers");
+        }}
+      />
 
       {/* Progress Card */}
       {progress && (

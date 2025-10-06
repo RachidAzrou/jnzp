@@ -552,6 +552,70 @@ export type Database = {
           },
         ]
       }
+      dossier_claims: {
+        Row: {
+          created_at: string | null
+          decided_at: string | null
+          decided_by: string | null
+          dossier_id: string
+          expire_at: string | null
+          id: string
+          reason: string | null
+          requested_by: string
+          requesting_org_id: string
+          status: string
+          token: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          decided_at?: string | null
+          decided_by?: string | null
+          dossier_id: string
+          expire_at?: string | null
+          id?: string
+          reason?: string | null
+          requested_by: string
+          requesting_org_id: string
+          status?: string
+          token?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          decided_at?: string | null
+          decided_by?: string | null
+          dossier_id?: string
+          expire_at?: string | null
+          id?: string
+          reason?: string | null
+          requested_by?: string
+          requesting_org_id?: string
+          status?: string
+          token?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dossier_claims_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dossier_claims_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dossier_claims_requesting_org_id_fkey"
+            columns: ["requesting_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dossier_communication_preferences: {
         Row: {
           dossier_id: string
@@ -622,10 +686,46 @@ export type Database = {
           },
         ]
       }
+      dossier_release_events: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          created_at: string | null
+          dossier_id: string
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          created_at?: string | null
+          dossier_id: string
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          created_at?: string | null
+          dossier_id?: string
+          id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dossier_release_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dossiers: {
         Row: {
           advisory_checks: Json | null
           assigned_fd_org_id: string | null
+          assignment_status: string
           created_at: string
           date_of_death: string | null
           deceased_dob: string | null
@@ -645,6 +745,7 @@ export type Database = {
         Insert: {
           advisory_checks?: Json | null
           assigned_fd_org_id?: string | null
+          assignment_status?: string
           created_at?: string
           date_of_death?: string | null
           deceased_dob?: string | null
@@ -664,6 +765,7 @@ export type Database = {
         Update: {
           advisory_checks?: Json | null
           assigned_fd_org_id?: string | null
+          assignment_status?: string
           created_at?: string
           date_of_death?: string | null
           deceased_dob?: string | null
@@ -3206,6 +3308,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      approve_dossier_claim: {
+        Args: { p_approved: boolean; p_claim_id: string }
+        Returns: Json
+      }
       calculate_device_risk: {
         Args: {
           p_current_ip: string
@@ -3384,6 +3490,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      release_dossier: {
+        Args: { p_action: string; p_dossier_id: string; p_reason?: string }
+        Returns: Json
       }
       request_data_deletion: {
         Args: { p_reason?: string }

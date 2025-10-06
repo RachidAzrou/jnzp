@@ -35,6 +35,7 @@ import Facturatie from "./pages/Facturatie";
 import FDFacturatie from "./pages/FDFacturatie";
 import FDBeoordelingen from "./pages/FDBeoordelingen";
 import DossierDetail from "./pages/DossierDetail";
+import DossierZoeken from "./pages/DossierZoeken";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
 import MoskeeAanvragen from "./pages/MoskeeAanvragen";
 import MoskeeAanvraag from "./pages/MoskeeAanvraag";
@@ -211,6 +212,11 @@ const App = () => (
                           <Route path="/dossiers" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <Dossiers />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/dossiers/zoeken" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'org_admin']}>
+                              <DossierZoeken />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/dossiers/:id" element={

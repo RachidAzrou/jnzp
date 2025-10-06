@@ -595,6 +595,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "dossiers": "Dossiers",
+    "searchDossiers": "Dossier zoeken",
     "incomingRequests": "Inkomende Aanvragen",
     "planning": "Planning",
     "documents": "Documenten",

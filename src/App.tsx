@@ -70,6 +70,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import Feedback from "./pages/Feedback";
+import AcceptInvite from "./pages/AcceptInvite";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
 import { AppGate } from "./components/AppGate";
 import CheckEmail from "./pages/CheckEmail";
@@ -181,6 +182,7 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/check-email" element={<CheckEmail />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/invite/accept" element={<AcceptInvite />} />
           <Route path="/qr-scan/:token" element={<QRScan />} />
           <Route path="/feedback/:token" element={<Feedback />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />

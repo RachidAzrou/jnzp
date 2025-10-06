@@ -1900,6 +1900,53 @@ export type Database = {
           },
         ]
       }
+      organization_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          invited_role: Database["public"]["Enums"]["app_role"]
+          organization_id: string
+          status: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          invited_role: Database["public"]["Enums"]["app_role"]
+          organization_id: string
+          status?: string
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          invited_role?: Database["public"]["Enums"]["app_role"]
+          organization_id?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_locations: {
         Row: {
           address: string | null
@@ -2928,6 +2975,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_active: boolean
           organization_id: string | null
           role: Database["public"]["Enums"]["app_role"]
           scope: string | null
@@ -2936,6 +2984,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          is_active?: boolean
           organization_id?: string | null
           role: Database["public"]["Enums"]["app_role"]
           scope?: string | null
@@ -2944,6 +2993,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          is_active?: boolean
           organization_id?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           scope?: string | null
@@ -3245,6 +3295,10 @@ export type Database = {
         Returns: string
       }
       generate_invitation_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_invitation_token: {
         Args: Record<PropertyKey, never>
         Returns: string
       }

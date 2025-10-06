@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, UserPlus, Copy, Check } from "lucide-react";
+import { Loader2, UserPlus, Copy, Check, UserX, UserCheck, Trash2, Edit } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -31,22 +31,35 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface TeamMember {
   id: string;
+  user_id: string;
   email: string;
   first_name: string;
   last_name: string;
   role: string;
+  is_active: boolean;
 }
 
 interface InvitationLink {
   id: string;
-  code: string;
-  role: string;
+  email: string;
+  invited_role: string;
+  status: string;
+  created_at: string;
   expires_at: string;
-  max_uses: number;
-  current_uses: number;
+  token: string;
 }
 
 const TeamManagement = () => {
@@ -55,11 +68,13 @@ const TeamManagement = () => {
   const [invitations, setInvitations] = useState<InvitationLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
+  const [organizationType, setOrganizationType] = useState<string | null>(null);
   const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const [inviteRole, setInviteRole] = useState<string>("");
-  const [maxUses, setMaxUses] = useState("1");
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState<"Admin" | "Medewerker">("Medewerker");
   const [generating, setGenerating] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -73,8 +88,9 @@ const TeamManagement = () => {
 
       const { data: roleData } = await supabase
         .from("user_roles")
-        .select("organization_id, role")
+        .select("organization_id, role, organizations(name, type)")
         .eq("user_id", user.id)
+        .eq("role", "org_admin")
         .not("organization_id", "is", null)
         .limit(1)
         .maybeSingle();
@@ -89,6 +105,8 @@ const TeamManagement = () => {
       }
 
       setOrganizationId(roleData.organization_id);
+      setOrganizationType((roleData.organizations as any)?.type || null);
+      
       await Promise.all([
         fetchTeamMembers(roleData.organization_id),
         fetchInvitations(roleData.organization_id),
@@ -108,8 +126,10 @@ const TeamManagement = () => {
     const { data, error } = await supabase
       .from("user_roles")
       .select(`
+        id,
         user_id,
         role,
+        is_active,
         profiles:user_id (
           email,
           first_name,
@@ -121,11 +141,13 @@ const TeamManagement = () => {
     if (error) throw error;
 
     const members = data?.map((item: any) => ({
-      id: item.user_id,
+      id: item.id,
+      user_id: item.user_id,
       email: item.profiles?.email || "",
       first_name: item.profiles?.first_name || "",
       last_name: item.profiles?.last_name || "",
       role: item.role,
+      is_active: item.is_active,
     })) || [];
 
     setTeamMembers(members);
@@ -133,20 +155,21 @@ const TeamManagement = () => {
 
   const fetchInvitations = async (orgId: string) => {
     const { data, error } = await supabase
-      .from("invitation_links")
+      .from("organization_invitations")
       .select("*")
       .eq("organization_id", orgId)
+      .eq("status", "PENDING")
       .gt("expires_at", new Date().toISOString());
 
     if (error) throw error;
     setInvitations(data || []);
   };
 
-  const generateInvite = async () => {
-    if (!organizationId || !inviteRole) {
+  const sendInvitation = async () => {
+    if (!organizationId || !inviteEmail) {
       toast({
         title: t("team.incompleteData"),
-        description: t("team.selectRoleFirst"),
+        description: "Vul alle velden in",
         variant: "destructive",
       });
       return;
@@ -154,40 +177,26 @@ const TeamManagement = () => {
 
     setGenerating(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error(t("team.notLoggedIn"));
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const response = await supabase.functions.invoke("send-team-invitation", {
+        body: { email: inviteEmail, role: inviteRole },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
 
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 7);
-
-      // Generate invitation code
-      const { data: codeData, error: codeError } = await supabase.rpc("generate_invitation_code");
-      if (codeError) throw codeError;
-
-      const { data, error } = await supabase
-        .from("invitation_links")
-        .insert([{
-          code: codeData,
-          organization_id: organizationId,
-          role: inviteRole as any,
-          created_by: user.id,
-          expires_at: expiresAt.toISOString(),
-          max_uses: parseInt(maxUses) || 1,
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
+      if (response.error) throw response.error;
 
       toast({
-        title: t("team.invitationCreated"),
-        description: t("team.invitationCreatedDesc"),
+        title: "Uitnodiging verzonden",
+        description: `Uitnodiging verzonden naar ${inviteEmail}`,
       });
 
       fetchInvitations(organizationId);
       setShowInviteDialog(false);
-      setInviteRole("");
-      setMaxUses("1");
+      setInviteEmail("");
+      setInviteRole("Medewerker");
     } catch (error: any) {
       toast({
         title: t("common.error"),
@@ -199,20 +208,102 @@ const TeamManagement = () => {
     }
   };
 
-  const copyInviteLink = (code: string) => {
-    const link = `${window.location.origin}/register?invite=${code}`;
+  const toggleMemberStatus = async (memberId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from("user_roles")
+        .update({ is_active: !currentStatus })
+        .eq("id", memberId);
+
+      if (error) throw error;
+
+      toast({
+        title: !currentStatus ? "Geactiveerd" : "Gedeactiveerd",
+        description: `Teamlid is ${!currentStatus ? "geactiveerd" : "gedeactiveerd"}`,
+      });
+
+      if (organizationId) fetchTeamMembers(organizationId);
+    } catch (error: any) {
+      toast({
+        title: t("common.error"),
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteMember = async (memberId: string) => {
+    try {
+      const { error } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("id", memberId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Verwijderd",
+        description: "Teamlid is verwijderd uit de organisatie",
+      });
+
+      if (organizationId) fetchTeamMembers(organizationId);
+      setDeleteConfirm(null);
+    } catch (error: any) {
+      toast({
+        title: t("common.error"),
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const cancelInvitation = async (inviteId: string) => {
+    try {
+      const { error } = await supabase
+        .from("organization_invitations")
+        .update({ status: "CANCELLED" })
+        .eq("id", inviteId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Geannuleerd",
+        description: "Uitnodiging is geannuleerd",
+      });
+
+      if (organizationId) fetchInvitations(organizationId);
+    } catch (error: any) {
+      toast({
+        title: t("common.error"),
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const copyInviteLink = (token: string) => {
+    const link = `${window.location.origin}/invite/accept?token=${token}`;
     navigator.clipboard.writeText(link);
-    setCopiedCode(code);
+    setCopiedCode(token);
     setTimeout(() => setCopiedCode(null), 2000);
     toast({
-      title: t("team.linkCopied"),
-      description: t("team.linkCopiedDesc"),
+      title: "Link gekopieerd",
+      description: "Uitnodigingslink is gekopieerd",
     });
   };
 
   const getRoleBadge = (role: string) => {
-    if (role === "org_admin") return <Badge>Org Admin</Badge>;
+    if (role === "org_admin") return <Badge>Admin</Badge>;
+    if (role === "funeral_director") return <Badge variant="outline">Uitvaartondernemer</Badge>;
+    if (role === "mosque") return <Badge variant="outline">Moskee</Badge>;
+    if (role === "wasplaats") return <Badge variant="outline">Wasplaats</Badge>;
+    if (role === "insurer") return <Badge variant="outline">Verzekeraar</Badge>;
     return <Badge variant="outline">{role}</Badge>;
+  };
+
+  const getRoleLabel = (role: string) => {
+    if (role === "org_admin") return "Admin";
+    return "Medewerker";
   };
 
   if (loading) {
@@ -229,81 +320,137 @@ const TeamManagement = () => {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg font-medium">{t("team.teamMembers")}</CardTitle>
-              <CardDescription className="text-sm">{t("team.manageTeam")}</CardDescription>
+              <CardTitle className="text-lg font-medium">Teamleden</CardTitle>
+              <CardDescription className="text-sm">
+                Beheer teamleden binnen uw organisatie
+              </CardDescription>
             </div>
             <Button onClick={() => setShowInviteDialog(true)} size="sm">
               <UserPlus className="mr-2 h-4 w-4" />
-              {t("team.inviteTeamMember")}
+              Teamlid uitnodigen
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">{t("team.name")}</TableHead>
-                <TableHead className="font-medium text-sm">{t("team.email")}</TableHead>
-                <TableHead className="font-medium text-sm">{t("team.role")}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {teamMembers.map((member) => (
-                <TableRow key={member.id} className="hover:bg-muted/30">
-                  <TableCell className="text-sm">
-                    {member.first_name} {member.last_name}
-                  </TableCell>
-                  <TableCell className="text-sm">{member.email}</TableCell>
-                  <TableCell>{getRoleBadge(member.role)}</TableCell>
+          {teamMembers.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <p className="text-sm">Nog geen teamleden.</p>
+              <p className="text-xs mt-1">Nodig collega's uit via hun e-mail.</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="font-medium text-sm">Naam</TableHead>
+                  <TableHead className="font-medium text-sm">E-mail</TableHead>
+                  <TableHead className="font-medium text-sm">Rol</TableHead>
+                  <TableHead className="font-medium text-sm">Status</TableHead>
+                  <TableHead className="font-medium text-sm">Acties</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {teamMembers.map((member) => (
+                  <TableRow key={member.id} className="hover:bg-muted/30">
+                    <TableCell className="text-sm">
+                      {member.first_name} {member.last_name}
+                    </TableCell>
+                    <TableCell className="text-sm">{member.email}</TableCell>
+                    <TableCell>{getRoleBadge(member.role)}</TableCell>
+                    <TableCell>
+                      <Badge variant={member.is_active ? "default" : "secondary"}>
+                        {member.is_active ? "Actief" : "Gedeactiveerd"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => toggleMemberStatus(member.id, member.is_active)}
+                        >
+                          {member.is_active ? (
+                            <UserX className="h-4 w-4" />
+                          ) : (
+                            <UserCheck className="h-4 w-4" />
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() =>
+                            setDeleteConfirm({
+                              id: member.id,
+                              name: `${member.first_name} ${member.last_name}`,
+                            })
+                          }
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">{t("team.activeInvitations")}</CardTitle>
-          <CardDescription className="text-sm">{t("team.validInvitationsDesc")}</CardDescription>
+          <CardTitle className="text-lg font-medium">Actieve uitnodigingen</CardTitle>
+          <CardDescription className="text-sm">
+            Uitnodigingen die nog niet zijn geaccepteerd
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {invitations.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              {t("team.noActiveInvitations")}
+              Geen actieve uitnodigingen
             </p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="font-medium text-sm">{t("team.role")}</TableHead>
-                  <TableHead className="font-medium text-sm">{t("team.used")}</TableHead>
-                  <TableHead className="font-medium text-sm">{t("team.expiresOn")}</TableHead>
-                  <TableHead className="font-medium text-sm">{t("team.actions")}</TableHead>
+                  <TableHead className="font-medium text-sm">E-mail</TableHead>
+                  <TableHead className="font-medium text-sm">Rol</TableHead>
+                  <TableHead className="font-medium text-sm">Uitgenodigd op</TableHead>
+                  <TableHead className="font-medium text-sm">Verloopt op</TableHead>
+                  <TableHead className="font-medium text-sm">Acties</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {invitations.map((invite) => (
                   <TableRow key={invite.id} className="hover:bg-muted/30">
-                    <TableCell>{getRoleBadge(invite.role)}</TableCell>
-                    <TableCell className="text-sm">
-                      {invite.current_uses} / {invite.max_uses}
+                    <TableCell className="text-sm">{invite.email}</TableCell>
+                    <TableCell>{getRoleBadge(invite.invited_role)}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {new Date(invite.created_at).toLocaleDateString("nl-NL")}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {new Date(invite.expires_at).toLocaleDateString("nl-NL")}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => copyInviteLink(invite.code)}
-                      >
-                        {copiedCode === invite.code ? (
-                          <Check className="h-4 w-4" />
-                        ) : (
-                          <Copy className="h-4 w-4" />
-                        )}
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => copyInviteLink(invite.token)}
+                        >
+                          {copiedCode === invite.token ? (
+                            <Check className="h-4 w-4" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => cancelInvitation(invite.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -316,37 +463,38 @@ const TeamManagement = () => {
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("team.inviteTeamMember")}</DialogTitle>
+            <DialogTitle>Teamlid uitnodigen</DialogTitle>
             <DialogDescription>
-              {t("team.createInvitation")}
+              De uitgenodigde ontvangt een e-mail met activatielink (48u geldig).
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="role">{t("team.role")}</Label>
-              <Select value={inviteRole} onValueChange={setInviteRole}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t("team.selectRole")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="funeral_director">Uitvaartondernemer</SelectItem>
-                  <SelectItem value="mosque">Moskee</SelectItem>
-                  <SelectItem value="wasplaats">Wasplaats</SelectItem>
-                  <SelectItem value="insurer">Verzekeraar</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="email">E-mail</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="naam@voorbeeld.nl"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="max-uses">{t("team.maxUses")}</Label>
-              <Input
-                id="max-uses"
-                type="number"
-                min="1"
-                value={maxUses}
-                onChange={(e) => setMaxUses(e.target.value)}
-              />
+              <Label htmlFor="role">Rol</Label>
+              <Select
+                value={inviteRole}
+                onValueChange={(value) => setInviteRole(value as "Admin" | "Medewerker")}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Admin">Admin</SelectItem>
+                  <SelectItem value="Medewerker">Medewerker</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -354,13 +502,36 @@ const TeamManagement = () => {
             <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
               {t("common.cancel")}
             </Button>
-            <Button onClick={generateInvite} disabled={generating || !inviteRole}>
+            <Button onClick={sendInvitation} disabled={generating || !inviteEmail}>
               {generating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {generating ? t("team.creating") : t("common.save")}
+              Uitnodigen
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog
+        open={!!deleteConfirm}
+        onOpenChange={(open) => !open && setDeleteConfirm(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Teamlid verwijderen</AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je {deleteConfirm?.name} wilt verwijderen uit deze organisatie?
+              Dit kan niet ongedaan worden gemaakt.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteConfirm && deleteMember(deleteConfirm.id)}
+            >
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

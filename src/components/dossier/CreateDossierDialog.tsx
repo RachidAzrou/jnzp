@@ -282,9 +282,8 @@ export function CreateDossierDialog() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Section 1: Overledene */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-semibold">🕊️ Overledene</h3>
+            <div>
+              <h3 className="text-lg font-semibold">Overledene</h3>
             </div>
             <Separator />
 
@@ -350,8 +349,8 @@ export function CreateDossierDialog() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-background z-50">
-                  <SelectItem value="LOC">🏠 Lokale begrafenis</SelectItem>
-                  <SelectItem value="REP">✈️ Repatriëring</SelectItem>
+                  <SelectItem value="LOC">Lokale begrafenis</SelectItem>
+                  <SelectItem value="REP">Repatriëring</SelectItem>
                 </SelectContent>
               </Select>
               {formData.flow === "REP" && (
@@ -364,9 +363,8 @@ export function CreateDossierDialog() {
 
           {/* Section 2: Contactpersoon */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-semibold">👨‍👩‍👧 Contactpersoon (Familie)</h3>
+            <div>
+              <h3 className="text-lg font-semibold">Contactpersoon (Familie)</h3>
             </div>
             <Separator />
 
@@ -454,9 +452,8 @@ export function CreateDossierDialog() {
 
           {/* Section 3: Uitvaartdetails */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-semibold">⚰️ Uitvaartdetails</h3>
+            <div>
+              <h3 className="text-lg font-semibold">Uitvaartdetails</h3>
             </div>
             <Separator />
 
@@ -472,9 +469,9 @@ export function CreateDossierDialog() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-background z-50">
-                  <SelectItem value="yes">✅ Verzekerd</SelectItem>
-                  <SelectItem value="no">❌ Niet verzekerd</SelectItem>
-                  <SelectItem value="unknown">❓ Onbekend</SelectItem>
+                  <SelectItem value="yes">Verzekerd</SelectItem>
+                  <SelectItem value="no">Niet verzekerd</SelectItem>
+                  <SelectItem value="unknown">Onbekend</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -535,9 +532,8 @@ export function CreateDossierDialog() {
 
           {/* Section 4: Notities */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-semibold">📝 Interne notities</h3>
+            <div>
+              <h3 className="text-lg font-semibold">Interne notities</h3>
             </div>
             <Separator />
 

@@ -339,6 +339,7 @@ const DossierDetail = () => {
           <TabsTrigger value="stakeholders">Stakeholders</TabsTrigger>
           <TabsTrigger value="chat">Communicatie</TabsTrigger>
           <TabsTrigger value="financial">Financieel</TabsTrigger>
+          <TabsTrigger value="notes">Notities</TabsTrigger>
           <TabsTrigger value="timeline">Tijdlijn</TabsTrigger>
         </TabsList>
 
@@ -414,18 +415,6 @@ const DossierDetail = () => {
             </div>
           </div>
 
-          {/* Internal Notes */}
-          <InternalNotesCard 
-            dossierId={id!} 
-            initialNotes={dossier.internal_notes}
-            onNotesSaved={fetchDossierData}
-          />
-
-          {/* Dossier Comments with Mentions */}
-          <DossierComments
-            dossierId={id!}
-            organizationId={dossier.assigned_fd_org_id}
-          />
         </TabsContent>
 
         {/* Documents Tab */}
@@ -728,6 +717,23 @@ const DossierDetail = () => {
             ) : (
               <p className="text-center text-muted-foreground py-8">Geen gebeurtenissen</p>
             )}
+          </div>
+        </TabsContent>
+
+        {/* Notes Tab */}
+        <TabsContent value="notes" className="space-y-6">
+          <InternalNotesCard 
+            dossierId={id!} 
+            initialNotes={dossier.internal_notes}
+            onNotesSaved={fetchDossierData}
+          />
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Opmerkingen & Discussie</h3>
+            <DossierComments
+              dossierId={id!}
+              organizationId={dossier.assigned_fd_org_id}
+            />
           </div>
         </TabsContent>
       </Tabs>

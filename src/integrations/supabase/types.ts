@@ -3130,6 +3130,23 @@ export type Database = {
         }
         Relationships: []
       }
+      v_fd_review_summary: {
+        Row: {
+          avg_rating: number | null
+          fd_org_id: string | null
+          last_comment: string | null
+          total_reviews: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fd_reviews_fd_org_id_fkey"
+            columns: ["fd_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       accept_invitation: {

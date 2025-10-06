@@ -33,6 +33,7 @@ import WasplaatsFacturatie from "./pages/WasplaatsFacturatie";
 import MortuariumAdHoc from "./pages/MortuariumAdHoc";
 import Facturatie from "./pages/Facturatie";
 import FDFacturatie from "./pages/FDFacturatie";
+import FDBeoordelingen from "./pages/FDBeoordelingen";
 import DossierDetail from "./pages/DossierDetail";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
 import MoskeeAanvragen from "./pages/MoskeeAanvragen";
@@ -233,6 +234,11 @@ const App = () => (
                           <Route path="/facturatie" element={
                             <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
                               <FDFacturatie />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/beoordelingen" element={
+                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                              <FDBeoordelingen />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/mijn-documenten" element={

@@ -1,4 +1,4 @@
-import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, Flag, Monitor, Bell, Webhook, TrendingUp } from "lucide-react";
+import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, Flag, Monitor, Bell, Webhook, TrendingUp, Star } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { HiOutlineInboxIn } from "react-icons/hi";
@@ -63,6 +63,7 @@ export function AppSidebar() {
     { titleKey: "navigation.documents", url: "/documenten", icon: FileText, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.planning", url: "/planning", icon: Calendar, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.facturatie", url: "/facturatie", icon: Receipt, roles: ['funeral_director', 'org_admin'] },
+    { titleKey: "navigation.beoordelingen", url: "/beoordelingen", icon: Star, roles: ['funeral_director', 'org_admin'] },
     
     // Insurer
     { titleKey: "navigation.dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },

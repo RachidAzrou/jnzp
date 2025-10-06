@@ -572,7 +572,7 @@ const DossierDetail = () => {
                 <h3 className="text-lg font-semibold">Facturen</h3>
               </div>
               <div className="flex gap-2">
-                <ExternalInvoiceUpload dossierId={id!} onUploaded={fetchDossierData} />
+                <ExternalInvoiceUpload dossierId={id!} onUploadComplete={fetchDossierData} />
                 <Button onClick={() => navigate(`/fd/facturatie?dossier=${id}`)}>
                   <DollarSign className="mr-2 h-4 w-4" />
                   Nieuwe Interne Factuur

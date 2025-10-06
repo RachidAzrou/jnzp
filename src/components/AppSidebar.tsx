@@ -18,7 +18,6 @@ import {
 import { useUserRole, UserRole, useRolePortalName } from "@/hooks/useUserRole";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useTranslation } from "react-i18next";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 type MenuItem = {
   titleKey: string;
@@ -154,10 +153,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      
-      <SidebarFooter className="p-3 sm:p-4 bg-sidebar-background/50">
-        {!isCollapsed && <LanguageSwitcher />}
-      </SidebarFooter>
     </Sidebar>
   );
 }

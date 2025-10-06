@@ -473,6 +473,9 @@ const Auth = () => {
       if (error) throw error;
       if (!data.user) throw new Error("User creation failed");
 
+      // CRITICAL: Sign out immediately to prevent auto-login
+      await supabase.auth.signOut();
+
       const orgType = selectedRole === "funeral_director" ? "FUNERAL_DIRECTOR" : 
                       selectedRole === "mosque" ? "MOSQUE" :
                       selectedRole === "wasplaats" ? "WASPLAATS" : "INSURER";
@@ -504,9 +507,6 @@ const Auth = () => {
           p_metadata: { org_type: orgType, email: email },
         });
       }
-
-      // Sign out immediately to prevent auto-login
-      await supabase.auth.signOut();
 
       toast({
         title: "Aanvraag ingediend",

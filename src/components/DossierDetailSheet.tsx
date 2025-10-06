@@ -22,34 +22,26 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      CREATED: "Aangemaakt",
-      INTAKE_IN_PROGRESS: "Intake lopend",
-      DOCS_PENDING: "Documenten vereist",
-      FD_ASSIGNED: "FD toegewezen",
-      DOCS_VERIFIED: "Docs geverifieerd",
-      APPROVED: "Goedgekeurd",
-      LEGAL_HOLD: "Legal Hold",
-      PLANNING: "Planning",
-      READY_FOR_TRANSPORT: "Klaar voor transport",
-      IN_TRANSIT: "In transit",
-      ARCHIVED: "Gearchiveerd",
+      created: "Aangemaakt",
+      intake_in_progress: "Intake lopend",
+      operational: "Operationeel",
+      planning_in_progress: "Planning bezig",
+      execution_in_progress: "Uitvoering bezig",
+      settlement: "Afronding / Facturatie",
+      archived: "Afgerond & Gearchiveerd",
     };
     return labels[status] || status.replace(/_/g, " ");
   };
 
   const getStatusColor = (status: string): "default" | "destructive" | "outline" | "secondary" => {
     const colors: Record<string, "default" | "destructive" | "outline" | "secondary"> = {
-      CREATED: "secondary",
-      INTAKE_IN_PROGRESS: "default",
-      DOCS_PENDING: "secondary",
-      FD_ASSIGNED: "default",
-      DOCS_VERIFIED: "default",
-      APPROVED: "default",
-      LEGAL_HOLD: "destructive",
-      PLANNING: "default",
-      READY_FOR_TRANSPORT: "default",
-      IN_TRANSIT: "default",
-      ARCHIVED: "secondary",
+      created: "secondary",
+      intake_in_progress: "default",
+      operational: "default",
+      planning_in_progress: "default",
+      execution_in_progress: "default",
+      settlement: "default",
+      archived: "secondary",
     };
     return colors[status] || "secondary";
   };

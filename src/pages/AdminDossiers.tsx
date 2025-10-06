@@ -58,7 +58,7 @@ export default function AdminDossiers() {
   const [selectedDossier, setSelectedDossier] = useState<Dossier | null>(null);
   const [overrideType, setOverrideType] = useState<"status" | "unlock" | null>(null);
   const [overrideReason, setOverrideReason] = useState("");
-  const [newStatus, setNewStatus] = useState<DossierStatus>("CREATED");
+  const [newStatus, setNewStatus] = useState<any>("created");
 
   useEffect(() => {
     fetchDossiers();
@@ -172,17 +172,13 @@ export default function AdminDossiers() {
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { label: string; className: string }> = {
-      CREATED: { label: "Aangemaakt", className: "bg-blue-600 hover:bg-blue-700 text-white border-0" },
-      INTAKE_IN_PROGRESS: { label: "Intake bezig", className: "bg-blue-500 hover:bg-blue-600 text-white border-0" },
-      DOCS_PENDING: { label: "Docs nodig", className: "bg-orange-600 hover:bg-orange-700 text-white border-0" },
-      FD_ASSIGNED: { label: "FD toegewezen", className: "bg-purple-600 hover:bg-purple-700 text-white border-0" },
-      DOCS_VERIFIED: { label: "Docs geverifieerd", className: "bg-cyan-600 hover:bg-cyan-700 text-white border-0" },
-      APPROVED: { label: "Goedgekeurd", className: "bg-green-600 hover:bg-green-700 text-white border-0" },
-      LEGAL_HOLD: { label: "Legal Hold", className: "bg-red-600 hover:bg-red-700 text-white border-0" },
-      PLANNING: { label: "Planning", className: "bg-yellow-600 hover:bg-yellow-700 text-white border-0" },
-      READY_FOR_TRANSPORT: { label: "Klaar voor transport", className: "bg-teal-600 hover:bg-teal-700 text-white border-0" },
-      IN_TRANSIT: { label: "In transit", className: "bg-indigo-600 hover:bg-indigo-700 text-white border-0" },
-      ARCHIVED: { label: "Gearchiveerd", className: "bg-gray-600 hover:bg-gray-700 text-white border-0" },
+      created: { label: "Aangemaakt", className: "bg-gray-600 hover:bg-gray-700 text-white border-0" },
+      intake_in_progress: { label: "Intake lopend", className: "bg-blue-600 hover:bg-blue-700 text-white border-0" },
+      operational: { label: "Operationeel", className: "bg-purple-600 hover:bg-purple-700 text-white border-0" },
+      planning_in_progress: { label: "Planning bezig", className: "bg-yellow-600 hover:bg-yellow-700 text-white border-0" },
+      execution_in_progress: { label: "Uitvoering bezig", className: "bg-teal-600 hover:bg-teal-700 text-white border-0" },
+      settlement: { label: "Afronding / Facturatie", className: "bg-indigo-600 hover:bg-indigo-700 text-white border-0" },
+      archived: { label: "Afgerond & Gearchiveerd", className: "bg-green-600 hover:bg-green-700 text-white border-0" },
     };
     const variant = variants[status] || { label: status, className: "" };
     return <Badge className={`text-xs ${variant.className}`}>{variant.label}</Badge>;
@@ -336,16 +332,13 @@ export default function AdminDossiers() {
                 <SelectValue placeholder={t("placeholders.newStatus")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="CREATED">Aangemaakt</SelectItem>
-                <SelectItem value="INTAKE_IN_PROGRESS">Intake bezig</SelectItem>
-                <SelectItem value="DOCS_PENDING">Docs nodig</SelectItem>
-                <SelectItem value="FD_ASSIGNED">FD toegewezen</SelectItem>
-                <SelectItem value="DOCS_VERIFIED">Docs geverifieerd</SelectItem>
-                <SelectItem value="APPROVED">Goedgekeurd</SelectItem>
-                <SelectItem value="PLANNING">Planning</SelectItem>
-                <SelectItem value="READY_FOR_TRANSPORT">Klaar voor transport</SelectItem>
-                <SelectItem value="IN_TRANSIT">In transit</SelectItem>
-                <SelectItem value="ARCHIVED">Gearchiveerd</SelectItem>
+                <SelectItem value="created">Aangemaakt</SelectItem>
+                <SelectItem value="intake_in_progress">Intake lopend</SelectItem>
+                <SelectItem value="operational">Operationeel</SelectItem>
+                <SelectItem value="planning_in_progress">Planning bezig</SelectItem>
+                <SelectItem value="execution_in_progress">Uitvoering bezig</SelectItem>
+                <SelectItem value="settlement">Afronding / Facturatie</SelectItem>
+                <SelectItem value="archived">Afgerond & Gearchiveerd</SelectItem>
               </SelectContent>
             </Select>
           )}

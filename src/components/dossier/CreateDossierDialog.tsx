@@ -111,7 +111,7 @@ export function CreateDossierDialog() {
           ref_number: refNumber,
           deceased_name: deceasedName,
           flow: validatedData.flow,
-          status: "FD_ASSIGNED",
+          status: "created",
           assigned_fd_org_id: fdOrgId,
         })
         .select()

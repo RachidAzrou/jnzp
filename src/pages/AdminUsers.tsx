@@ -59,7 +59,8 @@ export default function AdminUsers() {
         .select(`
           user_id,
           role,
-          organization_id
+          organization_id,
+          created_at
         `)
         .order("created_at", { ascending: false });
 

@@ -308,43 +308,51 @@ export default function AdminDirectory() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredOrgs.map((org) => (
-                <TableRow key={org.id} className="hover:bg-muted/30">
-                  <TableCell className="font-medium text-sm">{org.name}</TableCell>
-                  <TableCell className="text-sm">{getTypeLabel(org.type)}</TableCell>
-                  <TableCell>{getStatusBadge(org.verification_status)}</TableCell>
-                  <TableCell className="text-sm">{org.city || "—"}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {org.contact_email && <div>{org.contact_email}</div>}
-                    {org.contact_phone && <div>{org.contact_phone}</div>}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      {org.verification_status === "PENDING_VERIFICATION" && (
-                        <Button
-                          size="sm"
-                          variant="default"
-                          onClick={() => handleVerify(org.id)}
-                          className="bg-success hover:bg-success/90"
-                        >
-                          <CheckCircle className="mr-1 h-4 w-4" />
-                          Verifiëren
-                        </Button>
-                      )}
-                      {org.verification_status === "ACTIVE" && (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDeactivate(org.id)}
-                        >
-                          <XCircle className="mr-1 h-4 w-4" />
-                          Intrekken
-                        </Button>
-                      )}
-                    </div>
+              {filteredOrgs.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                    Geen organisaties gevonden
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                filteredOrgs.map((org) => (
+                  <TableRow key={org.id} className="hover:bg-muted/30">
+                    <TableCell className="font-medium text-sm">{org.name}</TableCell>
+                    <TableCell className="text-sm">{getTypeLabel(org.type)}</TableCell>
+                    <TableCell>{getStatusBadge(org.verification_status)}</TableCell>
+                    <TableCell className="text-sm">{org.city || "—"}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {org.contact_email && <div>{org.contact_email}</div>}
+                      {org.contact_phone && <div>{org.contact_phone}</div>}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        {org.verification_status === "PENDING_VERIFICATION" && (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => handleVerify(org.id)}
+                            className="bg-success hover:bg-success/90"
+                          >
+                            <CheckCircle className="mr-1 h-4 w-4" />
+                            Verifiëren
+                          </Button>
+                        )}
+                        {org.verification_status === "ACTIVE" && (
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleDeactivate(org.id)}
+                          >
+                            <XCircle className="mr-1 h-4 w-4" />
+                            Intrekken
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Users, Search, Ban, CheckCircle } from "lucide-react";
+import { Users, Search, Ban, CheckCircle, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRoleDisplayName } from "@/hooks/useUserRole";
 import { useTranslation } from "react-i18next";
@@ -40,8 +40,8 @@ export default function AdminUsers() {
   const [filteredUsers, setFilteredUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
-  const [actionType, setActionType] = useState<"block" | "activate" | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<UserWithRole | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -104,6 +104,41 @@ export default function AdminUsers() {
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredUsers(filtered);
+  };
+
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    try {
+      // Delete user from auth (will cascade to profiles and user_roles)
+      const { error } = await supabase.auth.admin.deleteUser(userToDelete.id);
+
+      if (error) throw error;
+
+      // Log the action
+      await supabase.rpc("log_admin_action", {
+        p_action: "USER_DELETED",
+        p_target_type: "User",
+        p_target_id: userToDelete.id,
+        p_reason: "Verwijderd door platform admin",
+      });
+
+      toast({
+        title: "Gebruiker verwijderd",
+        description: `${userToDelete.email} is succesvol verwijderd`,
+      });
+
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+      fetchUsers();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast({
+        title: "Fout",
+        description: "Kon gebruiker niet verwijderen",
+        variant: "destructive",
+      });
+    }
   };
 
   const getRoleBadge = (role: string) => {
@@ -169,6 +204,7 @@ export default function AdminUsers() {
                 <TableHead className="font-medium text-sm">Email</TableHead>
                 <TableHead className="font-medium text-sm">Rol</TableHead>
                 <TableHead className="font-medium text-sm">Aangemaakt</TableHead>
+                <TableHead className="font-medium text-sm">Acties</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -179,12 +215,56 @@ export default function AdminUsers() {
                   <TableCell className="text-sm text-muted-foreground">
                     {new Date(user.created_at).toLocaleDateString("nl-NL")}
                   </TableCell>
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setUserToDelete(user);
+                        setDeleteDialogOpen(true);
+                      }}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="mr-1 h-4 w-4" />
+                      Verwijderen
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Gebruiker verwijderen</DialogTitle>
+            <DialogDescription>
+              Weet je zeker dat je <strong>{userToDelete?.email}</strong> wilt verwijderen?
+              Deze actie kan niet ongedaan worden gemaakt.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setUserToDelete(null);
+              }}
+            >
+              Annuleren
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteUser}
+            >
+              Verwijderen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

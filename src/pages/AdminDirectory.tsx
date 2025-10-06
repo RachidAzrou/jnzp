@@ -118,7 +118,7 @@ export default function AdminDirectory() {
         description: "Organisatie is geverifieerd",
       });
 
-      fetchOrganizations();
+      await fetchOrganizations();
     } catch (error) {
       console.error("Error verifying organization:", error);
       toast({
@@ -149,7 +149,7 @@ export default function AdminDirectory() {
         description: "Organisatie is gedeactiveerd",
       });
 
-      fetchOrganizations();
+      await fetchOrganizations();
     } catch (error) {
       console.error("Error deactivating organization:", error);
       toast({

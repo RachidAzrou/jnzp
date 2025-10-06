@@ -107,7 +107,17 @@ export default function AdminUsers() {
   };
 
   const getRoleBadge = (role: string) => {
-    const roleLabel = useRoleDisplayName(role as any);
+    const roleLabels: Record<string, string> = {
+      'platform_admin': 'Platform Admin',
+      'admin': 'Admin',
+      'org_admin': 'Organisatie Admin',
+      'funeral_director': 'Uitvaartondernemer',
+      'wasplaats': 'Mortuarium',
+      'mosque': 'Moskee',
+      'insurer': 'Verzekeraar',
+      'family': 'Familie'
+    };
+    const roleLabel = roleLabels[role] || role;
     return <Badge variant="outline" className="text-xs">{roleLabel}</Badge>;
   };
 

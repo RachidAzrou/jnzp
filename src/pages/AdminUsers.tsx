@@ -54,35 +54,32 @@ export default function AdminUsers() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
+      // Fetch all user_roles with profile data
       const { data: userRoles, error } = await supabase
         .from("user_roles")
         .select(`
           user_id,
           role,
           organization_id,
-          created_at
+          created_at,
+          profiles!inner(
+            email,
+            first_name,
+            last_name
+          )
         `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
 
-      const userIds = [...new Set(userRoles?.map((ur) => ur.user_id) || [])];
-      
-      const usersData: UserWithRole[] = [];
-      
-      for (const userId of userIds) {
-        const { data: { user } } = await supabase.auth.admin.getUserById(userId);
-        if (user) {
-          const userRole = userRoles?.find((ur) => ur.user_id === userId);
-          usersData.push({
-            id: user.id,
-            email: user.email || "",
-            created_at: user.created_at,
-            role: userRole?.role || "unknown",
-            organization_id: userRole?.organization_id || null,
-          });
-        }
-      }
+      // Map to UserWithRole format
+      const usersData: UserWithRole[] = (userRoles || []).map((ur: any) => ({
+        id: ur.user_id,
+        email: ur.profiles?.email || "",
+        created_at: ur.created_at,
+        role: ur.role,
+        organization_id: ur.organization_id,
+      }));
 
       setUsers(usersData);
     } catch (error) {

@@ -2040,6 +2040,8 @@ export type Database = {
       organizations: {
         Row: {
           address: string | null
+          approved_at: string | null
+          approved_by: string | null
           city: string | null
           contact_email: string | null
           contact_phone: string | null
@@ -2062,6 +2064,8 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           city?: string | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -2084,6 +2088,8 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           city?: string | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -3130,6 +3136,10 @@ export type Database = {
         Args: { p_code: string; p_user_id: string }
         Returns: Json
       }
+      admin_approve_organization: {
+        Args: { p_admin_id: string; p_approved: boolean; p_org_id: string }
+        Returns: undefined
+      }
       apply_retention_policies: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -3323,6 +3333,10 @@ export type Database = {
       user_2fa_status: {
         Args: { p_user_id: string }
         Returns: Json
+      }
+      user_org_is_approved: {
+        Args: { p_user_id: string }
+        Returns: boolean
       }
       user_requires_2fa: {
         Args: { user_id: string }

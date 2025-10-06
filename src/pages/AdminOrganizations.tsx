@@ -77,15 +77,17 @@ const AdminOrganizations = () => {
     setProcessing(true);
 
     try {
-      const { error } = await supabase
-        .from("organizations")
-        .update({
-          verification_status: "ACTIVE",
-          verified_at: new Date().toISOString(),
-        })
-        .eq("id", selectedOrg.id);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No authenticated user");
 
-      if (error) throw error;
+      // Use admin function to approve organization
+      const { error: approveError } = await supabase.rpc('admin_approve_organization', {
+        p_org_id: selectedOrg.id,
+        p_admin_id: user.id,
+        p_approved: true
+      });
+
+      if (approveError) throw approveError;
 
       await supabase.rpc("log_admin_action", {
         p_action: "ORG_APPROVED",
@@ -102,12 +104,12 @@ const AdminOrganizations = () => {
           .eq("id", selectedOrg.requested_by)
           .single();
 
-        const { data: { user } } = await supabase.auth.admin.getUserById(selectedOrg.requested_by);
+        const { data: { user: reqUser } } = await supabase.auth.admin.getUserById(selectedOrg.requested_by);
 
-        if (user?.email && profile?.first_name) {
+        if (reqUser?.email && profile?.first_name) {
           await supabase.functions.invoke('send-org-decision-email', {
             body: {
-              email: user.email,
+              email: reqUser.email,
               firstName: profile.first_name,
               organizationName: selectedOrg.name,
               decision: 'approved',
@@ -147,15 +149,25 @@ const AdminOrganizations = () => {
     setProcessing(true);
 
     try {
-      const { error } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No authenticated user");
+
+      // Use admin function to reject organization
+      const { error: rejectError } = await supabase.rpc('admin_approve_organization', {
+        p_org_id: selectedOrg.id,
+        p_admin_id: user.id,
+        p_approved: false
+      });
+
+      if (rejectError) throw rejectError;
+
+      // Update rejection reason separately
+      const { error: updateError } = await supabase
         .from("organizations")
-        .update({
-          verification_status: "REJECTED",
-          rejection_reason: rejectionReason,
-        })
+        .update({ rejection_reason: rejectionReason })
         .eq("id", selectedOrg.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       await supabase.rpc("log_admin_action", {
         p_action: "ORG_REJECTED",
@@ -173,12 +185,12 @@ const AdminOrganizations = () => {
           .eq("id", selectedOrg.requested_by)
           .single();
 
-        const { data: { user } } = await supabase.auth.admin.getUserById(selectedOrg.requested_by);
+        const { data: { user: reqUser } } = await supabase.auth.admin.getUserById(selectedOrg.requested_by);
 
-        if (user?.email && profile?.first_name) {
+        if (reqUser?.email && profile?.first_name) {
           await supabase.functions.invoke('send-org-decision-email', {
             body: {
-              email: user.email,
+              email: reqUser.email,
               firstName: profile.first_name,
               organizationName: selectedOrg.name,
               decision: 'rejected',

@@ -1,13 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useTranslation } from "react-i18next";
+import { PendingApprovalScreen } from "@/components/PendingApprovalScreen";
 
 const Index = () => {
   const navigate = useNavigate();
   const { role, loading } = useUserRole();
   const { t } = useTranslation();
+  const [orgStatus, setOrgStatus] = useState<string | null>(null);
+  const [orgName, setOrgName] = useState<string>("");
+  const [rejectionReason, setRejectionReason] = useState<string>("");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -16,6 +20,39 @@ const Index = () => {
       if (!session) {
         navigate("/auth");
         return;
+      }
+
+      // Check organization status for professional roles
+      if (session.user && !loading && role) {
+        const professionalRoles = ['funeral_director', 'org_admin', 'wasplaats', 'mosque', 'insurer'];
+        
+        if (professionalRoles.includes(role)) {
+          const { data: userRole } = await supabase
+            .from('user_roles')
+            .select('organization_id')
+            .eq('user_id', session.user.id)
+            .eq('role', role)
+            .single();
+
+          if (userRole?.organization_id) {
+            const { data: org } = await supabase
+              .from('organizations')
+              .select('verification_status, name, rejection_reason')
+              .eq('id', userRole.organization_id)
+              .single();
+
+            if (org) {
+              setOrgStatus(org.verification_status);
+              setOrgName(org.name);
+              setRejectionReason(org.rejection_reason || "");
+
+              // Block access if not approved
+              if (org.verification_status !== 'ACTIVE') {
+                return;
+              }
+            }
+          }
+        }
       }
 
       if (!loading && role) {
@@ -53,6 +90,17 @@ const Index = () => {
 
     checkAuth();
   }, [navigate, role, loading]);
+
+  // Show pending approval screen if org not approved
+  if (orgStatus && orgStatus !== 'ACTIVE') {
+    return (
+      <PendingApprovalScreen 
+        status={orgStatus as "PENDING_VERIFICATION" | "REJECTED"}
+        organizationName={orgName}
+        rejectionReason={rejectionReason}
+      />
+    );
+  }
 
   if (loading) {
     return (

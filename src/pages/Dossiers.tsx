@@ -109,7 +109,7 @@ const Dossiers = () => {
   };
 
   const getStatusColor = (status: string) => {
-    if (status === 'COMPLETED' || status === 'ARCHIVED') {
+    if (status === 'archived') {
       return 'bg-green-50 text-green-700 border-green-200';
     }
     return 'bg-yellow-50 text-yellow-700 border-yellow-200';
@@ -117,15 +117,13 @@ const Dossiers = () => {
 
   const getStatusLabel = (status: string) => {
     const statusMap: Record<string, string> = {
-      'CREATED': t('status.created'),
-      'FD_ASSIGNED': t('status.fdAssigned'),
-      'DOCS_PENDING': t('status.docsPending'),
-      'READY_FOR_TRANSPORT': t('status.readyForTransport'),
-      'IN_TRANSIT': t('status.inTransit'),
-      'PLANNING': t('status.planning'),
-      'COMPLETED': t('status.completed'),
-      'ARCHIVED': t('status.archived'),
-      'LEGAL_HOLD': t('status.legalHold'),
+      'created': 'Aangemaakt',
+      'intake_in_progress': 'Intake lopend',
+      'operational': 'Operationeel',
+      'planning_in_progress': 'Planning bezig',
+      'execution_in_progress': 'Uitvoering bezig',
+      'settlement': 'Afronding / Facturatie',
+      'archived': 'Afgerond & Gearchiveerd',
     };
     return statusMap[status] || status;
   };
@@ -198,16 +196,14 @@ const Dossiers = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">{t("dossiers.allStatuses")}</SelectItem>
-                        <SelectItem value="CREATED">{t("status.created")}</SelectItem>
-                        <SelectItem value="FD_ASSIGNED">{t("status.fdAssigned")}</SelectItem>
-                        <SelectItem value="DOCS_PENDING">{t("status.docsPending")}</SelectItem>
-                        <SelectItem value="READY_FOR_TRANSPORT">{t("status.readyForTransport")}</SelectItem>
-                        <SelectItem value="IN_TRANSIT">{t("status.inTransit")}</SelectItem>
-                        <SelectItem value="PLANNING">{t("status.planning")}</SelectItem>
-                        <SelectItem value="COMPLETED">{t("status.completed")}</SelectItem>
-                        <SelectItem value="ARCHIVED">{t("status.archived")}</SelectItem>
-                        <SelectItem value="LEGAL_HOLD">{t("status.legalHold")}</SelectItem>
+                        <SelectItem value="all">Alle statussen</SelectItem>
+                        <SelectItem value="created">Aangemaakt</SelectItem>
+                        <SelectItem value="intake_in_progress">Intake lopend</SelectItem>
+                        <SelectItem value="operational">Operationeel</SelectItem>
+                        <SelectItem value="planning_in_progress">Planning bezig</SelectItem>
+                        <SelectItem value="execution_in_progress">Uitvoering bezig</SelectItem>
+                        <SelectItem value="settlement">Afronding / Facturatie</SelectItem>
+                        <SelectItem value="archived">Afgerond & Gearchiveerd</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -268,10 +264,10 @@ const Dossiers = () => {
                         </TableCell>
                         <TableCell>
                           <Badge 
-                            variant={dossier.status === 'COMPLETED' || dossier.status === 'ARCHIVED' ? 'default' : 'secondary'}
+                            variant={dossier.status === 'archived' ? 'default' : 'secondary'}
                             className="text-xs"
                           >
-                            {dossier.status === 'COMPLETED' || dossier.status === 'ARCHIVED' ? '✓' : '○'} {getStatusLabel(dossier.status)}
+                            {dossier.status === 'archived' ? '✓' : '○'} {getStatusLabel(dossier.status)}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -308,10 +304,10 @@ const Dossiers = () => {
                         </p>
                       </div>
                       <Badge 
-                        variant={dossier.status === 'COMPLETED' || dossier.status === 'ARCHIVED' ? 'default' : 'secondary'}
+                        variant={dossier.status === 'archived' ? 'default' : 'secondary'}
                         className="text-xs flex-shrink-0"
                       >
-                        {dossier.status === 'COMPLETED' || dossier.status === 'ARCHIVED' ? '✓' : '○'} {getStatusLabel(dossier.status)}
+                        {dossier.status === 'archived' ? '✓' : '○'} {getStatusLabel(dossier.status)}
                       </Badge>
                     </div>
                     <Button 

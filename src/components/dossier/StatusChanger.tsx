@@ -26,31 +26,23 @@ interface StatusChangerProps {
 }
 
 const STATUSES = [
-  "CREATED",
-  "INTAKE_IN_PROGRESS",
-  "DOCS_PENDING",
-  "FD_ASSIGNED",
-  "DOCS_VERIFIED",
-  "APPROVED",
-  "LEGAL_HOLD",
-  "PLANNING",
-  "READY_FOR_TRANSPORT",
-  "IN_TRANSIT",
-  "ARCHIVED",
+  "created",
+  "intake_in_progress",
+  "operational",
+  "planning_in_progress",
+  "execution_in_progress",
+  "settlement",
+  "archived",
 ];
 
 const STATUS_LABELS: Record<string, string> = {
-  CREATED: "Aangemaakt",
-  INTAKE_IN_PROGRESS: "Intake lopend",
-  DOCS_PENDING: "Documenten vereist",
-  FD_ASSIGNED: "FD toegewezen",
-  DOCS_VERIFIED: "Docs geverifieerd",
-  APPROVED: "Goedgekeurd",
-  LEGAL_HOLD: "Legal Hold",
-  PLANNING: "Planning",
-  READY_FOR_TRANSPORT: "Klaar voor transport",
-  IN_TRANSIT: "In transit",
-  ARCHIVED: "Gearchiveerd",
+  created: "Aangemaakt",
+  intake_in_progress: "Intake lopend",
+  operational: "Operationeel",
+  planning_in_progress: "Planning bezig",
+  execution_in_progress: "Uitvoering bezig",
+  settlement: "Afronding / Facturatie",
+  archived: "Afgerond & Gearchiveerd",
 };
 
 export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdmin = false }: StatusChangerProps) {
@@ -68,25 +60,41 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
 
   const getAdvisoryForStatus = (status: string) => {
     const advisories: Record<string, { title: string; message: string; checklistItems: string[] }> = {
-      DOCS_VERIFIED: {
-        title: t("advisory.docsVerified.title"),
-        message: t("advisory.docsVerified.message"),
-        checklistItems: t("advisory.docsVerified.checklist", { returnObjects: true }) as string[]
+      operational: {
+        title: "Dossier Operationeel maken",
+        message: "Bij het operationeel maken van een dossier worden automatisch taken gegenereerd.",
+        checklistItems: [
+          "Intakegegevens zijn compleet",
+          "Flow type (LOC/REP) is ingesteld",
+          "Familie contact is vastgelegd"
+        ]
       },
-      PLANNING: {
-        title: t("advisory.planningReady.title"),
-        message: t("advisory.planningReady.message"),
-        checklistItems: t("advisory.planningReady.checklist", { returnObjects: true }) as string[]
+      planning_in_progress: {
+        title: "Planning starten",
+        message: "Zorg dat de benodigde partijen beschikbaar zijn voor planning.",
+        checklistItems: [
+          "Wassing (mortuarium) beschikbaarheid gecheckt",
+          "Moskee (Janāza) beschikbaarheid gecheckt",
+          "Bij REP: Vlucht/cargo beschikbaarheid gecheckt"
+        ]
       },
-      READY_FOR_TRANSPORT: {
-        title: t("advisory.readyForTransport.title"),
-        message: t("advisory.readyForTransport.message"),
-        checklistItems: t("advisory.readyForTransport.checklist", { returnObjects: true }) as string[]
+      execution_in_progress: {
+        title: "Uitvoering starten",
+        message: "De praktische uitvoering van de uitvaart begint.",
+        checklistItems: [
+          "Planning is bevestigd",
+          "Familie is geïnformeerd",
+          "Documenten zijn in orde"
+        ]
       },
-      ARCHIVED: {
-        title: t("advisory.archiveDossier.title"),
-        message: t("advisory.archiveDossier.message"),
-        checklistItems: t("advisory.archiveDossier.checklist", { returnObjects: true }) as string[]
+      archived: {
+        title: "Dossier Archiveren",
+        message: "Na archivering ontvangt de familie automatisch een WhatsApp-verzoek voor beoordeling.",
+        checklistItems: [
+          "Alle facturen zijn verzameld en ingediend",
+          "Uitvoering is afgerond",
+          "Familie is geïnformeerd over afronding"
+        ]
       }
     };
     
@@ -119,7 +127,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     const { error } = await supabase
       .from("dossiers")
       .update({ 
-        status: newStatus as "CREATED" | "INTAKE_IN_PROGRESS" | "DOCS_PENDING" | "FD_ASSIGNED" | "DOCS_VERIFIED" | "APPROVED" | "LEGAL_HOLD" | "PLANNING" | "READY_FOR_TRANSPORT" | "IN_TRANSIT" | "ARCHIVED"
+        status: newStatus as any
       })
       .eq("id", dossierId);
 
@@ -133,7 +141,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     }
 
     // Send notification to family if status changed to specific states
-    const notifiableStatuses = ["DOCS_VERIFIED", "PLANNING", "READY_FOR_TRANSPORT", "ARCHIVED"];
+    const notifiableStatuses = ["operational", "planning_in_progress", "execution_in_progress", "archived"];
     if (notifiableStatuses.includes(newStatus)) {
       try {
         const { error: notifError } = await supabase.functions.invoke("send-notification", {

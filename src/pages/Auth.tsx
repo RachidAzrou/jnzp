@@ -380,27 +380,39 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      // Validate password
-      const validation = await validatePassword(password);
-      if (!validation.valid) {
+      // Check rate limits
+      const rateLimitCheck = await checkRateLimit(email, "signup");
+      if (!rateLimitCheck.allowed) {
         toast({
-          title: t("auth.invalidPassword"),
-          description: validation.error,
           variant: "destructive",
+          title: t("auth.error.tooManyAttempts"),
+          description: formatRetryAfter(rateLimitCheck.retryAfter || 60),
         });
         setLoading(false);
         return;
       }
 
-      const { data, error } = await supabase.auth.signUp({
+      // Validate password
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.isValid) {
+        toast({
+          variant: "destructive",
+          title: t("auth.error.weakPassword"),
+          description: passwordValidation.errors.join(", "),
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Signup
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
-            first_name: firstName,
-            last_name: lastName,
-            phone: phone,
+            full_name: `${firstName} ${lastName}`,
+            phone,
             role: "family",
           },
         },
@@ -408,24 +420,21 @@ const Auth = () => {
 
       if (error) throw error;
 
-      if (data.user) {
-        await supabase.from("user_roles").insert({
-          user_id: data.user.id,
-          role: "family",
-          scope: "ORG",
-        });
-      }
-
-      // Sign out to prevent auto-login
+      // CRITICAL: Force sign out immediately after signup
       await supabase.auth.signOut();
 
-      // Navigate to check-email
-      window.location.assign("/check-email");
+      toast({
+        title: t("auth.success.signupComplete"),
+        description: t("auth.success.checkEmail"),
+      });
+
+      // Navigate to check-email page
+      navigate("/check-email");
     } catch (error: any) {
       toast({
-        title: "Registratie mislukt",
-        description: error.message,
         variant: "destructive",
+        title: t("auth.error.signupFailed"),
+        description: error.message,
       });
     } finally {
       setLoading(false);
@@ -435,6 +444,86 @@ const Auth = () => {
   const handleProfessionalSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    try {
+      // Check rate limits
+      const rateLimitCheck = await checkRateLimit(email, "signup");
+      if (!rateLimitCheck.allowed) {
+        toast({
+          variant: "destructive",
+          title: t("auth.error.tooManyAttempts"),
+          description: formatRetryAfter(rateLimitCheck.retryAfter || 60),
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Validate password
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.isValid) {
+        toast({
+          variant: "destructive",
+          title: t("auth.error.weakPassword"),
+          description: passwordValidation.errors.join(", "),
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Signup
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            full_name: `${firstName} ${lastName}`,
+            phone,
+            role: selectedRole,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      // Create organization
+      if (data.user) {
+        const { error: orgError } = await supabase
+          .from("organizations")
+          .insert({
+            name: orgName,
+            type: selectedRole === "funeral_director" ? "FD" : selectedRole?.toUpperCase(),
+            registration_number: orgRegistrationNumber,
+            address: orgAddress,
+            city: orgCity,
+            postal_code: orgPostalCode,
+            requested_by: data.user.id,
+            verification_status: "PENDING_VERIFICATION",
+          });
+
+        if (orgError) throw orgError;
+      }
+
+      // CRITICAL: Force sign out immediately after signup
+      await supabase.auth.signOut();
+
+      toast({
+        title: t("auth.success.signupComplete"),
+        description: t("auth.success.checkEmail"),
+      });
+
+      // Navigate to check-email page
+      navigate("/check-email");
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: t("auth.error.signupFailed"),
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
     try {
       // Validate password

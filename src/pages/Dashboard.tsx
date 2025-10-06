@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FDReviewsCard } from "@/components/FDReviewsCard";
+// FDReviewsCard removed - only for insurers/admins
 import OnboardingWizard from "@/components/OnboardingWizard";
 
 interface DossierData {
@@ -201,8 +201,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Reviews Card */}
-        <FDReviewsCard />
+        {/* Reviews Card removed - only for insurers/admins */}
 
         {/* Active Dossiers with Progress */}
         <div className="space-y-3 sm:space-y-4">

@@ -33,7 +33,7 @@ import WasplaatsFacturatie from "./pages/WasplaatsFacturatie";
 import MortuariumAdHoc from "./pages/MortuariumAdHoc";
 import Facturatie from "./pages/Facturatie";
 import FDFacturatie from "./pages/FDFacturatie";
-import FDBeoordelingen from "./pages/FDBeoordelingen";
+// FDBeoordelingen removed - only for insurers/admins
 import DossierDetail from "./pages/DossierDetail";
 import DossierZoeken from "./pages/DossierZoeken";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
@@ -244,11 +244,7 @@ const App = () => (
                               <FDFacturatie />
                             </RoleProtectedRoute>
                           } />
-                          <Route path="/beoordelingen" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
-                              <FDBeoordelingen />
-                            </RoleProtectedRoute>
-                          } />
+                          {/* Beoordelingen removed - only for insurers/admins */}
                           <Route path="/mijn-documenten" element={
                             <RoleProtectedRoute allowedRoles={['family']}>
                               <MijnDocumenten />

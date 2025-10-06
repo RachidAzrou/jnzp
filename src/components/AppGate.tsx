@@ -20,60 +20,65 @@ export const AppGate = ({ children }: AppGateProps) => {
     const checkOrgStatus = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       
-      console.log('[AppGate] Session check:', { hasSession: !!session, userId: session?.user?.id });
-      
       if (!session) {
         setIsCheckingOrg(false);
         return;
       }
 
-      // Check organization status for professional roles
+      // Only check org status for professional roles
       if (session.user && !loading && role) {
-        console.log('[AppGate] User role:', role);
         const professionalRoles = ['funeral_director', 'org_admin', 'wasplaats', 'mosque', 'insurer'];
         
+        // Skip org check for platform_admin
+        if (role === 'platform_admin') {
+          setIsCheckingOrg(false);
+          return;
+        }
+        
         if (professionalRoles.includes(role)) {
-          console.log('[AppGate] Professional role detected, checking org...');
-          const { data: userRoles, error } = await supabase
-            .from('user_roles')
-            .select('organization_id')
-            .eq('user_id', session.user.id)
-            .not('organization_id', 'is', null)
-            .limit(1);
+          try {
+            const { data: userRoles, error } = await supabase
+              .from('user_roles')
+              .select('organization_id')
+              .eq('user_id', session.user.id)
+              .eq('role', role)
+              .not('organization_id', 'is', null)
+              .limit(1);
 
-          console.log('[AppGate] User roles query:', { userRoles, error });
+            if (error) {
+              console.error('[AppGate] Error fetching user roles:', error);
+              setIsCheckingOrg(false);
+              return;
+            }
 
-          const userRole = userRoles?.[0];
+            const userRole = userRoles?.[0];
 
-          if (userRole?.organization_id) {
-            const { data: org, error: orgError } = await supabase
-              .from('organizations')
-              .select('verification_status, name, rejection_reason')
-              .eq('id', userRole.organization_id)
-              .single();
+            if (userRole?.organization_id) {
+              const { data: org, error: orgError } = await supabase
+                .from('organizations')
+                .select('verification_status, name, rejection_reason')
+                .eq('id', userRole.organization_id)
+                .single();
 
-            console.log('[AppGate] Org check:', { org, orgError });
+              if (orgError) {
+                console.error('[AppGate] Error fetching org:', orgError);
+                setIsCheckingOrg(false);
+                return;
+              }
 
-            if (org) {
-              setOrgStatus(org.verification_status);
-              setOrgName(org.name);
-              setRejectionReason(org.rejection_reason || "");
+              if (org) {
+                setOrgStatus(org.verification_status);
+                setOrgName(org.name);
+                setRejectionReason(org.rejection_reason || "");
 
-              console.log('[AppGate] Org status:', org.verification_status);
-
-              // If not ACTIVE, sign out as failsafe
-              if (org.verification_status !== 'ACTIVE') {
-                console.log('[AppGate] Org not active, signing out');
-                await supabase.auth.signOut();
-              } else {
-                console.log('[AppGate] Org is ACTIVE, allowing access');
+                // If not ACTIVE, sign out
+                if (org.verification_status !== 'ACTIVE') {
+                  await supabase.auth.signOut();
+                }
               }
             }
-          } else {
-            // Professional user without organization - sign them out
-            console.log('[AppGate] No organization found, signing out');
-            await supabase.auth.signOut();
-            navigate("/auth");
+          } catch (err) {
+            console.error('[AppGate] Exception:', err);
           }
         }
       }
@@ -82,6 +87,12 @@ export const AppGate = ({ children }: AppGateProps) => {
     };
 
     checkOrgStatus();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      checkOrgStatus();
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate, role, loading]);
 
   // Show loading while checking

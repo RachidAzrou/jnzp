@@ -13,7 +13,7 @@ interface AuditLogTableProps {
 
 export function AuditLogTable({ dossierId }: AuditLogTableProps) {
   const { role } = useUserRole();
-  const isPlatformAdmin = role === "platform_admin" || role === "admin";
+  const isPlatformAdmin = role === "platform_admin";
 
   const { data: auditEvents, isLoading } = useQuery({
     queryKey: ["audit-events", dossierId],

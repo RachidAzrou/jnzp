@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 
-export type UserRole = 'platform_admin' | 'admin' | 'org_admin' | 'funeral_director' | 'family' | 'insurer' | 'wasplaats' | 'mosque' | 'reviewer' | 'support' | null;
+export type UserRole = 'platform_admin' | 'org_admin' | 'funeral_director' | 'family' | 'insurer' | 'wasplaats' | 'mosque' | null;
 
 export const useUserRole = () => {
   const [role, setRole] = useState<UserRole>(null);
@@ -28,9 +28,9 @@ export const useUserRole = () => {
           console.error('Error fetching user role:', error);
           setRole(null);
         } else if (data && data.length > 0) {
-          // Prioritize roles: platform_admin > admin > org_admin > other roles
+          // Prioritize roles: platform_admin > org_admin > funeral_director > other roles
           const roles = data.map(d => d.role as UserRole);
-          const priorityOrder = ['platform_admin', 'admin', 'org_admin', 'funeral_director', 'reviewer', 'support', 'insurer', 'wasplaats', 'mosque', 'family'];
+          const priorityOrder = ['platform_admin', 'org_admin', 'funeral_director', 'insurer', 'wasplaats', 'mosque', 'family'];
           const primaryRole = priorityOrder.find(r => roles.includes(r as UserRole)) || roles[0];
           setRole(primaryRole as UserRole);
         } else {
@@ -67,8 +67,6 @@ export const useRoleDisplayName = (role: UserRole): string => {
   switch (role) {
     case 'platform_admin':
       return t('roles.platform_admin');
-    case 'admin':
-      return t('roles.admin');
     case 'org_admin':
       return t('roles.org_admin');
     case 'funeral_director':
@@ -81,10 +79,6 @@ export const useRoleDisplayName = (role: UserRole): string => {
       return t('roles.wasplaats');
     case 'mosque':
       return t('roles.mosque');
-    case 'reviewer':
-      return t('roles.reviewer');
-    case 'support':
-      return t('roles.support');
     default:
       return t('roles.user');
   }
@@ -96,8 +90,6 @@ export const useRolePortalName = (role: UserRole): string => {
   switch (role) {
     case 'platform_admin':
       return t('rolePortals.platform_admin');
-    case 'admin':
-      return t('rolePortals.admin');
     case 'org_admin':
       return t('rolePortals.org_admin');
     case 'funeral_director':
@@ -110,10 +102,6 @@ export const useRolePortalName = (role: UserRole): string => {
       return t('rolePortals.wasplaats');
     case 'mosque':
       return t('rolePortals.mosque');
-    case 'reviewer':
-      return t('rolePortals.reviewer');
-    case 'support':
-      return t('rolePortals.support');
     default:
       return t('rolePortals.user');
   }

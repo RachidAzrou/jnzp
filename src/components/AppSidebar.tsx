@@ -37,19 +37,19 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
 
   const menuItems: MenuItem[] = [
-    // Platform Admin - Deze 9 pagina's voor platform_admin EN admin
-    { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.dossiers", url: "/admin/dossiers", icon: FolderOpen, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.documentReview", url: "/admin/documents", icon: FileText, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.invoicesTitle", url: "/admin/invoices", icon: Receipt, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.notifications", url: "/admin/notifications", icon: Bell, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.webhooks", url: "/admin/webhooks", icon: Webhook, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.reports", url: "/admin/reports", icon: TrendingUp, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.config", url: "/admin/config", icon: Flag, roles: ['platform_admin', 'admin'] },
-    { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin', 'admin'] },
+    // Platform Admin
+    { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin'] },
+    { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin'] },
+    { titleKey: "navigation.dossiers", url: "/admin/dossiers", icon: FolderOpen, roles: ['platform_admin'] },
+    { titleKey: "navigation.documentReview", url: "/admin/documents", icon: FileText, roles: ['platform_admin'] },
+    { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
+    { titleKey: "navigation.invoicesTitle", url: "/admin/invoices", icon: Receipt, roles: ['platform_admin'] },
+    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin'] },
+    { titleKey: "navigation.notifications", url: "/admin/notifications", icon: Bell, roles: ['platform_admin'] },
+    { titleKey: "navigation.webhooks", url: "/admin/webhooks", icon: Webhook, roles: ['platform_admin'] },
+    { titleKey: "navigation.reports", url: "/admin/reports", icon: TrendingUp, roles: ['platform_admin'] },
+    { titleKey: "navigation.config", url: "/admin/config", icon: Flag, roles: ['platform_admin'] },
+    { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin'] },
     
     // Org Admin
     { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] },
@@ -89,8 +89,8 @@ export function AppSidebar() {
     { titleKey: "navigation.myDocuments", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
     { titleKey: "navigation.chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
     
-    // Settings for all (platform_admin en admin hebben geen settings in sidebar)
-    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'org_admin', 'reviewer', 'support'] },
+    // Settings for all (platform_admin heeft geen settings in sidebar)
+    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'org_admin'] },
   ];
 
   const filteredMenuItems = menuItems.filter(item => 

@@ -159,7 +159,7 @@ const RoleBasedHome = () => {
   if (role === 'family') {
     return <Navigate to="/familie" replace />;
   }
-  if (role === 'platform_admin' || role === 'admin') {
+  if (role === 'platform_admin') {
     return <Navigate to="/admin" replace />;
   }
   if (role === 'funeral_director' || role === 'org_admin') {
@@ -207,37 +207,37 @@ const App = () => (
                           <Routes>
                           <Route path="/" element={<RoleBasedHome />} />
                           <Route path="/dossiers" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <Dossiers />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/dossiers/:id" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <DossierDetail />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/taken" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <Taken />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/documenten" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'family']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'family']}>
                               <Documenten />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/planning" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <Planning />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/facturatie" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <FDFacturatie />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/beoordelingen" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <FDBeoordelingen />
                             </RoleProtectedRoute>
                           } />
@@ -347,7 +347,7 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           <Route path="/fd/chat" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'org_admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'org_admin']}>
                               <FDChatOverview />
                             </RoleProtectedRoute>
                           } />
@@ -362,93 +362,93 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           <Route path="/chat/:dossierId" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <FDChat />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/fd/incoming-requests" element={
-                            <RoleProtectedRoute allowedRoles={['admin', 'funeral_director', 'org_admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'org_admin']}>
                               <FDIncomingRequests />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminDashboard />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/directory" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminDirectory />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/organizations" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminOrganizations />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/gdpr" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminGDPR />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/dossiers" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <Dossiers />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/integrations" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminIntegrations />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/invoices" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminInvoices />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/users" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminUsers />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/audit" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminAudit />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/config" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminConfig />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/notifications" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminNotificationTemplates />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/webhooks" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminWebhooks />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/reports" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminReports />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/dossiers" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminDossiers />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin/documents" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin']}>
                               <AdminDocumentReview />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />
                           <Route path="/team" element={
-                            <RoleProtectedRoute allowedRoles={['org_admin', 'admin', 'platform_admin']}>
+                            <RoleProtectedRoute allowedRoles={['org_admin', 'platform_admin']}>
                               <TeamManagement />
                             </RoleProtectedRoute>
                           } />

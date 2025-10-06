@@ -25,17 +25,41 @@ export function TopBar() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
-  const [userEmail, setUserEmail] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
+  const [userType, setUserType] = useState<string>("");
   const { role } = useUserRole();
-  const roleDisplayName = useRoleDisplayName(role);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user?.email) {
-        setUserEmail(session.user.email);
+    const fetchUserData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
+      // Fetch profile data
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile) {
+        const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ');
+        setUserName(fullName || session.user.email || t("roles.user"));
+      } else {
+        setUserName(session.user.email || t("roles.user"));
       }
-    });
-  }, []);
+    };
+
+    fetchUserData();
+  }, [t]);
+
+  // Determine user type based on role
+  useEffect(() => {
+    if (role === 'platform_admin' || role === 'org_admin') {
+      setUserType('Admin');
+    } else if (role) {
+      setUserType('Medewerker');
+    }
+  }, [role]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -81,8 +105,8 @@ export function TopBar() {
             >
               <User className="h-4 w-4 flex-shrink-0" />
               <div className="hidden lg:flex flex-col items-start overflow-hidden">
-                <span className="text-sm font-medium leading-none truncate max-w-[120px]">{userEmail || t("roles.user")}</span>
-                <span className="text-xs text-muted-foreground mt-1 truncate max-w-[120px]">{roleDisplayName}</span>
+                <span className="text-sm font-medium leading-none truncate max-w-[120px]">{userName}</span>
+                <span className="text-xs text-muted-foreground mt-1 truncate max-w-[120px]">{userType}</span>
               </div>
             </Button>
           </DropdownMenuTrigger>

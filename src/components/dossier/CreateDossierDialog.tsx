@@ -118,7 +118,7 @@ export function CreateDossierDialog() {
           ref_number: refNumber,
           deceased_name: deceasedName,
           flow: validatedData.flow,
-          status: "created",
+          status: "CREATED" as any, // Use uppercase to match database enum
           assigned_fd_org_id: fdOrgId,
         })
         .select()

@@ -70,6 +70,9 @@ import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import Feedback from "./pages/Feedback";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
+import { AppGate } from "./components/AppGate";
+import CheckEmail from "./pages/CheckEmail";
+import AuthCallback from "./pages/AuthCallback";
 
 const queryClient = new QueryClient();
 
@@ -175,6 +178,8 @@ const App = () => (
           {/* Public routes without sidebar */}
           <Route path="/auth" element={<Auth />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/check-email" element={<CheckEmail />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/qr-scan/:token" element={<QRScan />} />
           <Route path="/feedback/:token" element={<Feedback />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
@@ -186,18 +191,19 @@ const App = () => (
             </ProtectedRoute>
           } />
           
-          {/* Protected routes with sidebar */}
+          {/* Protected routes with sidebar - wrapped in AppGate */}
           <Route
             path="/*"
             element={
               <ProtectedRoute>
-                <SidebarProvider>
-                  <div className="flex min-h-screen w-full">
-                    <AppSidebar />
-                    <div className="flex-1 flex flex-col min-w-0">
-                      <TopBar />
-                      <main className="flex-1 p-3 sm:p-4 overflow-x-hidden">
-                        <Routes>
+                <AppGate>
+                  <SidebarProvider>
+                    <div className="flex min-h-screen w-full">
+                      <AppSidebar />
+                      <div className="flex-1 flex flex-col min-w-0">
+                        <TopBar />
+                        <main className="flex-1 p-3 sm:p-4 overflow-x-hidden">
+                          <Routes>
                           <Route path="/" element={<RoleBasedHome />} />
                           <Route path="/dossiers" element={
                             <RoleProtectedRoute allowedRoles={['admin', 'funeral_director']}>
@@ -441,11 +447,12 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </main>
+                          </Routes>
+                        </main>
+                      </div>
                     </div>
-                  </div>
-                </SidebarProvider>
+                  </SidebarProvider>
+                </AppGate>
               </ProtectedRoute>
             }
           />

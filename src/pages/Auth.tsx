@@ -396,7 +396,7 @@ const Auth = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             first_name: firstName,
             last_name: lastName,
@@ -416,18 +416,11 @@ const Auth = () => {
         });
       }
 
-      toast({
-        title: t("auth.accountCreated"),
-        description: t("auth.checkEmail"),
-      });
+      // Sign out to prevent auto-login
+      await supabase.auth.signOut();
 
-      setEmail("");
-      setPassword("");
-      setFirstName("");
-      setLastName("");
-      setPhone("");
-      setSelectedRole(null);
-      setRegistrationStep("role");
+      // Navigate to check-email
+      window.location.assign("/check-email");
     } catch (error: any) {
       toast({
         title: "Registratie mislukt",
@@ -460,7 +453,7 @@ const Auth = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             first_name: firstName,
             last_name: lastName,
@@ -508,23 +501,8 @@ const Auth = () => {
         });
       }
 
-      toast({
-        title: "Aanvraag ingediend",
-        description: "Uw aanvraag wordt beoordeeld. U ontvangt een e-mail zodra uw account is goedgekeurd of afgewezen.",
-      });
-
-      setEmail("");
-      setPassword("");
-      setFirstName("");
-      setLastName("");
-      setPhone("");
-      setOrgName("");
-      setOrgRegistrationNumber("");
-      setOrgAddress("");
-      setOrgCity("");
-      setOrgPostalCode("");
-      setSelectedRole(null);
-      setRegistrationStep("role");
+      // Navigate to check-email page
+      window.location.assign("/check-email");
     } catch (error: any) {
       toast({
         title: "Registratie mislukt",

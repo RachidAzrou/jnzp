@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 interface PendingApprovalScreenProps {
   status: "PENDING_VERIFICATION" | "REJECTED";
@@ -18,6 +19,11 @@ export const PendingApprovalScreen = ({
 }: PendingApprovalScreenProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  // Failsafe: ensure user is logged out
+  useEffect(() => {
+    supabase.auth.signOut().catch(() => {});
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

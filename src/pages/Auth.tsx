@@ -128,8 +128,8 @@ const Auth = () => {
             const result = data as any;
             if (result.success) {
               toast({
-                title: 'Uitnodiging geaccepteerd',
-                description: 'U bent toegevoegd aan de organisatie',
+                title: t('register.invitationAccepted'),
+                description: t('register.invitationAcceptedDescription'),
               });
             }
           }
@@ -151,8 +151,8 @@ const Auth = () => {
       
       if (!rateLimitResult.allowed) {
         toast({
-          title: "Te veel pogingen",
-          description: `Probeer het opnieuw over ${formatRetryAfter(rateLimitResult.retry_after || 0)}.`,
+          title: t("auth.error.tooManyAttempts"),
+          description: `${t("auth.error.tryAgainAfter")} ${formatRetryAfter(rateLimitResult.retry_after || 0)}.`,
           variant: "destructive",
         });
         setLoading(false);
@@ -165,7 +165,7 @@ const Auth = () => {
       });
 
       if (isLocked) {
-        throw new Error("Account tijdelijk geblokkeerd na te veel mislukte inlogpogingen. Probeer het over 15 minuten opnieuw.");
+        throw new Error(t("auth.error.accountLockedDescription"));
       }
 
       // Get progressive delay based on failed attempts
@@ -173,8 +173,8 @@ const Auth = () => {
       
       if (delay > 0) {
         toast({
-          title: "Wacht alstublieft",
-          description: `Wacht ${delay} seconden voor de volgende poging.`,
+          title: t("auth.error.pleaseWait"),
+          description: `${t("auth.error.pleaseWait")} ${delay} ${t("auth.error.waitSeconds")}.`,
           variant: "destructive",
         });
         
@@ -189,8 +189,8 @@ const Auth = () => {
       // Require captcha after 3 failed attempts
       if (showCaptcha && !captchaToken) {
         toast({
-          title: "Captcha verificatie vereist",
-          description: "Los de captcha op om door te gaan.",
+          title: t("auth.error.captchaRequired"),
+          description: t("auth.error.completeCaptcha"),
           variant: "destructive",
         });
         setLoading(false);
@@ -253,8 +253,8 @@ const Auth = () => {
           if (orgData?.verification_status === "PENDING_VERIFICATION") {
             await supabase.auth.signOut();
             toast({
-              title: "Account nog niet actief",
-              description: "Uw aanvraag wordt nog beoordeeld. U ontvangt een e-mail zodra uw account is goedgekeurd.",
+              title: t("auth.error.accountNotActive"),
+              description: t("auth.error.accountPendingApproval"),
               variant: "destructive",
             });
             setLoading(false);
@@ -264,8 +264,8 @@ const Auth = () => {
           if (orgData?.verification_status === "REJECTED") {
             await supabase.auth.signOut();
             toast({
-              title: "Aanvraag afgewezen",
-              description: "Uw aanvraag is afgewezen. Neem contact op voor meer informatie.",
+              title: t("auth.error.requestRejected"),
+              description: t("auth.error.requestRejectedDescription"),
               variant: "destructive",
             });
             setLoading(false);
@@ -299,7 +299,7 @@ const Auth = () => {
               });
 
               if (nonceError || !nonceData) {
-                throw new Error("Kon geen 2FA verificatie starten");
+                throw new Error(t("auth.error.couldNotStart2FA"));
               }
 
               // Store nonce and user ID for device trust
@@ -314,8 +314,8 @@ const Auth = () => {
             } else {
               // Device is trusted, skip 2FA
               toast({
-                title: "Welkom terug!",
-                description: "Ingelogd op vertrouwd apparaat.",
+                title: t("auth.welcomeBack"),
+                description: t("auth.loggedInTrustedDevice"),
               });
             }
           }
@@ -323,8 +323,8 @@ const Auth = () => {
       }
 
       toast({
-        title: "Welkom terug!",
-        description: "U bent succesvol ingelogd.",
+        title: t("auth.welcomeBack"),
+        description: t("auth.loggedInSuccessfully"),
       });
 
       navigate("/");
@@ -364,14 +364,14 @@ const Auth = () => {
       setPendingSession(null);
       
       toast({
-        title: "Welkom terug!",
-        description: "U bent succesvol ingelogd.",
+        title: t("auth.welcomeBack"),
+        description: t("auth.loggedInSuccessfully"),
       });
 
       navigate("/");
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -409,7 +409,7 @@ const Auth = () => {
         toast({
           variant: "destructive",
           title: t("auth.error.weakPassword"),
-          description: passwordValidation.error || "Wachtwoord voldoet niet aan de eisen",
+          description: passwordValidation.error || t("auth.error.weakPassword"),
         });
         setLoading(false);
         return;
@@ -475,7 +475,7 @@ const Auth = () => {
         toast({
           variant: "destructive",
           title: t("auth.error.weakPassword"),
-          description: passwordValidation.error || "Wachtwoord voldoet niet aan de eisen",
+          description: passwordValidation.error || t("auth.error.weakPassword"),
         });
         setLoading(false);
         return;
@@ -553,8 +553,8 @@ const Auth = () => {
       
       if (!rateLimitResult.allowed) {
         toast({
-          title: "Te veel reset verzoeken",
-          description: `Probeer het opnieuw over ${formatRetryAfter(rateLimitResult.retry_after || 0)}.`,
+          title: t("auth.error.tooManyAttempts"),
+          description: `${t("auth.error.tryAgainAfter")} ${formatRetryAfter(rateLimitResult.retry_after || 0)}.`,
           variant: "destructive",
         });
         setResetLoading(false);
@@ -576,7 +576,7 @@ const Auth = () => {
       setResetEmail("");
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -593,7 +593,7 @@ const Auth = () => {
       // For MVP: Simple 6-digit code check
       // In production, this should verify against a TOTP or SMS code
       if (twoFACode.length !== 6) {
-        throw new Error("De 2FA-code moet 6 cijfers bevatten");
+        throw new Error(t("auth.error.twoFACodeSixDigits"));
       }
 
       // TODO: Implement actual 2FA verification

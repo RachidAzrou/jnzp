@@ -1,6 +1,7 @@
 {
   "auth": {
     "welcome": "Welkom bij JanazApp",
+    "platformDescription": "Centraal platform voor uitvaartzorg",
     "tagline": "Centraal platform voor uitvaartzorg",
     "login": "Inloggen",
     "register": "Registreren",
@@ -21,6 +22,7 @@
     "creatingAccount": "Account aanmaken...",
     "passwordRequirements": "Wachtwoordvereisten",
     "minLength": "Minimaal 12 tekens",
+    "minCharacters": "Minimaal 12 karakters vereist",
     "uppercase": "Minimaal 1 hoofdletter",
     "lowercase": "Minimaal 1 kleine letter",
     "number": "Minimaal 1 cijfer",
@@ -50,7 +52,36 @@
     "newPassword": "Nieuw wachtwoord",
     "changePassword": "Wachtwoord wijzigen",
     "changing": "Bezig met wijzigen...",
-    "resetPasswordDescription": "Voer uw e-mailadres in. Als dit e-mailadres bij ons bekend is, ontvangt u een herstel-link."
+    "resetPasswordDescription": "Voer uw e-mailadres in. Als dit e-mailadres bij ons bekend is, ontvangt u een herstel-link.",
+    "verificationSuccessful": "Verificatie succesvol",
+    "canLoginAgain": "U kunt nu opnieuw proberen in te loggen",
+    "success": {
+      "signupComplete": "Registratie voltooid",
+      "checkEmail": "Controleer uw e-mail om uw account te activeren."
+    },
+    "error": {
+      "tooManyAttempts": "Te veel pogingen",
+      "tryAgainAfter": "Probeer het opnieuw over",
+      "weakPassword": "Zwak wachtwoord",
+      "signupFailed": "Registratie mislukt",
+      "accountLocked": "Account tijdelijk geblokkeerd",
+      "accountLockedDescription": "Account tijdelijk geblokkeerd na te veel mislukte inlogpogingen. Probeer het over 15 minuten opnieuw.",
+      "pleaseWait": "Wacht alstublieft",
+      "waitSeconds": "seconden voor de volgende poging",
+      "captchaRequired": "Captcha verificatie vereist",
+      "completeCaptcha": "Los de captcha op om door te gaan",
+      "accountNotActive": "Account nog niet actief",
+      "accountPendingApproval": "Uw aanvraag wordt nog beoordeeld. U ontvangt een e-mail zodra uw account is goedgekeurd.",
+      "requestRejected": "Aanvraag afgewezen",
+      "requestRejectedDescription": "Uw aanvraag is afgewezen. Neem contact op voor meer informatie.",
+      "couldNotStart2FA": "Kon geen 2FA verificatie starten",
+      "twoFACodeSixDigits": "De 2FA-code moet 6 cijfers bevatten"
+    },
+    "welcomeBack": "Welkom terug!",
+    "loggedInSuccessfully": "U bent succesvol ingelogd",
+    "loggedInTrustedDevice": "Ingelogd op vertrouwd apparaat",
+    "sendResetLink": "Verstuur reset-link",
+    "sending": "Versturen..."
   },
   "register": {
     "title": "Registreren bij JanazApp",

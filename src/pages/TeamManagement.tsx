@@ -75,7 +75,9 @@ const TeamManagement = () => {
         .from("user_roles")
         .select("organization_id, role")
         .eq("user_id", user.id)
-        .single();
+        .not("organization_id", "is", null)
+        .limit(1)
+        .maybeSingle();
 
       if (!roleData?.organization_id) {
         toast({

@@ -386,19 +386,19 @@ const Auth = () => {
         toast({
           variant: "destructive",
           title: t("auth.error.tooManyAttempts"),
-          description: formatRetryAfter(rateLimitCheck.retryAfter || 60),
+          description: formatRetryAfter(rateLimitCheck.retry_after || 60),
         });
         setLoading(false);
         return;
       }
 
       // Validate password
-      const passwordValidation = validatePassword(password);
-      if (!passwordValidation.isValid) {
+      const passwordValidation = await validatePassword(password);
+      if (!passwordValidation.valid) {
         toast({
           variant: "destructive",
           title: t("auth.error.weakPassword"),
-          description: passwordValidation.errors.join(", "),
+          description: passwordValidation.error || "Wachtwoord voldoet niet aan de eisen",
         });
         setLoading(false);
         return;
@@ -452,19 +452,19 @@ const Auth = () => {
         toast({
           variant: "destructive",
           title: t("auth.error.tooManyAttempts"),
-          description: formatRetryAfter(rateLimitCheck.retryAfter || 60),
+          description: formatRetryAfter(rateLimitCheck.retry_after || 60),
         });
         setLoading(false);
         return;
       }
 
       // Validate password
-      const passwordValidation = validatePassword(password);
-      if (!passwordValidation.isValid) {
+      const passwordValidation = await validatePassword(password);
+      if (!passwordValidation.valid) {
         toast({
           variant: "destructive",
           title: t("auth.error.weakPassword"),
-          description: passwordValidation.errors.join(", "),
+          description: passwordValidation.error || "Wachtwoord voldoet niet aan de eisen",
         });
         setLoading(false);
         return;
@@ -488,15 +488,21 @@ const Auth = () => {
 
       // Create organization
       if (data.user) {
+        const orgType = selectedRole === "funeral_director" ? "FUNERAL_DIRECTOR" : 
+                       selectedRole === "mosque" ? "MOSQUE" :
+                       selectedRole === "wasplaats" ? "WASPLAATS" : "INSURER";
+        
         const { error: orgError } = await supabase
           .from("organizations")
           .insert({
             name: orgName,
-            type: selectedRole === "funeral_director" ? "FD" : selectedRole?.toUpperCase(),
+            type: orgType,
             registration_number: orgRegistrationNumber,
             address: orgAddress,
             city: orgCity,
             postal_code: orgPostalCode,
+            contact_email: email,
+            contact_phone: phone,
             requested_by: data.user.id,
             verification_status: "PENDING_VERIFICATION",
           });
@@ -525,83 +531,6 @@ const Auth = () => {
     }
   };
 
-    try {
-      // Validate password
-      const validation = await validatePassword(password);
-      if (!validation.valid) {
-        toast({
-          title: t("auth.invalidPassword"),
-          description: validation.error,
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            phone: phone,
-            role: selectedRole,
-          },
-        },
-      });
-
-      if (error) throw error;
-      if (!data.user) throw new Error("User creation failed");
-
-      // CRITICAL: Sign out immediately to prevent auto-login
-      await supabase.auth.signOut();
-
-      const orgType = selectedRole === "funeral_director" ? "FUNERAL_DIRECTOR" : 
-                      selectedRole === "mosque" ? "MOSQUE" :
-                      selectedRole === "wasplaats" ? "WASPLAATS" : "INSURER";
-
-      const { data: orgData, error: orgError } = await supabase
-        .from("organizations")
-        .insert([{
-          name: orgName,
-          type: orgType as "FUNERAL_DIRECTOR" | "MOSQUE" | "WASPLAATS" | "INSURER",
-          verification_status: "PENDING_VERIFICATION",
-          registration_number: orgRegistrationNumber,
-          address: orgAddress,
-          city: orgCity,
-          postal_code: orgPostalCode,
-          contact_email: email,
-          contact_phone: phone,
-          requested_by: data.user.id,
-        }])
-        .select()
-        .single();
-
-      if (orgError) throw orgError;
-
-      if (orgData) {
-        await supabase.rpc("log_admin_action", {
-          p_action: "ORG_REGISTRATION_REQUEST",
-          p_target_type: "Organization",
-          p_target_id: orgData.id,
-          p_metadata: { org_type: orgType, email: email },
-        });
-      }
-
-      // Navigate to check-email page
-      window.location.assign("/check-email");
-    } catch (error: any) {
-      toast({
-        title: "Registratie mislukt",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -915,8 +844,7 @@ const Auth = () => {
 
             {/* Right side - Login form */}
             <div className="p-6 sm:p-8 md:p-10 lg:p-14 bg-white flex items-center">
-              <div className="w-full">
-              <div className="space-y-8">
+              <div className="w-full space-y-8">
                 {/* Language Switcher */}
                 <div className="flex justify-end">
                   <LanguageSwitcher />
@@ -1016,7 +944,6 @@ const Auth = () => {
                     </div>
                   </div>
                 </form>
-              </div>
               </div>
             </div>
           </div>

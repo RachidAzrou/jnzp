@@ -33,6 +33,17 @@ const Auth = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
+
+  // Clear any existing sessions on mount to prevent loops
+  useEffect(() => {
+    const clearStuckSessions = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        await supabase.auth.signOut();
+      }
+    };
+    clearStuckSessions();
+  }, []);
   
   // Registration flow state
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);

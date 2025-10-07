@@ -1095,6 +1095,47 @@ export type Database = {
           },
         ]
       }
+      flight_attachments: {
+        Row: {
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          notes: string | null
+          repatriation_id: string
+          uploaded_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          notes?: string | null
+          repatriation_id: string
+          uploaded_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          notes?: string | null
+          repatriation_id?: string
+          uploaded_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flight_attachments_repatriation_id_fkey"
+            columns: ["repatriation_id"]
+            isOneToOne: false
+            referencedRelation: "repatriations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flights: {
         Row: {
           air_waybill: string | null

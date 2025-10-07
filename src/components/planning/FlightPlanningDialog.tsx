@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Upload, X } from "lucide-react";
 
 interface FlightPlanningDialogProps {
   open: boolean;
@@ -18,25 +18,37 @@ interface FlightPlanningDialogProps {
 
 interface Passenger {
   name: string;
-  departureCountry: string;
-  departureCity: string;
-  departureAirport: string;
+}
+
+interface Attachment {
+  file: File;
+  uploading: boolean;
 }
 
 export function FlightPlanningDialog({ open, onOpenChange, onSuccess }: FlightPlanningDialogProps) {
   const [dossiers, setDossiers] = useState<any[]>([]);
   const [selectedDossier, setSelectedDossier] = useState("");
+  
+  // General departure/destination (applies to all)
+  const [departureCountry, setDepartureCountry] = useState("");
+  const [departureCity, setDepartureCity] = useState("");
+  const [departureAirport, setDepartureAirport] = useState("");
   const [destinationCountry, setDestinationCountry] = useState("");
   const [destinationCity, setDestinationCity] = useState("");
   const [destinationAirport, setDestinationAirport] = useState("");
-  const [passengers, setPassengers] = useState<Passenger[]>([
-    { name: "", departureCountry: "", departureCity: "", departureAirport: "" }
-  ]);
+  
+  const [passengers, setPassengers] = useState<Passenger[]>([{ name: "" }]);
+  
   const [coffin, setCoffin] = useState({
     departureCountry: "",
     departureCity: "",
-    departureAirport: ""
+    departureAirport: "",
+    destinationCountry: "",
+    destinationCity: "",
+    destinationAirport: ""
   });
+  
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -58,10 +70,7 @@ export function FlightPlanningDialog({ open, onOpenChange, onSuccess }: FlightPl
   };
 
   const addPassenger = () => {
-    setPassengers([
-      ...passengers,
-      { name: "", departureCountry: "", departureCity: "", departureAirport: "" }
-    ]);
+    setPassengers([...passengers, { name: "" }]);
   };
 
   const removePassenger = (index: number) => {
@@ -74,11 +83,27 @@ export function FlightPlanningDialog({ open, onOpenChange, onSuccess }: FlightPl
     setPassengers(updated);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const newAttachments = Array.from(files).map(file => ({
+      file,
+      uploading: false
+    }));
+    
+    setAttachments([...attachments, ...newAttachments]);
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments(attachments.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async () => {
-    if (!selectedDossier || !destinationCountry || !destinationCity || !destinationAirport) {
+    if (!selectedDossier || !departureCountry || !departureCity || !destinationCountry || !destinationCity) {
       toast({
         title: "Vul de verplichte velden in",
-        description: "Bestemming is verplicht",
+        description: "Vertrek en bestemming zijn verplicht",
         variant: "destructive"
       });
       return;
@@ -115,20 +140,54 @@ export function FlightPlanningDialog({ open, onOpenChange, onSuccess }: FlightPl
         repatriation = newRep;
       }
 
-      // Store flight preferences as notes for now
+      // Upload attachments
+      const uploadedFiles: string[] = [];
+      for (const attachment of attachments) {
+        const fileName = `${repatriation.id}/${Date.now()}_${attachment.file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from('flight-attachments')
+          .upload(fileName, attachment.file);
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          continue;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('flight-attachments')
+          .getPublicUrl(fileName);
+
+        // Save attachment record
+        await supabase
+          .from('flight_attachments')
+          .insert({
+            repatriation_id: repatriation.id,
+            file_name: attachment.file.name,
+            file_url: publicUrl,
+            file_size: attachment.file.size,
+            uploaded_by: user.id
+          });
+
+        uploadedFiles.push(attachment.file.name);
+      }
+
+      // Store flight preferences as notes
       const preferencesNote = `Vluchtvoorkeuren:
-Bestemming: ${destinationCountry}, ${destinationCity} (${destinationAirport})
+Algemeen:
+- Vertrek: ${departureCountry}, ${departureCity} (${departureAirport || 'N/A'})
+- Bestemming: ${destinationCountry}, ${destinationCity} (${destinationAirport || 'N/A'})
 
 Medereizigers (${passengers.filter(p => p.name).length}):
-${passengers.filter(p => p.name).map((p, i) => 
-  `${i + 1}. ${p.name} - Van ${p.departureCity}, ${p.departureCountry} (${p.departureAirport})`
-).join('\n')}
+${passengers.filter(p => p.name).map((p, i) => `${i + 1}. ${p.name}`).join('\n')}
 
-Kist vervoer: Van ${coffin.departureCity}, ${coffin.departureCountry} (${coffin.departureAirport})
+Kist vervoer:
+- Van: ${coffin.departureCity || departureCity}, ${coffin.departureCountry || departureCountry} (${coffin.departureAirport || departureAirport || 'N/A'})
+- Naar: ${coffin.destinationCity || destinationCity}, ${coffin.destinationCountry || destinationCountry} (${coffin.destinationAirport || destinationAirport || 'N/A'})
 
-${notes ? `Extra notities: ${notes}` : ''}`;
+${uploadedFiles.length > 0 ? `Bijlagen (${uploadedFiles.length}): ${uploadedFiles.join(', ')}` : ''}
+${notes ? `\nExtra notities: ${notes}` : ''}`;
 
-      // Update repatriation with note
+      // Update repatriation with preferences
       const { error: updateError } = await supabase
         .from("repatriations")
         .update({
@@ -142,7 +201,7 @@ ${notes ? `Extra notities: ${notes}` : ''}`;
 
       toast({
         title: "Vluchtvoorkeuren opgeslagen",
-        description: "De voorkeuren zijn geregistreerd voor verdere planning"
+        description: `Voorkeuren geregistreerd${uploadedFiles.length > 0 ? ` met ${uploadedFiles.length} bijlage(n)` : ''}`
       });
 
       onSuccess?.();
@@ -161,11 +220,22 @@ ${notes ? `Extra notities: ${notes}` : ''}`;
 
   const resetForm = () => {
     setSelectedDossier("");
+    setDepartureCountry("");
+    setDepartureCity("");
+    setDepartureAirport("");
     setDestinationCountry("");
     setDestinationCity("");
     setDestinationAirport("");
-    setPassengers([{ name: "", departureCountry: "", departureCity: "", departureAirport: "" }]);
-    setCoffin({ departureCountry: "", departureCity: "", departureAirport: "" });
+    setPassengers([{ name: "" }]);
+    setCoffin({ 
+      departureCountry: "", 
+      departureCity: "", 
+      departureAirport: "",
+      destinationCountry: "",
+      destinationCity: "",
+      destinationAirport: ""
+    });
+    setAttachments([]);
     setNotes("");
   };
 
@@ -195,9 +265,40 @@ ${notes ? `Extra notities: ${notes}` : ''}`;
               </Select>
             </div>
 
-            {/* Bestemming */}
+            {/* Vertrek (algemeen) */}
             <div className="space-y-3">
-              <Label className="text-lg font-semibold">Bestemming</Label>
+              <Label className="text-lg font-semibold">Vertrek (algemeen voor alle reizigers)</Label>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-2">
+                  <Label>Land *</Label>
+                  <Input
+                    value={departureCountry}
+                    onChange={(e) => setDepartureCountry(e.target.value)}
+                    placeholder="Bijv. België"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Stad *</Label>
+                  <Input
+                    value={departureCity}
+                    onChange={(e) => setDepartureCity(e.target.value)}
+                    placeholder="Bijv. Brussel"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Luchthaven</Label>
+                  <Input
+                    value={departureAirport}
+                    onChange={(e) => setDepartureAirport(e.target.value)}
+                    placeholder="Bijv. BRU"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bestemming (algemeen) */}
+            <div className="space-y-3">
+              <Label className="text-lg font-semibold">Bestemming (algemeen voor alle reizigers)</Label>
               <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-2">
                   <Label>Land *</Label>
@@ -216,7 +317,7 @@ ${notes ? `Extra notities: ${notes}` : ''}`;
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Luchthaven *</Label>
+                  <Label>Luchthaven</Label>
                   <Input
                     value={destinationAirport}
                     onChange={(e) => setDestinationAirport(e.target.value)}
@@ -237,7 +338,7 @@ ${notes ? `Extra notities: ${notes}` : ''}`;
               </div>
               
               {passengers.map((passenger, index) => (
-                <div key={index} className="border rounded-lg p-4 space-y-3">
+                <div key={index} className="border rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <Label>Passagier {index + 1}</Label>
                     {passengers.length > 1 && (
@@ -252,39 +353,12 @@ ${notes ? `Extra notities: ${notes}` : ''}`;
                     )}
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="col-span-2 space-y-2">
-                      <Label>Naam</Label>
-                      <Input
-                        value={passenger.name}
-                        onChange={(e) => updatePassenger(index, "name", e.target.value)}
-                        placeholder="Naam passagier"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Vertrek land</Label>
-                      <Input
-                        value={passenger.departureCountry}
-                        onChange={(e) => updatePassenger(index, "departureCountry", e.target.value)}
-                        placeholder="Bijv. België"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Vertrek stad</Label>
-                      <Input
-                        value={passenger.departureCity}
-                        onChange={(e) => updatePassenger(index, "departureCity", e.target.value)}
-                        placeholder="Bijv. Brussel"
-                      />
-                    </div>
-                    <div className="col-span-2 space-y-2">
-                      <Label>Vertrek luchthaven</Label>
-                      <Input
-                        value={passenger.departureAirport}
-                        onChange={(e) => updatePassenger(index, "departureAirport", e.target.value)}
-                        placeholder="Bijv. BRU"
-                      />
-                    </div>
+                  <div className="mt-3">
+                    <Input
+                      value={passenger.name}
+                      onChange={(e) => updatePassenger(index, "name", e.target.value)}
+                      placeholder="Naam passagier"
+                    />
                   </div>
                 </div>
               ))}
@@ -292,34 +366,90 @@ ${notes ? `Extra notities: ${notes}` : ''}`;
 
             {/* Kist vervoer */}
             <div className="space-y-3">
-              <Label className="text-lg font-semibold">Vervoer kist</Label>
-              <div className="border rounded-lg p-4 space-y-3">
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="space-y-2">
-                    <Label>Vertrek land</Label>
+              <Label className="text-lg font-semibold">Vervoer kist (optioneel - anders algemeen)</Label>
+              <div className="border rounded-lg p-4 space-y-4">
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">Vertrek</Label>
+                  <div className="grid grid-cols-3 gap-3">
                     <Input
                       value={coffin.departureCountry}
                       onChange={(e) => setCoffin({ ...coffin, departureCountry: e.target.value })}
-                      placeholder="Bijv. België"
+                      placeholder="Land (of algemeen)"
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Vertrek stad</Label>
                     <Input
                       value={coffin.departureCity}
                       onChange={(e) => setCoffin({ ...coffin, departureCity: e.target.value })}
-                      placeholder="Bijv. Brussel"
+                      placeholder="Stad (of algemeen)"
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Vertrek luchthaven</Label>
                     <Input
                       value={coffin.departureAirport}
                       onChange={(e) => setCoffin({ ...coffin, departureAirport: e.target.value })}
-                      placeholder="Bijv. BRU"
+                      placeholder="Luchthaven"
                     />
                   </div>
                 </div>
+                
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">Bestemming</Label>
+                  <div className="grid grid-cols-3 gap-3">
+                    <Input
+                      value={coffin.destinationCountry}
+                      onChange={(e) => setCoffin({ ...coffin, destinationCountry: e.target.value })}
+                      placeholder="Land (of algemeen)"
+                    />
+                    <Input
+                      value={coffin.destinationCity}
+                      onChange={(e) => setCoffin({ ...coffin, destinationCity: e.target.value })}
+                      placeholder="Stad (of algemeen)"
+                    />
+                    <Input
+                      value={coffin.destinationAirport}
+                      onChange={(e) => setCoffin({ ...coffin, destinationAirport: e.target.value })}
+                      placeholder="Luchthaven"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bijlagen */}
+            <div className="space-y-3">
+              <Label className="text-lg font-semibold">Bijlagen</Label>
+              <div className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="file"
+                    multiple
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <Label
+                    htmlFor="file-upload"
+                    className="flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-md cursor-pointer hover:bg-secondary/80"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Bestand toevoegen
+                  </Label>
+                </div>
+                
+                {attachments.length > 0 && (
+                  <div className="space-y-2">
+                    {attachments.map((attachment, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                        <span className="text-sm truncate flex-1">{attachment.file.name}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeAttachment(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

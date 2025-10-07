@@ -8,7 +8,6 @@ const corsHeaders = {
 
 interface CreateFDRequest {
   company_name: string;
-  legal_name: string;
   business_number: string;
   email: string;
   phone: string;
@@ -19,9 +18,6 @@ interface CreateFDRequest {
   address_city: string;
   address_country: string;
   language: string;
-  website?: string;
-  billing_email?: string;
-  iban?: string;
   mortuarium_org_id: string;
   mortuarium_name: string;
   dossier_ref: string;
@@ -96,7 +92,6 @@ const handler = async (req: Request): Promise<Response> => {
         name: requestData.company_name,
         type: "FUNERAL_DIRECTOR",
         company_name: requestData.company_name,
-        legal_name: requestData.legal_name,
         business_number: requestData.business_number,
         email: requestData.email,
         phone: requestData.phone,
@@ -107,9 +102,6 @@ const handler = async (req: Request): Promise<Response> => {
         address_city: requestData.address_city,
         address_country: requestData.address_country,
         language: requestData.language,
-        website: requestData.website,
-        billing_email: requestData.billing_email,
-        iban: requestData.iban,
         created_by_role: "wasplaats",
         status: "pending",
         verification_status: "PENDING",

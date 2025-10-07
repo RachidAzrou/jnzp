@@ -10,7 +10,6 @@ import { z } from "zod";
 
 const fdSchema = z.object({
   company_name: z.string().min(2, "Minimaal 2 karakters").max(120, "Maximaal 120 karakters"),
-  legal_name: z.string().min(2, "Minimaal 2 karakters").max(160, "Maximaal 160 karakters"),
   business_number: z.string().regex(/^(BE)?0\d{9}$/, "Ongeldig ondernemingsnummer (BE0XXXXXXXXX)"),
   email: z.string().email("Ongeldig e-mailadres"),
   phone: z.string().min(10, "Ongeldig telefoonnummer"),
@@ -21,9 +20,6 @@ const fdSchema = z.object({
   address_city: z.string().min(2, "Minimaal 2 karakters").max(80, "Maximaal 80 karakters"),
   address_country: z.string().default("BE"),
   language: z.string().default("nl"),
-  website: z.string().url("Ongeldige URL").optional().or(z.literal("")),
-  billing_email: z.string().email("Ongeldig e-mailadres").optional().or(z.literal("")),
-  iban: z.string().regex(/^[A-Z]{2}\d{2}[A-Z0-9]+$/, "Ongeldig IBAN").optional().or(z.literal("")),
 });
 
 interface NewFDDialogProps {
@@ -46,7 +42,6 @@ export function NewFDDialog({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     company_name: "",
-    legal_name: "",
     business_number: "",
     email: "",
     phone: "",
@@ -57,9 +52,6 @@ export function NewFDDialog({
     address_city: "",
     address_country: "BE",
     language: "nl",
-    website: "",
-    billing_email: "",
-    iban: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,206 +100,190 @@ export function NewFDDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Nieuwe uitvaartondernemer toevoegen</DialogTitle>
-          <p className="text-sm text-muted-foreground">
-            Deze FD ontvangt een uitnodiging om zich te registreren op Janazapp en wacht op goedkeuring door de platform admin.
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="space-y-3 pb-4 border-b">
+          <DialogTitle className="text-2xl font-bold">Nieuwe uitvaartondernemer toevoegen</DialogTitle>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Deze uitvaartondernemer ontvangt een uitnodiging om zich te registreren op Janazapp en wacht op goedkeuring door de platform administrator.
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
           {/* Company Information */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm">Bedrijfsgegevens</h3>
-            <div>
-              <Label htmlFor="company_name">Bedrijfsnaam *</Label>
-              <Input
-                id="company_name"
-                value={formData.company_name}
-                onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                placeholder="Publieke naam"
-                required
-              />
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 pb-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+              <h3 className="font-semibold text-base">Bedrijfsgegevens</h3>
             </div>
-            <div>
-              <Label htmlFor="legal_name">Juridische naam *</Label>
-              <Input
-                id="legal_name"
-                value={formData.legal_name}
-                onChange={(e) => setFormData({ ...formData, legal_name: e.target.value })}
-                placeholder="Officiële naam"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="business_number">Ondernemingsnummer *</Label>
-              <Input
-                id="business_number"
-                value={formData.business_number}
-                onChange={(e) => setFormData({ ...formData, business_number: e.target.value })}
-                placeholder="BE0XXXXXXXXX"
-                required
-              />
+            <div className="space-y-3 pl-3.5">
+              <div className="space-y-2">
+                <Label htmlFor="company_name" className="text-sm font-medium">Bedrijfsnaam *</Label>
+                <Input
+                  id="company_name"
+                  value={formData.company_name}
+                  onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                  placeholder="Naam van het bedrijf"
+                  required
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="business_number" className="text-sm font-medium">Ondernemingsnummer *</Label>
+                <Input
+                  id="business_number"
+                  value={formData.business_number}
+                  onChange={(e) => setFormData({ ...formData, business_number: e.target.value })}
+                  placeholder="BE0123456789"
+                  required
+                  className="h-11"
+                />
+              </div>
             </div>
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm">Contactgegevens</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="contact_first_name">Voornaam contactpersoon *</Label>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 pb-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+              <h3 className="font-semibold text-base">Contactgegevens</h3>
+            </div>
+            <div className="space-y-3 pl-3.5">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="contact_first_name" className="text-sm font-medium">Voornaam *</Label>
+                  <Input
+                    id="contact_first_name"
+                    value={formData.contact_first_name}
+                    onChange={(e) => setFormData({ ...formData, contact_first_name: e.target.value })}
+                    placeholder="Voornaam"
+                    required
+                    className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact_last_name" className="text-sm font-medium">Achternaam *</Label>
+                  <Input
+                    id="contact_last_name"
+                    value={formData.contact_last_name}
+                    onChange={(e) => setFormData({ ...formData, contact_last_name: e.target.value })}
+                    placeholder="Achternaam"
+                    required
+                    className="h-11"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">E-mailadres *</Label>
                 <Input
-                  id="contact_first_name"
-                  value={formData.contact_first_name}
-                  onChange={(e) => setFormData({ ...formData, contact_first_name: e.target.value })}
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="email@voorbeeld.be"
                   required
+                  className="h-11"
                 />
               </div>
-              <div>
-                <Label htmlFor="contact_last_name">Achternaam contactpersoon *</Label>
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-sm font-medium">Telefoonnummer *</Label>
                 <Input
-                  id="contact_last_name"
-                  value={formData.contact_last_name}
-                  onChange={(e) => setFormData({ ...formData, contact_last_name: e.target.value })}
+                  id="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="+32470123456"
                   required
+                  className="h-11"
                 />
               </div>
-            </div>
-            <div>
-              <Label htmlFor="email">E-mailadres *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">Telefoonnummer *</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+32470123456"
-                required
-              />
             </div>
           </div>
 
           {/* Address */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm">Adresgegevens</h3>
-            <div>
-              <Label htmlFor="address_street">Straat + nr *</Label>
-              <Input
-                id="address_street"
-                value={formData.address_street}
-                onChange={(e) => setFormData({ ...formData, address_street: e.target.value })}
-                placeholder="Stationsstraat 12"
-                required
-              />
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 pb-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+              <h3 className="font-semibold text-base">Adresgegevens</h3>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="address_postcode">Postcode *</Label>
+            <div className="space-y-3 pl-3.5">
+              <div className="space-y-2">
+                <Label htmlFor="address_street" className="text-sm font-medium">Straat en nummer *</Label>
                 <Input
-                  id="address_postcode"
-                  value={formData.address_postcode}
-                  onChange={(e) => setFormData({ ...formData, address_postcode: e.target.value })}
-                  placeholder="2800"
+                  id="address_street"
+                  value={formData.address_street}
+                  onChange={(e) => setFormData({ ...formData, address_street: e.target.value })}
+                  placeholder="Stationsstraat 12"
                   required
+                  className="h-11"
                 />
               </div>
-              <div>
-                <Label htmlFor="address_city">Gemeente *</Label>
-                <Input
-                  id="address_city"
-                  value={formData.address_city}
-                  onChange={(e) => setFormData({ ...formData, address_city: e.target.value })}
-                  placeholder="Mechelen"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="address_postcode" className="text-sm font-medium">Postcode *</Label>
+                  <Input
+                    id="address_postcode"
+                    value={formData.address_postcode}
+                    onChange={(e) => setFormData({ ...formData, address_postcode: e.target.value })}
+                    placeholder="2800"
+                    required
+                    className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address_city" className="text-sm font-medium">Gemeente *</Label>
+                  <Input
+                    id="address_city"
+                    value={formData.address_city}
+                    onChange={(e) => setFormData({ ...formData, address_city: e.target.value })}
+                    placeholder="Mechelen"
+                    required
+                    className="h-11"
+                  />
+                </div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="address_country">Land *</Label>
-                <Select
-                  value={formData.address_country}
-                  onValueChange={(value) => setFormData({ ...formData, address_country: value })}
-                >
-                  <SelectTrigger id="address_country">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="BE">België</SelectItem>
-                    <SelectItem value="NL">Nederland</SelectItem>
-                    <SelectItem value="FR">Frankrijk</SelectItem>
-                    <SelectItem value="DE">Duitsland</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="language">Taal *</Label>
-                <Select
-                  value={formData.language}
-                  onValueChange={(value) => setFormData({ ...formData, language: value })}
-                >
-                  <SelectTrigger id="language">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="nl">Nederlands</SelectItem>
-                    <SelectItem value="fr">Frans</SelectItem>
-                    <SelectItem value="en">Engels</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="address_country" className="text-sm font-medium">Land *</Label>
+                  <Select
+                    value={formData.address_country}
+                    onValueChange={(value) => setFormData({ ...formData, address_country: value })}
+                  >
+                    <SelectTrigger id="address_country" className="h-11">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="BE">België</SelectItem>
+                      <SelectItem value="NL">Nederland</SelectItem>
+                      <SelectItem value="FR">Frankrijk</SelectItem>
+                      <SelectItem value="DE">Duitsland</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="language" className="text-sm font-medium">Taal *</Label>
+                  <Select
+                    value={formData.language}
+                    onValueChange={(value) => setFormData({ ...formData, language: value })}
+                  >
+                    <SelectTrigger id="language" className="h-11">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="nl">Nederlands</SelectItem>
+                      <SelectItem value="fr">Frans</SelectItem>
+                      <SelectItem value="en">Engels</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Optional Fields */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm">Optionele gegevens</h3>
-            <div>
-              <Label htmlFor="website">Website</Label>
-              <Input
-                id="website"
-                type="url"
-                value={formData.website}
-                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                placeholder="https://www.voorbeeld.be"
-              />
-            </div>
-            <div>
-              <Label htmlFor="billing_email">Facturatie e-mail</Label>
-              <Input
-                id="billing_email"
-                type="email"
-                value={formData.billing_email}
-                onChange={(e) => setFormData({ ...formData, billing_email: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="iban">IBAN</Label>
-              <Input
-                id="iban"
-                value={formData.iban}
-                onChange={(e) => setFormData({ ...formData, iban: e.target.value })}
-                placeholder="BE71096123456769"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <div className="flex justify-end gap-3 pt-6 border-t">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-11 px-6">
               Annuleren
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="h-11 px-6">
               {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Opslaan & uitnodigen
             </Button>

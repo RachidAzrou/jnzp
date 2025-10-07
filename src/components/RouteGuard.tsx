@@ -61,6 +61,11 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
 
     const [, config] = matchedRoute;
 
+    // If route requires org type, wait until it's loaded
+    if (config.requireOrgType && organizationType === null) {
+      return; // Still loading organization type
+    }
+
     // Check if user has ANY of the required roles
     const hasRequiredRole = config.roles?.some(requiredRole => roles.includes(requiredRole));
     

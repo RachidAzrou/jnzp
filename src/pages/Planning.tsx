@@ -121,7 +121,8 @@ const Planning = () => {
         dossier_ref: service.dossier?.display_id,
         deceased_name: service.dossier?.deceased_name,
         facility_name: service.facility?.name,
-        scheduled_at: service.start_at,
+        start_at: service.start_at,
+        end_at: service.end_at,
         status: service.status,
         cool_cell: service.cool_cell?.label,
         notes: service.note
@@ -269,10 +270,10 @@ const Planning = () => {
                     <TableHead>Dossier</TableHead>
                     <TableHead>Naam</TableHead>
                     <TableHead>Locatie</TableHead>
-                    <TableHead>Datum & Tijd</TableHead>
+                    <TableHead>Van</TableHead>
+                    <TableHead>Tot</TableHead>
                     <TableHead>Koelcel</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Notities</TableHead>
                     <TableHead>Acties</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -284,14 +285,16 @@ const Planning = () => {
                       </TableCell>
                       <TableCell className="text-sm">{service.deceased_name}</TableCell>
                       <TableCell className="text-sm">{service.facility_name}</TableCell>
-                      <TableCell className="text-sm">{formatDateTime(service.scheduled_at)}</TableCell>
+                      <TableCell className="text-sm">
+                        {format(new Date(service.start_at), "dd/MM HH:mm", { locale: nl })}
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {format(new Date(service.end_at), "dd/MM HH:mm", { locale: nl })}
+                      </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="text-xs">{service.cool_cell}</Badge>
                       </TableCell>
                       <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
-                        {service.notes || "-"}
-                      </TableCell>
                       <TableCell>
                         <Button 
                           variant="outline" 

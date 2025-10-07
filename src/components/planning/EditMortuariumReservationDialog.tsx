@@ -67,7 +67,6 @@ export function EditMortuariumReservationDialog({
       const { error } = await supabase
         .from("cool_cell_reservations")
         .update({
-          status: status as "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED",
           note,
           updated_at: new Date().toISOString()
         })
@@ -165,17 +164,12 @@ export function EditMortuariumReservationDialog({
 
             <div className="space-y-2">
               <Label>Status</Label>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PENDING">In afwachting</SelectItem>
-                  <SelectItem value="CONFIRMED">Bevestigd</SelectItem>
-                  <SelectItem value="COMPLETED">Voltooid</SelectItem>
-                  <SelectItem value="CANCELLED">Geannuleerd</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="text-sm bg-muted p-2 rounded">
+                {status === "PENDING" && "In afwachting"}
+                {status === "CONFIRMED" && "Bevestigd"}
+                {status === "COMPLETED" && "Voltooid"}
+                {status === "CANCELLED" && "Geannuleerd"}
+              </div>
             </div>
 
             <div className="space-y-2">

@@ -46,7 +46,6 @@ const Register = () => {
   const [addressCity, setAddressCity] = useState("");
   const [addressCountry, setAddressCountry] = useState("BE");
   const [language, setLanguage] = useState("nl");
-  const [website, setWebsite] = useState("");
   const [invitationCode, setInvitationCode] = useState<string>("");
 
   useEffect(() => {
@@ -175,7 +174,6 @@ const Register = () => {
           contact_first_name: firstName,
           contact_last_name: lastName,
           language: language,
-          website: website || null,
           requested_by: data.user.id,
         }])
         .select()
@@ -567,16 +565,6 @@ const Register = () => {
                             className="h-10"
                           />
                         </div>
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="website" className="text-sm">{t('register.website')} ({t('common.optional')})</Label>
-                        <Input
-                          id="website"
-                          type="url"
-                          value={website}
-                          onChange={(e) => setWebsite(e.target.value)}
-                          className="h-10"
-                        />
                       </div>
                     </div>
                   </div>

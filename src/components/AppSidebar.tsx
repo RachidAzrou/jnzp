@@ -29,7 +29,25 @@ type MenuItem = {
 export function AppSidebar() {
   const { role, roles, organizationType, loading, isOrgAdmin, hasRole } = useUserRole();
   const { t } = useTranslation();
-  const rolePortalName = useRolePortalName(role);
+  
+  // Determine portal name based on organization type for org_admin
+  const getPortalName = () => {
+    if (isOrgAdmin && organizationType) {
+      switch (organizationType) {
+        case 'MOSQUE':
+          return t('rolePortals.mosque');
+        case 'FUNERAL_DIRECTOR':
+          return t('rolePortals.funeral_director');
+        case 'WASPLAATS':
+          return t('rolePortals.wasplaats');
+        case 'INSURER':
+          return t('rolePortals.insurer');
+      }
+    }
+    return useRolePortalName(role);
+  };
+  
+  const rolePortalName = getPortalName();
   const { state } = useSidebar();
   const location = useLocation();
   const isCollapsed = state === "collapsed";

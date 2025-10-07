@@ -128,7 +128,7 @@ export const AppGate = ({ children }: AppGateProps) => {
     return () => {
       cancelled = true;
     };
-  }, [navigate]); // Only depend on navigate, check loading inside
+  }, [navigate, loading]); // Must include loading to re-run when it becomes false
 
   // Show loading while checking
   if (loading || isCheckingOrg) {

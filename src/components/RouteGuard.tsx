@@ -70,15 +70,19 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
     const hasRequiredRole = config.roles?.some(requiredRole => roles.includes(requiredRole));
     
     if (config.roles && !hasRequiredRole) {
-      console.warn(`[RouteGuard] Access denied: user roles ${roles.join(', ')} not in allowed roles`, config.roles);
+      console.warn(`[RouteGuard] Access denied: user roles [${roles.join(', ')}] not in allowed roles [${config.roles.join(', ')}]`);
       navigate('/');
       return;
     }
 
     // Check org type access (important for multi-role users like org_admin + mosque)
+    // org_admin gets access to their org's routes automatically
     if (config.requireOrgType && config.orgTypes) {
-      if (!organizationType || !config.orgTypes.includes(organizationType)) {
-        console.warn(`[RouteGuard] Access denied: org type ${organizationType} not in allowed types`, config.orgTypes);
+      const isOrgAdmin = roles.includes('org_admin');
+      const hasMatchingOrgType = organizationType && config.orgTypes.includes(organizationType);
+      
+      if (!hasMatchingOrgType && !isOrgAdmin) {
+        console.warn(`[RouteGuard] Access denied: org type ${organizationType}, not in allowed types [${config.orgTypes.join(', ')}], and user is not org_admin`);
         navigate('/');
         return;
       }

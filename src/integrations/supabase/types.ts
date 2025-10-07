@@ -3610,6 +3610,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: Json
       }
+      user_in_org: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
       user_org_is_approved: {
         Args: { p_user_id: string }
         Returns: boolean

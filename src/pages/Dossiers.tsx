@@ -245,6 +245,11 @@ const Dossiers = () => {
     return dossier.assigned_fd_org_id === organizationId;
   };
 
+  const shouldBlurInfo = (dossier: any) => {
+    // Blur info als het dossier NIET van jouw organisatie is
+    return !canViewDossier(dossier);
+  };
+
   const handleAcceptRequest = async (requestId: string) => {
     setProcessing(true);
     try {
@@ -504,26 +509,60 @@ const Dossiers = () => {
                             <TableCell className="font-mono text-sm text-muted-foreground">
                               {dossier.display_id || dossier.ref_number}
                             </TableCell>
-                            <TableCell className="font-medium">{dossier.deceased_name}</TableCell>
-                            <TableCell>
-                              <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+                            <TableCell className="font-medium">
+                              {shouldBlurInfo(dossier) ? (
+                                <span className="inline-block bg-muted text-transparent select-none blur-sm">
+                                  ████████████
+                                </span>
+                              ) : (
+                                dossier.deceased_name
+                              )}
                             </TableCell>
                             <TableCell>
-                              <Badge variant={dossier.status === 'archived' ? 'default' : 'secondary'}>
-                                {getStatusLabel(dossier.status)}
-                              </Badge>
+                              {shouldBlurInfo(dossier) ? (
+                                <Badge variant="outline" className="blur-sm">████</Badge>
+                              ) : (
+                                <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {shouldBlurInfo(dossier) ? (
+                                <Badge className="blur-sm">████████</Badge>
+                              ) : (
+                                <Badge variant={dossier.status === 'archived' ? 'default' : 'secondary'}>
+                                  {getStatusLabel(dossier.status)}
+                                </Badge>
+                              )}
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground">
-                              {formatDate(dossier.updated_at)}
+                              {shouldBlurInfo(dossier) ? (
+                                <span className="blur-sm">██/██/████</span>
+                              ) : (
+                                formatDate(dossier.updated_at)
+                              )}
                             </TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleViewDetails(dossier.id)}
-                              >
-                                Bekijken
-                              </Button>
+                            <TableCell className="text-right space-x-2">
+                              {isClaimable(dossier) ? (
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleClaim(dossier)}
+                                  className="bg-primary hover:bg-primary/90 shadow-sm"
+                                >
+                                  Claimen
+                                </Button>
+                              ) : canViewDossier(dossier) ? (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleViewDetails(dossier.id)}
+                                >
+                                  Bekijken
+                                </Button>
+                              ) : (
+                                <Badge variant="secondary" className="text-xs">
+                                  Geen toegang
+                                </Badge>
+                              )}
                             </TableCell>
                           </TableRow>
                         ))
@@ -661,14 +700,36 @@ const Dossiers = () => {
                             <p className="font-mono text-xs text-muted-foreground bg-muted/50 inline-block px-2 py-1 rounded">
                               {dossier.display_id || dossier.ref_number}
                             </p>
-                            <p className="text-sm font-semibold mt-2">{dossier.deceased_name}</p>
+                            <p className="text-sm font-semibold mt-2">
+                              {shouldBlurInfo(dossier) ? (
+                                <span className="inline-block bg-muted text-transparent select-none blur-sm">
+                                  ████████████
+                                </span>
+                              ) : (
+                                dossier.deceased_name
+                              )}
+                            </p>
                             <div className="flex items-center gap-2 mt-2 flex-wrap">
-                              <Badge variant="outline" className="text-xs border-primary/30 bg-primary/5">{getFlowLabel(dossier.flow)}</Badge>
-                              {dossier.assignment_status === 'UNASSIGNED' && (
-                                <Badge variant="secondary" className="text-xs gap-1">
-                                  <Clock className="h-3 w-3" />
-                                  Niet toegewezen
-                                </Badge>
+                              {shouldBlurInfo(dossier) ? (
+                                <>
+                                  <Badge variant="outline" className="text-xs blur-sm">████</Badge>
+                                  {dossier.assignment_status === 'UNASSIGNED' && (
+                                    <Badge variant="secondary" className="text-xs gap-1">
+                                      <Clock className="h-3 w-3" />
+                                      Niet toegewezen
+                                    </Badge>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <Badge variant="outline" className="text-xs border-primary/30 bg-primary/5">{getFlowLabel(dossier.flow)}</Badge>
+                                  {dossier.assignment_status === 'UNASSIGNED' && (
+                                    <Badge variant="secondary" className="text-xs gap-1">
+                                      <Clock className="h-3 w-3" />
+                                      Niet toegewezen
+                                    </Badge>
+                                  )}
+                                </>
                               )}
                             </div>
                           </div>

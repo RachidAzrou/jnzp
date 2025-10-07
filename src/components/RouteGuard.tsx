@@ -42,7 +42,7 @@ const ROUTE_ACCESS: Record<string, {
 };
 
 export const RouteGuard = ({ children }: RouteGuardProps) => {
-  const { role, organizationType, loading } = useUserRole();
+  const { roles, organizationType, loading } = useUserRole();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -61,23 +61,25 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
 
     const [, config] = matchedRoute;
 
-    // Check role access
-    if (config.roles && role && !config.roles.includes(role)) {
-      console.warn(`[RouteGuard] Access denied: role ${role} not in allowed roles`, config.roles);
+    // Check if user has ANY of the required roles
+    const hasRequiredRole = config.roles?.some(requiredRole => roles.includes(requiredRole));
+    
+    if (config.roles && !hasRequiredRole) {
+      console.warn(`[RouteGuard] Access denied: user roles ${roles.join(', ')} not in allowed roles`, config.roles);
       navigate('/');
       return;
     }
 
-    // Check org type access for org_admin
-    if (config.requireOrgType && role === 'org_admin') {
-      if (config.orgTypes && organizationType && !config.orgTypes.includes(organizationType)) {
+    // Check org type access (important for multi-role users like org_admin + mosque)
+    if (config.requireOrgType && config.orgTypes) {
+      if (!organizationType || !config.orgTypes.includes(organizationType)) {
         console.warn(`[RouteGuard] Access denied: org type ${organizationType} not in allowed types`, config.orgTypes);
         navigate('/');
         return;
       }
     }
 
-  }, [role, organizationType, loading, location.pathname, navigate]);
+  }, [roles, organizationType, loading, location.pathname, navigate]);
 
   if (loading) {
     return (

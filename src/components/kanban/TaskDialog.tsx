@@ -233,14 +233,14 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           <div className="space-y-2">
             <Label>Dossier (optioneel)</Label>
             <Select
-              value={formData.dossier_id}
-              onValueChange={(value) => setFormData({ ...formData, dossier_id: value })}
+              value={formData.dossier_id || "none"}
+              onValueChange={(value) => setFormData({ ...formData, dossier_id: value === "none" ? "" : value })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecteer een dossier (optioneel)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Geen dossier</SelectItem>
+                <SelectItem value="none">Geen dossier</SelectItem>
                 {dossiers.map((dossier) => (
                   <SelectItem key={dossier.id} value={dossier.id}>
                     {dossier.display_id || dossier.ref_number} - {dossier.deceased_name}

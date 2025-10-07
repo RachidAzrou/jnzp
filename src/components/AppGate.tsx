@@ -49,7 +49,7 @@ export const AppGate = ({ children }: AppGateProps) => {
               .from('organizations')
               .select('verification_status, name, rejection_reason')
               .eq('id', professionalRole.organization_id)
-              .single();
+              .maybeSingle();
 
             if (orgError) {
               console.error('[AppGate] Error fetching org:', orgError);

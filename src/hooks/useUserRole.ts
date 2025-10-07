@@ -21,16 +21,24 @@ export const useUserRole = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchUserRole = async () => {
       try {
+        console.log('[useUserRole] Fetching user role...');
         const { data: { session } } = await supabase.auth.getSession();
         
+        if (!isMounted) return;
+        
         if (!session?.user) {
+          console.log('[useUserRole] No session found');
           setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
           setLoading(false);
           return;
         }
 
+        console.log('[useUserRole] Session found, fetching roles for user:', session.user.id);
+        
         const { data, error } = await supabase
           .from('user_roles')
           .select(`
@@ -42,10 +50,17 @@ export const useUserRole = () => {
           `)
           .eq('user_id', session.user.id);
 
+        if (!isMounted) return;
+
         if (error) {
-          console.error('Error fetching user role:', error);
+          console.error('[useUserRole] Error fetching user role:', error);
           setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
-        } else if (data && data.length > 0) {
+          setLoading(false);
+          return;
+        }
+        
+        if (data && data.length > 0) {
+          console.log('[useUserRole] Roles found:', data.length);
           // Get all roles
           const allRoles = data.map(d => d.role as UserRole);
           
@@ -68,23 +83,35 @@ export const useUserRole = () => {
             organizationId: primaryRoleData.organization_id
           });
         } else {
+          console.log('[useUserRole] No roles found');
           setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
         }
-      } catch (error) {
-        console.error('Error in fetchUserRole:', error);
-        setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
-      } finally {
+        
         setLoading(false);
+        console.log('[useUserRole] Loading complete');
+      } catch (error) {
+        console.error('[useUserRole] Exception in fetchUserRole:', error);
+        if (isMounted) {
+          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
+          setLoading(false);
+        }
       }
     };
 
     fetchUserRole();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      fetchUserRole();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      console.log('[useUserRole] Auth state changed:', event);
+      if (isMounted) {
+        setLoading(true);
+        fetchUserRole();
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   return { 

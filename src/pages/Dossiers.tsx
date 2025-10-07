@@ -237,7 +237,7 @@ const Dossiers = () => {
   };
 
   const isClaimable = (dossier: any) => {
-    return dossier.assignment_status === "UNASSIGNED" && dossier.flow !== "UNSET";
+    return dossier.assignment_status === "UNASSIGNED";
   };
 
   const canViewDossier = (dossier: any) => {

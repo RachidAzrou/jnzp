@@ -11,6 +11,7 @@ type DossierWithMessages = {
   id: string;
   display_id: string;
   deceased_name: string;
+  family_contact_name: string | null;
   status: string;
   unread_count: number;
   last_message_at: string | null;
@@ -36,9 +37,16 @@ export default function FDChatOverview() {
 
       if (error) throw error;
 
-      // For each dossier, get the thread and unread message count
+      // For each dossier, get the thread, family contact, and unread message count
       const dossiersWithMessages = await Promise.all(
         (dossiersData || []).map(async (dossier) => {
+          // Get family contact for this dossier
+          const { data: familyContact } = await supabase
+            .from("family_contacts")
+            .select("name")
+            .eq("dossier_id", dossier.id)
+            .maybeSingle();
+
           // Get family thread for this dossier
           const { data: thread } = await supabase
             .from("threads")
@@ -60,6 +68,7 @@ export default function FDChatOverview() {
 
           return {
             ...dossier,
+            family_contact_name: familyContact?.name || null,
             unread_count,
             last_message_at: thread?.last_message_at || null,
           };
@@ -81,7 +90,8 @@ export default function FDChatOverview() {
 
   const filteredDossiers = dossiers.filter((d) =>
     d.deceased_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    d.display_id.toLowerCase().includes(searchTerm.toLowerCase())
+    d.display_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (d.family_contact_name && d.family_contact_name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   if (loading) {
@@ -130,7 +140,7 @@ export default function FDChatOverview() {
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <CardTitle className="text-lg">
-                      {dossier.deceased_name}
+                      {dossier.family_contact_name || dossier.deceased_name}
                     </CardTitle>
                     <CardDescription>
                       Dossier: {dossier.display_id}

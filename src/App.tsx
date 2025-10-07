@@ -74,6 +74,7 @@ import Feedback from "./pages/Feedback";
 import AcceptInvite from "./pages/AcceptInvite";
 import { useUserRole, UserRole } from "./hooks/useUserRole";
 import { AppGate } from "./components/AppGate";
+import { RouteGuard } from "./components/RouteGuard";
 import CheckEmail from "./pages/CheckEmail";
 import AuthCallback from "./pages/AuthCallback";
 
@@ -201,14 +202,15 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AppGate>
-                  <SidebarProvider>
-                    <div className="flex min-h-screen w-full">
-                      <AppSidebar />
-                      <div className="flex-1 flex flex-col min-w-0">
-                        <TopBar />
-                        <main className="flex-1 p-3 sm:p-4 overflow-x-hidden">
-                          <Routes>
-                          <Route path="/" element={<RoleBasedHome />} />
+                  <RouteGuard>
+                    <SidebarProvider>
+                      <div className="flex min-h-screen w-full">
+                        <AppSidebar />
+                        <div className="flex-1 flex flex-col min-w-0">
+                          <TopBar />
+                          <main className="flex-1 p-3 sm:p-4 overflow-x-hidden">
+                            <Routes>
+                            <Route path="/" element={<RoleBasedHome />} />
                           <Route path="/dossiers" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <Dossiers />
@@ -462,6 +464,7 @@ const App = () => (
                       </div>
                     </div>
                   </SidebarProvider>
+                  </RouteGuard>
                 </AppGate>
               </ProtectedRoute>
             }

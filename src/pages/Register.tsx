@@ -40,7 +40,6 @@ const Register = () => {
   const [detailsSubStep, setDetailsSubStep] = useState<DetailsSubStep>("organization");
   // Organization fields
   const [companyName, setCompanyName] = useState("");
-  const [legalName, setLegalName] = useState("");
   const [businessNumber, setBusinessNumber] = useState("");
   const [addressStreet, setAddressStreet] = useState("");
   const [addressPostcode, setAddressPostcode] = useState("");
@@ -48,8 +47,6 @@ const Register = () => {
   const [addressCountry, setAddressCountry] = useState("BE");
   const [language, setLanguage] = useState("nl");
   const [website, setWebsite] = useState("");
-  const [billingEmail, setBillingEmail] = useState("");
-  const [iban, setIban] = useState("");
   const [invitationCode, setInvitationCode] = useState<string>("");
 
   useEffect(() => {
@@ -163,7 +160,6 @@ const Register = () => {
         .insert([{
           name: companyName,
           company_name: companyName,
-          legal_name: legalName,
           type: orgType as "FUNERAL_DIRECTOR" | "MOSQUE" | "WASPLAATS" | "INSURER",
           verification_status: "PENDING_VERIFICATION",
           status: "pending",
@@ -180,8 +176,6 @@ const Register = () => {
           contact_last_name: lastName,
           language: language,
           website: website || null,
-          billing_email: billingEmail || null,
-          iban: iban || null,
           requested_by: data.user.id,
         }])
         .select()
@@ -532,16 +526,6 @@ const Register = () => {
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="legal-name" className="text-sm">{t('register.legalName')}</Label>
-                        <Input
-                          id="legal-name"
-                          value={legalName}
-                          onChange={(e) => setLegalName(e.target.value)}
-                          required
-                          className="h-10"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
                         <Label htmlFor="business-number" className="text-sm">{t('register.businessNumber')}</Label>
                         <Input
                           id="business-number"
@@ -594,31 +578,12 @@ const Register = () => {
                           className="h-10"
                         />
                       </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="billing-email" className="text-sm">{t('register.billingEmail')} ({t('common.optional')})</Label>
-                        <Input
-                          id="billing-email"
-                          type="email"
-                          value={billingEmail}
-                          onChange={(e) => setBillingEmail(e.target.value)}
-                          className="h-10"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="iban" className="text-sm">{t('register.iban')} ({t('common.optional')})</Label>
-                        <Input
-                          id="iban"
-                          value={iban}
-                          onChange={(e) => setIban(e.target.value)}
-                          className="h-10"
-                        />
-                      </div>
                     </div>
                   </div>
 
                   <Button
                     onClick={() => setDetailsSubStep("contact")}
-                    disabled={!companyName || !legalName || !businessNumber || !addressStreet || !addressCity || !addressPostcode}
+                    disabled={!companyName || !businessNumber || !addressStreet || !addressCity || !addressPostcode}
                     className="w-full h-10 mt-4"
                   >
                     {t('register.nextStep')}

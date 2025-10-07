@@ -42,7 +42,14 @@ export default function AdminUsers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<UserWithRole | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
+  useEffect(() => {
+    // Get current user ID
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setCurrentUserId(user?.id || null);
+    });
+  }, []);
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -110,18 +117,13 @@ export default function AdminUsers() {
     if (!userToDelete) return;
 
     try {
-      // Delete user from auth (will cascade to profiles and user_roles)
-      const { error } = await supabase.auth.admin.deleteUser(userToDelete.id);
+      // Call edge function to delete user
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { user_id: userToDelete.id }
+      });
 
       if (error) throw error;
-
-      // Log the action
-      await supabase.rpc("log_admin_action", {
-        p_action: "USER_DELETED",
-        p_target_type: "User",
-        p_target_id: userToDelete.id,
-        p_reason: "Verwijderd door platform admin",
-      });
+      if (data?.error) throw new Error(data.error);
 
       toast({
         title: "Gebruiker verwijderd",
@@ -131,11 +133,11 @@ export default function AdminUsers() {
       setDeleteDialogOpen(false);
       setUserToDelete(null);
       fetchUsers();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting user:", error);
       toast({
         title: "Fout",
-        description: "Kon gebruiker niet verwijderen",
+        description: error.message || "Kon gebruiker niet verwijderen",
         variant: "destructive",
       });
     }
@@ -223,7 +225,9 @@ export default function AdminUsers() {
                         setUserToDelete(user);
                         setDeleteDialogOpen(true);
                       }}
-                      className="text-destructive hover:text-destructive"
+                      disabled={user.id === currentUserId}
+                      className="text-destructive hover:text-destructive disabled:opacity-50"
+                      title={user.id === currentUserId ? "Je kunt je eigen account niet verwijderen" : ""}
                     >
                       <Trash2 className="mr-1 h-4 w-4" />
                       Verwijderen

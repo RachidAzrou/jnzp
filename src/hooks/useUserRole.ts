@@ -23,8 +23,18 @@ export const useUserRole = () => {
   useEffect(() => {
     let isMounted = true;
     let loadingTimeout: NodeJS.Timeout;
+    let lastFetchTime = 0;
+    const DEBOUNCE_MS = 1000; // Prevent multiple fetches within 1 second
     
     const fetchUserRole = async () => {
+      // Debounce: skip if we just fetched
+      const now = Date.now();
+      if (now - lastFetchTime < DEBOUNCE_MS) {
+        console.log('[useUserRole] Skipping fetch - too soon after last fetch');
+        return;
+      }
+      lastFetchTime = now;
+
       try {
         console.log('[useUserRole] Fetching user role...');
         
@@ -57,17 +67,18 @@ export const useUserRole = () => {
         }
 
         console.log('[useUserRole] Session found, fetching roles for user:', session.user.id);
-        
+
         const { data, error } = await supabase
           .from('user_roles')
           .select(`
-            role, 
+            role,
             organization_id,
             organizations (
               type
             )
           `)
-          .eq('user_id', session.user.id);
+          .eq('user_id', session.user.id)
+          .eq('is_active', true);
 
         if (!isMounted) return;
 
@@ -86,16 +97,19 @@ export const useUserRole = () => {
           const priorityOrder = ['platform_admin', 'org_admin', 'funeral_director', 'insurer', 'wasplaats', 'mosque', 'family'];
           
           const sortedData = data.sort((a, b) => {
-            const indexA = priorityOrder.indexOf(a.role);
-            const indexB = priorityOrder.indexOf(b.role);
-            return indexA - indexB;
+            return priorityOrder.indexOf(a.role) - priorityOrder.indexOf(b.role);
           });
           
           const primaryRoleData = sortedData[0];
-          const orgType = primaryRoleData.organizations?.[0]?.type || null;
+          const primaryRole = primaryRoleData.role as UserRole;
+          
+          let orgType: string | null = null;
+          if (primaryRoleData.organizations && typeof primaryRoleData.organizations === 'object' && 'type' in primaryRoleData.organizations) {
+            orgType = (primaryRoleData.organizations as { type: string }).type;
+          }
           
           setRoleContext({
-            role: primaryRoleData.role as UserRole,
+            role: primaryRole,
             roles: allRoles,
             organizationType: orgType as 'FUNERAL_DIRECTOR' | 'MOSQUE' | 'WASPLAATS' | 'INSURER' | null,
             organizationId: primaryRoleData.organization_id
@@ -122,9 +136,8 @@ export const useUserRole = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       console.log('[useUserRole] Auth state changed:', event);
-      if (isMounted) {
-        // Don't set loading to true on every auth change - can cause infinite loading
-        // Only refetch roles
+      if (isMounted && event !== 'INITIAL_SESSION') {
+        // Skip INITIAL_SESSION since we already fetched on mount
         fetchUserRole();
       }
     });

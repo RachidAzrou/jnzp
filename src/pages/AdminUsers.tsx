@@ -132,8 +132,26 @@ export default function AdminUsers() {
       });
 
       if (error) throw error;
-      if (data?.error) throw new Error(data.error);
 
+      // Handle structured error responses from edge function
+      if (data?.error) {
+        // Special case: user already deleted (404)
+        if (data.code === 'user_not_found') {
+          toast({
+            title: "Gebruiker al verwijderd",
+            description: `${userToDelete.email} bestaat niet meer in het systeem`,
+          });
+          setDeleteDialogOpen(false);
+          setUserToDelete(null);
+          // Refresh list to remove stale entries
+          fetchUsers();
+          return;
+        }
+        // Other errors
+        throw new Error(data.detail || data.error);
+      }
+
+      // Success
       toast({
         title: "Gebruiker verwijderd",
         description: `${userToDelete.email} is succesvol verwijderd`,
@@ -149,6 +167,10 @@ export default function AdminUsers() {
         description: error.message || "Kon gebruiker niet verwijderen",
         variant: "destructive",
       });
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+      // Refresh anyway in case of stale data
+      fetchUsers();
     }
   };
 

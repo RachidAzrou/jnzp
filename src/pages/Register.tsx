@@ -155,14 +155,27 @@ const Register = () => {
         .from("organizations")
         .insert([{
           name: orgName,
+          company_name: orgName,
+          legal_name: orgName,
           type: orgType as "FUNERAL_DIRECTOR" | "MOSQUE" | "WASPLAATS" | "INSURER",
           verification_status: "PENDING_VERIFICATION",
+          status: "pending",
           registration_number: orgRegistrationNumber,
+          business_number: orgRegistrationNumber,
           address: orgAddress,
+          address_street: orgAddress,
           city: orgCity,
+          address_city: orgCity,
           postal_code: orgPostalCode,
+          address_postcode: orgPostalCode,
+          address_country: "BE",
           contact_email: email,
+          email: email,
           contact_phone: phone,
+          phone: phone,
+          contact_first_name: firstName,
+          contact_last_name: lastName,
+          language: "nl",
           requested_by: data.user.id,
         }])
         .select()

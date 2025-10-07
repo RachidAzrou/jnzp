@@ -88,11 +88,13 @@ export function AppSidebar() {
     { titleKey: "navigation.invoicesTitle", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
     { titleKey: "navigation.reporting", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
     
-    // Mortuarium
+    // Mortuarium/Wasplaats
     { titleKey: "navigation.dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
     { titleKey: "navigation.coolCells", url: "/wasplaats/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['wasplaats'] },
     { titleKey: "navigation.adhocDossier", url: "/wasplaats/adhoc", icon: FolderOpen, roles: ['wasplaats'] },
+    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['wasplaats'] },
     { titleKey: "navigation.facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
+    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['wasplaats'] },
     
     // Mosque
     { titleKey: "navigation.dashboard", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
@@ -105,8 +107,8 @@ export function AppSidebar() {
     { titleKey: "navigation.myDocuments", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
     { titleKey: "navigation.chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
     
-    // Settings for all roles (org_admin ziet dit altijd via aparte check)
-    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'wasplaats', 'mosque'] },
+    // Settings voor andere roles (wasplaats heeft het al in eigen sectie)
+    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'mosque'] },
   ];
 
   // RBAC: Filter menu items based on ALL user roles and organization type

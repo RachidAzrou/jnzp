@@ -117,7 +117,7 @@ const Dossiers = () => {
       const pendingDossiers = pendingClaims?.map((claim: any) => claim.dossier).filter(Boolean) || [];
       setMyDossiers([...(myData || []), ...pendingDossiers]);
 
-      // Fetch "Alle dossiers" - all org dossiers + unassigned claimable
+      // Fetch "Alle dossiers" - alleen UNASSIGNED (niet-toegewezen) dossiers
       const { data: allData, error: allError } = await supabase
         .from("dossiers")
         .select(`
@@ -125,7 +125,7 @@ const Dossiers = () => {
           assigned_fd_org:organizations!assigned_fd_org_id(name),
           insurer_org:organizations!insurer_org_id(name)
         `)
-        .or(`assigned_fd_org_id.eq.${organizationId},assignment_status.eq.UNASSIGNED`)
+        .eq("assignment_status", "UNASSIGNED")
         .order("created_at", { ascending: false });
 
       if (allError) throw allError;

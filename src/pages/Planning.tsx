@@ -31,7 +31,7 @@ const Planning = () => {
   const { t } = useTranslation();
   const [mosqueServices, setMosqueServices] = useState<any[]>([]);
   const [wasplaatsServices, setWasplaatsServices] = useState<any[]>([]);
-  const [flights, setFlights] = useState<any[]>([]);
+  const [repatriations, setRepatriations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchDossier, setSearchDossier] = useState("");
   const [searchName, setSearchName] = useState("");
@@ -89,21 +89,19 @@ const Planning = () => {
 
       if (wasplaatsError) throw wasplaatsError;
 
-      // Fetch flights with repatriation and dossier info
-      const { data: flightsData, error: flightsError } = await supabase
-        .from("flights")
+      // Fetch repatriations (flight planning preferences)
+      const { data: repatriationsData, error: repatriationsError } = await supabase
+        .from("repatriations")
         .select(`
           *,
-          repatriation:repatriations!inner(
-            dossier:dossiers!inner(
-              display_id,
-              deceased_name
-            )
+          dossier:dossiers!inner(
+            display_id,
+            deceased_name
           )
         `)
-        .order("depart_at", { ascending: true });
+        .order("created_at", { ascending: false });
 
-      if (flightsError) throw flightsError;
+      if (repatriationsError) throw repatriationsError;
 
       // Transform data to match component expectations
       const transformedMosque = (mosqueData || []).map(service => ({
@@ -128,21 +126,19 @@ const Planning = () => {
         notes: service.note
       }));
 
-      const transformedFlights = (flightsData || []).map(flight => ({
-        id: flight.id,
-        dossier_ref: flight.repatriation?.dossier?.display_id,
-        deceased_name: flight.repatriation?.dossier?.deceased_name,
-        carrier: flight.carrier,
-        flight_number: flight.carrier, // You may need to add flight_number to the flights table
-        depart_at: flight.depart_at,
-        arrive_at: flight.arrive_at,
-        reservation_ref: flight.reservation_ref,
-        air_waybill: flight.air_waybill
+      const transformedRepatriations = (repatriationsData || []).map(rep => ({
+        id: rep.id,
+        dossier_ref: rep.dossier?.display_id,
+        deceased_name: rep.dossier?.deceased_name,
+        dest_country: rep.dest_country,
+        dest_city: rep.dest_city,
+        dest_address: rep.dest_address,
+        created_at: rep.created_at
       }));
 
       setMosqueServices(transformedMosque);
       setWasplaatsServices(transformedWasplaats);
-      setFlights(transformedFlights);
+      setRepatriations(transformedRepatriations);
     } catch (error: any) {
       console.error("Error fetching planning data:", error);
       toast({
@@ -192,7 +188,7 @@ const Planning = () => {
 
   const filteredMosqueServices = filterBySearch(mosqueServices);
   const filteredWasplaatsServices = filterBySearch(wasplaatsServices);
-  const filteredFlights = filterBySearch(flights);
+  const filteredRepatriations = filterBySearch(repatriations);
 
   if (loading) {
     return (
@@ -402,7 +398,7 @@ const Planning = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {filteredFlights.length === 0 ? (
+            {filteredRepatriations.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-sm text-muted-foreground">{t("planning.noFlights")}</p>
               </div>
@@ -413,44 +409,24 @@ const Planning = () => {
                   <TableRow>
                     <TableHead>Dossier</TableHead>
                     <TableHead>Naam</TableHead>
-                    <TableHead>Maatschappij</TableHead>
-                    <TableHead>Vertrek</TableHead>
-                    <TableHead>Aankomst</TableHead>
-                    <TableHead>Reservering</TableHead>
-                    <TableHead>AWB</TableHead>
+                    <TableHead>Bestemming</TableHead>
+                    <TableHead>Aangemaakt</TableHead>
                     <TableHead>Acties</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredFlights.map((flight) => (
-                    <TableRow key={flight.id} className="hover:bg-muted/30">
+                  {filteredRepatriations.map((rep) => (
+                    <TableRow key={rep.id} className="hover:bg-muted/30">
                       <TableCell className="font-medium font-mono text-sm">
-                        {flight.dossier_ref}
+                        {rep.dossier_ref}
                       </TableCell>
-                      <TableCell className="text-sm">{flight.deceased_name}</TableCell>
+                      <TableCell className="text-sm">{rep.deceased_name}</TableCell>
+                      <TableCell className="text-sm">
+                        {rep.dest_city}, {rep.dest_country}
+                      </TableCell>
+                      <TableCell className="text-sm">{format(new Date(rep.created_at), "dd/MM/yyyy", { locale: nl })}</TableCell>
                       <TableCell>
-                        <div className="text-sm">{flight.carrier}</div>
-                        <div className="text-xs text-muted-foreground">{flight.flight_number}</div>
-                      </TableCell>
-                      <TableCell className="text-sm">{formatDateTime(flight.depart_at)}</TableCell>
-                      <TableCell className="text-sm">{formatDateTime(flight.arrive_at)}</TableCell>
-                      <TableCell className="font-mono text-xs">
-                        {flight.reservation_ref}
-                      </TableCell>
-                      <TableCell className="font-mono text-xs">
-                        {flight.air_waybill || "-"}
-                      </TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => {
-                            setSelectedFlightId(flight.id);
-                            setEditFlightDialogOpen(true);
-                          }}
-                        >
-                          {t("common.view")}
-                        </Button>
+                        <Button variant="outline" size="sm">{t("common.view")}</Button>
                       </TableCell>
                     </TableRow>
                   ))}

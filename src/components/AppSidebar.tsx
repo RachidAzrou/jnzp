@@ -55,16 +55,16 @@ export function AppSidebar() {
     // Platform Admin
     { titleKey: "navigation.adminDashboard", url: "/admin", icon: LayoutDashboard, roles: ['platform_admin'] },
     { titleKey: "navigation.directory", url: "/admin/directory", icon: Building2, roles: ['platform_admin'] },
+    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin'] },
     { titleKey: "navigation.dossiers", url: "/admin/dossiers", icon: FolderOpen, roles: ['platform_admin'] },
     { titleKey: "navigation.documentReview", url: "/admin/documents", icon: FileText, roles: ['platform_admin'] },
-    { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
     { titleKey: "navigation.invoicesTitle", url: "/admin/invoices", icon: Receipt, roles: ['platform_admin'] },
-    { titleKey: "navigation.users", url: "/admin/users", icon: Users, roles: ['platform_admin'] },
+    { titleKey: "navigation.integrations", url: "/admin/integrations", icon: Activity, roles: ['platform_admin'] },
     { titleKey: "navigation.notifications", url: "/admin/notifications", icon: Bell, roles: ['platform_admin'] },
     { titleKey: "navigation.webhooks", url: "/admin/webhooks", icon: Webhook, roles: ['platform_admin'] },
-    { titleKey: "navigation.reports", url: "/admin/reports", icon: TrendingUp, roles: ['platform_admin'] },
     { titleKey: "navigation.config", url: "/admin/config", icon: Flag, roles: ['platform_admin'] },
     { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin'] },
+    { titleKey: "navigation.reports", url: "/admin/reports", icon: TrendingUp, roles: ['platform_admin'] },
     
     // FD items
     { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director'] },

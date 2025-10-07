@@ -106,12 +106,46 @@ const DossierDetail = () => {
   const fetchDossierData = async () => {
     setLoading(true);
     
+    // Fetch current user's organization
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+    
+    const { data: userRoleData } = await supabase
+      .from("user_roles")
+      .select("organization_id, role")
+      .eq("user_id", userId)
+      .maybeSingle();
+    
     // Fetch dossier
-    const { data: dossierData } = await supabase
+    const { data: dossierData, error: dossierError } = await supabase
       .from("dossiers")
       .select("*")
       .eq("id", id)
       .single();
+
+    if (dossierError || !dossierData) {
+      toast({
+        title: "Fout",
+        description: "Dossier niet gevonden",
+        variant: "destructive",
+      });
+      navigate("/dossiers");
+      return;
+    }
+
+    // SECURITY CHECK: Verify access rights
+    const isAdminRole = userRoleData?.role === "admin" || userRoleData?.role === "platform_admin";
+    const isOwnOrganization = dossierData.assigned_fd_org_id === userRoleData?.organization_id;
+    
+    if (!isAdminRole && !isOwnOrganization) {
+      toast({
+        title: "Geen toegang",
+        description: "Je hebt geen toegang tot dit dossier. Het is niet toegewezen aan jouw organisatie.",
+        variant: "destructive",
+      });
+      navigate("/dossiers");
+      return;
+    }
 
     // Fetch documents
     const { data: docsData } = await supabase
@@ -170,6 +204,7 @@ const DossierDetail = () => {
 
     // Set all fetched data
     setDossier(dossierData);
+    setDocuments(docsData || []);
     setEvents(eventsData || []);
     setMosqueService(mosqueData);
     setWashService(washData);

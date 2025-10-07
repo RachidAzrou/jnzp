@@ -240,6 +240,11 @@ const Dossiers = () => {
     return dossier.assignment_status === "UNASSIGNED" && dossier.flow !== "UNSET";
   };
 
+  const canViewDossier = (dossier: any) => {
+    // Alleen toegang tot dossiers van eigen organisatie
+    return dossier.assigned_fd_org_id === organizationId;
+  };
+
   const handleAcceptRequest = async (requestId: string) => {
     setProcessing(true);
     try {
@@ -619,7 +624,7 @@ const Dossiers = () => {
                                 >
                                   Claimen
                                 </Button>
-                              ) : (
+                              ) : canViewDossier(dossier) ? (
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -627,6 +632,10 @@ const Dossiers = () => {
                                 >
                                   Bekijken
                                 </Button>
+                              ) : (
+                                <Badge variant="secondary" className="text-xs">
+                                  Geen toegang
+                                </Badge>
                               )}
                             </TableCell>
                           </TableRow>
@@ -670,7 +679,7 @@ const Dossiers = () => {
                             >
                               Claimen
                             </Button>
-                          ) : (
+                          ) : canViewDossier(dossier) ? (
                             <Button
                               variant="outline"
                               size="sm"
@@ -679,6 +688,10 @@ const Dossiers = () => {
                             >
                               Bekijken
                             </Button>
+                          ) : (
+                            <Badge variant="secondary" className="w-full justify-center py-2">
+                              Geen toegang
+                            </Badge>
                           )}
                         </div>
                       </div>

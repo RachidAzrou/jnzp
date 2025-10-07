@@ -122,7 +122,7 @@ const RoleProtectedRoute = ({
   children: React.ReactNode;
   allowedRoles: UserRole[];
 }) => {
-  const { role, loading } = useUserRole();
+  const { roles, loading } = useUserRole();
 
   if (loading) {
     return (
@@ -132,15 +132,14 @@ const RoleProtectedRoute = ({
     );
   }
 
-  if (!role || !allowedRoles.includes(role)) {
-    return <Navigate to="/" replace />;
-  }
-
-  return <>{children}</>;
+  // Check if user has ANY of the allowed roles
+  const hasAllowedRole = roles.some(userRole => allowedRoles.includes(userRole));
+  
+  return hasAllowedRole ? <>{children}</> : <Navigate to="/" replace />;
 };
 
 const RoleBasedHome = () => {
-  const { role, loading } = useUserRole();
+  const { roles, organizationType, loading } = useUserRole();
 
   if (loading) {
     return (
@@ -150,23 +149,28 @@ const RoleBasedHome = () => {
     );
   }
 
-  if (role === 'wasplaats') {
-    return <Navigate to="/wasplaats" replace />;
-  }
-  if (role === 'mosque') {
-    return <Navigate to="/moskee" replace />;
-  }
-  if (role === 'insurer') {
-    return <Navigate to="/insurer" replace />;
-  }
-  if (role === 'family') {
-    return <Navigate to="/familie" replace />;
-  }
-  if (role === 'platform_admin') {
+  // Platform admin -> admin dashboard
+  if (roles.includes('platform_admin')) {
     return <Navigate to="/admin" replace />;
   }
-  if (role === 'funeral_director' || role === 'org_admin') {
+  
+  // Redirect based on organization type (for multi-role users like org_admin + mosque)
+  if (organizationType === 'WASPLAATS') {
+    return <Navigate to="/wasplaats" replace />;
+  }
+  if (organizationType === 'MOSQUE') {
+    return <Navigate to="/moskee" replace />;
+  }
+  if (organizationType === 'INSURER') {
+    return <Navigate to="/insurer" replace />;
+  }
+  if (organizationType === 'FUNERAL_DIRECTOR') {
     return <Dashboard />;
+  }
+  
+  // Family role (no organization)
+  if (roles.includes('family')) {
+    return <Navigate to="/familie" replace />;
   }
 
   return <Navigate to="/auth" replace />;

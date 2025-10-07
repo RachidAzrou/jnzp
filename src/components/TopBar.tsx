@@ -27,7 +27,7 @@ export function TopBar() {
   const { t } = useTranslation();
   const [userName, setUserName] = useState<string>("");
   const [userType, setUserType] = useState<string>("");
-  const { role } = useUserRole();
+  const { role, roles } = useUserRole();
 
   useEffect(() => {
     const fetchUserData = async () => {

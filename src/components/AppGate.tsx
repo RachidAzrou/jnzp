@@ -10,7 +10,7 @@ interface AppGateProps {
 
 export const AppGate = ({ children }: AppGateProps) => {
   const navigate = useNavigate();
-  const { role, loading } = useUserRole();
+  const { roles, loading } = useUserRole();
   const [orgStatus, setOrgStatus] = useState<string | null>(null);
   const [orgName, setOrgName] = useState<string>("");
   const [rejectionReason, setRejectionReason] = useState<string>("");

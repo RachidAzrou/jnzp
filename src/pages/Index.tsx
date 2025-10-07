@@ -7,7 +7,7 @@ import { PendingApprovalScreen } from "@/components/PendingApprovalScreen";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { role, loading } = useUserRole();
+  const { roles, organizationType, loading } = useUserRole();
   const { t } = useTranslation();
   const [orgStatus, setOrgStatus] = useState<string | null>(null);
   const [orgName, setOrgName] = useState<string>("");
@@ -17,8 +17,8 @@ const Index = () => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       
-      // Force logout if user has no role (e.g. after cleanup)
-      if (session && !loading && !role) {
+      // Force logout if user has no roles (e.g. after cleanup)
+      if (session && !loading && roles.length === 0) {
         await supabase.auth.signOut();
         navigate("/auth");
         return;
@@ -30,10 +30,11 @@ const Index = () => {
       }
 
       // Check organization status for professional roles
-      if (session.user && !loading && role) {
+      if (session.user && !loading && roles.length > 0) {
         const professionalRoles = ['funeral_director', 'org_admin', 'wasplaats', 'mosque', 'insurer'];
+        const hasProfessionalRole = roles.some(r => professionalRoles.includes(r));
         
-        if (professionalRoles.includes(role)) {
+        if (hasProfessionalRole) {
           const { data: userRole } = await supabase
             .from('user_roles')
             .select('organization_id')
@@ -60,7 +61,6 @@ const Index = () => {
             }
           } else {
             // Professional user without organization - should not happen normally
-            // But if it does, sign them out
             await supabase.auth.signOut();
             navigate("/auth");
             return;
@@ -68,36 +68,28 @@ const Index = () => {
         }
       }
 
-      if (!loading && role) {
-        // Redirect based on role
-        switch (role) {
-          case "platform_admin":
-            navigate("/admin");
-            break;
-          case "org_admin":
-          case "funeral_director":
-            navigate("/dashboard");
-            break;
-          case "family":
-            navigate("/familie");
-            break;
-          case "insurer":
-            navigate("/insurer");
-            break;
-          case "wasplaats":
-            navigate("/wasplaats");
-            break;
-          case "mosque":
-            navigate("/moskee");
-            break;
-          default:
-            navigate("/auth");
+      if (!loading && organizationType) {
+        // Redirect based on organization type
+        if (organizationType === 'WASPLAATS') {
+          navigate("/wasplaats");
+        } else if (organizationType === 'MOSQUE') {
+          navigate("/moskee");
+        } else if (organizationType === 'INSURER') {
+          navigate("/insurer");
+        } else if (organizationType === 'FUNERAL_DIRECTOR') {
+          navigate("/dashboard");
         }
+      } else if (!loading && roles.includes('platform_admin')) {
+        navigate("/admin");
+      } else if (!loading && roles.includes('family')) {
+        navigate("/familie");
+      } else if (!loading && roles.length > 0) {
+        navigate("/auth");
       }
     };
 
     checkAuth();
-  }, [navigate, role, loading]);
+  }, [navigate, roles, organizationType, loading]);
 
   // Show pending approval screen if org not approved
   if (orgStatus && orgStatus !== 'ACTIVE') {

@@ -40,7 +40,7 @@ const Instellingen = () => {
   const [saving, setSaving] = useState(false);
   const [must2FASetup, setMust2FASetup] = useState(false);
   const { toast } = useToast();
-  const { role } = useUserRole();
+  const { role, organizationId } = useUserRole();
 
   useEffect(() => {
     fetchProfile();

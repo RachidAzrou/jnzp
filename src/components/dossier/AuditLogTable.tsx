@@ -12,8 +12,8 @@ interface AuditLogTableProps {
 }
 
 export function AuditLogTable({ dossierId }: AuditLogTableProps) {
-  const { role } = useUserRole();
-  const isPlatformAdmin = role === "platform_admin";
+  const { roles } = useUserRole();
+  const isPlatformAdmin = roles.includes("platform_admin");
 
   const { data: auditEvents, isLoading } = useQuery({
     queryKey: ["audit-events", dossierId],
@@ -43,8 +43,8 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
     },
   });
 
-  // Don't show audit log for family users
-  if (role === "family" && !isPlatformAdmin) {
+  // Don't show audit log for family users (unless they're also platform admin)
+  if (roles.includes("family") && !isPlatformAdmin) {
     return null;
   }
 

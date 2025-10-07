@@ -121,9 +121,16 @@ export function AppSidebar() {
       return item.roles.includes('platform_admin');
     }
     
-    // Org admin: always see team management and settings
+    // Special handling for org_admin items to avoid duplicates with role-specific sections
     if (isOrgAdmin) {
-      if (item.titleKey === "navigation.teamManagement" || item.titleKey === "navigation.settings") {
+      // For wasplaats org_admin: skip the generic org_admin teamManagement/settings, use wasplaats-specific ones
+      if (organizationType === 'WASPLAATS' && item.roles.includes('org_admin') && 
+          (item.titleKey === "navigation.teamManagement" || item.titleKey === "navigation.settings")) {
+        return false; // Skip generic org_admin items, we'll use wasplaats-specific ones
+      }
+      
+      // For other org types: show generic org_admin items
+      if (item.roles.includes('org_admin') && organizationType !== 'WASPLAATS') {
         return true;
       }
     }
@@ -132,7 +139,6 @@ export function AppSidebar() {
     const hasRequiredRole = item.roles.some(requiredRole => roles.includes(requiredRole));
     
     // Additionally check organization type for operational items
-    // This ensures mosque org_admin only sees mosque items, not FD items
     if (hasRequiredRole && organizationType) {
       // FD items only for FUNERAL_DIRECTOR orgs
       if (item.roles.includes('funeral_director') && organizationType !== 'FUNERAL_DIRECTOR') {

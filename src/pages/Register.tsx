@@ -38,11 +38,18 @@ const Register = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [registrationStep, setRegistrationStep] = useState<RegistrationStep>("role");
   const [detailsSubStep, setDetailsSubStep] = useState<DetailsSubStep>("organization");
-  const [orgName, setOrgName] = useState("");
-  const [orgRegistrationNumber, setOrgRegistrationNumber] = useState("");
-  const [orgAddress, setOrgAddress] = useState("");
-  const [orgCity, setOrgCity] = useState("");
-  const [orgPostalCode, setOrgPostalCode] = useState("");
+  // Organization fields
+  const [companyName, setCompanyName] = useState("");
+  const [legalName, setLegalName] = useState("");
+  const [businessNumber, setBusinessNumber] = useState("");
+  const [addressStreet, setAddressStreet] = useState("");
+  const [addressPostcode, setAddressPostcode] = useState("");
+  const [addressCity, setAddressCity] = useState("");
+  const [addressCountry, setAddressCountry] = useState("BE");
+  const [language, setLanguage] = useState("nl");
+  const [website, setWebsite] = useState("");
+  const [billingEmail, setBillingEmail] = useState("");
+  const [iban, setIban] = useState("");
   const [invitationCode, setInvitationCode] = useState<string>("");
 
   useEffect(() => {
@@ -154,28 +161,27 @@ const Register = () => {
       const { data: orgData, error: orgError } = await supabase
         .from("organizations")
         .insert([{
-          name: orgName,
-          company_name: orgName,
-          legal_name: orgName,
+          name: companyName,
+          company_name: companyName,
+          legal_name: legalName,
           type: orgType as "FUNERAL_DIRECTOR" | "MOSQUE" | "WASPLAATS" | "INSURER",
           verification_status: "PENDING_VERIFICATION",
           status: "pending",
-          registration_number: orgRegistrationNumber,
-          business_number: orgRegistrationNumber,
-          address: orgAddress,
-          address_street: orgAddress,
-          city: orgCity,
-          address_city: orgCity,
-          postal_code: orgPostalCode,
-          address_postcode: orgPostalCode,
-          address_country: "BE",
+          business_number: businessNumber,
+          address_street: addressStreet,
+          address_city: addressCity,
+          address_postcode: addressPostcode,
+          address_country: addressCountry,
           contact_email: email,
           email: email,
           contact_phone: phone,
           phone: phone,
           contact_first_name: firstName,
           contact_last_name: lastName,
-          language: "nl",
+          language: language,
+          website: website || null,
+          billing_email: billingEmail || null,
+          iban: iban || null,
           requested_by: data.user.id,
         }])
         .select()
@@ -511,69 +517,108 @@ const Register = () => {
 
                   <div className="space-y-3 p-4 bg-muted/30 rounded-lg border">
                     <h4 className="font-semibold text-sm flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                       <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
                       {t('register.organizationDetails')}
                     </h4>
                     <div className="space-y-2.5">
                       <div className="space-y-1.5">
-                        <Label htmlFor="org-name" className="text-sm">{t('register.organizationName')}</Label>
+                        <Label htmlFor="company-name" className="text-sm">{t('register.companyName')}</Label>
                         <Input
-                          id="org-name"
-                          value={orgName}
-                          onChange={(e) => setOrgName(e.target.value)}
+                          id="company-name"
+                          value={companyName}
+                          onChange={(e) => setCompanyName(e.target.value)}
                           required
                           className="h-10"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="org-registration" className="text-sm">{t('register.registrationNumber')}</Label>
+                        <Label htmlFor="legal-name" className="text-sm">{t('register.legalName')}</Label>
                         <Input
-                          id="org-registration"
-                          value={orgRegistrationNumber}
-                          onChange={(e) => setOrgRegistrationNumber(e.target.value)}
+                          id="legal-name"
+                          value={legalName}
+                          onChange={(e) => setLegalName(e.target.value)}
+                          required
+                          className="h-10"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="business-number" className="text-sm">{t('register.businessNumber')}</Label>
+                        <Input
+                          id="business-number"
+                          value={businessNumber}
+                          onChange={(e) => setBusinessNumber(e.target.value)}
                           placeholder={t('register.registrationNumberPlaceholder')}
                           required
                           className="h-10"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="org-address" className="text-sm">{t('register.address')}</Label>
+                        <Label htmlFor="address-street" className="text-sm">{t('register.addressStreet')}</Label>
                         <Input
-                          id="org-address"
-                          value={orgAddress}
-                          onChange={(e) => setOrgAddress(e.target.value)}
+                          id="address-street"
+                          value={addressStreet}
+                          onChange={(e) => setAddressStreet(e.target.value)}
                           required
                           className="h-10"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-2.5">
                         <div className="space-y-1.5">
-                          <Label htmlFor="org-city" className="text-sm">{t('register.city')}</Label>
+                          <Label htmlFor="address-postcode" className="text-sm">{t('register.postalCode')}</Label>
                           <Input
-                            id="org-city"
-                            value={orgCity}
-                            onChange={(e) => setOrgCity(e.target.value)}
+                            id="address-postcode"
+                            value={addressPostcode}
+                            onChange={(e) => setAddressPostcode(e.target.value)}
                             required
                             className="h-10"
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <Label htmlFor="org-postal" className="text-sm">{t('register.postalCode')}</Label>
+                          <Label htmlFor="address-city" className="text-sm">{t('register.city')}</Label>
                           <Input
-                            id="org-postal"
-                            value={orgPostalCode}
-                            onChange={(e) => setOrgPostalCode(e.target.value)}
+                            id="address-city"
+                            value={addressCity}
+                            onChange={(e) => setAddressCity(e.target.value)}
                             required
                             className="h-10"
                           />
                         </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="website" className="text-sm">{t('register.website')} ({t('common.optional')})</Label>
+                        <Input
+                          id="website"
+                          type="url"
+                          value={website}
+                          onChange={(e) => setWebsite(e.target.value)}
+                          className="h-10"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="billing-email" className="text-sm">{t('register.billingEmail')} ({t('common.optional')})</Label>
+                        <Input
+                          id="billing-email"
+                          type="email"
+                          value={billingEmail}
+                          onChange={(e) => setBillingEmail(e.target.value)}
+                          className="h-10"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="iban" className="text-sm">{t('register.iban')} ({t('common.optional')})</Label>
+                        <Input
+                          id="iban"
+                          value={iban}
+                          onChange={(e) => setIban(e.target.value)}
+                          className="h-10"
+                        />
                       </div>
                     </div>
                   </div>
 
                   <Button
                     onClick={() => setDetailsSubStep("contact")}
-                    disabled={!orgName || !orgRegistrationNumber || !orgAddress || !orgCity || !orgPostalCode}
+                    disabled={!companyName || !legalName || !businessNumber || !addressStreet || !addressCity || !addressPostcode}
                     className="w-full h-10 mt-4"
                   >
                     {t('register.nextStep')}

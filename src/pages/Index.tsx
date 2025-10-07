@@ -31,6 +31,7 @@ const Index = () => {
       }
 
       // Redirect based on organization type or role
+      // Note: org status checks are handled by AppGate, not here
       if (organizationType === 'WASPLAATS') {
         console.log('[Index] Redirecting WASPLAATS to /wasplaats');
         navigate("/wasplaats");

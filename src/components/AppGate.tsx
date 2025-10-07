@@ -36,15 +36,14 @@ export const AppGate = ({ children }: AppGateProps) => {
         return;
       }
 
-      // ⚠️ CRITICAL: Set flag IMMEDIATELY to prevent concurrent runs
-      checkedRef.current = true;
-      console.log('[AppGate] Starting org check (flag set)');
+      console.log('[AppGate] Starting org check');
 
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
         console.log('[AppGate] No session found - allowing access');
         if (!cancelled) setIsCheckingOrg(false);
+        checkedRef.current = true;
         return;
       }
 
@@ -61,6 +60,7 @@ export const AppGate = ({ children }: AppGateProps) => {
         if (error) {
           console.error('[AppGate] Error fetching user roles:', error);
           if (!cancelled) setIsCheckingOrg(false);
+          checkedRef.current = true;
           return;
         }
 
@@ -72,6 +72,7 @@ export const AppGate = ({ children }: AppGateProps) => {
         if (!professionalRole?.organization_id) {
           console.log('[AppGate] No professional role with org - allowing access');
           if (!cancelled) setIsCheckingOrg(false);
+          checkedRef.current = true;
           return;
         }
 
@@ -86,13 +87,15 @@ export const AppGate = ({ children }: AppGateProps) => {
         if (orgError) {
           console.error('[AppGate] Error fetching org:', orgError);
           setIsCheckingOrg(false);
+          checkedRef.current = true;
           return;
         }
 
-        // ⚠️ CRITICAL: Only proceed if we actually got org data
+        // ⚠️ CRITICAL: If org data is incomplete/null → wait, don't sign out
         if (!org) {
-          console.log('[AppGate] No org data returned - allowing access');
-          setIsCheckingOrg(false);
+          console.log('[AppGate] ⚠️ Org data still loading - waiting (not signing out)');
+          // Don't set checkedRef.current, allow retry on next render
+          setIsCheckingOrg(true);
           return;
         }
 
@@ -103,21 +106,22 @@ export const AppGate = ({ children }: AppGateProps) => {
         setOrgName(org.name);
         setRejectionReason(org.rejection_reason || "");
 
-        // ⚠️ ONLY sign out if we KNOW FOR SURE the org is not ACTIVE
+        // ⚠️ CRITICAL: Only show pending screen if org is definitively not ACTIVE
+        // Do NOT sign out - just show the PendingApprovalScreen
         if (org.verification_status !== 'ACTIVE') {
-          console.log('[AppGate] ❌ Org is NOT ACTIVE (status:', org.verification_status, ') - signing out');
-          await supabase.auth.signOut();
-          if (!cancelled) {
-            navigate('/auth');
-          }
+          console.log('[AppGate] ❌ Org is NOT ACTIVE (status:', org.verification_status, ') - showing pending screen (no signout)');
+          if (!cancelled) setIsCheckingOrg(false);
+          checkedRef.current = true;
           return;
         }
 
         console.log('[AppGate] ✅ Org is ACTIVE - allowing access');
         setIsCheckingOrg(false);
+        checkedRef.current = true;
       } catch (err) {
         console.error('[AppGate] Exception during org check:', err);
         if (!cancelled) setIsCheckingOrg(false);
+        checkedRef.current = true;
       }
     };
 

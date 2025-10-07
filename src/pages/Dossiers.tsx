@@ -242,11 +242,19 @@ const Dossiers = () => {
 
   const canViewDossier = (dossier: any) => {
     // Alleen toegang tot dossiers van eigen organisatie
-    return dossier.assigned_fd_org_id === organizationId;
+    const hasAccess = dossier.assigned_fd_org_id === organizationId;
+    console.log('canViewDossier:', { 
+      dossier_id: dossier.display_id, 
+      assigned_to: dossier.assigned_fd_org_id, 
+      my_org: organizationId, 
+      hasAccess 
+    });
+    return hasAccess;
   };
 
   const shouldBlurInfo = (dossier: any) => {
     // Blur info als het dossier NIET van jouw organisatie is
+    // Dit geldt voor UNASSIGNED dossiers en dossiers van andere organisaties
     return !canViewDossier(dossier);
   };
 

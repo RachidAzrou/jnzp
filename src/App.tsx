@@ -165,7 +165,7 @@ const RoleBasedHome = () => {
     return <Navigate to="/insurer" replace />;
   }
   if (organizationType === 'FUNERAL_DIRECTOR') {
-    return <Dashboard />;
+    return <Navigate to="/dashboard" replace />;
   }
   
   // Family role (no organization)
@@ -215,6 +215,11 @@ const App = () => (
                           <main className="flex-1 p-3 sm:p-4 overflow-x-hidden">
                             <Routes>
                             <Route path="/" element={<RoleBasedHome />} />
+                          <Route path="/dashboard" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
+                              <Dashboard />
+                            </RoleProtectedRoute>
+                          } />
                           <Route path="/dossiers" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <Dossiers />

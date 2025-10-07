@@ -168,7 +168,6 @@ const Register = () => {
           address_postcode: addressPostcode,
           address_country: addressCountry,
           contact_email: email,
-          email: email,
           contact_phone: phone,
           phone: phone,
           contact_first_name: firstName,

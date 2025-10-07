@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 
-export type UserRole = 'platform_admin' | 'org_admin' | 'funeral_director' | 'family' | 'insurer' | 'wasplaats' | 'mosque' | null;
+export type UserRole = 'platform_admin' | 'org_admin' | 'funeral_director' | 'insurer' | 'wasplaats' | 'mosque' | null;
 
 export interface UserRoleContext {
   role: UserRole; // Primary role for backwards compatibility
@@ -94,7 +94,7 @@ export const useUserRole = () => {
           console.log('[useUserRole] Roles found:', data.length);
           const allRoles = data.map(d => d.role as UserRole);
           
-          const priorityOrder = ['platform_admin', 'org_admin', 'funeral_director', 'insurer', 'wasplaats', 'mosque', 'family'];
+          const priorityOrder = ['platform_admin', 'org_admin', 'funeral_director', 'insurer', 'wasplaats', 'mosque'];
           
           const sortedData = data.sort((a, b) => {
             return priorityOrder.indexOf(a.role) - priorityOrder.indexOf(b.role);
@@ -175,8 +175,6 @@ export const useRoleDisplayName = (role: UserRole): string => {
       return t('roles.org_admin');
     case 'funeral_director':
       return t('roles.funeral_director');
-    case 'family':
-      return t('roles.family');
     case 'insurer':
       return t('roles.insurer');
     case 'wasplaats':
@@ -198,8 +196,6 @@ export const useRolePortalName = (role: UserRole): string => {
       return t('rolePortals.org_admin');
     case 'funeral_director':
       return t('rolePortals.funeral_director');
-    case 'family':
-      return t('rolePortals.family');
     case 'insurer':
       return t('rolePortals.insurer');
     case 'wasplaats':

@@ -162,8 +162,8 @@ const RoleBasedHome = () => {
     return <Navigate to="/dashboard" replace />;
   }
   
-  // Family role -> redirect to mobile app download
-  if (roles.includes('family')) {
+  // Family role -> redirect to mobile app download (check string literal since family removed from UserRole)
+  if (roles.some(r => r === 'family' as any)) {
     return <Navigate to="/familie" replace />;
   }
 

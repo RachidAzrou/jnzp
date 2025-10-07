@@ -99,16 +99,11 @@ export function AppSidebar() {
     { titleKey: "navigation.availability", url: "/moskee/beschikbaarheid", icon: PiMosque, roles: ['mosque'] },
     { titleKey: "navigation.publicScreen", url: "/moskee/publiek-scherm", icon: Monitor, roles: ['mosque'] },
     
-    // Family
-    { titleKey: "navigation.dashboard", url: "/familie", icon: LayoutDashboard, roles: ['family'] },
-    { titleKey: "navigation.myDocuments", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
-    { titleKey: "navigation.chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
-    
     // Teambeheer - voor org_admin van niet-wasplaats orgs (wasplaats heeft het al in eigen sectie)
     { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] },
     
     // Settings voor andere roles (wasplaats heeft het al in eigen sectie)
-    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'mosque'] },
+    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'insurer', 'mosque'] },
   ];
 
   // RBAC: Filter menu items based on ALL user roles and organization type

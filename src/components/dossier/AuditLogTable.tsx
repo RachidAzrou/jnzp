@@ -43,11 +43,6 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
     },
   });
 
-  // Don't show audit log for family users (unless they're also platform admin)
-  if (roles.includes("family") && !isPlatformAdmin) {
-    return null;
-  }
-
   if (isLoading) {
     return (
       <div className="space-y-4">

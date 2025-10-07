@@ -59,7 +59,7 @@ const Dashboard = () => {
           if (roleData?.organization_id) {
             setOrganizationId(roleData.organization_id);
 
-            // Only show onboarding for professional roles (not family)
+            // Check onboarding status for professional roles
             const professionalRoles = ["funeral_director", "mosque", "wasplaats", "insurer", "org_admin", "admin"];
             if (professionalRoles.includes(roleData.role)) {
               // Check onboarding status

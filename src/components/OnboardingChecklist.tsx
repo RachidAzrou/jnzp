@@ -12,7 +12,7 @@ interface OnboardingStep {
 
 interface OnboardingChecklistProps {
   steps: OnboardingStep[];
-  role: "funeral_director" | "mosque" | "wasplaats" | "family";
+  role: "funeral_director" | "mosque" | "wasplaats";
 }
 
 const roleLabels = {

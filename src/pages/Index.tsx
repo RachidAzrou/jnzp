@@ -41,7 +41,7 @@ const Index = () => {
       } else if (roles.includes('platform_admin')) {
         console.log('[Index] Redirecting platform_admin to /admin');
         navigate("/admin");
-      } else if (roles.includes('family')) {
+      } else if (roles.some(r => r === 'family' as any)) {
         console.log('[Index] Redirecting family to /familie');
         navigate("/familie");
       }

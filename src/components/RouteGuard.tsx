@@ -46,8 +46,8 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
   useEffect(() => {
     if (loading) return;
 
-    // Redirect family users to mobile app download page
-    if (roles.includes('family')) {
+    // Redirect family users to mobile app download page (check string literal)
+    if (roles.some(r => r === 'family' as any)) {
       if (location.pathname !== '/familie') {
         navigate('/familie');
       }

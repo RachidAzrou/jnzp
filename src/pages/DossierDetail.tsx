@@ -378,15 +378,6 @@ const DossierDetail = () => {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-8">
-          {/* FD Management Card for Familie users */}
-          {userRole === "family" && (
-            <FDManagementCard
-              dossierId={id!}
-              assignedFdOrgId={dossier.assigned_fd_org_id}
-              assignmentStatus={dossier.assignment_status}
-            />
-          )}
-          
           <div className="grid gap-8 md:grid-cols-2">
             {/* Overledene */}
             <div className="space-y-4">

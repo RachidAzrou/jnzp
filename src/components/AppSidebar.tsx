@@ -77,7 +77,6 @@ export function AppSidebar() {
     { titleKey: "navigation.documents", url: "/documenten", icon: FileText, roles: ['funeral_director'] },
     { titleKey: "navigation.planning", url: "/planning", icon: Calendar, roles: ['funeral_director'] },
     { titleKey: "navigation.facturatie", url: "/facturatie", icon: Receipt, roles: ['funeral_director'] },
-    { titleKey: "navigation.beoordelingen", url: "/beoordelingen", icon: Star, roles: ['funeral_director'] },
     
     // Insurer
     { titleKey: "navigation.dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },

@@ -20,7 +20,6 @@ const ROUTE_ACCESS: Record<string, {
   '/dossiers': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
   '/fd/': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
   '/facturatie': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
-  '/beoordelingen': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
   '/documenten': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
   '/planning': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
   '/taken': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },

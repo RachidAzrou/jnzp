@@ -23,10 +23,9 @@ const Index = () => {
         return;
       }
 
-      // Force logout if user has no roles (should not happen)
+      // If no roles loaded yet, keep waiting (AppGate handles org verification)
       if (roles.length === 0) {
-        console.log('[Index] No roles found, redirecting to auth');
-        navigate("/auth");
+        console.log('[Index] Roles still loading, waiting...');
         return;
       }
 

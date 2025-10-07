@@ -376,12 +376,12 @@ const Dossiers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       <div className="space-y-6 max-w-[1600px] mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
               Dossiers
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -392,21 +392,23 @@ const Dossiers = () => {
         </div>
 
         {/* Tabs and Content */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "my" | "all" | "incoming")} className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="my">Mijn dossiers</TabsTrigger>
-            <TabsTrigger value="all" className="relative">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "my" | "all" | "incoming")} className="space-y-6">
+          <TabsList className="bg-card border shadow-sm">
+            <TabsTrigger value="my" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Mijn dossiers
+            </TabsTrigger>
+            <TabsTrigger value="all" className="relative data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Alle dossiers
               {claimableCount > 0 && (
-                <Badge variant="destructive" className="ml-2 px-1.5 py-0 text-xs h-5">
+                <Badge variant="destructive" className="ml-2 px-2 py-0.5 text-xs h-5 rounded-full">
                   {claimableCount}
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="incoming" className="relative">
+            <TabsTrigger value="incoming" className="relative data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Inkomende aanvragen
               {incomingCount > 0 && (
-                <Badge variant="destructive" className="ml-2 px-1.5 py-0 text-xs h-5">
+                <Badge variant="destructive" className="ml-2 px-2 py-0.5 text-xs h-5 rounded-full animate-pulse">
                   {incomingCount}
                 </Badge>
               )}
@@ -414,7 +416,7 @@ const Dossiers = () => {
           </TabsList>
 
           {/* Search and Filters */}
-          <Card className="border-0 shadow-sm">
+          <Card className="border shadow-sm bg-card/50 backdrop-blur-sm">
             <CardContent className="pt-6">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2">
@@ -422,16 +424,16 @@ const Dossiers = () => {
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       placeholder="Zoek op naam, ID, telefoon..."
-                      className="pl-10 bg-background"
+                      className="pl-10 bg-background border-muted-foreground/20 focus:border-primary transition-colors"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
                   </div>
                   <Button
-                    variant="outline"
+                    variant={showFilters ? "default" : "outline"}
                     size="icon"
                     onClick={() => setShowFilters(!showFilters)}
-                    className={showFilters ? "bg-muted" : ""}
+                    className="transition-all"
                   >
                     <SlidersHorizontal className="h-4 w-4" />
                   </Button>
@@ -474,7 +476,7 @@ const Dossiers = () => {
             </CardContent>
           </Card>
 
-          <TabsContent value="my" className="mt-0">
+          <TabsContent value="my" className="mt-0 space-y-4">
             <Card className="border-0 shadow-sm">
               <CardContent className="p-0">
                 <div className="hidden md:block">
@@ -498,8 +500,8 @@ const Dossiers = () => {
                         </TableRow>
                       ) : (
                         currentDossiers.map((dossier) => (
-                          <TableRow key={dossier.id} className="hover:bg-muted/30">
-                            <TableCell className="font-mono text-sm">
+                          <TableRow key={dossier.id} className="hover:bg-muted/50 transition-colors">
+                            <TableCell className="font-mono text-sm text-muted-foreground">
                               {dossier.display_id || dossier.ref_number}
                             </TableCell>
                             <TableCell className="font-medium">{dossier.deceased_name}</TableCell>
@@ -621,6 +623,7 @@ const Dossiers = () => {
                                 <Button
                                   size="sm"
                                   onClick={() => handleClaim(dossier)}
+                                  className="bg-primary hover:bg-primary/90 shadow-sm"
                                 >
                                   Claimen
                                 </Button>
@@ -652,15 +655,15 @@ const Dossiers = () => {
                     </div>
                   ) : (
                     currentDossiers.map((dossier) => (
-                      <div key={dossier.id} className="p-4 border rounded-lg space-y-3">
+                      <div key={dossier.id} className="p-4 border rounded-lg bg-card hover:shadow-md transition-all space-y-3">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
-                            <p className="font-mono text-xs text-muted-foreground">
+                            <p className="font-mono text-xs text-muted-foreground bg-muted/50 inline-block px-2 py-1 rounded">
                               {dossier.display_id || dossier.ref_number}
                             </p>
-                            <p className="text-sm font-medium mt-1">{dossier.deceased_name}</p>
-                            <div className="flex items-center gap-2 mt-2">
-                              <Badge variant="outline" className="text-xs">{getFlowLabel(dossier.flow)}</Badge>
+                            <p className="text-sm font-semibold mt-2">{dossier.deceased_name}</p>
+                            <div className="flex items-center gap-2 mt-2 flex-wrap">
+                              <Badge variant="outline" className="text-xs border-primary/30 bg-primary/5">{getFlowLabel(dossier.flow)}</Badge>
                               {dossier.assignment_status === 'UNASSIGNED' && (
                                 <Badge variant="secondary" className="text-xs gap-1">
                                   <Clock className="h-3 w-3" />
@@ -702,12 +705,17 @@ const Dossiers = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="incoming" className="mt-0">
+          <TabsContent value="incoming" className="mt-0 space-y-4">
             <div className="space-y-4">
               {currentDossiers.length === 0 ? (
-                <Card className="border-0 shadow-sm">
-                  <CardContent className="py-12 text-center text-sm text-muted-foreground">
-                    Geen inkomende aanvragen
+                <Card className="border shadow-sm bg-card/50 backdrop-blur-sm">
+                  <CardContent className="py-16 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="rounded-full bg-muted p-4">
+                        <Clock className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">Geen inkomende aanvragen</p>
+                    </div>
                   </CardContent>
                 </Card>
               ) : (
@@ -721,19 +729,22 @@ const Dossiers = () => {
                   return (
                     <Card
                       key={request.id}
-                      className={`border-0 shadow-sm ${!isPending ? 'opacity-60' : ''}`}
+                      className={`border shadow-sm bg-card/50 backdrop-blur-sm transition-all hover:shadow-md ${!isPending ? 'opacity-60' : ''}`}
                     >
                       <CardContent className="pt-6 space-y-4">
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-                          <div className="space-y-1">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                          <div className="space-y-2">
                             <h3 className="text-base sm:text-lg font-semibold">
                               {dossier.deceased_name}
                             </h3>
-                            <p className="text-xs sm:text-sm text-muted-foreground">
+                            <p className="text-xs sm:text-sm text-muted-foreground bg-muted/50 inline-block px-2 py-1 rounded">
                               Dossier {dossier.display_id}
                             </p>
                           </div>
-                          <Badge variant={isPending ? "default" : request.status === "APPROVED" ? "default" : "secondary"} className="gap-1">
+                          <Badge 
+                            variant={isPending ? "default" : request.status === "APPROVED" ? "default" : "secondary"} 
+                            className="gap-1.5 shadow-sm"
+                          >
                             {isPending && <Clock className="h-3 w-3" />}
                             {request.status === "APPROVED" && <CheckCircle className="h-3 w-3" />}
                             {request.status === "REJECTED" && <XCircle className="h-3 w-3" />}

@@ -23,6 +23,9 @@ import { useTranslation } from "react-i18next";
 import { MortuariumReservationDialog } from "@/components/planning/MortuariumReservationDialog";
 import { MosqueServiceDialog } from "@/components/planning/MosqueServiceDialog";
 import { FlightPlanningDialog } from "@/components/planning/FlightPlanningDialog";
+import { EditMortuariumReservationDialog } from "@/components/planning/EditMortuariumReservationDialog";
+import { EditMosqueServiceDialog } from "@/components/planning/EditMosqueServiceDialog";
+import { EditFlightDialog } from "@/components/planning/EditFlightDialog";
 
 const Planning = () => {
   const { t } = useTranslation();
@@ -36,6 +39,12 @@ const Planning = () => {
   const [mortuariumDialogOpen, setMortuariumDialogOpen] = useState(false);
   const [mosqueDialogOpen, setMosqueDialogOpen] = useState(false);
   const [flightDialogOpen, setFlightDialogOpen] = useState(false);
+  const [editMortuariumDialogOpen, setEditMortuariumDialogOpen] = useState(false);
+  const [editMosqueDialogOpen, setEditMosqueDialogOpen] = useState(false);
+  const [editFlightDialogOpen, setEditFlightDialogOpen] = useState(false);
+  const [selectedReservationId, setSelectedReservationId] = useState<string>("");
+  const [selectedServiceId, setSelectedServiceId] = useState<string>("");
+  const [selectedFlightId, setSelectedFlightId] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -284,7 +293,16 @@ const Planning = () => {
                         {service.notes || "-"}
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">{t("common.view")}</Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setSelectedReservationId(service.id);
+                            setEditMortuariumDialogOpen(true);
+                          }}
+                        >
+                          {t("common.view")}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -344,7 +362,16 @@ const Planning = () => {
                         {service.notes || "-"}
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">{t("common.view")}</Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setSelectedServiceId(service.id);
+                            setEditMosqueDialogOpen(true);
+                          }}
+                        >
+                          {t("common.view")}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -411,7 +438,16 @@ const Planning = () => {
                         {flight.air_waybill || "-"}
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">{t("common.view")}</Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setSelectedFlightId(flight.id);
+                            setEditFlightDialogOpen(true);
+                          }}
+                        >
+                          {t("common.view")}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -439,6 +475,32 @@ const Planning = () => {
         onOpenChange={setFlightDialogOpen}
         onSuccess={fetchData}
       />
+      
+      {/* Edit Dialogs */}
+      {selectedReservationId && (
+        <EditMortuariumReservationDialog
+          open={editMortuariumDialogOpen}
+          onOpenChange={setEditMortuariumDialogOpen}
+          reservationId={selectedReservationId}
+          onSuccess={fetchData}
+        />
+      )}
+      {selectedServiceId && (
+        <EditMosqueServiceDialog
+          open={editMosqueDialogOpen}
+          onOpenChange={setEditMosqueDialogOpen}
+          serviceId={selectedServiceId}
+          onSuccess={fetchData}
+        />
+      )}
+      {selectedFlightId && (
+        <EditFlightDialog
+          open={editFlightDialogOpen}
+          onOpenChange={setEditFlightDialogOpen}
+          flightId={selectedFlightId}
+          onSuccess={fetchData}
+        />
+      )}
     </div>
   );
 };

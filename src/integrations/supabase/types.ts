@@ -3748,6 +3748,14 @@ export type Database = {
           organization_id: string
         }[]
       }
+      handle_fd_request: {
+        Args: {
+          p_approved: boolean
+          p_claim_id: string
+          p_rejection_reason?: string
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

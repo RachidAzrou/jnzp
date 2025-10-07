@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, ChevronLeft, ChevronRight, SlidersHorizontal, Clock, MapPin, Building2 } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, SlidersHorizontal, Clock, MapPin, Building2, CheckCircle, XCircle, User, Phone, Calendar } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +28,17 @@ import {
 import { CreateDossierDialog } from "@/components/dossier/CreateDossierDialog";
 import { ClaimDossierDialog } from "@/components/dossier/ClaimDossierDialog";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -35,12 +46,15 @@ const Dossiers = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { organizationId } = useUserRole();
+  const { toast } = useToast();
   
-  const [activeTab, setActiveTab] = useState<"my" | "all">("my");
+  const [activeTab, setActiveTab] = useState<"my" | "all" | "incoming">("my");
   const [myDossiers, setMyDossiers] = useState<any[]>([]);
   const [allDossiers, setAllDossiers] = useState<any[]>([]);
+  const [incomingRequests, setIncomingRequests] = useState<any[]>([]);
   const [filteredDossiers, setFilteredDossiers] = useState<any[]>([]);
   const [claimableCount, setClaimableCount] = useState(0);
+  const [incomingCount, setIncomingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -49,6 +63,10 @@ const Dossiers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [claimDialogOpen, setClaimDialogOpen] = useState(false);
   const [selectedDossier, setSelectedDossier] = useState<any>(null);
+  const [showDeclineDialog, setShowDeclineDialog] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [declineReason, setDeclineReason] = useState("");
+  const [processing, setProcessing] = useState(false);
 
   const getDateLocale = () => {
     switch(i18n.language) {
@@ -60,6 +78,7 @@ const Dossiers = () => {
 
   useEffect(() => {
     fetchDossiers();
+    fetchIncomingRequests();
     fetchClaimableCount();
     setupRealtimeSubscriptions();
   }, [organizationId]);
@@ -67,7 +86,7 @@ const Dossiers = () => {
   useEffect(() => {
     filterDossiers();
     setCurrentPage(1);
-  }, [activeTab, myDossiers, allDossiers, searchQuery, statusFilter, flowFilter]);
+  }, [activeTab, myDossiers, allDossiers, incomingRequests, searchQuery, statusFilter, flowFilter]);
 
   const fetchDossiers = async () => {
     if (!organizationId) return;
@@ -104,6 +123,39 @@ const Dossiers = () => {
     }
   };
 
+  const fetchIncomingRequests = async () => {
+    if (!organizationId) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from("dossier_claims")
+        .select(`
+          *,
+          dossier:dossiers!inner(
+            id,
+            display_id,
+            deceased_name,
+            flow,
+            date_of_death,
+            family_contacts(
+              name,
+              phone,
+              relationship
+            )
+          )
+        `)
+        .eq("requesting_org_id", organizationId)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setIncomingRequests(data || []);
+      setIncomingCount(data?.filter((r: any) => r.status === "PENDING").length || 0);
+    } catch (error) {
+      console.error("Error fetching incoming requests:", error);
+    }
+  };
+
   const fetchClaimableCount = async () => {
     try {
       const { data, error } = await supabase.rpc("count_claimable_dossiers");
@@ -133,6 +185,7 @@ const Dossiers = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "dossier_claims" },
         () => {
+          fetchIncomingRequests();
           fetchClaimableCount();
         }
       )
@@ -145,24 +198,28 @@ const Dossiers = () => {
   };
 
   const filterDossiers = () => {
-    const source = activeTab === "my" ? myDossiers : allDossiers;
+    let source = activeTab === "my" ? myDossiers : activeTab === "all" ? allDossiers : incomingRequests;
     let filtered = [...source];
 
     if (searchQuery) {
-      filtered = filtered.filter(
-        (d) =>
-          (d.display_id && d.display_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          d.ref_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          d.deceased_name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      filtered = filtered.filter((d) => {
+        const dossier = activeTab === "incoming" ? d.dossier : d;
+        return (
+          (dossier.display_id && dossier.display_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (dossier.ref_number && dossier.ref_number.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          dossier.deceased_name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      });
     }
 
-    if (statusFilter !== "all") {
-      filtered = filtered.filter((d) => d.status === statusFilter);
-    }
+    if (activeTab !== "incoming") {
+      if (statusFilter !== "all") {
+        filtered = filtered.filter((d) => d.status === statusFilter);
+      }
 
-    if (flowFilter !== "all") {
-      filtered = filtered.filter((d) => d.flow === flowFilter);
+      if (flowFilter !== "all") {
+        filtered = filtered.filter((d) => d.flow === flowFilter);
+      }
     }
 
     setFilteredDossiers(filtered);
@@ -180,6 +237,85 @@ const Dossiers = () => {
 
   const isClaimable = (dossier: any) => {
     return dossier.assignment_status === "UNASSIGNED" && dossier.flow !== "UNSET";
+  };
+
+  const handleAcceptRequest = async (requestId: string) => {
+    setProcessing(true);
+    try {
+      const { data, error } = await supabase.rpc("handle_fd_request", {
+        p_claim_id: requestId,
+        p_approved: true,
+      });
+
+      if (error) throw error;
+
+      if ((data as any)?.success) {
+        toast({
+          title: "Aanvraag geaccepteerd",
+          description: "Het dossier is aan jouw organisatie toegewezen",
+        });
+        fetchDossiers();
+        fetchIncomingRequests();
+        fetchClaimableCount();
+      } else {
+        throw new Error((data as any)?.error || "Acceptatie mislukt");
+      }
+    } catch (error: any) {
+      console.error("Error accepting request:", error);
+      toast({
+        title: "Fout",
+        description: error.message || "Kon aanvraag niet accepteren",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleDeclineRequest = async () => {
+    if (!selectedRequest || !declineReason.trim()) {
+      toast({
+        title: "Reden vereist",
+        description: "Geef een reden op voor de weigering",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      const { data, error } = await supabase.rpc("handle_fd_request", {
+        p_claim_id: selectedRequest.id,
+        p_approved: false,
+        p_rejection_reason: declineReason,
+      });
+
+      if (error) throw error;
+
+      if ((data as any)?.success) {
+        toast({
+          title: "Aanvraag geweigerd",
+          description: "Het dossier blijft beschikbaar voor andere uitvaartondernemers",
+        });
+        setShowDeclineDialog(false);
+        setDeclineReason("");
+        setSelectedRequest(null);
+        fetchDossiers();
+        fetchIncomingRequests();
+        fetchClaimableCount();
+      } else {
+        throw new Error((data as any)?.error || "Weigering mislukt");
+      }
+    } catch (error: any) {
+      console.error("Error declining request:", error);
+      toast({
+        title: "Fout",
+        description: error.message || "Kon aanvraag niet weigeren",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessing(false);
+    }
   };
 
   // Pagination
@@ -250,7 +386,7 @@ const Dossiers = () => {
         </div>
 
         {/* Tabs and Content */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "my" | "all")} className="space-y-4">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "my" | "all" | "incoming")} className="space-y-4">
           <TabsList>
             <TabsTrigger value="my">Mijn dossiers</TabsTrigger>
             <TabsTrigger value="all" className="relative">
@@ -258,6 +394,14 @@ const Dossiers = () => {
               {claimableCount > 0 && (
                 <Badge variant="destructive" className="ml-2 px-1.5 py-0 text-xs h-5">
                   {claimableCount}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="incoming" className="relative">
+              Inkomende aanvragen
+              {incomingCount > 0 && (
+                <Badge variant="destructive" className="ml-2 px-1.5 py-0 text-xs h-5">
+                  {incomingCount}
                 </Badge>
               )}
             </TabsTrigger>
@@ -543,6 +687,118 @@ const Dossiers = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="incoming" className="mt-0">
+            <div className="space-y-4">
+              {currentDossiers.length === 0 ? (
+                <Card className="border-0 shadow-sm">
+                  <CardContent className="py-12 text-center text-sm text-muted-foreground">
+                    Geen inkomende aanvragen
+                  </CardContent>
+                </Card>
+              ) : (
+                currentDossiers.map((request: any) => {
+                  const isPending = request.status === "PENDING";
+                  const dossier = request.dossier;
+                  
+                  return (
+                    <Card
+                      key={request.id}
+                      className={`border-0 shadow-sm ${!isPending ? 'opacity-60' : ''}`}
+                    >
+                      <CardContent className="pt-6 space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                          <div className="space-y-1">
+                            <h3 className="text-base sm:text-lg font-semibold">
+                              {dossier.deceased_name}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground">
+                              Dossier {dossier.display_id}
+                            </p>
+                          </div>
+                          <Badge variant={isPending ? "default" : request.status === "APPROVED" ? "default" : "secondary"} className="gap-1">
+                            {isPending && <Clock className="h-3 w-3" />}
+                            {request.status === "APPROVED" && <CheckCircle className="h-3 w-3" />}
+                            {request.status === "REJECTED" && <XCircle className="h-3 w-3" />}
+                            {request.status === "PENDING" ? "In afwachting" : 
+                             request.status === "APPROVED" ? "Geaccepteerd" :
+                             request.status === "REJECTED" ? "Geweigerd" : request.status}
+                          </Badge>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <MapPin className="h-4 w-4 flex-shrink-0" />
+                            <span className="truncate">
+                              {dossier.flow === "LOC" ? "Lokaal" : "Repatriëring"}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Calendar className="h-4 w-4 flex-shrink-0" />
+                            <span className="truncate">
+                              {dossier.date_of_death
+                                ? formatDate(dossier.date_of_death)
+                                : "Onbekend"}
+                            </span>
+                          </div>
+                          {dossier.family_contacts?.[0] && (
+                            <>
+                              <div className="flex items-center gap-2 text-muted-foreground">
+                                <User className="h-4 w-4 flex-shrink-0" />
+                                <span className="truncate">
+                                  {dossier.family_contacts[0].name}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 text-muted-foreground">
+                                <Phone className="h-4 w-4 flex-shrink-0" />
+                                <span className="truncate">
+                                  {dossier.family_contacts[0].phone}
+                                </span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        {isPending && (
+                          <>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <Clock className="h-3 w-3" />
+                              <span>
+                                Verloopt om {format(new Date(request.expire_at), "HH:mm", { locale: getDateLocale() })}
+                              </span>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                              <Button
+                                onClick={() => handleAcceptRequest(request.id)}
+                                disabled={processing}
+                                className="flex-1 min-h-[44px]"
+                              >
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                Accepteren
+                              </Button>
+                              <Button
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedRequest(request);
+                                  setShowDeclineDialog(true);
+                                }}
+                                disabled={processing}
+                                className="flex-1 min-h-[44px]"
+                              >
+                                <XCircle className="h-4 w-4 mr-2" />
+                                Weigeren
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              )}
+            </div>
+          </TabsContent>
         </Tabs>
 
         {/* Pagination */}
@@ -601,6 +857,51 @@ const Dossiers = () => {
           onClaimed={handleClaimSuccess}
         />
       )}
+
+      {/* Decline Dialog */}
+      <Dialog open={showDeclineDialog} onOpenChange={setShowDeclineDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Aanvraag weigeren</DialogTitle>
+            <DialogDescription>
+              Waarom wil je deze aanvraag weigeren? De nabestaande zal een melding ontvangen.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reason">Reden</Label>
+              <Textarea
+                id="reason"
+                placeholder="bijv. Te druk met andere dossiers, geen capaciteit..."
+                value={declineReason}
+                onChange={(e) => setDeclineReason(e.target.value)}
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowDeclineDialog(false);
+                setDeclineReason("");
+                setSelectedRequest(null);
+              }}
+              className="min-h-[44px]"
+            >
+              Annuleren
+            </Button>
+            <Button
+              onClick={handleDeclineRequest}
+              disabled={processing || !declineReason.trim()}
+              variant="destructive"
+              className="min-h-[44px]"
+            >
+              Weigeren
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

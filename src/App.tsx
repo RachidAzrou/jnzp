@@ -57,7 +57,7 @@ import AdminNotificationTemplates from "./pages/AdminNotificationTemplates";
 import AdminWebhooks from "./pages/AdminWebhooks";
 import AdminReports from "./pages/AdminReports";
 import TeamManagement from "./pages/TeamManagement";
-import FDIncomingRequests from "./pages/FDIncomingRequests";
+
 import Auth from "./pages/Auth";
 import Register from "./pages/Register";
 import QRScan from "./pages/QRScan";
@@ -346,11 +346,6 @@ const App = () => (
                           <Route path="/chat/:dossierId" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <FDChat />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/fd/incoming-requests" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
-                              <FDIncomingRequests />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/admin" element={

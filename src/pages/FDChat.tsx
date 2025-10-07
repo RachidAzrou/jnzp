@@ -59,18 +59,10 @@ export default function FDChat() {
         return;
       }
 
-      // Get dossier with family contact (left join to include dossiers without family contacts)
+      // Get dossier first
       const { data: dossierData, error: dossierError } = await supabase
         .from('dossiers')
-        .select(`
-          id, 
-          display_id, 
-          ref_number, 
-          deceased_name, 
-          status, 
-          flow,
-          family_contacts (name)
-        `)
+        .select('id, display_id, ref_number, deceased_name, status, flow')
         .eq('id', dossierId)
         .maybeSingle();
 
@@ -78,17 +70,22 @@ export default function FDChat() {
         console.error('Error fetching dossier:', dossierError);
       }
 
-      // Transform the data to get family contact name
+      // Get family contact separately
+      let familyContactName = null;
+      if (dossierData) {
+        const { data: familyContact } = await supabase
+          .from('family_contacts')
+          .select('name')
+          .eq('dossier_id', dossierId)
+          .maybeSingle();
+        
+        familyContactName = familyContact?.name || null;
+      }
+
+      // Transform the data to include family contact name
       const transformedDossier = dossierData ? {
-        id: dossierData.id,
-        display_id: dossierData.display_id,
-        ref_number: dossierData.ref_number,
-        deceased_name: dossierData.deceased_name,
-        status: dossierData.status,
-        flow: dossierData.flow,
-        family_contact_name: Array.isArray((dossierData as any).family_contacts) && (dossierData as any).family_contacts.length > 0 
-          ? (dossierData as any).family_contacts[0].name 
-          : null,
+        ...dossierData,
+        family_contact_name: familyContactName,
       } : null;
 
       if (transformedDossier) {

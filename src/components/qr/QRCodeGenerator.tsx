@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -32,14 +32,23 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // Create QR token
+      // First generate a token
+      const { data: tokenData, error: tokenError } = await supabase.rpc('generate_qr_token');
+      
+      if (tokenError || !tokenData) {
+        throw new Error('Failed to generate token');
+      }
+
+      // Create QR token record
       const { data, error } = await supabase
-        .from('qr_tokens' as any)
+        .from('qr_tokens')
         .insert({
+          token: tokenData,
           dossier_id: dossierId,
           created_by: user.id,
           max_scans: maxScans,
-          scopes: scopes
+          scopes: scopes,
+          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
         })
         .select()
         .single();
@@ -48,10 +57,10 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
 
       // Generate URL for QR code
       const baseUrl = window.location.origin;
-      const qrUrl = `${baseUrl}/qr-scan?token=${(data as any).token}`;
+      const qrUrl = `${baseUrl}/qr-scan/${data.token}`;
 
       setQrData({
-        token: (data as any).token,
+        token: data.token,
         url: qrUrl
       });
 
@@ -60,9 +69,10 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
         description: "U kunt de QR code nu downloaden of delen"
       });
     } catch (error: any) {
+      console.error('QR generation error:', error);
       toast({
         title: "Fout",
-        description: error.message,
+        description: error.message || 'Er is een fout opgetreden bij het genereren van de QR code',
         variant: "destructive"
       });
     } finally {
@@ -105,6 +115,9 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>QR Code voor dossier {displayId}</DialogTitle>
+          <DialogDescription>
+            Genereer een veilige QR code voor dit dossier met configureerbare toegangsrechten
+          </DialogDescription>
         </DialogHeader>
         
         {!qrData ? (

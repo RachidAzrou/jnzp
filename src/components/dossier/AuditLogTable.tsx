@@ -18,25 +18,12 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
   const { data: auditEvents, isLoading } = useQuery({
     queryKey: ["audit-events", dossierId],
     queryFn: async () => {
-      const query = supabase
+      const { data, error } = await supabase
         .from("audit_events")
-        .select(`
-          *,
-          profiles:user_id (
-            first_name,
-            last_name,
-            email
-          ),
-          organizations:organization_id (
-            name,
-            type
-          )
-        `)
+        .select("*")
         .eq("dossier_id", dossierId)
         .order("created_at", { ascending: false })
         .limit(100);
-
-      const { data, error } = await query;
 
       if (error) throw error;
       return data;
@@ -131,13 +118,8 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
                   {format(new Date(event.created_at), "dd MMM yyyy HH:mm", { locale: nl })}
                 </TableCell>
                 <TableCell>
-                  {event.profiles ? (
-                    <div className="flex flex-col">
-                      <span className="font-medium">
-                        {event.profiles.first_name} {event.profiles.last_name}
-                      </span>
-                      <span className="text-xs text-muted-foreground">{event.profiles.email}</span>
-                    </div>
+                  {event.user_id ? (
+                    <span className="text-sm font-mono">{event.user_id.slice(0, 8)}...</span>
                   ) : (
                     <span className="text-muted-foreground">Systeem</span>
                   )}
@@ -151,13 +133,8 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
                 </TableCell>
                 {isPlatformAdmin && (
                   <TableCell>
-                    {event.organizations ? (
-                      <div className="flex flex-col">
-                        <span className="font-medium">{event.organizations.name}</span>
-                        <span className="text-xs text-muted-foreground capitalize">
-                          {event.organizations.type}
-                        </span>
-                      </div>
+                    {event.organization_id ? (
+                      <span className="text-sm font-mono">{event.organization_id.slice(0, 8)}...</span>
                     ) : (
                       <span className="text-muted-foreground">-</span>
                     )}

@@ -11,21 +11,16 @@ const Index = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-
-      // Wait for roles to load
+      // CRITICAL: Wait for roles to fully load before any action
       if (loading) {
+        console.log('[Index] Still loading roles, waiting...');
         return;
       }
 
-      // If no roles loaded yet, keep waiting (AppGate handles org verification)
+      // If no roles after loading, AppGate will handle auth issues
+      // DO NOT redirect to /auth here - causes loop
       if (roles.length === 0) {
-        console.log('[Index] Roles still loading, waiting...');
+        console.log('[Index] No roles - AppGate will handle authentication');
         return;
       }
 

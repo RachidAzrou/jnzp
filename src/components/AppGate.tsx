@@ -23,11 +23,13 @@ export const AppGate = ({ children }: AppGateProps) => {
     let cancelled = false;
 
     const checkOrgStatus = async () => {
-      // Wait for auth to finish loading
+      // CRITICAL: Wait for auth to finish loading first
       if (loading) {
         console.log('[AppGate] Still loading roles, waiting...');
         return;
       }
+
+      console.log('[AppGate] Loading complete, proceeding with org check');
 
       // If already checked this session, skip
       if (checkedRef.current) {
@@ -126,7 +128,7 @@ export const AppGate = ({ children }: AppGateProps) => {
     return () => {
       cancelled = true;
     };
-  }, [navigate, loading]);
+  }, [navigate]); // Only depend on navigate, check loading inside
 
   // Show loading while checking
   if (loading || isCheckingOrg) {

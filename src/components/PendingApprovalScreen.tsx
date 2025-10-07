@@ -20,10 +20,8 @@ export const PendingApprovalScreen = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  // Failsafe: ensure user is logged out
-  useEffect(() => {
-    supabase.auth.signOut().catch(() => {});
-  }, []);
+  // Note: No automatic logout - only via button
+  // This prevents logout loops when the component briefly mounts during loading
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

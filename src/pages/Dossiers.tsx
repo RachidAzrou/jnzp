@@ -93,11 +93,11 @@ const Dossiers = () => {
     
     setLoading(true);
     try {
-      // Fetch "Mijn dossiers" - assigned to my org
+      // Fetch "Mijn dossiers" - assigned to my org OR pending claim by my org
       const { data: myData, error: myError } = await supabase
         .from("view_my_dossiers")
         .select("*")
-        .eq("assigned_fd_org_id", organizationId)
+        .or(`assigned_fd_org_id.eq.${organizationId},and(assignment_status.eq.PENDING_CLAIM,assigned_fd_org_id.eq.${organizationId})`)
         .order("created_at", { ascending: false });
 
       if (myError) throw myError;
@@ -529,6 +529,11 @@ const Dossiers = () => {
                             <TableCell>
                               {shouldBlurInfo(dossier) ? (
                                 <Badge className="blur-sm">████████</Badge>
+                              ) : dossier.assignment_status === 'PENDING_CLAIM' ? (
+                                <Badge variant="secondary" className="gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  In afwachting
+                                </Badge>
                               ) : (
                                 <Badge variant={dossier.status === 'archived' ? 'default' : 'secondary'}>
                                   {getStatusLabel(dossier.status)}
@@ -543,7 +548,15 @@ const Dossiers = () => {
                               )}
                             </TableCell>
                             <TableCell className="text-right space-x-2">
-                              {isClaimable(dossier) ? (
+                              {dossier.assignment_status === 'PENDING_CLAIM' ? (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleViewDetails(dossier.id)}
+                                >
+                                  Bekijken
+                                </Button>
+                              ) : isClaimable(dossier) ? (
                                 <Button
                                   size="sm"
                                   onClick={() => handleClaim(dossier)}
@@ -590,7 +603,15 @@ const Dossiers = () => {
                               {formatDate(dossier.updated_at)}
                             </p>
                           </div>
-                          <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+                          <div className="flex flex-col gap-2">
+                            <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+                            {dossier.assignment_status === 'PENDING_CLAIM' && (
+                              <Badge variant="secondary" className="gap-1">
+                                <Clock className="h-3 w-3" />
+                                In afwachting
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                         <Button
                           variant="outline"

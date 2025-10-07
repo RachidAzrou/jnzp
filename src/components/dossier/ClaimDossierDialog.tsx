@@ -108,7 +108,7 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
             <div className="flex items-start justify-between gap-2">
               <div>
                 <p className="text-sm font-mono text-muted-foreground">{dossier.display_id}</p>
-                <p className="text-base font-semibold mt-1">{dossier.deceased_name}</p>
+                <p className="text-base font-semibold mt-1 blur-sm select-none">████████████</p>
               </div>
               <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
             </div>
@@ -121,9 +121,9 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
                 </div>
               )}
               {dossier.date_of_death && (
-                <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex items-center gap-2 text-muted-foreground blur-sm">
                   <Calendar className="h-4 w-4" />
-                  <span>{format(new Date(dossier.date_of_death), "dd/MM/yyyy", { locale: nl })}</span>
+                  <span className="select-none">██/██/████</span>
                 </div>
               )}
             </div>

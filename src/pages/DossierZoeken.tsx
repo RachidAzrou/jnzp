@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { TopBar } from "@/components/TopBar";
+
 
 interface SearchResult {
   id: string;
@@ -116,8 +116,6 @@ export default function DossierZoeken() {
 
   return (
     <>
-      <TopBar />
-      
       <div className="container mx-auto p-6 max-w-4xl space-y-4">
         <div>
           <h1 className="text-3xl font-bold">Dossier zoeken</h1>

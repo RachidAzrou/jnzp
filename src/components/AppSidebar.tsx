@@ -52,17 +52,17 @@ export function AppSidebar() {
     // Org Admin
     { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] },
     
-    // FD & Org Admin (alleen voor FUNERAL_DIRECTOR organisaties)
-    { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director', 'org_admin'] },
-    { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['funeral_director', 'org_admin'] },
-    { titleKey: "navigation.searchDossiers", url: "/dossiers/zoeken", icon: Search, roles: ['funeral_director', 'org_admin'] },
-    { titleKey: "navigation.incomingRequests", url: "/fd/incoming-requests", icon: HiOutlineInboxIn, roles: ['funeral_director', 'org_admin'] },
-    { titleKey: "navigation.chat", url: "/fd/chat", icon: MessageSquare, roles: ['funeral_director', 'org_admin'] },
-    { titleKey: "navigation.tasks", url: "/taken", icon: CheckSquare, roles: ['funeral_director', 'org_admin'] },
-    { titleKey: "navigation.documents", url: "/documenten", icon: FileText, roles: ['funeral_director', 'org_admin'] },
-    { titleKey: "navigation.planning", url: "/planning", icon: Calendar, roles: ['funeral_director', 'org_admin'] },
-    { titleKey: "navigation.facturatie", url: "/facturatie", icon: Receipt, roles: ['funeral_director', 'org_admin'] },
-    { titleKey: "navigation.beoordelingen", url: "/beoordelingen", icon: Star, roles: ['funeral_director', 'org_admin'] },
+    // FD items (org_admin van FD org ziet deze ook via organizationType check)
+    { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director'] },
+    { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['funeral_director'] },
+    { titleKey: "navigation.searchDossiers", url: "/dossiers/zoeken", icon: Search, roles: ['funeral_director'] },
+    { titleKey: "navigation.incomingRequests", url: "/fd/incoming-requests", icon: HiOutlineInboxIn, roles: ['funeral_director'] },
+    { titleKey: "navigation.chat", url: "/fd/chat", icon: MessageSquare, roles: ['funeral_director'] },
+    { titleKey: "navigation.tasks", url: "/taken", icon: CheckSquare, roles: ['funeral_director'] },
+    { titleKey: "navigation.documents", url: "/documenten", icon: FileText, roles: ['funeral_director'] },
+    { titleKey: "navigation.planning", url: "/planning", icon: Calendar, roles: ['funeral_director'] },
+    { titleKey: "navigation.facturatie", url: "/facturatie", icon: Receipt, roles: ['funeral_director'] },
+    { titleKey: "navigation.beoordelingen", url: "/beoordelingen", icon: Star, roles: ['funeral_director'] },
     
     // Insurer
     { titleKey: "navigation.dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },
@@ -88,8 +88,8 @@ export function AppSidebar() {
     { titleKey: "navigation.myDocuments", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
     { titleKey: "navigation.chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
     
-    // Settings for all (platform_admin heeft geen settings in sidebar)
-    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'org_admin'] },
+    // Settings for all roles (org_admin ziet dit altijd via aparte check)
+    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'wasplaats', 'mosque'] },
   ];
 
   // CRITICAL FIX: Filter menu items based on role AND organization type

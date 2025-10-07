@@ -107,6 +107,7 @@ export function AppSidebar() {
     { titleKey: "navigation.myDocuments", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
     { titleKey: "navigation.chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
     
+    
     // Settings voor andere roles (wasplaats heeft het al in eigen sectie)
     { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'mosque'] },
   ];

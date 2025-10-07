@@ -85,11 +85,11 @@ export function AppSidebar() {
     { titleKey: "navigation.invoicesTitle", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
     { titleKey: "navigation.reporting", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
     
-    // Wasplaats - in de exacte volgorde zoals gevraagd
+    // Wasplaats
     { titleKey: "navigation.dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
     { titleKey: "navigation.coolCells", url: "/wasplaats/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['wasplaats'] },
     { titleKey: "navigation.adhocDossier", url: "/wasplaats/adhoc", icon: FolderOpen, roles: ['wasplaats'] },
-    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['wasplaats'] },
+    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] }, // Alleen voor wasplaats org_admin
     { titleKey: "navigation.facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
     { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['wasplaats'] },
     
@@ -104,7 +104,7 @@ export function AppSidebar() {
     { titleKey: "navigation.myDocuments", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
     { titleKey: "navigation.chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
     
-    // Org Admin (alleen voor niet-wasplaats orgs)
+    // Teambeheer - voor org_admin van niet-wasplaats orgs (wasplaats heeft het al in eigen sectie)
     { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] },
     
     // Settings voor andere roles (wasplaats heeft het al in eigen sectie)
@@ -123,18 +123,20 @@ export function AppSidebar() {
     // Check if user has ANY of the required roles for this menu item
     const hasRequiredRole = item.roles.some(requiredRole => roles.includes(requiredRole));
     
-    // Special handling: org_admin can see items for their organization type
+    // Special handling voor org_admin role items
+    if (item.roles.includes('org_admin') && !isOrgAdmin) {
+      // Normale medewerkers zien geen org_admin items
+      return false;
+    }
+    
+    // Org_admin special handling: zie alle items van hun org type + teambeheer
     if (isOrgAdmin && organizationType) {
-      // Skip generic org_admin items if org has specific navigation
+      // Teambeheer altijd tonen voor org_admin
       if (item.roles.includes('org_admin')) {
-        // Generic org_admin items only for non-wasplaats orgs
-        if (organizationType === 'WASPLAATS') {
-          return false; // Wasplaats uses role-specific navigation
-        }
         return true;
       }
       
-      // Allow org_admin to see their org type's navigation
+      // Ook alle items van hun org type tonen
       if (item.roles.includes('funeral_director') && organizationType === 'FUNERAL_DIRECTOR') {
         return true;
       }
@@ -149,28 +151,31 @@ export function AppSidebar() {
       }
     }
     
-    // For non-org_admin: check organization type restrictions
+    // Voor normale medewerkers: filter op org type
     if (hasRequiredRole && organizationType) {
-      // FD items only for FUNERAL_DIRECTOR orgs
+      // FD items alleen voor FUNERAL_DIRECTOR orgs
       if (item.roles.includes('funeral_director') && organizationType !== 'FUNERAL_DIRECTOR') {
         return false;
       }
-      // Mosque items only for MOSQUE orgs
+      // Mosque items alleen voor MOSQUE orgs
       if (item.roles.includes('mosque') && organizationType !== 'MOSQUE') {
         return false;
       }
-      // Wasplaats items only for WASPLAATS orgs
+      // Wasplaats items alleen voor WASPLAATS orgs
       if (item.roles.includes('wasplaats') && organizationType !== 'WASPLAATS') {
         return false;
       }
-      // Insurer items only for INSURER orgs
+      // Insurer items alleen voor INSURER orgs
       if (item.roles.includes('insurer') && organizationType !== 'INSURER') {
         return false;
       }
     }
     
     return hasRequiredRole;
-  });
+  }).filter((item, index, self) => 
+    // Dedupe: verwijder duplicaat URLs (bijv. meerdere teambeheer items)
+    index === self.findIndex((t) => t.url === item.url)
+  );
 
   if (loading) {
     return (

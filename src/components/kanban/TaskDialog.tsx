@@ -110,14 +110,6 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
       return;
     }
 
-    if (!formData.dossier_id) {
-      toast({
-        title: "Dossier vereist",
-        description: "Koppel de taak aan een dossier",
-        variant: "destructive"
-      });
-      return;
-    }
 
     setLoading(true);
     try {
@@ -137,11 +129,11 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
         const { error } = await supabase
           .from('kanban_tasks' as any)
           .update({
-            title: formData.title,
+          title: formData.title,
             description: formData.description,
             priority: formData.priority,
             column_id: formData.column_id,
-            dossier_id: formData.dossier_id,
+            dossier_id: formData.dossier_id || null,
             due_date: formData.due_date?.toISOString().split('T')[0],
             labels: formData.labels
           })
@@ -166,10 +158,10 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
         const { data: newTask, error } = await supabase
           .from('kanban_tasks' as any)
           .insert({
-            board_id: boardId,
+          board_id: boardId,
             org_id: userRole.organization_id,
             column_id: formData.column_id,
-            dossier_id: formData.dossier_id,
+            dossier_id: formData.dossier_id || null,
             title: formData.title,
             description: formData.description,
             priority: formData.priority,
@@ -239,15 +231,16 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           </div>
 
           <div className="space-y-2">
-            <Label>Dossier *</Label>
+            <Label>Dossier (optioneel)</Label>
             <Select
               value={formData.dossier_id}
               onValueChange={(value) => setFormData({ ...formData, dossier_id: value })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecteer een dossier" />
+                <SelectValue placeholder="Selecteer een dossier (optioneel)" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="">Geen dossier</SelectItem>
                 {dossiers.map((dossier) => (
                   <SelectItem key={dossier.id} value={dossier.id}>
                     {dossier.display_id || dossier.ref_number} - {dossier.deceased_name}

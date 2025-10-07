@@ -20,6 +20,9 @@ const ROUTE_ACCESS: Record<string, {
   '/fd/': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
   '/facturatie': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
   '/beoordelingen': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/documenten': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/planning': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/taken': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
   
   // Mosque-specific routes
   '/moskee': { roles: ['mosque', 'org_admin'], orgTypes: ['MOSQUE'], requireOrgType: true },

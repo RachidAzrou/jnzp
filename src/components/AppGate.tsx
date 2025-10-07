@@ -58,13 +58,19 @@ export const AppGate = ({ children }: AppGateProps) => {
             }
 
             if (org) {
-              setOrgStatus(org.verification_status);
-              setOrgName(org.name);
-              setRejectionReason(org.rejection_reason || "");
+              // Only update state if it changed to prevent infinite loops
+              if (orgStatus !== org.verification_status) {
+                setOrgStatus(org.verification_status);
+                setOrgName(org.name);
+                setRejectionReason(org.rejection_reason || "");
 
-              // If not ACTIVE, sign out
-              if (org.verification_status !== 'ACTIVE') {
-                await supabase.auth.signOut();
+                // If not ACTIVE, sign out (only once)
+                if (org.verification_status !== 'ACTIVE') {
+                  console.log('[AppGate] Organization not active, signing out');
+                  await supabase.auth.signOut();
+                  navigate('/auth');
+                  return;
+                }
               }
             }
           }
@@ -76,14 +82,11 @@ export const AppGate = ({ children }: AppGateProps) => {
       setIsCheckingOrg(false);
     };
 
+    // Only run if we haven't checked yet or roles changed
+    if (loading) return;
+    
     checkOrgStatus();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      checkOrgStatus();
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate, loading]);
+  }, [navigate, loading, roles, orgStatus]);
 
   // Show loading while checking
   if (loading || isCheckingOrg) {

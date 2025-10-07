@@ -702,6 +702,9 @@ const Dossiers = () => {
                   const isPending = request.status === "PENDING";
                   const dossier = request.dossier;
                   
+                  // Skip if dossier data is missing
+                  if (!dossier) return null;
+                  
                   return (
                     <Card
                       key={request.id}

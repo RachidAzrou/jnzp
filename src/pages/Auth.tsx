@@ -236,7 +236,7 @@ const Auth = () => {
           user_agent: navigator.userAgent,
         });
 
-        // Check if user's organization is approved (for professional users)
+        // CRITICAL: Check if user's organization is approved BEFORE allowing access
         const { data: roleData } = await supabase
           .from("user_roles")
           .select("role, organization_id")
@@ -247,28 +247,35 @@ const Auth = () => {
         if (roleData?.organization_id) {
           const { data: orgData } = await supabase
             .from("organizations")
-            .select("verification_status")
+            .select("verification_status, name")
             .eq("id", roleData.organization_id)
             .single();
 
-          if (orgData?.verification_status === "PENDING_VERIFICATION") {
+          // Block login if organization is not ACTIVE
+          if (orgData?.verification_status !== "ACTIVE") {
+            // Immediately sign out
             await supabase.auth.signOut();
-            toast({
-              title: t("auth.error.accountNotActive"),
-              description: t("auth.error.accountPendingApproval"),
-              variant: "destructive",
-            });
-            setLoading(false);
-            return;
-          }
-
-          if (orgData?.verification_status === "REJECTED") {
-            await supabase.auth.signOut();
-            toast({
-              title: t("auth.error.requestRejected"),
-              description: t("auth.error.requestRejectedDescription"),
-              variant: "destructive",
-            });
+            
+            if (orgData?.verification_status === "PENDING_VERIFICATION") {
+              toast({
+                title: t("auth.error.accountNotActive"),
+                description: t("auth.error.accountPendingApproval"),
+                variant: "destructive",
+              });
+            } else if (orgData?.verification_status === "REJECTED") {
+              toast({
+                title: t("auth.error.requestRejected"),
+                description: t("auth.error.requestRejectedDescription"),
+                variant: "destructive",
+              });
+            } else {
+              toast({
+                title: t("auth.error.accountNotActive"),
+                description: t("auth.error.contactSupport"),
+                variant: "destructive",
+              });
+            }
+            
             setLoading(false);
             return;
           }

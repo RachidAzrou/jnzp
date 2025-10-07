@@ -563,13 +563,9 @@ const Dossiers = () => {
                             </TableCell>
                             <TableCell className="text-right space-x-2">
                               {dossier.assignment_status === 'PENDING_CLAIM' ? (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleViewDetails(dossier.id)}
-                                >
-                                  Bekijken
-                                </Button>
+                                <div className="flex justify-end">
+                                  <Clock className="h-5 w-5 text-muted-foreground" />
+                                </div>
                               ) : isClaimable(dossier) ? (
                                 <Button
                                   size="sm"

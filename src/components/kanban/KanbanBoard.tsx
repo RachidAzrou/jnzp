@@ -118,29 +118,24 @@ export function KanbanBoard({
   const fetchBoardData = async () => {
     setLoading(true);
     try {
-      // Fetch columns
-      const { data: columnsData, error: columnsError } = await supabase
-        .from('task_board_columns' as any)
-        .select('*')
-        .eq('board_id', boardId)
-        .order('order_idx');
-
-      if (columnsError) throw columnsError;
-
-      let finalColumns = (columnsData as any) || [];
-
-      // Ensure the default columns always exist
+      // Ensure default columns exist first
       const defaultColumns = [
         { key: 'TE_DOEN', label: 'Te doen', order_idx: 0, is_done: false },
         { key: 'BEZIG', label: 'Bezig', order_idx: 1, is_done: false },
         { key: 'AFGEROND', label: 'Afgerond', order_idx: 2, is_done: true },
       ];
 
+      // Create missing columns
       for (const defaultCol of defaultColumns) {
-        const exists = finalColumns.some((col: Column) => col.key === defaultCol.key);
-        if (!exists) {
-          // Create the missing column
-          const { data: newColumn, error: createError } = await supabase
+        const { data: existing } = await supabase
+          .from('task_board_columns' as any)
+          .select('id')
+          .eq('board_id', boardId)
+          .eq('key', defaultCol.key)
+          .maybeSingle();
+
+        if (!existing) {
+          await supabase
             .from('task_board_columns' as any)
             .insert({
               board_id: boardId,
@@ -148,18 +143,18 @@ export function KanbanBoard({
               label: defaultCol.label,
               order_idx: defaultCol.order_idx,
               is_done: defaultCol.is_done,
-            })
-            .select()
-            .single();
-
-          if (!createError && newColumn) {
-            finalColumns.push(newColumn);
-          }
+            });
         }
       }
 
-      // Sort columns by order_idx
-      finalColumns.sort((a: Column, b: Column) => a.order_idx - b.order_idx);
+      // Now fetch all columns
+      const { data: columnsData, error: columnsError } = await supabase
+        .from('task_board_columns' as any)
+        .select('*')
+        .eq('board_id', boardId)
+        .order('order_idx');
+
+      if (columnsError) throw columnsError;
 
       // Fetch tasks
       const { data: tasksData, error: tasksError } = await supabase
@@ -171,9 +166,10 @@ export function KanbanBoard({
 
       if (tasksError) throw tasksError;
 
-      setColumns(finalColumns);
+      setColumns((columnsData as any as Column[]) || []);
       setTasks((tasksData as any) || []);
     } catch (error: any) {
+      console.error('Error fetching board data:', error);
       toast({
         title: "Fout",
         description: "Kon bord niet laden",

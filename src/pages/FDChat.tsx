@@ -59,8 +59,8 @@ export default function FDChat() {
         return;
       }
 
-      // Get dossier with family contact
-      const { data: dossierData } = await supabase
+      // Get dossier with family contact (left join to include dossiers without family contacts)
+      const { data: dossierData, error: dossierError } = await supabase
         .from('dossiers')
         .select(`
           id, 
@@ -74,10 +74,21 @@ export default function FDChat() {
         .eq('id', dossierId)
         .maybeSingle();
 
+      if (dossierError) {
+        console.error('Error fetching dossier:', dossierError);
+      }
+
       // Transform the data to get family contact name
       const transformedDossier = dossierData ? {
-        ...dossierData,
-        family_contact_name: (dossierData as any).family_contacts?.[0]?.name || null,
+        id: dossierData.id,
+        display_id: dossierData.display_id,
+        ref_number: dossierData.ref_number,
+        deceased_name: dossierData.deceased_name,
+        status: dossierData.status,
+        flow: dossierData.flow,
+        family_contact_name: Array.isArray((dossierData as any).family_contacts) && (dossierData as any).family_contacts.length > 0 
+          ? (dossierData as any).family_contacts[0].name 
+          : null,
       } : null;
 
       if (transformedDossier) {

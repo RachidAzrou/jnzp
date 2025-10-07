@@ -137,21 +137,23 @@ export default function AdminUsers() {
       if (data?.error) {
         // Special case: user already deleted (404)
         if (data.code === 'user_not_found') {
+          // Remove from local state immediately
+          setUsers(users.filter(u => u.id !== userToDelete.id));
           toast({
             title: "Gebruiker al verwijderd",
             description: `${userToDelete.email} bestaat niet meer in het systeem`,
           });
           setDeleteDialogOpen(false);
           setUserToDelete(null);
-          // Refresh list to remove stale entries
-          fetchUsers();
           return;
         }
         // Other errors
         throw new Error(data.detail || data.error);
       }
 
-      // Success
+      // Success - remove from local state immediately for instant feedback
+      setUsers(users.filter(u => u.id !== userToDelete.id));
+      
       toast({
         title: "Gebruiker verwijderd",
         description: `${userToDelete.email} is succesvol verwijderd`,
@@ -159,6 +161,8 @@ export default function AdminUsers() {
 
       setDeleteDialogOpen(false);
       setUserToDelete(null);
+      
+      // Still fetch to ensure consistency
       fetchUsers();
     } catch (error: any) {
       console.error("Error deleting user:", error);
@@ -169,8 +173,6 @@ export default function AdminUsers() {
       });
       setDeleteDialogOpen(false);
       setUserToDelete(null);
-      // Refresh anyway in case of stale data
-      fetchUsers();
     }
   };
 

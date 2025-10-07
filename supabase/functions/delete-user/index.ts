@@ -13,9 +13,25 @@ serve(async (req) => {
   }
 
   try {
+    // Get environment variables
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseServiceRoleKey) {
+      console.error('Missing environment variables:', { 
+        hasUrl: !!supabaseUrl, 
+        hasServiceKey: !!supabaseServiceRoleKey 
+      });
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Create admin client with service role key
     const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      supabaseUrl,
+      supabaseServiceRoleKey,
       {
         auth: {
           autoRefreshToken: false,
@@ -50,18 +66,36 @@ serve(async (req) => {
       .select('role')
       .eq('user_id', user.id)
       .eq('role', 'platform_admin')
-      .single();
+      .maybeSingle();
 
-    if (roleError || !userRoles) {
+    if (roleError) {
       console.error('Role check error:', roleError);
+      return new Response(
+        JSON.stringify({ error: 'Error checking permissions' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!userRoles) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized - platform_admin role required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Get user_id to delete from request body
-    const { user_id } = await req.json();
+    // Parse request body
+    let body;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON in request body' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { user_id } = body;
 
     if (!user_id) {
       return new Response(
@@ -83,30 +117,37 @@ serve(async (req) => {
       .from('profiles')
       .select('email')
       .eq('id', user_id)
-      .single();
+      .maybeSingle();
 
-    // Delete user via Admin API (will cascade to profiles and user_roles)
+    console.log('Attempting to delete user:', user_id);
+
+    // Delete user via Admin API (will cascade properly now)
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user_id);
 
     if (deleteError) {
       console.error('Delete error:', deleteError);
       return new Response(
-        JSON.stringify({ error: deleteError.message }),
+        JSON.stringify({ error: `Failed to delete user: ${deleteError.message}` }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // Log the action
-    await supabaseAdmin.rpc('log_admin_action', {
-      p_action: 'USER_DELETED',
-      p_target_type: 'User',
-      p_target_id: user_id,
-      p_reason: `Gebruiker ${profileData?.email || user_id} verwijderd door platform admin`,
-      p_metadata: {
-        deleted_email: profileData?.email,
-        deleted_by: user.email
-      }
-    });
+    try {
+      await supabaseAdmin.rpc('log_admin_action', {
+        p_action: 'USER_DELETED',
+        p_target_type: 'User',
+        p_target_id: user_id,
+        p_reason: `Gebruiker ${profileData?.email || user_id} verwijderd door platform admin`,
+        p_metadata: {
+          deleted_email: profileData?.email,
+          deleted_by: user.email
+        }
+      });
+    } catch (logError) {
+      console.error('Failed to log action (non-critical):', logError);
+      // Don't fail the request if logging fails
+    }
 
     console.log(`User ${user_id} deleted successfully by ${user.email}`);
 
@@ -125,7 +166,7 @@ serve(async (req) => {
     console.error('Unexpected error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: `Server error: ${errorMessage}` }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

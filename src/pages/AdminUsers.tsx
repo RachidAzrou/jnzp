@@ -79,16 +79,25 @@ export default function AdminUsers() {
 
       if (error) throw error;
 
-      // Map to UserWithRole format
-      const usersData: UserWithRole[] = (userRoles || []).map((ur: any) => ({
-        id: ur.user_id,
-        email: ur.profiles?.email || "",
-        created_at: ur.created_at,
-        role: ur.role,
-        organization_id: ur.organization_id,
-      }));
+      // Map to UserWithRole format and deduplicate users (some have multiple roles)
+      const usersMap = new Map<string, UserWithRole>();
+      
+      (userRoles || []).forEach((ur: any) => {
+        const userId = ur.user_id;
+        
+        // If user already exists, keep the first role we encountered
+        if (!usersMap.has(userId)) {
+          usersMap.set(userId, {
+            id: userId,
+            email: ur.profiles?.email || "",
+            created_at: ur.created_at,
+            role: ur.role,
+            organization_id: ur.organization_id,
+          });
+        }
+      });
 
-      setUsers(usersData);
+      setUsers(Array.from(usersMap.values()));
     } catch (error) {
       console.error("Error fetching users:", error);
       toast({

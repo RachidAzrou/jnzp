@@ -22,18 +22,37 @@ export const useUserRole = () => {
 
   useEffect(() => {
     let isMounted = true;
+    let loadingTimeout: NodeJS.Timeout;
     
     const fetchUserRole = async () => {
       try {
         console.log('[useUserRole] Fetching user role...');
-        const { data: { session } } = await supabase.auth.getSession();
+        
+        // Safety timeout - force loading to false after 5 seconds
+        loadingTimeout = setTimeout(() => {
+          if (isMounted) {
+            console.warn('[useUserRole] Loading timeout - forcing loading to false');
+            setLoading(false);
+          }
+        }, 5000);
+        
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (!isMounted) return;
+        
+        if (sessionError) {
+          console.error('[useUserRole] Session error:', sessionError);
+          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
+          setLoading(false);
+          clearTimeout(loadingTimeout);
+          return;
+        }
         
         if (!session?.user) {
           console.log('[useUserRole] No session found');
           setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
           setLoading(false);
+          clearTimeout(loadingTimeout);
           return;
         }
 
@@ -56,15 +75,14 @@ export const useUserRole = () => {
           console.error('[useUserRole] Error fetching user role:', error);
           setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
           setLoading(false);
+          clearTimeout(loadingTimeout);
           return;
         }
         
         if (data && data.length > 0) {
           console.log('[useUserRole] Roles found:', data.length);
-          // Get all roles
           const allRoles = data.map(d => d.role as UserRole);
           
-          // Prioritize roles: platform_admin > org_admin > other roles
           const priorityOrder = ['platform_admin', 'org_admin', 'funeral_director', 'insurer', 'wasplaats', 'mosque', 'family'];
           
           const sortedData = data.sort((a, b) => {
@@ -88,12 +106,14 @@ export const useUserRole = () => {
         }
         
         setLoading(false);
+        clearTimeout(loadingTimeout);
         console.log('[useUserRole] Loading complete');
       } catch (error) {
         console.error('[useUserRole] Exception in fetchUserRole:', error);
         if (isMounted) {
           setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
           setLoading(false);
+          clearTimeout(loadingTimeout);
         }
       }
     };
@@ -103,13 +123,15 @@ export const useUserRole = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       console.log('[useUserRole] Auth state changed:', event);
       if (isMounted) {
-        setLoading(true);
+        // Don't set loading to true on every auth change - can cause infinite loading
+        // Only refetch roles
         fetchUserRole();
       }
     });
 
     return () => {
       isMounted = false;
+      if (loadingTimeout) clearTimeout(loadingTimeout);
       subscription.unsubscribe();
     };
   }, []);

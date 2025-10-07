@@ -4,8 +4,18 @@ import { useTranslation } from 'react-i18next';
 
 export type UserRole = 'platform_admin' | 'org_admin' | 'funeral_director' | 'family' | 'insurer' | 'wasplaats' | 'mosque' | null;
 
+export interface UserRoleContext {
+  role: UserRole;
+  organizationType: 'FUNERAL_DIRECTOR' | 'MOSQUE' | 'WASPLAATS' | 'INSURER' | null;
+  organizationId: string | null;
+}
+
 export const useUserRole = () => {
-  const [role, setRole] = useState<UserRole>(null);
+  const [roleContext, setRoleContext] = useState<UserRoleContext>({
+    role: null,
+    organizationType: null,
+    organizationId: null
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,31 +24,49 @@ export const useUserRole = () => {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session?.user) {
-          setRole(null);
+          setRoleContext({ role: null, organizationType: null, organizationId: null });
           setLoading(false);
           return;
         }
 
         const { data, error } = await supabase
           .from('user_roles')
-          .select('role')
+          .select(`
+            role, 
+            organization_id,
+            organizations (
+              type
+            )
+          `)
           .eq('user_id', session.user.id);
 
         if (error) {
           console.error('Error fetching user role:', error);
-          setRole(null);
+          setRoleContext({ role: null, organizationType: null, organizationId: null });
         } else if (data && data.length > 0) {
-          // Prioritize roles: platform_admin > org_admin > funeral_director > other roles
-          const roles = data.map(d => d.role as UserRole);
+          // Prioritize roles: platform_admin > org_admin > other roles
           const priorityOrder = ['platform_admin', 'org_admin', 'funeral_director', 'insurer', 'wasplaats', 'mosque', 'family'];
-          const primaryRole = priorityOrder.find(r => roles.includes(r as UserRole)) || roles[0];
-          setRole(primaryRole as UserRole);
+          
+          const sortedData = data.sort((a, b) => {
+            const indexA = priorityOrder.indexOf(a.role);
+            const indexB = priorityOrder.indexOf(b.role);
+            return indexA - indexB;
+          });
+          
+          const primaryRoleData = sortedData[0];
+          const orgType = primaryRoleData.organizations?.[0]?.type || null;
+          
+          setRoleContext({
+            role: primaryRoleData.role as UserRole,
+            organizationType: orgType as 'FUNERAL_DIRECTOR' | 'MOSQUE' | 'WASPLAATS' | 'INSURER' | null,
+            organizationId: primaryRoleData.organization_id
+          });
         } else {
-          setRole(null);
+          setRoleContext({ role: null, organizationType: null, organizationId: null });
         }
       } catch (error) {
         console.error('Error in fetchUserRole:', error);
-        setRole(null);
+        setRoleContext({ role: null, organizationType: null, organizationId: null });
       } finally {
         setLoading(false);
       }
@@ -53,7 +81,7 @@ export const useUserRole = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  return { role, loading };
+  return { role: roleContext.role, organizationType: roleContext.organizationType, organizationId: roleContext.organizationId, loading };
 };
 
 export const getRoleDisplayName = (role: UserRole): string => {

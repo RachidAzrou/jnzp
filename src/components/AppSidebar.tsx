@@ -27,8 +27,7 @@ type MenuItem = {
 };
 
 export function AppSidebar() {
-  // Fixed: UserPlus icon replaced with HiOutlineInboxIn
-  const { role, loading } = useUserRole();
+  const { role, organizationType, loading } = useUserRole();
   const { t } = useTranslation();
   const rolePortalName = useRolePortalName(role);
   const { state } = useSidebar();
@@ -53,7 +52,7 @@ export function AppSidebar() {
     // Org Admin
     { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] },
     
-    // FD & Org Admin (niet voor platform_admin/admin - die hebben eigen menu)
+    // FD & Org Admin (alleen voor FUNERAL_DIRECTOR organisaties)
     { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['funeral_director', 'org_admin'] },
     { titleKey: "navigation.searchDossiers", url: "/dossiers/zoeken", icon: Search, roles: ['funeral_director', 'org_admin'] },
@@ -93,9 +92,37 @@ export function AppSidebar() {
     { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'org_admin'] },
   ];
 
-  const filteredMenuItems = menuItems.filter(item => 
-    role && item.roles.includes(role)
-  );
+  // CRITICAL FIX: Filter menu items based on role AND organization type
+  const filteredMenuItems = menuItems.filter(item => {
+    if (!role) return false;
+    
+    // Altijd tonen voor platform_admin
+    if (role === 'platform_admin') {
+      return item.roles.includes('platform_admin');
+    }
+    
+    // Voor org_admin: alleen tonen wat bij hun organisatietype hoort
+    if (role === 'org_admin') {
+      // Team management is altijd zichtbaar voor org_admin
+      if (item.titleKey === "navigation.teamManagement" || item.titleKey === "navigation.settings") {
+        return true;
+      }
+      
+      // Anders afhankelijk van organisatie type
+      if (organizationType === 'MOSQUE') {
+        return item.roles.includes('mosque');
+      } else if (organizationType === 'WASPLAATS') {
+        return item.roles.includes('wasplaats');
+      } else if (organizationType === 'INSURER') {
+        return item.roles.includes('insurer');
+      } else if (organizationType === 'FUNERAL_DIRECTOR') {
+        return item.roles.includes('funeral_director') || item.roles.includes('org_admin');
+      }
+    }
+    
+    // Voor andere rollen: gewoon checken of rol in de lijst staat
+    return item.roles.includes(role);
+  });
 
   if (loading) {
     return (

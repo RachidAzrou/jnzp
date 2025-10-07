@@ -86,18 +86,16 @@ const Instellingen = () => {
           .single();
 
         if (orgData) {
-          const roleLabels: Record<string, string> = {
-            admin: 'Beheerder',
-            funeral_director: 'Uitvaartondernemer',
-            insurer: 'Verzekeraar',
-            wasplaats: 'Mortuarium',
-            mosque: 'Moskee',
-            family: 'Familie'
+          const orgTypeLabels: Record<string, string> = {
+            FUNERAL_DIRECTOR: 'Uitvaartondernemer',
+            INSURER: 'Verzekeraar',
+            WASPLAATS: 'Mortuarium',
+            MOSQUE: 'Moskee'
           };
 
           setOrganization({
             name: orgData.name || "",
-            type: roleLabels[roleData.role] || roleData.role,
+            type: orgTypeLabels[orgData.type] || orgData.type || "",
             contactEmail: orgData.contact_email || "",
             contactPhone: orgData.contact_phone || "",
             address: orgData.address || "",

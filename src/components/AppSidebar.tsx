@@ -101,14 +101,15 @@ export function AppSidebar() {
       return item.roles.includes('platform_admin');
     }
     
-    // Voor org_admin: alleen tonen wat bij hun organisatietype hoort
+    // Voor org_admin: org-specifieke admin met toegang tot operationele items van hun org type
     if (role === 'org_admin') {
-      // Team management is altijd zichtbaar voor org_admin
+      // Team management en settings zijn altijd zichtbaar voor org_admin
       if (item.titleKey === "navigation.teamManagement" || item.titleKey === "navigation.settings") {
         return true;
       }
       
-      // Anders afhankelijk van organisatie type
+      // Toon operationele items op basis van organisatietype
+      // org_admin van MOSQUE = mosque rechten, org_admin van FD = FD rechten, etc.
       if (organizationType === 'MOSQUE') {
         return item.roles.includes('mosque');
       } else if (organizationType === 'WASPLAATS') {
@@ -116,8 +117,11 @@ export function AppSidebar() {
       } else if (organizationType === 'INSURER') {
         return item.roles.includes('insurer');
       } else if (organizationType === 'FUNERAL_DIRECTOR') {
-        return item.roles.includes('funeral_director') || item.roles.includes('org_admin');
+        return item.roles.includes('funeral_director');
       }
+      
+      // Als geen organizationType bekend is, alleen admin items
+      return false;
     }
     
     // Voor andere rollen: gewoon checken of rol in de lijst staat

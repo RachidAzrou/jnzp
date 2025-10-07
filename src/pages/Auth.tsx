@@ -237,32 +237,42 @@ const Auth = () => {
         });
 
         // CRITICAL: Check if user's organization is approved BEFORE allowing access
-        const { data: roleData } = await supabase
+        const { data: roleData, error: roleError } = await supabase
           .from("user_roles")
           .select("role, organization_id")
           .eq("user_id", data.user.id)
           .not('organization_id', 'is', null)
+          .order('role')
+          .limit(1)
           .maybeSingle();
 
+        if (roleError) {
+          console.error('[Auth] Error fetching user roles:', roleError);
+        }
+
         if (roleData?.organization_id) {
-          const { data: orgData } = await supabase
+          const { data: orgData, error: orgError } = await supabase
             .from("organizations")
             .select("verification_status, name")
             .eq("id", roleData.organization_id)
-            .single();
+            .maybeSingle();
 
-          // Block login if organization is not ACTIVE
-          if (orgData?.verification_status !== "ACTIVE") {
+          if (orgError) {
+            console.error('[Auth] Error fetching org:', orgError);
+          }
+
+          // Block login if organization exists but is not ACTIVE
+          if (orgData && orgData.verification_status !== "ACTIVE") {
             // Immediately sign out
             await supabase.auth.signOut();
             
-            if (orgData?.verification_status === "PENDING_VERIFICATION") {
+            if (orgData.verification_status === "PENDING_VERIFICATION") {
               toast({
                 title: t("auth.error.accountNotActive"),
                 description: t("auth.error.accountPendingApproval"),
                 variant: "destructive",
               });
-            } else if (orgData?.verification_status === "REJECTED") {
+            } else if (orgData.verification_status === "REJECTED") {
               toast({
                 title: t("auth.error.requestRejected"),
                 description: t("auth.error.requestRejectedDescription"),
@@ -505,13 +515,13 @@ const Auth = () => {
 
       if (error) throw error;
 
-      // Create organization
+      // Create organization with proper type mapping
       if (data.user) {
         const orgType = selectedRole === "funeral_director" ? "FUNERAL_DIRECTOR" : 
                        selectedRole === "mosque" ? "MOSQUE" :
                        selectedRole === "wasplaats" ? "WASPLAATS" : "INSURER";
         
-        const { error: orgError } = await supabase
+        const { data: orgData, error: orgError } = await supabase
           .from("organizations")
           .insert({
             name: orgName,
@@ -524,9 +534,37 @@ const Auth = () => {
             contact_phone: phone,
             requested_by: data.user.id,
             verification_status: "PENDING_VERIFICATION",
-          });
+          })
+          .select('id')
+          .single();
 
         if (orgError) throw orgError;
+
+        // Create user_roles: org_admin + operational role
+        const rolesToInsert: Array<{
+          user_id: string;
+          organization_id: string;
+          role: 'org_admin' | 'funeral_director' | 'mosque' | 'wasplaats' | 'insurer';
+        }> = [
+          { user_id: data.user.id, organization_id: orgData.id, role: 'org_admin' as const }
+        ];
+
+        // Add operational role based on selected role
+        const operationalRole = selectedRole as 'funeral_director' | 'mosque' | 'wasplaats' | 'insurer';
+        rolesToInsert.push({
+          user_id: data.user.id,
+          organization_id: orgData.id,
+          role: operationalRole
+        });
+
+        const { error: rolesError } = await supabase
+          .from('user_roles')
+          .insert(rolesToInsert);
+
+        if (rolesError) {
+          console.error('Roles creation error:', rolesError);
+          throw new Error('Failed to assign roles');
+        }
       }
 
       // CRITICAL: Force sign out immediately after signup

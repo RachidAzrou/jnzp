@@ -70,7 +70,6 @@ export function AppSidebar() {
     // FD items
     { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director'] },
     { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['funeral_director'] },
-    { titleKey: "navigation.searchDossiers", url: "/dossiers/zoeken", icon: Search, roles: ['funeral_director'] },
     { titleKey: "navigation.incomingRequests", url: "/fd/incoming-requests", icon: HiOutlineInboxIn, roles: ['funeral_director'] },
     { titleKey: "navigation.chat", url: "/fd/chat", icon: MessageSquare, roles: ['funeral_director'] },
     { titleKey: "navigation.tasks", url: "/taken", icon: CheckSquare, roles: ['funeral_director'] },

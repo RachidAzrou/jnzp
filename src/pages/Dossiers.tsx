@@ -467,21 +467,22 @@ const Dossiers = () => {
                               )}
                             </TableCell>
                             <TableCell className="text-right space-x-2">
-                              {isClaimable(dossier) && (
+                              {isClaimable(dossier) ? (
                                 <Button
                                   size="sm"
                                   onClick={() => handleClaim(dossier)}
                                 >
-                                  Claim
+                                  Claimen
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleViewDetails(dossier.id)}
+                                >
+                                  Bekijken
                                 </Button>
                               )}
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleViewDetails(dossier.id)}
-                              >
-                                Bekijken
-                              </Button>
                             </TableCell>
                           </TableRow>
                         ))
@@ -516,23 +517,24 @@ const Dossiers = () => {
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          {isClaimable(dossier) && (
+                          {isClaimable(dossier) ? (
                             <Button
                               size="sm"
                               onClick={() => handleClaim(dossier)}
-                              className="flex-1"
+                              className="w-full"
                             >
-                              Claim
+                              Claimen
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewDetails(dossier.id)}
+                              className="w-full"
+                            >
+                              Bekijken
                             </Button>
                           )}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewDetails(dossier.id)}
-                            className="flex-1"
-                          >
-                            Bekijken
-                          </Button>
                         </div>
                       </div>
                     ))

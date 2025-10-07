@@ -120,24 +120,36 @@ export function AppSidebar() {
       return item.roles.includes('platform_admin');
     }
     
-    // Special handling for org_admin items to avoid duplicates with role-specific sections
-    if (isOrgAdmin) {
-      // For wasplaats org_admin: skip the generic org_admin teamManagement/settings, use wasplaats-specific ones
-      if (organizationType === 'WASPLAATS' && item.roles.includes('org_admin') && 
-          (item.titleKey === "navigation.teamManagement" || item.titleKey === "navigation.settings")) {
-        return false; // Skip generic org_admin items, we'll use wasplaats-specific ones
+    // Check if user has ANY of the required roles for this menu item
+    const hasRequiredRole = item.roles.some(requiredRole => roles.includes(requiredRole));
+    
+    // Special handling: org_admin can see items for their organization type
+    if (isOrgAdmin && organizationType) {
+      // Skip generic org_admin items if org has specific navigation
+      if (item.roles.includes('org_admin')) {
+        // Generic org_admin items only for non-wasplaats orgs
+        if (organizationType === 'WASPLAATS') {
+          return false; // Wasplaats uses role-specific navigation
+        }
+        return true;
       }
       
-      // For other org types: show generic org_admin items
-      if (item.roles.includes('org_admin') && organizationType !== 'WASPLAATS') {
+      // Allow org_admin to see their org type's navigation
+      if (item.roles.includes('funeral_director') && organizationType === 'FUNERAL_DIRECTOR') {
+        return true;
+      }
+      if (item.roles.includes('wasplaats') && organizationType === 'WASPLAATS') {
+        return true;
+      }
+      if (item.roles.includes('mosque') && organizationType === 'MOSQUE') {
+        return true;
+      }
+      if (item.roles.includes('insurer') && organizationType === 'INSURER') {
         return true;
       }
     }
     
-    // Check if user has ANY of the required roles for this menu item
-    const hasRequiredRole = item.roles.some(requiredRole => roles.includes(requiredRole));
-    
-    // Additionally check organization type for operational items
+    // For non-org_admin: check organization type restrictions
     if (hasRequiredRole && organizationType) {
       // FD items only for FUNERAL_DIRECTOR orgs
       if (item.roles.includes('funeral_director') && organizationType !== 'FUNERAL_DIRECTOR') {

@@ -3150,6 +3150,7 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          is_admin: boolean | null
           organization_id: string | null
           role: Database["public"]["Enums"]["app_role"]
           scope: string | null
@@ -3159,6 +3160,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          is_admin?: boolean | null
           organization_id?: string | null
           role: Database["public"]["Enums"]["app_role"]
           scope?: string | null
@@ -3168,6 +3170,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          is_admin?: boolean | null
           organization_id?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           scope?: string | null
@@ -3526,6 +3529,10 @@ export type Database = {
       }
       is_allowed_role: {
         Args: { p_role: Database["public"]["Enums"]["app_role"] }
+        Returns: boolean
+      }
+      is_org_admin: {
+        Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
       is_org_admin_for: {

@@ -2,13 +2,12 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, AlertTriangle, CheckCircle, User, Calendar, MapPin } from "lucide-react";
+import { Loader2, AlertTriangle, User, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 
@@ -29,7 +28,6 @@ interface ClaimDossierDialogProps {
 
 export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: ClaimDossierDialogProps) {
   const [note, setNote] = useState("");
-  const [requireFamilyApproval, setRequireFamilyApproval] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleClaim = async () => {
@@ -38,7 +36,7 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
       const { data, error } = await supabase.rpc("claim_dossier", {
         p_dossier_id: dossier.id,
         p_note: note || null,
-        p_require_family_approval: requireFamilyApproval,
+        p_require_family_approval: true,
       });
 
       if (error) throw error;
@@ -62,7 +60,6 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
       onOpenChange(false);
       onClaimed?.();
       setNote("");
-      setRequireFamilyApproval(false);
     } catch (error: any) {
       console.error("Error claiming dossier:", error);
       toast.error("Fout bij claimen", {
@@ -150,50 +147,17 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
               disabled={loading}
             />
             <p className="text-xs text-muted-foreground">
-              Deze opmerking wordt gedeeld met de familie indien van toepassing.
+              Deze opmerking wordt gedeeld met de familie.
             </p>
           </div>
 
-          {/* Family Approval Checkbox */}
-          <div className="flex items-start space-x-3 p-3 border rounded-lg">
-            <Checkbox
-              id="family-approval"
-              checked={requireFamilyApproval}
-              onCheckedChange={(checked) => setRequireFamilyApproval(checked as boolean)}
-              disabled={loading}
-            />
-            <div className="space-y-1 flex-1">
-              <Label
-                htmlFor="family-approval"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-              >
-                Familie moet akkoord geven
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                Indien aangevinkt, wordt een verzoek gestuurd naar de familie. Het dossier wordt pas toegewezen na goedkeuring.
-              </p>
-            </div>
-          </div>
-
-          {/* Warning for family approval */}
-          {requireFamilyApproval && (
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription className="text-sm">
-                De claim wordt in afwachting gezet totdat de familie deze goedkeurt via de Familie-app.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {/* Success info for direct assignment */}
-          {!requireFamilyApproval && (
-            <Alert className="border-green-200 bg-green-50">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-sm text-green-800">
-                Het dossier wordt direct toegewezen aan jouw organisatie.
-              </AlertDescription>
-            </Alert>
-          )}
+          {/* Info about family approval */}
+          <Alert>
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription className="text-sm">
+              De claim wordt in afwachting gezet totdat de familie deze goedkeurt via de Familie-app.
+            </AlertDescription>
+          </Alert>
         </div>
 
         <DialogFooter>
@@ -202,7 +166,7 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
           </Button>
           <Button onClick={handleClaim} disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {requireFamilyApproval ? "Claim aanvragen" : "Direct claimen"}
+            Claim aanvragen
           </Button>
         </DialogFooter>
       </DialogContent>

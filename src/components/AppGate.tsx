@@ -20,29 +20,35 @@ export const AppGate = ({ children }: AppGateProps) => {
   const checkedRef = useRef(false);
 
   useEffect(() => {
-    const checkOrgStatus = async () => {
-      // If already checked this session, skip
-      if (checkedRef.current) {
-        console.log('[AppGate] Already checked this session, skipping');
-        return;
-      }
+    let cancelled = false;
 
+    const checkOrgStatus = async () => {
       // Wait for auth to finish loading
       if (loading) {
         console.log('[AppGate] Still loading roles, waiting...');
         return;
       }
 
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        console.log('[AppGate] No session found');
-        checkedRef.current = true;
-        setIsCheckingOrg(false);
+      // If already checked this session, skip
+      if (checkedRef.current) {
+        console.log('[AppGate] Already checked this session, skipping');
+        if (!cancelled) setIsCheckingOrg(false);
         return;
       }
 
-      console.log('[AppGate] Starting org check for user:', session.user.id);
+      // ⚠️ CRITICAL: Set flag IMMEDIATELY to prevent concurrent runs
+      checkedRef.current = true;
+      console.log('[AppGate] Starting org check (flag set)');
+
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        console.log('[AppGate] No session found - allowing access');
+        if (!cancelled) setIsCheckingOrg(false);
+        return;
+      }
+
+      console.log('[AppGate] Session found for user:', session.user.id);
 
       try {
         // Get all professional roles for this user that have an organization
@@ -54,8 +60,7 @@ export const AppGate = ({ children }: AppGateProps) => {
 
         if (error) {
           console.error('[AppGate] Error fetching user roles:', error);
-          checkedRef.current = true;
-          setIsCheckingOrg(false);
+          if (!cancelled) setIsCheckingOrg(false);
           return;
         }
 
@@ -64,57 +69,63 @@ export const AppGate = ({ children }: AppGateProps) => {
         // If user has any professional role with organization, check that org
         const professionalRole = userRoles?.[0];
 
-        if (professionalRole?.organization_id) {
-          const { data: org, error: orgError } = await supabase
-            .from('organizations')
-            .select('verification_status, name, rejection_reason')
-            .eq('id', professionalRole.organization_id)
-            .maybeSingle();
-
-          if (orgError) {
-            console.error('[AppGate] Error fetching org:', orgError);
-            checkedRef.current = true;
-            setIsCheckingOrg(false);
-            return;
-          }
-
-          // ⚠️ CRITICAL: Only proceed if we actually got org data
-          if (!org) {
-            console.log('[AppGate] No org data found, allowing access');
-            checkedRef.current = true;
-            setIsCheckingOrg(false);
-            return;
-          }
-
-          console.log('[AppGate] Org found:', org.name, 'Status:', org.verification_status);
-          
-          // Set org info
-          setOrgStatus(org.verification_status);
-          setOrgName(org.name);
-          setRejectionReason(org.rejection_reason || "");
-
-          // ⚠️ ONLY sign out if we KNOW FOR SURE the org is not ACTIVE
-          if (org.verification_status !== 'ACTIVE') {
-            console.log('[AppGate] Org status is', org.verification_status, '- signing out');
-            checkedRef.current = true;
-            await supabase.auth.signOut();
-            navigate('/auth');
-            return;
-          }
-
-          console.log('[AppGate] Org is ACTIVE - allowing access');
-        } else {
-          console.log('[AppGate] No professional role with org found, allowing access');
+        if (!professionalRole?.organization_id) {
+          console.log('[AppGate] No professional role with org - allowing access');
+          if (!cancelled) setIsCheckingOrg(false);
+          return;
         }
+
+        const { data: org, error: orgError } = await supabase
+          .from('organizations')
+          .select('verification_status, name, rejection_reason')
+          .eq('id', professionalRole.organization_id)
+          .maybeSingle();
+
+        if (cancelled) return; // Stop if component unmounted
+
+        if (orgError) {
+          console.error('[AppGate] Error fetching org:', orgError);
+          setIsCheckingOrg(false);
+          return;
+        }
+
+        // ⚠️ CRITICAL: Only proceed if we actually got org data
+        if (!org) {
+          console.log('[AppGate] No org data returned - allowing access');
+          setIsCheckingOrg(false);
+          return;
+        }
+
+        console.log('[AppGate] Org found:', org.name, 'Status:', org.verification_status);
+        
+        // Set org info
+        setOrgStatus(org.verification_status);
+        setOrgName(org.name);
+        setRejectionReason(org.rejection_reason || "");
+
+        // ⚠️ ONLY sign out if we KNOW FOR SURE the org is not ACTIVE
+        if (org.verification_status !== 'ACTIVE') {
+          console.log('[AppGate] ❌ Org is NOT ACTIVE (status:', org.verification_status, ') - signing out');
+          await supabase.auth.signOut();
+          if (!cancelled) {
+            navigate('/auth');
+          }
+          return;
+        }
+
+        console.log('[AppGate] ✅ Org is ACTIVE - allowing access');
+        setIsCheckingOrg(false);
       } catch (err) {
         console.error('[AppGate] Exception during org check:', err);
+        if (!cancelled) setIsCheckingOrg(false);
       }
-
-      checkedRef.current = true;
-      setIsCheckingOrg(false);
     };
 
     checkOrgStatus();
+
+    return () => {
+      cancelled = true;
+    };
   }, [navigate, loading]);
 
   // Show loading while checking

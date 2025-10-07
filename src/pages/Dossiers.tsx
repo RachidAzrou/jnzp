@@ -93,15 +93,29 @@ const Dossiers = () => {
     
     setLoading(true);
     try {
-      // Fetch "Mijn dossiers" - assigned to my org OR pending claim by my org
+      // Fetch "Mijn dossiers" - assigned to my org
       const { data: myData, error: myError } = await supabase
         .from("view_my_dossiers")
         .select("*")
-        .or(`assigned_fd_org_id.eq.${organizationId},and(assignment_status.eq.PENDING_CLAIM,assigned_fd_org_id.eq.${organizationId})`)
+        .eq("assigned_fd_org_id", organizationId)
         .order("created_at", { ascending: false });
 
       if (myError) throw myError;
-      setMyDossiers(myData || []);
+
+      // Fetch dossiers with pending claims by my org
+      const { data: pendingClaims, error: claimsError } = await supabase
+        .from("dossier_claims")
+        .select(`
+          dossier:dossiers(*)
+        `)
+        .eq("requesting_org_id", organizationId)
+        .eq("status", "PENDING");
+
+      if (claimsError) throw claimsError;
+
+      // Combine assigned dossiers and pending claim dossiers
+      const pendingDossiers = pendingClaims?.map((claim: any) => claim.dossier).filter(Boolean) || [];
+      setMyDossiers([...(myData || []), ...pendingDossiers]);
 
       // Fetch "Alle dossiers" - all org dossiers + unassigned claimable
       const { data: allData, error: allError } = await supabase

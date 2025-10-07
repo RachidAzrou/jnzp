@@ -28,14 +28,14 @@ export function SendFeedbackButton({ dossierId }: SendFeedbackButtonProps) {
   const [feedbackUrl, setFeedbackUrl] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const handleCreateLink = async (sendWhatsApp: boolean) => {
+  const handleCreateLink = async () => {
     try {
       setLoading(true);
 
       const { data, error } = await supabase.functions.invoke("create-feedback-link", {
         body: {
           dossierId,
-          sendWhatsApp,
+          sendWhatsApp: false,
         },
       });
 
@@ -46,10 +46,8 @@ export function SendFeedbackButton({ dossierId }: SendFeedbackButtonProps) {
       setFeedbackUrl(data.feedbackUrl);
 
       toast({
-        title: sendWhatsApp ? t("feedback.sentViaWhatsApp") : t("feedback.linkCreated"),
-        description: sendWhatsApp
-          ? t("feedback.sentViaWhatsAppDesc")
-          : t("feedback.linkCreatedDesc"),
+        title: t("feedback.linkCreated"),
+        description: t("feedback.linkCreatedDesc"),
       });
     } catch (error: any) {
       console.error("Error creating feedback link:", error);
@@ -119,21 +117,12 @@ export function SendFeedbackButton({ dossierId }: SendFeedbackButtonProps) {
 
         <DialogFooter>
           {!feedbackUrl ? (
-            <>
-              <Button
-                variant="outline"
-                onClick={() => handleCreateLink(false)}
-                disabled={loading}
-              >
-                {t("feedback.createLinkOnly")}
-              </Button>
-              <Button
-                onClick={() => handleCreateLink(true)}
-                disabled={loading}
-              >
-                {loading ? t("feedback.sending") : t("feedback.sendViaWhatsApp")}
-              </Button>
-            </>
+            <Button
+              onClick={() => handleCreateLink()}
+              disabled={loading}
+            >
+              {loading ? t("feedback.loading") : t("feedback.createLinkOnly")}
+            </Button>
           ) : (
             <Button variant="outline" onClick={() => setOpen(false)}>
               {t("common.close")}

@@ -3,7 +3,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { MessageSquare, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type MessageChannel = "PORTAL" | "WHATSAPP";
+type MessageChannel = "PORTAL";
 
 interface ChatMessageProps {
   message: string;
@@ -17,11 +17,6 @@ const channelConfig = {
   PORTAL: {
     label: "Portal",
     color: "bg-blue-500",
-    icon: MessageSquare,
-  },
-  WHATSAPP: {
-    label: "WhatsApp",
-    color: "bg-green-500",
     icon: MessageSquare,
   },
 };

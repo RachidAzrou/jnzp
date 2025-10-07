@@ -155,15 +155,6 @@ export default function FDChat() {
         attachment_type = selectedFile.type;
       }
 
-      // Get last channel preference
-      const { data: prefData } = await supabase
-        .from('dossier_communication_preferences')
-        .select('last_channel_used, whatsapp_phone')
-        .eq('dossier_id', dossier.id)
-        .maybeSingle();
-
-      const targetChannel = prefData?.last_channel_used || 'PORTAL';
-
       // Insert message
       const { error: insertError } = await supabase
         .from('chat_messages')
@@ -171,7 +162,7 @@ export default function FDChat() {
           dossier_id: dossier.id,
           sender_user_id: session.user.id,
           sender_role: roleData?.role || 'funeral_director',
-          channel: targetChannel as any,
+          channel: 'PORTAL',
           message: newMessage.trim() || (selectedFile ? `[Bijlage: ${selectedFile.name}]` : ''),
           attachment_url,
           attachment_name,
@@ -180,19 +171,13 @@ export default function FDChat() {
 
       if (insertError) throw insertError;
 
-      // If target channel is WhatsApp, send via WhatsApp API
-      if (targetChannel === 'WHATSAPP' && prefData?.whatsapp_phone) {
-        // TODO: Call WhatsApp API to send message
-        console.log('TODO: Send WhatsApp message to', prefData.whatsapp_phone);
-      }
-
       // Reset form
       setNewMessage("");
       setSelectedFile(null);
 
       toast({
         title: "Bericht verzonden",
-        description: `Verzonden via ${targetChannel === 'WHATSAPP' ? 'WhatsApp' : 'Portal'}`,
+        description: "Uw bericht is verstuurd",
       });
     } catch (error) {
       console.error('Error sending message:', error);
@@ -339,16 +324,9 @@ export default function FDChat() {
                         <div className="flex items-center justify-between gap-2 text-xs opacity-80">
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{getRoleName(msg.sender_role)}</span>
-                            {msg.channel === 'WHATSAPP' && (
-                              <Badge className="bg-green-500 text-white text-[10px] h-4 px-1.5">
-                                WhatsApp
-                              </Badge>
-                            )}
-                            {msg.channel === 'PORTAL' && (
-                              <Badge className="bg-blue-500 text-white text-[10px] h-4 px-1.5">
-                                Portal
-                              </Badge>
-                            )}
+                            <Badge className="bg-blue-500 text-white text-[10px] h-4 px-1.5">
+                              Portal
+                            </Badge>
                           </div>
                           <span>{formatTime(msg.created_at)}</span>
                         </div>
@@ -438,7 +416,7 @@ export default function FDChat() {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                💡 Antwoord wordt automatisch verzonden via het laatst gebruikte kanaal van de familie
+                💡 Berichten worden verzonden via het portal
               </p>
             </div>
           </CardContent>

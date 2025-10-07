@@ -92,18 +92,9 @@ const handler = async (req: Request): Promise<Response> => {
       message = message.replace(new RegExp(`{${key}}`, "g"), value);
     }
 
-    // Determine channel to use
-    let channel = template.channel;
-    if (channel === "BOTH") {
-      channel = commPrefs?.last_channel_used || "WHATSAPP";
-    }
-
-    let recipientContact = "";
-    if (channel === "WHATSAPP" && commPrefs?.whatsapp_phone) {
-      recipientContact = commPrefs.whatsapp_phone;
-    } else if (channel === "EMAIL" && familyContact.email) {
-      recipientContact = familyContact.email;
-    }
+    // Only EMAIL channel is supported
+    const channel = "EMAIL";
+    const recipientContact = familyContact.email || "";
 
     if (!recipientContact) {
       console.log("No recipient contact available");
@@ -131,8 +122,7 @@ const handler = async (req: Request): Promise<Response> => {
       console.error("Error logging notification:", logError);
     }
 
-    // In a real implementation, you would send the actual notification here
-    // For WhatsApp: use WhatsApp Business API
+    // In a real implementation, you would send the actual email notification here
     // For Email: use Resend or similar service
 
     console.log(`Notification logged for ${recipientContact} via ${channel}`);

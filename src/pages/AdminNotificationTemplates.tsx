@@ -158,16 +158,7 @@ export default function AdminNotificationTemplates() {
                       {template.recipient_type}
                     </Badge>
                     <Badge variant="secondary">
-                      {template.channel === "EMAIL" ? (
-                        <Mail className="mr-1 h-3 w-3" />
-                      ) : template.channel === "WHATSAPP" ? (
-                        <MessageSquare className="mr-1 h-3 w-3" />
-                      ) : (
-                        <>
-                          <Mail className="mr-1 h-3 w-3" />
-                          <MessageSquare className="ml-1 h-3 w-3" />
-                        </>
-                      )}
+                      <Mail className="mr-1 h-3 w-3" />
                       {template.channel}
                     </Badge>
                     <Badge
@@ -277,7 +268,6 @@ export default function AdminNotificationTemplates() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="EMAIL">Email</SelectItem>
-                      <SelectItem value="WHATSAPP">WhatsApp</SelectItem>
                       <SelectItem value="BOTH">Beide</SelectItem>
                     </SelectContent>
                   </Select>

@@ -89,7 +89,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       },
       archived: {
         title: "Dossier Archiveren",
-        message: "Na archivering ontvangt de familie automatisch een WhatsApp-verzoek voor beoordeling.",
+        message: "Na archivering wordt het dossier alleen-lezen.",
         checklistItems: [
           "Alle facturen zijn verzameld en ingediend",
           "Uitvoering is afgerond",
@@ -115,7 +115,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     if (newStatus === "archived" && !isAdmin) {
       setAdvisoryConfig({
         title: "⚠️ Dossier Archiveren - Bevestiging Vereist",
-        message: "Let op: Na archivering wordt het dossier alleen-lezen en ontvangt de familie automatisch een WhatsApp-verzoek voor beoordeling.",
+        message: "Let op: Na archivering wordt het dossier alleen-lezen.",
         checklistItems: [
           "✅ Alle facturen zijn verzameld en ingediend",
           "✅ Uitvoering is volledig afgerond",

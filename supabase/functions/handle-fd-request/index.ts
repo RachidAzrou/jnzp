@@ -83,30 +83,15 @@ serve(async (req) => {
 
 async function notifyFamilyAcceptance(supabaseClient: any, dossierId: string, fdOrgName: string) {
   try {
-    // Get family WhatsApp number
-    const { data: commPrefs } = await supabaseClient
-      .from("dossier_communication_preferences")
-      .select("whatsapp_phone")
-      .eq("dossier_id", dossierId)
-      .maybeSingle();
-
-    if (!commPrefs?.whatsapp_phone) {
-      console.log("No WhatsApp number found for dossier", dossierId);
-      return;
-    }
-
     const message = `Goed nieuws — ${fdOrgName || "De uitvaartondernemer"} heeft uw dossier aanvaard.\nZe nemen vandaag nog contact met u op.\nUw dossier is nu actief in Janazapp.\n🕊️ Moge Allah de overledene genadig zijn.`;
 
-    // Send WhatsApp message (implementation depends on your WhatsApp provider)
-    console.log("Would send WhatsApp message to", commPrefs.whatsapp_phone, ":", message);
-
-    // Insert notification in chat_messages
+    // Insert notification in chat_messages (portal only)
     await supabaseClient.from("chat_messages").insert({
       dossier_id: dossierId,
       sender_role: "funeral_director",
       sender_user_id: "00000000-0000-0000-0000-000000000000", // System user
       message,
-      channel: "WHATSAPP",
+      channel: "PORTAL",
     });
   } catch (error) {
     console.error("Error notifying family of acceptance:", error);
@@ -115,30 +100,15 @@ async function notifyFamilyAcceptance(supabaseClient: any, dossierId: string, fd
 
 async function notifyFamilyDecline(supabaseClient: any, dossierId: string) {
   try {
-    // Get family WhatsApp number
-    const { data: commPrefs } = await supabaseClient
-      .from("dossier_communication_preferences")
-      .select("whatsapp_phone")
-      .eq("dossier_id", dossierId)
-      .maybeSingle();
-
-    if (!commPrefs?.whatsapp_phone) {
-      console.log("No WhatsApp number found for dossier", dossierId);
-      return;
-    }
-
     const message = `De uitvaartondernemer is momenteel niet beschikbaar.\nWilt u een andere uitvaartondernemer kiezen?\n\nStuur "Ja" om de lijst opnieuw te zien.`;
 
-    // Send WhatsApp message
-    console.log("Would send WhatsApp message to", commPrefs.whatsapp_phone, ":", message);
-
-    // Insert notification in chat_messages
+    // Insert notification in chat_messages (portal only)
     await supabaseClient.from("chat_messages").insert({
       dossier_id: dossierId,
       sender_role: "funeral_director",
       sender_user_id: "00000000-0000-0000-0000-000000000000", // System user
       message,
-      channel: "WHATSAPP",
+      channel: "PORTAL",
     });
   } catch (error) {
     console.error("Error notifying family of decline:", error);

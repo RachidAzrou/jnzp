@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Send, Paperclip } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import whatsappIcon from "@/assets/whatsapp-icon.svg";
+
 
 interface Message {
   id: string;
@@ -178,15 +178,6 @@ export default function FamilieChat() {
 
       if (insertError) throw insertError;
 
-      // Update last channel preference
-      await supabase
-        .from('dossier_communication_preferences')
-        .upsert({
-          dossier_id: dossier.id,
-          last_channel_used: 'PORTAL' as any,
-        }, {
-          onConflict: 'dossier_id'
-        });
 
       // Reset form
       setNewMessage("");
@@ -245,19 +236,6 @@ export default function FamilieChat() {
             {dossier ? `Dossier ${dossier.display_id || dossier.ref_number}` : 'Geen dossier'}
           </p>
         </div>
-        <Button
-          size="lg"
-          className="bg-[#25D366] hover:bg-[#20BD5A] text-white border-0 shadow-lg"
-          onClick={() => {
-            const message = dossier 
-              ? encodeURIComponent(`Hallo, ik heb een vraag over dossier ${dossier.display_id || dossier.ref_number}`)
-              : encodeURIComponent(`Hallo, ik heb een vraag over mijn dossier`);
-            window.open(`https://wa.me/YOUR_WHATSAPP_NUMBER?text=${message}`, '_blank');
-          }}
-        >
-          <img src={whatsappIcon} alt="WhatsApp" className="h-5 w-5 mr-2" />
-          Praat met onze JanAssist
-        </Button>
       </div>
 
       <div className="grid lg:grid-cols-[1fr,300px] gap-6">

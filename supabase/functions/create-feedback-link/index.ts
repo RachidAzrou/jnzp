@@ -47,57 +47,7 @@ const handler = async (req: Request): Promise<Response> => {
     const appUrl = Deno.env.get("APP_URL") || "https://janazapp.lovable.app";
     const feedbackUrl = `${appUrl}/feedback/${token}`;
 
-    if (sendWhatsApp) {
-      // Get dossier and family contact info
-      const { data: dossier } = await supabase
-        .from("dossiers")
-        .select("*, assigned_fd_org_id")
-        .eq("id", dossierId)
-        .single();
-
-      const { data: familyContact } = await supabase
-        .from("family_contacts")
-        .select("*")
-        .eq("dossier_id", dossierId)
-        .limit(1)
-        .single();
-
-      const { data: commPrefs } = await supabase
-        .from("dossier_communication_preferences")
-        .select("*")
-        .eq("dossier_id", dossierId)
-        .single();
-
-      const { data: fdOrg } = await supabase
-        .from("organizations")
-        .select("name")
-        .eq("id", dossier?.assigned_fd_org_id)
-        .single();
-
-      if (familyContact && commPrefs?.whatsapp_phone) {
-        // Send feedback request notification using supabase.functions.invoke
-        const { error: notifError } = await supabase.functions.invoke(
-          "send-notification",
-          {
-            body: {
-              dossierId,
-              triggerEvent: "FEEDBACK_REQUEST",
-              recipientType: "FAMILY",
-              customData: {
-                feedback_url: feedbackUrl,
-                family_name: familyContact.name || "Familie",
-                deceased_name: dossier?.deceased_name || "",
-                fd_name: fdOrg?.name || "",
-              },
-            },
-          }
-        );
-
-        if (notifError) {
-          console.error("Error sending notification:", notifError);
-        }
-      }
-    }
+    // WhatsApp notifications removed - feedback link must be shared manually via the portal
 
     return new Response(
       JSON.stringify({ 

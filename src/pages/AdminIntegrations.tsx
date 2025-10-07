@@ -115,7 +115,6 @@ export default function AdminIntegrations() {
   const getProviderLabel = (provider: string) => {
     const labels: Record<string, string> = {
       mawaqit: "Mawaqit API",
-      whatsapp: "WhatsApp Business",
       insurer_api: "Verzekeraar API",
     };
     return labels[provider] || provider;

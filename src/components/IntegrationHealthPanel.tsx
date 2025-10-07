@@ -57,14 +57,6 @@ const mockIntegrations: Integration[] = [
     provider: "MAWAQIT",
   },
   {
-    id: "2",
-    name: "WhatsApp Business API",
-    status: "operational",
-    lastSync: new Date().toISOString(),
-    errorCount: 0,
-    provider: "WHATSAPP",
-  },
-  {
     id: "3",
     name: "Insurer API (AG Insurance)",
     status: "operational",

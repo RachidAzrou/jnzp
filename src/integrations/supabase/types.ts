@@ -192,7 +192,6 @@ export type Database = {
           sender_user_id: string
           thread_id: string | null
           updated_at: string
-          whatsapp_message_id: string | null
         }
         Insert: {
           attachment_name?: string | null
@@ -207,7 +206,6 @@ export type Database = {
           sender_user_id: string
           thread_id?: string | null
           updated_at?: string
-          whatsapp_message_id?: string | null
         }
         Update: {
           attachment_name?: string | null
@@ -222,7 +220,6 @@ export type Database = {
           sender_user_id?: string
           thread_id?: string | null
           updated_at?: string
-          whatsapp_message_id?: string | null
         }
         Relationships: [
           {
@@ -658,21 +655,18 @@ export type Database = {
           id: string
           last_channel_used: Database["public"]["Enums"]["communication_channel"]
           updated_at: string
-          whatsapp_phone: string | null
         }
         Insert: {
           dossier_id: string
           id?: string
           last_channel_used: Database["public"]["Enums"]["communication_channel"]
           updated_at?: string
-          whatsapp_phone?: string | null
         }
         Update: {
           dossier_id?: string
           id?: string
           last_channel_used?: Database["public"]["Enums"]["communication_channel"]
           updated_at?: string
-          whatsapp_phone?: string | null
         }
         Relationships: [
           {
@@ -920,7 +914,6 @@ export type Database = {
           fd_org_id: string
           id: string
           rating: number
-          whatsapp_phone: string | null
         }
         Insert: {
           comment?: string | null
@@ -930,7 +923,6 @@ export type Database = {
           fd_org_id: string
           id?: string
           rating: number
-          whatsapp_phone?: string | null
         }
         Update: {
           comment?: string | null
@@ -940,7 +932,6 @@ export type Database = {
           fd_org_id?: string
           id?: string
           rating?: number
-          whatsapp_phone?: string | null
         }
         Relationships: [
           {
@@ -3674,7 +3665,7 @@ export type Database = {
         | "API_REJECTED"
         | "MANUAL_APPROVED"
         | "MANUAL_REJECTED"
-      communication_channel: "PORTAL" | "WHATSAPP"
+      communication_channel: "PORTAL"
       cool_cell_status: "FREE" | "RESERVED" | "OCCUPIED" | "OUT_OF_SERVICE"
       delivery_status: "PENDING" | "SENT" | "FAILED"
       doc_status: "IN_REVIEW" | "APPROVED" | "REJECTED"
@@ -3901,7 +3892,7 @@ export const Constants = {
         "MANUAL_APPROVED",
         "MANUAL_REJECTED",
       ],
-      communication_channel: ["PORTAL", "WHATSAPP"],
+      communication_channel: ["PORTAL"],
       cool_cell_status: ["FREE", "RESERVED", "OCCUPIED", "OUT_OF_SERVICE"],
       delivery_status: ["PENDING", "SENT", "FAILED"],
       doc_status: ["IN_REVIEW", "APPROVED", "REJECTED"],

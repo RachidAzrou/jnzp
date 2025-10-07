@@ -219,7 +219,7 @@ export default function DossierZoeken() {
             <DialogTitle>Dossier claimen</DialogTitle>
             <DialogDescription>
               U gaat een claimverzoek indienen voor dossier {result?.display_id}. 
-              De familie ontvangt een bevestigingsverzoek via WhatsApp.
+              De familie ontvangt een bevestigingsverzoek.
             </DialogDescription>
           </DialogHeader>
           

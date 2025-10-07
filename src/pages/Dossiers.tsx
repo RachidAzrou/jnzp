@@ -242,14 +242,7 @@ const Dossiers = () => {
 
   const canViewDossier = (dossier: any) => {
     // Alleen toegang tot dossiers van eigen organisatie
-    const hasAccess = dossier.assigned_fd_org_id === organizationId;
-    console.log('canViewDossier:', { 
-      dossier_id: dossier.display_id, 
-      assigned_to: dossier.assigned_fd_org_id, 
-      my_org: organizationId, 
-      hasAccess 
-    });
-    return hasAccess;
+    return dossier.assigned_fd_org_id === organizationId;
   };
 
   const shouldBlurInfo = (dossier: any) => {
@@ -643,14 +636,30 @@ const Dossiers = () => {
                             <TableCell className="font-mono text-sm">
                               {dossier.display_id || dossier.ref_number}
                             </TableCell>
-                            <TableCell className="font-medium">{dossier.deceased_name}</TableCell>
-                            <TableCell>
-                              <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+                            <TableCell className="font-medium">
+                              {shouldBlurInfo(dossier) ? (
+                                <span className="inline-block bg-muted text-transparent select-none blur-sm">
+                                  ████████████
+                                </span>
+                              ) : (
+                                dossier.deceased_name
+                              )}
                             </TableCell>
                             <TableCell>
-                              <Badge variant={dossier.status === 'archived' ? 'default' : 'secondary'}>
-                                {getStatusLabel(dossier.status)}
-                              </Badge>
+                              {shouldBlurInfo(dossier) ? (
+                                <Badge variant="outline" className="blur-sm">████</Badge>
+                              ) : (
+                                <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {shouldBlurInfo(dossier) ? (
+                                <Badge className="blur-sm">████████</Badge>
+                              ) : (
+                                <Badge variant={dossier.status === 'archived' ? 'default' : 'secondary'}>
+                                  {getStatusLabel(dossier.status)}
+                                </Badge>
+                              )}
                             </TableCell>
                             <TableCell>
                               {dossier.assignment_status === 'ASSIGNED' ? (

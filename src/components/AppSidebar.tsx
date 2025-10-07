@@ -29,9 +29,11 @@ type MenuItem = {
 export function AppSidebar() {
   const { role, roles, organizationType, loading, isOrgAdmin, hasRole } = useUserRole();
   const { t } = useTranslation();
+  const defaultRolePortalName = useRolePortalName(role);
+  const { state } = useSidebar();
   
   // Determine portal name based on organization type for org_admin
-  const getPortalName = () => {
+  const rolePortalName = (() => {
     if (isOrgAdmin && organizationType) {
       switch (organizationType) {
         case 'MOSQUE':
@@ -44,11 +46,8 @@ export function AppSidebar() {
           return t('rolePortals.insurer');
       }
     }
-    return useRolePortalName(role);
-  };
-  
-  const rolePortalName = getPortalName();
-  const { state } = useSidebar();
+    return defaultRolePortalName;
+  })();
   const location = useLocation();
   const isCollapsed = state === "collapsed";
 

@@ -1,0 +1,211 @@
+import { useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Loader2, AlertTriangle, CheckCircle, User, Calendar, MapPin } from "lucide-react";
+import { format } from "date-fns";
+import { nl } from "date-fns/locale";
+
+interface ClaimDossierDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  dossier: {
+    id: string;
+    display_id: string;
+    deceased_name: string;
+    deceased_gender?: string;
+    date_of_death?: string;
+    flow: string;
+    status: string;
+  };
+  onClaimed?: () => void;
+}
+
+export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: ClaimDossierDialogProps) {
+  const [note, setNote] = useState("");
+  const [requireFamilyApproval, setRequireFamilyApproval] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleClaim = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.rpc("claim_dossier", {
+        p_dossier_id: dossier.id,
+        p_note: note || null,
+        p_require_family_approval: requireFamilyApproval,
+      });
+
+      if (error) throw error;
+
+      const result = data as { success: boolean; error?: string; requires_approval?: boolean };
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to claim dossier");
+      }
+
+      if (result.requires_approval) {
+        toast.success("Claim aangevraagd", {
+          description: "Familie moet de claim nog goedkeuren. Je ontvangt een notificatie zodra dit gebeurt.",
+        });
+      } else {
+        toast.success("Dossier geclaimd", {
+          description: "Het dossier is succesvol toegewezen aan jouw organisatie.",
+        });
+      }
+
+      onOpenChange(false);
+      onClaimed?.();
+      setNote("");
+      setRequireFamilyApproval(false);
+    } catch (error: any) {
+      console.error("Error claiming dossier:", error);
+      toast.error("Fout bij claimen", {
+        description: error.message || "Er is een fout opgetreden bij het claimen van het dossier.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getFlowLabel = (flow: string) => {
+    const flowMap: Record<string, string> = {
+      LOC: "Lokaal",
+      REP: "Repatriëring",
+      UNSET: "Niet ingesteld",
+    };
+    return flowMap[flow] || flow;
+  };
+
+  const getStatusLabel = (status: string) => {
+    const statusMap: Record<string, string> = {
+      CREATED: "Aangemaakt",
+      INTAKE_PENDING: "Intake Lopend",
+      INTAKE_COMPLETE: "Intake Compleet",
+      PLANNED: "Gepland",
+      IN_PROGRESS: "In Behandeling",
+      COMPLETED: "Voltooid",
+      ARCHIVED: "Gearchiveerd",
+    };
+    return statusMap[status] || status;
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Dossier claimen</DialogTitle>
+          <DialogDescription>
+            Bevestig dat je dit dossier wilt claimen voor jouw organisatie.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          {/* Dossier Info */}
+          <div className="p-4 border rounded-lg bg-muted/50 space-y-3">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <p className="text-sm font-mono text-muted-foreground">{dossier.display_id}</p>
+                <p className="text-base font-semibold mt-1">{dossier.deceased_name}</p>
+              </div>
+              <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              {dossier.deceased_gender && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  <span>{dossier.deceased_gender === "M" ? "Man" : "Vrouw"}</span>
+                </div>
+              )}
+              {dossier.date_of_death && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span>{format(new Date(dossier.date_of_death), "dd/MM/yyyy", { locale: nl })}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2 border-t">
+              <Badge variant="secondary" className="text-xs">
+                Status: {getStatusLabel(dossier.status)}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Note */}
+          <div className="space-y-2">
+            <Label htmlFor="note">Opmerking (optioneel)</Label>
+            <Textarea
+              id="note"
+              placeholder="Voeg een opmerking toe aan je claim..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              rows={3}
+              disabled={loading}
+            />
+            <p className="text-xs text-muted-foreground">
+              Deze opmerking wordt gedeeld met de familie indien van toepassing.
+            </p>
+          </div>
+
+          {/* Family Approval Checkbox */}
+          <div className="flex items-start space-x-3 p-3 border rounded-lg">
+            <Checkbox
+              id="family-approval"
+              checked={requireFamilyApproval}
+              onCheckedChange={(checked) => setRequireFamilyApproval(checked as boolean)}
+              disabled={loading}
+            />
+            <div className="space-y-1 flex-1">
+              <Label
+                htmlFor="family-approval"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+              >
+                Familie moet akkoord geven
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Indien aangevinkt, wordt een verzoek gestuurd naar de familie. Het dossier wordt pas toegewezen na goedkeuring.
+              </p>
+            </div>
+          </div>
+
+          {/* Warning for family approval */}
+          {requireFamilyApproval && (
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription className="text-sm">
+                De claim wordt in afwachting gezet totdat de familie deze goedkeurt via de Familie-app.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Success info for direct assignment */}
+          {!requireFamilyApproval && (
+            <Alert className="border-green-200 bg-green-50">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-sm text-green-800">
+                Het dossier wordt direct toegewezen aan jouw organisatie.
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
+            Annuleren
+          </Button>
+          <Button onClick={handleClaim} disabled={loading}>
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {requireFamilyApproval ? "Claim aanvragen" : "Direct claimen"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

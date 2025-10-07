@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,10 +10,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search, ChevronLeft, ChevronRight, SlidersHorizontal, Clock, MapPin, Building2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { nl, fr, enUS } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
@@ -24,23 +25,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
 import { CreateDossierDialog } from "@/components/dossier/CreateDossierDialog";
+import { ClaimDossierDialog } from "@/components/dossier/ClaimDossierDialog";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const ITEMS_PER_PAGE = 10;
 
 const Dossiers = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const [dossiers, setDossiers] = useState<any[]>([]);
+  const { organizationId } = useUserRole();
+  
+  const [activeTab, setActiveTab] = useState<"my" | "all">("my");
+  const [myDossiers, setMyDossiers] = useState<any[]>([]);
+  const [allDossiers, setAllDossiers] = useState<any[]>([]);
   const [filteredDossiers, setFilteredDossiers] = useState<any[]>([]);
+  const [claimableCount, setClaimableCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [flowFilter, setFlowFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [claimDialogOpen, setClaimDialogOpen] = useState(false);
+  const [selectedDossier, setSelectedDossier] = useState<any>(null);
 
   const getDateLocale = () => {
     switch(i18n.language) {
@@ -52,30 +60,94 @@ const Dossiers = () => {
 
   useEffect(() => {
     fetchDossiers();
-  }, []);
+    fetchClaimableCount();
+    setupRealtimeSubscriptions();
+  }, [organizationId]);
 
   useEffect(() => {
     filterDossiers();
-    setCurrentPage(1); // Reset to first page when filters change
-  }, [dossiers, searchQuery, statusFilter, flowFilter]);
+    setCurrentPage(1);
+  }, [activeTab, myDossiers, allDossiers, searchQuery, statusFilter, flowFilter]);
 
   const fetchDossiers = async () => {
+    if (!organizationId) return;
+    
     setLoading(true);
-    const { data, error } = await supabase
-      .from("dossiers")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      // Fetch "Mijn dossiers" - assigned to my org
+      const { data: myData, error: myError } = await supabase
+        .from("view_my_dossiers")
+        .select("*")
+        .eq("assigned_fd_org_id", organizationId)
+        .order("created_at", { ascending: false });
 
-    if (data) {
-      setDossiers(data);
+      if (myError) throw myError;
+      setMyDossiers(myData || []);
+
+      // Fetch "Alle dossiers" - all org dossiers + unassigned claimable
+      const { data: allData, error: allError } = await supabase
+        .from("dossiers")
+        .select(`
+          *,
+          assigned_fd_org:organizations!assigned_fd_org_id(name),
+          insurer_org:organizations!insurer_org_id(name)
+        `)
+        .or(`assigned_fd_org_id.eq.${organizationId},assignment_status.eq.UNASSIGNED`)
+        .order("created_at", { ascending: false });
+
+      if (allError) throw allError;
+      setAllDossiers(allData || []);
+    } catch (error) {
+      console.error("Error fetching dossiers:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const fetchClaimableCount = async () => {
+    try {
+      const { data, error } = await supabase.rpc("count_claimable_dossiers");
+      if (error) throw error;
+      setClaimableCount(data || 0);
+    } catch (error) {
+      console.error("Error fetching claimable count:", error);
+    }
+  };
+
+  const setupRealtimeSubscriptions = () => {
+    const dossiersChannel = supabase
+      .channel("dossiers_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "dossiers" },
+        () => {
+          fetchDossiers();
+          fetchClaimableCount();
+        }
+      )
+      .subscribe();
+
+    const claimsChannel = supabase
+      .channel("claims_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "dossier_claims" },
+        () => {
+          fetchClaimableCount();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(dossiersChannel);
+      supabase.removeChannel(claimsChannel);
+    };
   };
 
   const filterDossiers = () => {
-    let filtered = [...dossiers];
+    const source = activeTab === "my" ? myDossiers : allDossiers;
+    let filtered = [...source];
 
-    // Search filter
     if (searchQuery) {
       filtered = filtered.filter(
         (d) =>
@@ -85,17 +157,29 @@ const Dossiers = () => {
       );
     }
 
-    // Status filter
     if (statusFilter !== "all") {
       filtered = filtered.filter((d) => d.status === statusFilter);
     }
 
-    // Flow filter
     if (flowFilter !== "all") {
       filtered = filtered.filter((d) => d.flow === flowFilter);
     }
 
     setFilteredDossiers(filtered);
+  };
+
+  const handleClaim = (dossier: any) => {
+    setSelectedDossier(dossier);
+    setClaimDialogOpen(true);
+  };
+
+  const handleClaimSuccess = () => {
+    fetchDossiers();
+    fetchClaimableCount();
+  };
+
+  const isClaimable = (dossier: any) => {
+    return dossier.assignment_status === "UNASSIGNED" && dossier.flow !== "UNSET";
   };
 
   // Pagination
@@ -152,178 +236,312 @@ const Dossiers = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="space-y-6 max-w-[1600px] mx-auto">
-        {/* Header with Create Button */}
+        {/* Header */}
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-              Dossierbeheer
+              Dossiers
             </h1>
+            <p className="text-sm text-muted-foreground">
+              Beheer jouw dossiers en claim nieuwe aanvragen
+            </p>
           </div>
           <CreateDossierDialog />
         </div>
 
-        {/* Search Bar */}
-        <Card className="border-0 shadow-sm">
-          <CardContent className="pt-6">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder={t("dossiers.searchPlaceholder")}
-                    className="pl-10 bg-background"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className={showFilters ? "bg-muted" : ""}
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              {/* Filters */}
-              {showFilters && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">{t("dossiers.status")}</label>
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="bg-background">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Alle statussen</SelectItem>
-                        <SelectItem value="created">Aangemaakt</SelectItem>
-                        <SelectItem value="intake_in_progress">Intake lopend</SelectItem>
-                        <SelectItem value="operational">Operationeel</SelectItem>
-                        <SelectItem value="planning_in_progress">Planning bezig</SelectItem>
-                        <SelectItem value="execution_in_progress">Uitvoering bezig</SelectItem>
-                        <SelectItem value="settlement">Afronding / Facturatie</SelectItem>
-                        <SelectItem value="archived">Afgerond & Gearchiveerd</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">{t("dossiers.flow")}</label>
-                    <Select value={flowFilter} onValueChange={setFlowFilter}>
-                      <SelectTrigger className="bg-background">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{t("dossiers.allFlows")}</SelectItem>
-                        <SelectItem value="REP">{t("flow.repatriation")}</SelectItem>
-                        <SelectItem value="LOC">{t("flow.local")}</SelectItem>
-                        <SelectItem value="UNSET">{t("flow.unset")}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+        {/* Tabs and Content */}
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "my" | "all")} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="my">Mijn dossiers</TabsTrigger>
+            <TabsTrigger value="all" className="relative">
+              Alle dossiers
+              {claimableCount > 0 && (
+                <Badge variant="destructive" className="ml-2 px-1.5 py-0 text-xs h-5">
+                  {claimableCount}
+                </Badge>
               )}
-            </div>
-          </CardContent>
-        </Card>
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Table Card */}
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-0">
-            {/* Desktop Table */}
-            <div className="hidden md:block">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-b">
-                    <TableHead className="font-medium text-sm">{t("dossiers.jaId")}</TableHead>
-                    <TableHead className="font-medium text-sm">{t("dossiers.deceasedName")}</TableHead>
-                    <TableHead className="font-medium text-sm">{t("dossiers.city")}</TableHead>
-                    <TableHead className="font-medium text-sm">{t("dossiers.dateCreated")}</TableHead>
-                    <TableHead className="font-medium text-sm">{t("dossiers.status")}</TableHead>
-                    <TableHead className="font-medium text-sm"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+          {/* Search and Filters */}
+          <Card className="border-0 shadow-sm">
+            <CardContent className="pt-6">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      placeholder="Zoek op naam, ID, telefoon..."
+                      className="pl-10 bg-background"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={showFilters ? "bg-muted" : ""}
+                  >
+                    <SlidersHorizontal className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {showFilters && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Status</label>
+                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="bg-background">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Alle statussen</SelectItem>
+                          <SelectItem value="created">Aangemaakt</SelectItem>
+                          <SelectItem value="intake_in_progress">Intake lopend</SelectItem>
+                          <SelectItem value="operational">Operationeel</SelectItem>
+                          <SelectItem value="archived">Gearchiveerd</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Type</label>
+                      <Select value={flowFilter} onValueChange={setFlowFilter}>
+                        <SelectTrigger className="bg-background">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Alle types</SelectItem>
+                          <SelectItem value="LOC">Lokaal</SelectItem>
+                          <SelectItem value="REP">Repatriëring</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <TabsContent value="my" className="mt-0">
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-0">
+                <div className="hidden md:block">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-b">
+                        <TableHead className="font-medium">Case ID</TableHead>
+                        <TableHead className="font-medium">Overledene</TableHead>
+                        <TableHead className="font-medium">Type</TableHead>
+                        <TableHead className="font-medium">Status</TableHead>
+                        <TableHead className="font-medium">Laatste update</TableHead>
+                        <TableHead className="font-medium text-right">Acties</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {currentDossiers.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-12 text-sm text-muted-foreground">
+                            Geen dossiers gevonden
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        currentDossiers.map((dossier) => (
+                          <TableRow key={dossier.id} className="hover:bg-muted/30">
+                            <TableCell className="font-mono text-sm">
+                              {dossier.display_id || dossier.ref_number}
+                            </TableCell>
+                            <TableCell className="font-medium">{dossier.deceased_name}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={dossier.status === 'archived' ? 'default' : 'secondary'}>
+                                {getStatusLabel(dossier.status)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground">
+                              {formatDate(dossier.updated_at)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleViewDetails(dossier.id)}
+                              >
+                                Bekijken
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                <div className="md:hidden space-y-3 p-4">
                   {currentDossiers.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-12 text-sm text-muted-foreground">
-                        {dossiers.length === 0 ? "Geen dossiers" : "Geen resultaten"}
-                      </TableCell>
-                    </TableRow>
+                    <div className="text-center py-12 text-sm text-muted-foreground">
+                      Geen dossiers gevonden
+                    </div>
                   ) : (
                     currentDossiers.map((dossier) => (
-                      <TableRow key={dossier.id} className="hover:bg-muted/30">
-                        <TableCell className="font-mono text-sm">
-                          {dossier.display_id || dossier.ref_number}
-                        </TableCell>
-                        <TableCell className="text-sm font-medium">{dossier.deceased_name}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">-</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {formatDate(dossier.created_at)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={dossier.status === 'archived' ? 'default' : 'secondary'}
-                            className="text-xs"
-                          >
-                            {dossier.status === 'archived' ? '✓' : '○'} {getStatusLabel(dossier.status)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
+                      <div key={dossier.id} className="p-4 border rounded-lg space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <p className="font-mono text-xs text-muted-foreground">
+                              {dossier.display_id || dossier.ref_number}
+                            </p>
+                            <p className="text-sm font-medium mt-1">{dossier.deceased_name}</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {formatDate(dossier.updated_at)}
+                            </p>
+                          </div>
+                          <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewDetails(dossier.id)}
+                          className="w-full"
+                        >
+                          Bekijken
+                        </Button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="all" className="mt-0">
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-0">
+                <div className="hidden md:block">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-b">
+                        <TableHead className="font-medium">Case ID</TableHead>
+                        <TableHead className="font-medium">Overledene</TableHead>
+                        <TableHead className="font-medium">Type</TableHead>
+                        <TableHead className="font-medium">Status</TableHead>
+                        <TableHead className="font-medium">Toewijzing</TableHead>
+                        <TableHead className="font-medium text-right">Acties</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {currentDossiers.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-12 text-sm text-muted-foreground">
+                            Geen dossiers gevonden
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        currentDossiers.map((dossier) => (
+                          <TableRow key={dossier.id} className="hover:bg-muted/30">
+                            <TableCell className="font-mono text-sm">
+                              {dossier.display_id || dossier.ref_number}
+                            </TableCell>
+                            <TableCell className="font-medium">{dossier.deceased_name}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{getFlowLabel(dossier.flow)}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={dossier.status === 'archived' ? 'default' : 'secondary'}>
+                                {getStatusLabel(dossier.status)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {dossier.assignment_status === 'ASSIGNED' ? (
+                                <div className="flex items-center gap-2 text-sm">
+                                  <Building2 className="h-4 w-4 text-muted-foreground" />
+                                  <span>{dossier.assigned_fd_org?.name || "Toegewezen"}</span>
+                                </div>
+                              ) : (
+                                <Badge variant="secondary" className="gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  Niet toegewezen
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right space-x-2">
+                              {isClaimable(dossier) && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleClaim(dossier)}
+                                >
+                                  Claim
+                                </Button>
+                              )}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleViewDetails(dossier.id)}
+                              >
+                                Bekijken
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                <div className="md:hidden space-y-3 p-4">
+                  {currentDossiers.length === 0 ? (
+                    <div className="text-center py-12 text-sm text-muted-foreground">
+                      Geen dossiers gevonden
+                    </div>
+                  ) : (
+                    currentDossiers.map((dossier) => (
+                      <div key={dossier.id} className="p-4 border rounded-lg space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <p className="font-mono text-xs text-muted-foreground">
+                              {dossier.display_id || dossier.ref_number}
+                            </p>
+                            <p className="text-sm font-medium mt-1">{dossier.deceased_name}</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge variant="outline" className="text-xs">{getFlowLabel(dossier.flow)}</Badge>
+                              {dossier.assignment_status === 'UNASSIGNED' && (
+                                <Badge variant="secondary" className="text-xs gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  Niet toegewezen
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          {isClaimable(dossier) && (
+                            <Button
+                              size="sm"
+                              onClick={() => handleClaim(dossier)}
+                              className="flex-1"
+                            >
+                              Claim
+                            </Button>
+                          )}
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleViewDetails(dossier.id)}
+                            className="flex-1"
                           >
-                            {t("common.view")}
+                            Bekijken
                           </Button>
-                        </TableCell>
-                      </TableRow>
+                        </div>
+                      </div>
                     ))
                   )}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Mobile Card View */}
-            <div className="md:hidden space-y-3 p-4">
-              {currentDossiers.length === 0 ? (
-                <div className="text-center py-12 text-sm text-muted-foreground">
-                  {dossiers.length === 0 ? "Geen dossiers" : "Geen resultaten"}
                 </div>
-              ) : (
-                currentDossiers.map((dossier) => (
-                  <div key={dossier.id} className="p-4 border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-mono text-xs text-muted-foreground">{dossier.display_id || dossier.ref_number}</p>
-                        <p className="text-sm font-medium mt-1 truncate">{dossier.deceased_name}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {formatDate(dossier.created_at)}
-                        </p>
-                      </div>
-                      <Badge 
-                        variant={dossier.status === 'archived' ? 'default' : 'secondary'}
-                        className="text-xs flex-shrink-0"
-                      >
-                        {dossier.status === 'archived' ? '✓' : '○'} {getStatusLabel(dossier.status)}
-                      </Badge>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleViewDetails(dossier.id)}
-                      className="w-full"
-                    >
-                      {t("common.view")}
-                    </Button>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
         {/* Pagination */}
         {totalPages > 1 && (
@@ -336,9 +554,8 @@ const Dossiers = () => {
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            
+
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-              // Show first page, last page, current page, and pages around current
               if (
                 page === 1 ||
                 page === totalPages ||
@@ -372,8 +589,27 @@ const Dossiers = () => {
           </div>
         )}
       </div>
+
+      {/* Claim Dialog */}
+      {selectedDossier && (
+        <ClaimDossierDialog
+          open={claimDialogOpen}
+          onOpenChange={setClaimDialogOpen}
+          dossier={selectedDossier}
+          onClaimed={handleClaimSuccess}
+        />
+      )}
     </div>
   );
+};
+
+const getFlowLabel = (flow: string) => {
+  const flowMap: Record<string, string> = {
+    LOC: "Lokaal",
+    REP: "Repatriëring",
+    UNSET: "Niet ingesteld",
+  };
+  return flowMap[flow] || flow;
 };
 
 export default Dossiers;

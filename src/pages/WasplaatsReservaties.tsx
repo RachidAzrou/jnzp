@@ -6,13 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 
 export default function WasplaatsReservaties() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [dossierId, setDossierId] = useState("");
-  const [startAt, setStartAt] = useState("");
-  const [endAt, setEndAt] = useState("");
+  const [startAt, setStartAt] = useState<Date | undefined>(new Date());
+  const [endAt, setEndAt] = useState<Date | undefined>(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -40,8 +41,8 @@ export default function WasplaatsReservaties() {
       const { error } = await supabase.from("cool_cell_reservations").insert({
         dossier_id: dossierId,
         facility_org_id: orgData.id,
-        start_at: new Date(startAt).toISOString(),
-        end_at: new Date(endAt).toISOString(),
+        start_at: startAt?.toISOString(),
+        end_at: endAt?.toISOString(),
         created_by_user_id: sessionData.session.user.id,
         note: note || null,
         status: "PENDING",
@@ -92,24 +93,21 @@ export default function WasplaatsReservaties() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="start">Start Datum & Tijd</Label>
-              <Input
-                id="start"
-                type="datetime-local"
-                value={startAt}
-                onChange={(e) => setStartAt(e.target.value)}
-                required
+              <Label>Start Datum & Tijd</Label>
+              <DateTimePicker
+                date={startAt}
+                onSelect={setStartAt}
+                placeholder="Selecteer start"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="end">Einde Datum & Tijd (verplicht)</Label>
-              <Input
-                id="end"
-                type="datetime-local"
-                value={endAt}
-                onChange={(e) => setEndAt(e.target.value)}
-                required
+              <Label>Einde Datum & Tijd</Label>
+              <DateTimePicker
+                date={endAt}
+                onSelect={setEndAt}
+                placeholder="Selecteer einde"
+                disabled={(date) => startAt ? date < startAt : false}
               />
             </div>
 

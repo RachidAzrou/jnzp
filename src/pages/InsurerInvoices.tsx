@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, CheckCircle, AlertCircle, Search, Clock, Euro } from "lucide-react";
+import { DatePicker } from "@/components/ui/date-picker";
+import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -69,7 +71,7 @@ export default function InsurerInvoices() {
   const [loading, setLoading] = useState(true);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [needsInfoReason, setNeedsInfoReason] = useState("");
-  const [paymentDate, setPaymentDate] = useState("");
+  const [paymentDate, setPaymentDate] = useState<Date | undefined>(new Date());
   const [paymentRef, setPaymentRef] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -239,7 +241,7 @@ export default function InsurerInvoices() {
         .from("invoices")
         .update({
           status: "PAID",
-          paid_at: paymentDate,
+          paid_at: paymentDate ? format(paymentDate, "yyyy-MM-dd") : null,
           payment_reference: paymentRef,
         })
         .eq("id", invoiceId);
@@ -259,7 +261,7 @@ export default function InsurerInvoices() {
         description: "Factuur gemarkeerd als betaald",
       });
 
-      setPaymentDate("");
+      setPaymentDate(new Date());
       setPaymentRef("");
       fetchInvoices();
       setIsDetailOpen(false);
@@ -544,10 +546,11 @@ export default function InsurerInvoices() {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label>Betaaldatum *</Label>
-                            <Input
-                              type="date"
-                              value={paymentDate}
-                              onChange={(e) => setPaymentDate(e.target.value)}
+                            <DatePicker
+                              date={paymentDate}
+                              onSelect={setPaymentDate}
+                              placeholder="Selecteer betaaldatum"
+                              disabled={(date) => date > new Date()}
                             />
                           </div>
                           <div className="space-y-2">

@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, FileText, Download, Search, Package } from "lucide-react";
+import { DatePicker } from "@/components/ui/date-picker";
+import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -113,7 +115,7 @@ export default function Facturatie() {
     qty: 1,
     unit_price: 0,
   });
-  const [paymentDate, setPaymentDate] = useState("");
+  const [paymentDate, setPaymentDate] = useState<Date | undefined>(new Date());
   const [paymentRef, setPaymentRef] = useState("");
 
   useEffect(() => {
@@ -444,7 +446,7 @@ export default function Facturatie() {
         .from("invoices")
         .update({
           status: "PAID",
-          paid_at: paymentDate,
+          paid_at: paymentDate ? format(paymentDate, "yyyy-MM-dd") : null,
         })
         .eq("id", invoiceId);
 
@@ -455,7 +457,7 @@ export default function Facturatie() {
         description: "Factuur gemarkeerd als betaald",
       });
 
-      setPaymentDate("");
+      setPaymentDate(new Date());
       setPaymentRef("");
       fetchInvoices();
     } catch (error) {
@@ -766,19 +768,20 @@ export default function Facturatie() {
                          )}
                          {selectedInvoice.status === "ISSUED" && (
                            <>
-                             <div className="flex gap-2 items-end">
-                               <div className="space-y-2">
-                                 <Label>Betaaldatum</Label>
-                                 <Input
-                                   type="date"
-                                   value={paymentDate}
-                                   onChange={(e) => setPaymentDate(e.target.value)}
-                                 />
-                               </div>
-                               <Button onClick={() => markAsPaid(selectedInvoice.id)}>
-                                 Markeer als Betaald
-                               </Button>
-                             </div>
+                              <div className="flex gap-2 items-end">
+                                <div className="space-y-2 flex-1">
+                                  <Label>Betaaldatum</Label>
+                                  <DatePicker
+                                    date={paymentDate}
+                                    onSelect={setPaymentDate}
+                                    placeholder="Selecteer betaaldatum"
+                                    disabled={(date) => date > new Date()}
+                                  />
+                                </div>
+                                <Button onClick={() => markAsPaid(selectedInvoice.id)}>
+                                  Markeer als Betaald
+                                </Button>
+                              </div>
                            </>
                          )}
                          {(selectedInvoice.status === "DRAFT" || selectedInvoice.status === "ISSUED") && (

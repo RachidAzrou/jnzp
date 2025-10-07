@@ -12,12 +12,15 @@ import { toast } from "sonner";
 import { CheckCircle2, ChevronLeft, ChevronRight, Loader2, Mail, QrCode, FolderOpen, Plus } from "lucide-react";
 import { createQRToken, generateQRCodeURL } from "@/utils/qrToken";
 import { NewFDDialog } from "./NewFDDialog";
+import { DatePicker } from "@/components/ui/date-picker";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { format } from "date-fns";
 
 type WizardStep = 1 | 2 | 3 | 4;
 
 interface DossierData {
   deceasedName: string;
-  dateOfDeath: string;
+  dateOfDeath: Date | undefined;
   notes: string;
 }
 
@@ -29,8 +32,8 @@ interface FDData {
 
 interface CoolCellAllocation {
   coolCellId: string;
-  startAt: string;
-  endAt: string;
+  startAt: Date | undefined;
+  endAt: Date | undefined;
   note: string;
 }
 
@@ -50,7 +53,7 @@ export function AdHocDossierWizard() {
 
   const [dossierData, setDossierData] = useState<DossierData>({
     deceasedName: "",
-    dateOfDeath: new Date().toISOString().split("T")[0],
+    dateOfDeath: new Date(),
     notes: "",
   });
 
@@ -64,8 +67,8 @@ export function AdHocDossierWizard() {
 
   const [coolCellData, setCoolCellData] = useState<CoolCellAllocation>({
     coolCellId: "",
-    startAt: new Date().toISOString().slice(0, 16),
-    endAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+    startAt: new Date(),
+    endAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     note: "",
   });
 
@@ -124,11 +127,16 @@ export function AdHocDossierWizard() {
 
   // Check cool cell overlap
   const checkCoolCellOverlap = async (): Promise<boolean> => {
+    if (!coolCellData.startAt || !coolCellData.endAt) {
+      toast.error("Selecteer start en eind datum/tijd");
+      return false;
+    }
+
     const { data } = await supabase
       .from("cool_cell_reservations")
       .select("*")
       .eq("cool_cell_id", coolCellData.coolCellId)
-      .or(`start_at.lte.${coolCellData.endAt},end_at.gte.${coolCellData.startAt}`);
+      .or(`start_at.lte.${coolCellData.endAt.toISOString()},end_at.gte.${coolCellData.startAt.toISOString()}`);
 
     if (data && data.length > 0) {
       toast.error("Deze koelcel is al gereserveerd in het gekozen tijdsinterval");
@@ -171,6 +179,10 @@ export function AdHocDossierWizard() {
         toast.error("Vul alle verplichte velden in");
         return;
       }
+      if (coolCellData.startAt >= coolCellData.endAt) {
+        toast.error("Einddatum moet na startdatum liggen");
+        return;
+      }
       const noOverlap = await checkCoolCellOverlap();
       if (!noOverlap) return;
       setStep(4);
@@ -200,7 +212,7 @@ export function AdHocDossierWizard() {
         .from("dossiers")
         .insert({
           deceased_name: dossierData.deceasedName,
-          date_of_death: dossierData.dateOfDeath,
+          date_of_death: dossierData.dateOfDeath ? format(dossierData.dateOfDeath, "yyyy-MM-dd") : null,
           internal_notes: dossierData.notes,
           ref_number: `AD-${Date.now()}`,
           flow: "LOC",
@@ -223,8 +235,8 @@ export function AdHocDossierWizard() {
       await supabase.from("cool_cell_reservations").insert({
         dossier_id: dossier.id,
         cool_cell_id: coolCellData.coolCellId,
-        start_at: coolCellData.startAt,
-        end_at: coolCellData.endAt,
+        start_at: coolCellData.startAt?.toISOString(),
+        end_at: coolCellData.endAt?.toISOString(),
         note: coolCellData.note,
         facility_org_id: userRole.organization_id,
         created_by_user_id: user.id,
@@ -267,12 +279,12 @@ export function AdHocDossierWizard() {
               />
             </div>
             <div>
-              <Label htmlFor="dateOfDeath">Overlijdensdatum *</Label>
-              <Input
-                id="dateOfDeath"
-                type="date"
-                value={dossierData.dateOfDeath}
-                onChange={(e) => setDossierData({ ...dossierData, dateOfDeath: e.target.value })}
+              <Label>Overlijdensdatum *</Label>
+              <DatePicker
+                date={dossierData.dateOfDeath}
+                onSelect={(date) => setDossierData({ ...dossierData, dateOfDeath: date })}
+                placeholder="Selecteer overlijdensdatum"
+                disabled={(date) => date > new Date()}
               />
             </div>
             <div>
@@ -383,21 +395,20 @@ export function AdHocDossierWizard() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="startAt">Start datum/tijd *</Label>
-                <Input
-                  id="startAt"
-                  type="datetime-local"
-                  value={coolCellData.startAt}
-                  onChange={(e) => setCoolCellData({ ...coolCellData, startAt: e.target.value })}
+                <Label>Start datum/tijd *</Label>
+                <DateTimePicker
+                  date={coolCellData.startAt}
+                  onSelect={(date) => setCoolCellData({ ...coolCellData, startAt: date })}
+                  placeholder="Selecteer start"
                 />
               </div>
               <div>
-                <Label htmlFor="endAt">Eind datum/tijd *</Label>
-                <Input
-                  id="endAt"
-                  type="datetime-local"
-                  value={coolCellData.endAt}
-                  onChange={(e) => setCoolCellData({ ...coolCellData, endAt: e.target.value })}
+                <Label>Eind datum/tijd *</Label>
+                <DateTimePicker
+                  date={coolCellData.endAt}
+                  onSelect={(date) => setCoolCellData({ ...coolCellData, endAt: date })}
+                  placeholder="Selecteer einde"
+                  disabled={(date) => coolCellData.startAt ? date < coolCellData.startAt : false}
                 />
               </div>
             </div>
@@ -421,7 +432,7 @@ export function AdHocDossierWizard() {
               <h3 className="font-semibold">Dossier</h3>
               <div className="text-sm space-y-1">
                 <p><span className="text-muted-foreground">Naam:</span> {dossierData.deceasedName}</p>
-                <p><span className="text-muted-foreground">Overlijdensdatum:</span> {dossierData.dateOfDeath}</p>
+                <p><span className="text-muted-foreground">Overlijdensdatum:</span> {dossierData.dateOfDeath ? format(dossierData.dateOfDeath, "PPP", { locale: require("date-fns/locale/nl").nl }) : "-"}</p>
                 {dossierData.notes && <p><span className="text-muted-foreground">Notities:</span> {dossierData.notes}</p>}
               </div>
             </div>
@@ -444,7 +455,7 @@ export function AdHocDossierWizard() {
               <h3 className="font-semibold">Koelcel</h3>
               <div className="text-sm space-y-1">
                 <p><span className="text-muted-foreground">Label:</span> {availableCells.find(c => c.id === coolCellData.coolCellId)?.label}</p>
-                <p><span className="text-muted-foreground">Periode:</span> {new Date(coolCellData.startAt).toLocaleString('nl-NL')} - {new Date(coolCellData.endAt).toLocaleString('nl-NL')}</p>
+                <p><span className="text-muted-foreground">Periode:</span> {coolCellData.startAt && coolCellData.endAt ? `${format(coolCellData.startAt, "PPP 'om' HH:mm", { locale: require("date-fns/locale/nl").nl })} - ${format(coolCellData.endAt, "PPP 'om' HH:mm", { locale: require("date-fns/locale/nl").nl })}` : "-"}</p>
               </div>
             </div>
 

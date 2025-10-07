@@ -66,10 +66,7 @@ export function AppSidebar() {
     { titleKey: "navigation.config", url: "/admin/config", icon: Flag, roles: ['platform_admin'] },
     { titleKey: "navigation.auditLog", url: "/admin/audit", icon: FileText, roles: ['platform_admin'] },
     
-    // Org Admin
-    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] },
-    
-    // FD items (org_admin van FD org ziet deze ook via organizationType check)
+    // FD items
     { titleKey: "navigation.dashboard", url: "/", icon: Home, roles: ['funeral_director'] },
     { titleKey: "navigation.dossiers", url: "/dossiers", icon: FolderOpen, roles: ['funeral_director'] },
     { titleKey: "navigation.searchDossiers", url: "/dossiers/zoeken", icon: Search, roles: ['funeral_director'] },
@@ -88,7 +85,7 @@ export function AppSidebar() {
     { titleKey: "navigation.invoicesTitle", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
     { titleKey: "navigation.reporting", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
     
-    // Mortuarium/Wasplaats
+    // Wasplaats - in de exacte volgorde zoals gevraagd
     { titleKey: "navigation.dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
     { titleKey: "navigation.coolCells", url: "/wasplaats/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['wasplaats'] },
     { titleKey: "navigation.adhocDossier", url: "/wasplaats/adhoc", icon: FolderOpen, roles: ['wasplaats'] },
@@ -107,6 +104,8 @@ export function AppSidebar() {
     { titleKey: "navigation.myDocuments", url: "/mijn-documenten", icon: Upload, roles: ['family'] },
     { titleKey: "navigation.chat", url: "/familie/chat", icon: MessageSquare, roles: ['family'] },
     
+    // Org Admin (alleen voor niet-wasplaats orgs)
+    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] },
     
     // Settings voor andere roles (wasplaats heeft het al in eigen sectie)
     { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'family', 'insurer', 'mosque'] },

@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 
-export type UserRole = 'platform_admin' | 'org_admin' | 'funeral_director' | 'insurer' | 'wasplaats' | 'mosque' | null;
+export type UserRole = 'platform_admin' | 'funeral_director' | 'insurer' | 'wasplaats' | 'mosque' | null;
 
 export interface UserRoleContext {
   role: UserRole; // Primary role for backwards compatibility
   roles: UserRole[]; // All roles of the user
   organizationType: 'FUNERAL_DIRECTOR' | 'MOSQUE' | 'WASPLAATS' | 'INSURER' | null;
   organizationId: string | null;
+  isAdmin: boolean; // Whether user has admin rights in their organization
 }
 
 export const useUserRole = () => {
@@ -16,7 +17,8 @@ export const useUserRole = () => {
     role: null,
     roles: [],
     organizationType: null,
-    organizationId: null
+    organizationId: null,
+    isAdmin: false
   });
   const [loading, setLoading] = useState(true);
 
@@ -52,7 +54,7 @@ export const useUserRole = () => {
         
         if (sessionError) {
           console.error('[useUserRole] Session error:', sessionError);
-          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
+          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null, isAdmin: false });
           setLoading(false);
           clearTimeout(loadingTimeout);
           return;
@@ -60,7 +62,7 @@ export const useUserRole = () => {
         
         if (!session?.user) {
           console.log('[useUserRole] No session found');
-          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
+          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null, isAdmin: false });
           setLoading(false);
           clearTimeout(loadingTimeout);
           return;
@@ -73,6 +75,7 @@ export const useUserRole = () => {
           .select(`
             role,
             organization_id,
+            is_admin,
             organizations (
               type
             )
@@ -84,7 +87,7 @@ export const useUserRole = () => {
 
         if (error) {
           console.error('[useUserRole] Error fetching user role:', error);
-          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
+          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null, isAdmin: false });
           setLoading(false);
           clearTimeout(loadingTimeout);
           return;
@@ -94,7 +97,7 @@ export const useUserRole = () => {
           console.log('[useUserRole] Roles found:', data.length);
           const allRoles = data.map(d => d.role as UserRole);
           
-          const priorityOrder = ['platform_admin', 'org_admin', 'funeral_director', 'insurer', 'wasplaats', 'mosque'];
+          const priorityOrder = ['platform_admin', 'funeral_director', 'insurer', 'wasplaats', 'mosque'];
           
           const sortedData = data.sort((a, b) => {
             return priorityOrder.indexOf(a.role) - priorityOrder.indexOf(b.role);
@@ -102,6 +105,7 @@ export const useUserRole = () => {
           
           const primaryRoleData = sortedData[0];
           const primaryRole = primaryRoleData.role as UserRole;
+          const isAdmin = primaryRoleData.is_admin || false;
           
           let orgType: string | null = null;
           if (primaryRoleData.organizations && typeof primaryRoleData.organizations === 'object' && 'type' in primaryRoleData.organizations) {
@@ -112,11 +116,12 @@ export const useUserRole = () => {
             role: primaryRole,
             roles: allRoles,
             organizationType: orgType as 'FUNERAL_DIRECTOR' | 'MOSQUE' | 'WASPLAATS' | 'INSURER' | null,
-            organizationId: primaryRoleData.organization_id
+            organizationId: primaryRoleData.organization_id,
+            isAdmin
           });
         } else {
           console.log('[useUserRole] No roles found');
-          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
+          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null, isAdmin: false });
         }
         
         setLoading(false);
@@ -125,7 +130,7 @@ export const useUserRole = () => {
       } catch (error) {
         console.error('[useUserRole] Exception in fetchUserRole:', error);
         if (isMounted) {
-          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null });
+          setRoleContext({ role: null, roles: [], organizationType: null, organizationId: null, isAdmin: false });
           setLoading(false);
           clearTimeout(loadingTimeout);
         }
@@ -155,7 +160,8 @@ export const useUserRole = () => {
     organizationType: roleContext.organizationType, 
     organizationId: roleContext.organizationId, 
     loading,
-    isOrgAdmin: roleContext.roles.includes('org_admin'),
+    isAdmin: roleContext.isAdmin,
+    isOrgAdmin: roleContext.isAdmin, // Keep for backwards compatibility
     hasRole: (roleToCheck: UserRole) => roleContext.roles.includes(roleToCheck)
   };
 };
@@ -171,8 +177,6 @@ export const useRoleDisplayName = (role: UserRole): string => {
   switch (role) {
     case 'platform_admin':
       return t('roles.platform_admin');
-    case 'org_admin':
-      return t('roles.org_admin');
     case 'funeral_director':
       return t('roles.funeral_director');
     case 'insurer':
@@ -192,8 +196,6 @@ export const useRolePortalName = (role: UserRole): string => {
   switch (role) {
     case 'platform_admin':
       return t('rolePortals.platform_admin');
-    case 'org_admin':
-      return t('rolePortals.org_admin');
     case 'funeral_director':
       return t('rolePortals.funeral_director');
     case 'insurer':

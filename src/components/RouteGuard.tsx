@@ -11,35 +11,36 @@ const ROUTE_ACCESS: Record<string, {
   roles?: UserRole[];
   orgTypes?: ('FUNERAL_DIRECTOR' | 'MOSQUE' | 'WASPLAATS' | 'INSURER')[];
   requireOrgType?: boolean;
+  requireAdmin?: boolean;
 }> = {
   // Platform admin routes
   '/admin': { roles: ['platform_admin'] },
   
   // FD-specific routes
-  '/dossiers': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
-  '/fd/': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
-  '/facturatie': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
-  '/beoordelingen': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
-  '/documenten': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
-  '/planning': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
-  '/taken': { roles: ['funeral_director', 'org_admin'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/dossiers': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/fd/': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/facturatie': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/beoordelingen': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/documenten': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/planning': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
+  '/taken': { roles: ['funeral_director'], orgTypes: ['FUNERAL_DIRECTOR'], requireOrgType: true },
   
   // Mosque-specific routes
-  '/moskee': { roles: ['mosque', 'org_admin'], orgTypes: ['MOSQUE'], requireOrgType: true },
+  '/moskee': { roles: ['mosque'], orgTypes: ['MOSQUE'], requireOrgType: true },
   
   // Wasplaats-specific routes
-  '/wasplaats': { roles: ['wasplaats', 'org_admin'], orgTypes: ['WASPLAATS'], requireOrgType: true },
+  '/wasplaats': { roles: ['wasplaats'], orgTypes: ['WASPLAATS'], requireOrgType: true },
   
   // Insurer-specific routes
-  '/insurer': { roles: ['insurer', 'org_admin'], orgTypes: ['INSURER'], requireOrgType: true },
+  '/insurer': { roles: ['insurer'], orgTypes: ['INSURER'], requireOrgType: true },
   
   // Shared routes (accessible by all authenticated users except family)
-  '/instellingen': { roles: ['funeral_director', 'insurer', 'wasplaats', 'mosque', 'org_admin'] },
-  '/team': { roles: ['org_admin'] },
+  '/instellingen': { roles: ['funeral_director', 'insurer', 'wasplaats', 'mosque'] },
+  '/team': { roles: ['funeral_director', 'insurer', 'wasplaats', 'mosque'], requireAdmin: true },
 };
 
 export const RouteGuard = ({ children }: RouteGuardProps) => {
-  const { roles, organizationType, loading } = useUserRole();
+  const { roles, organizationType, loading, isAdmin } = useUserRole();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -80,14 +81,19 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
       return;
     }
 
-    // Check org type access (important for multi-role users like org_admin + mosque)
-    // org_admin gets access to their org's routes automatically
+    // Check admin requirement
+    if ((config as any).requireAdmin && !isAdmin) {
+      console.warn(`[RouteGuard] Access denied: route requires admin but user is not admin`);
+      navigate('/');
+      return;
+    }
+
+    // Check org type access
     if (config.requireOrgType && config.orgTypes) {
-      const isOrgAdmin = roles.includes('org_admin');
       const hasMatchingOrgType = organizationType && config.orgTypes.includes(organizationType);
       
-      if (!hasMatchingOrgType && !isOrgAdmin) {
-        console.warn(`[RouteGuard] Access denied: org type ${organizationType}, not in allowed types [${config.orgTypes.join(', ')}], and user is not org_admin`);
+      if (!hasMatchingOrgType) {
+        console.warn(`[RouteGuard] Access denied: org type ${organizationType}, not in allowed types [${config.orgTypes.join(', ')}]`);
         navigate('/');
         return;
       }

@@ -27,7 +27,7 @@ export function TopBar() {
   const { t } = useTranslation();
   const [userName, setUserName] = useState<string>("");
   const [userType, setUserType] = useState<string>("");
-  const { role, roles } = useUserRole();
+  const { role, roles, isAdmin } = useUserRole();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -54,12 +54,12 @@ export function TopBar() {
 
   // Determine user type based on role
   useEffect(() => {
-    if (role === 'platform_admin' || role === 'org_admin') {
+    if (role === 'platform_admin' || isAdmin) {
       setUserType('Admin');
     } else if (role) {
       setUserType('Medewerker');
     }
-  }, [role]);
+  }, [role, isAdmin]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();

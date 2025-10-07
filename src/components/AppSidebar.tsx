@@ -24,6 +24,7 @@ type MenuItem = {
   url: string;
   icon: any;
   roles: UserRole[];
+  requireAdmin?: boolean;
 };
 
 export function AppSidebar() {
@@ -89,7 +90,7 @@ export function AppSidebar() {
     { titleKey: "navigation.dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
     { titleKey: "navigation.coolCells", url: "/wasplaats/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['wasplaats'] },
     { titleKey: "navigation.adhocDossier", url: "/wasplaats/adhoc", icon: FolderOpen, roles: ['wasplaats'] },
-    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] }, // Alleen voor wasplaats org_admin
+    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['wasplaats'], requireAdmin: true },
     { titleKey: "navigation.facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
     { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['wasplaats'] },
     
@@ -99,8 +100,8 @@ export function AppSidebar() {
     { titleKey: "navigation.availability", url: "/moskee/beschikbaarheid", icon: PiMosque, roles: ['mosque'] },
     { titleKey: "navigation.publicScreen", url: "/moskee/publiek-scherm", icon: Monitor, roles: ['mosque'] },
     
-    // Teambeheer - voor org_admin van niet-wasplaats orgs (wasplaats heeft het al in eigen sectie)
-    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['org_admin'] },
+    // Teambeheer - voor admins van niet-wasplaats orgs (wasplaats heeft het al in eigen sectie)
+    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['funeral_director', 'mosque', 'insurer'], requireAdmin: true },
     
     // Settings voor andere roles (wasplaats heeft het al in eigen sectie)
     { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'insurer', 'mosque'] },
@@ -118,19 +119,13 @@ export function AppSidebar() {
     // Check if user has ANY of the required roles for this menu item
     const hasRequiredRole = item.roles.some(requiredRole => roles.includes(requiredRole));
     
-    // Special handling voor org_admin role items
-    if (item.roles.includes('org_admin') && !isOrgAdmin) {
-      // Normale medewerkers zien geen org_admin items
+    // If item requires admin rights but user is not admin, skip it
+    if ((item as any).requireAdmin && !isOrgAdmin) {
       return false;
     }
     
-    // Org_admin special handling: zie alle items van hun org type + teambeheer
+    // Admin special handling: zie alle items van hun org type + teambeheer
     if (isOrgAdmin && organizationType) {
-      // Teambeheer altijd tonen voor org_admin
-      if (item.roles.includes('org_admin')) {
-        return true;
-      }
-      
       // Ook alle items van hun org type tonen
       if (item.roles.includes('funeral_director') && organizationType === 'FUNERAL_DIRECTOR') {
         return true;

@@ -50,6 +50,7 @@ interface TeamMember {
   last_name: string;
   role: string;
   is_active: boolean;
+  is_admin: boolean;
 }
 
 interface InvitationLink {
@@ -71,7 +72,7 @@ const TeamManagement = () => {
   const [organizationType, setOrganizationType] = useState<string | null>(null);
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState<"Admin" | "Medewerker">("Medewerker");
+  const [inviteIsAdmin, setInviteIsAdmin] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null);
@@ -88,9 +89,9 @@ const TeamManagement = () => {
 
       const { data: roleData } = await supabase
         .from("user_roles")
-        .select("organization_id, role, organizations(name, type)")
+        .select("organization_id, role, is_admin, organizations(name, type)")
         .eq("user_id", user.id)
-        .eq("role", "org_admin")
+        .eq("is_admin", true)
         .not("organization_id", "is", null)
         .limit(1)
         .maybeSingle();
@@ -130,6 +131,7 @@ const TeamManagement = () => {
         user_id,
         role,
         is_active,
+        is_admin,
         profiles:user_id (
           email,
           first_name,
@@ -148,6 +150,7 @@ const TeamManagement = () => {
       last_name: item.profiles?.last_name || "",
       role: item.role,
       is_active: item.is_active,
+      is_admin: item.is_admin || false,
     })) || [];
 
     setTeamMembers(members);
@@ -180,7 +183,7 @@ const TeamManagement = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       const response = await supabase.functions.invoke("send-team-invitation", {
-        body: { email: inviteEmail, role: inviteRole },
+        body: { email: inviteEmail, isAdmin: inviteIsAdmin },
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
         },
@@ -196,7 +199,7 @@ const TeamManagement = () => {
       fetchInvitations(organizationId);
       setShowInviteDialog(false);
       setInviteEmail("");
-      setInviteRole("Medewerker");
+      setInviteIsAdmin(false);
     } catch (error: any) {
       toast({
         title: t("common.error"),
@@ -292,18 +295,12 @@ const TeamManagement = () => {
     });
   };
 
-  const getRoleBadge = (role: string) => {
-    if (role === "org_admin") return <Badge>Admin</Badge>;
-    if (role === "funeral_director") return <Badge variant="outline">Uitvaartondernemer</Badge>;
-    if (role === "mosque") return <Badge variant="outline">Moskee</Badge>;
-    if (role === "wasplaats") return <Badge variant="outline">Wasplaats</Badge>;
-    if (role === "insurer") return <Badge variant="outline">Verzekeraar</Badge>;
-    return <Badge variant="outline">{role}</Badge>;
-  };
-
-  const getRoleLabel = (role: string) => {
-    if (role === "org_admin") return "Admin";
-    return "Medewerker";
+  const getRoleBadge = (role: string, isAdmin: boolean) => {
+    if (role === "funeral_director") return <Badge variant="outline">Uitvaartondernemer {isAdmin && "(Admin)"}</Badge>;
+    if (role === "mosque") return <Badge variant="outline">Moskee {isAdmin && "(Admin)"}</Badge>;
+    if (role === "wasplaats") return <Badge variant="outline">Wasplaats {isAdmin && "(Admin)"}</Badge>;
+    if (role === "insurer") return <Badge variant="outline">Verzekeraar {isAdmin && "(Admin)"}</Badge>;
+    return <Badge variant="outline">{role} {isAdmin && "(Admin)"}</Badge>;
   };
 
   if (loading) {
@@ -355,7 +352,7 @@ const TeamManagement = () => {
                       {member.first_name} {member.last_name}
                     </TableCell>
                     <TableCell className="text-sm">{member.email}</TableCell>
-                    <TableCell>{getRoleBadge(member.role)}</TableCell>
+                    <TableCell>{getRoleBadge(member.role, member.is_admin)}</TableCell>
                     <TableCell>
                       <Badge variant={member.is_active ? "default" : "secondary"}>
                         {member.is_active ? "Actief" : "Gedeactiveerd"}
@@ -423,7 +420,7 @@ const TeamManagement = () => {
                 {invitations.map((invite) => (
                   <TableRow key={invite.id} className="hover:bg-muted/30">
                     <TableCell className="text-sm">{invite.email}</TableCell>
-                    <TableCell>{getRoleBadge(invite.invited_role)}</TableCell>
+                    <TableCell><Badge variant="outline">Teamlid</Badge></TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {new Date(invite.created_at).toLocaleDateString("nl-NL")}
                     </TableCell>
@@ -481,20 +478,17 @@ const TeamManagement = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="role">Rol</Label>
-              <Select
-                value={inviteRole}
-                onValueChange={(value) => setInviteRole(value as "Admin" | "Medewerker")}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Admin">Admin</SelectItem>
-                  <SelectItem value="Medewerker">Medewerker</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="isAdmin"
+                checked={inviteIsAdmin}
+                onChange={(e) => setInviteIsAdmin(e.target.checked)}
+                className="rounded border-gray-300"
+              />
+              <Label htmlFor="isAdmin" className="cursor-pointer">
+                Admin rechten (kan teamleden beheren)
+              </Label>
             </div>
           </div>
 

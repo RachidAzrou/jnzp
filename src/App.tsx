@@ -223,7 +223,7 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           <Route path="/dossiers/zoeken" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'org_admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <DossierZoeken />
                             </RoleProtectedRoute>
                           } />
@@ -329,7 +329,7 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           <Route path="/fd/chat" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'org_admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <FDChatOverview />
                             </RoleProtectedRoute>
                           } />
@@ -349,7 +349,7 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           <Route path="/fd/incoming-requests" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'org_admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <FDIncomingRequests />
                             </RoleProtectedRoute>
                           } />
@@ -430,7 +430,7 @@ const App = () => (
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />
                           <Route path="/team" element={
-                            <RoleProtectedRoute allowedRoles={['org_admin', 'platform_admin']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'mosque', 'wasplaats', 'insurer']}>
                               <TeamManagement />
                             </RoleProtectedRoute>
                           } />

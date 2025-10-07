@@ -95,11 +95,11 @@ const DossierDetail = () => {
     
     const { data } = await supabase
       .from("user_roles")
-      .select("role")
+      .select("role, is_admin")
       .eq("user_id", userId)
       .maybeSingle();
     
-    setIsAdmin(data?.role === "admin" || data?.role === "org_admin");
+    setIsAdmin(data?.role === "admin" || data?.is_admin === true);
     setUserRole(data?.role || null);
   };
 

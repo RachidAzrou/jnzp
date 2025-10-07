@@ -1470,7 +1470,9 @@ export type Database = {
           dossier_id: string
           id: string
           mosque_name: string
+          mosque_org_id: string | null
           notes: string | null
+          prayer_time: string | null
           service_date: string
           status: Database["public"]["Enums"]["service_status"]
         }
@@ -1479,7 +1481,9 @@ export type Database = {
           dossier_id: string
           id?: string
           mosque_name: string
+          mosque_org_id?: string | null
           notes?: string | null
+          prayer_time?: string | null
           service_date: string
           status?: Database["public"]["Enums"]["service_status"]
         }
@@ -1488,7 +1492,9 @@ export type Database = {
           dossier_id?: string
           id?: string
           mosque_name?: string
+          mosque_org_id?: string | null
           notes?: string | null
+          prayer_time?: string | null
           service_date?: string
           status?: Database["public"]["Enums"]["service_status"]
         }
@@ -1505,6 +1511,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "view_my_dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "janaz_services_mosque_org_id_fkey"
+            columns: ["mosque_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]

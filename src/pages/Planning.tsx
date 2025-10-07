@@ -20,6 +20,9 @@ import { EmptyState } from "@/components/EmptyState";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
+import { MortuariumReservationDialog } from "@/components/planning/MortuariumReservationDialog";
+import { MosqueServiceDialog } from "@/components/planning/MosqueServiceDialog";
+import { FlightPlanningDialog } from "@/components/planning/FlightPlanningDialog";
 
 const Planning = () => {
   const { t } = useTranslation();
@@ -30,6 +33,9 @@ const Planning = () => {
   const [searchDossier, setSearchDossier] = useState("");
   const [searchName, setSearchName] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [mortuariumDialogOpen, setMortuariumDialogOpen] = useState(false);
+  const [mosqueDialogOpen, setMosqueDialogOpen] = useState(false);
+  const [flightDialogOpen, setFlightDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -235,7 +241,7 @@ const Planning = () => {
                   {t("planning.mortuariumPlanning")}
                 </CardTitle>
               </div>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" onClick={() => setMortuariumDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 {t("planning.newAppointment")}
               </Button>
@@ -299,7 +305,7 @@ const Planning = () => {
                   {t("planning.mosquePlanning")}
                 </CardTitle>
               </div>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" onClick={() => setMosqueDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Nieuwe afspraak
               </Button>
@@ -359,7 +365,7 @@ const Planning = () => {
                   {t("planning.flightPlanning")}
                 </CardTitle>
               </div>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" onClick={() => setFlightDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 {t("planning.newFlight")}
               </Button>
@@ -416,6 +422,23 @@ const Planning = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialogs */}
+      <MortuariumReservationDialog
+        open={mortuariumDialogOpen}
+        onOpenChange={setMortuariumDialogOpen}
+        onSuccess={fetchData}
+      />
+      <MosqueServiceDialog
+        open={mosqueDialogOpen}
+        onOpenChange={setMosqueDialogOpen}
+        onSuccess={fetchData}
+      />
+      <FlightPlanningDialog
+        open={flightDialogOpen}
+        onOpenChange={setFlightDialogOpen}
+        onSuccess={fetchData}
+      />
     </div>
   );
 };

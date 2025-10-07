@@ -59,6 +59,12 @@ export const createQRToken = async ({
       return null;
     }
 
+    // Verify token was generated
+    if (!tokenData || typeof tokenData !== 'string') {
+      console.error('Invalid token data received:', tokenData);
+      return null;
+    }
+
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + expiresInHours);
 

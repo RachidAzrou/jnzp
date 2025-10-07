@@ -22,9 +22,10 @@ import { Label } from "@/components/ui/label";
 interface FDRequest {
   id: string;
   dossier_id: string;
-  status: "PENDING" | "ACCEPTED" | "DECLINED" | "EXPIRED";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
   created_at: string;
-  expires_at: string;
+  expire_at: string;
+  reason?: string;
   dossier: {
     display_id: string;
     deceased_name: string;
@@ -65,9 +66,9 @@ export default function FDIncomingRequests() {
     try {
       setLoading(true);
       
-      // Fetch FD requests with dossier and family contact information
-      const { data, error } = await (supabase as any)
-        .from("fd_requests")
+      // Fetch dossier claims (FD requests) with dossier and family contact information
+      const { data, error } = await supabase
+        .from("dossier_claims")
         .select(`
           *,
           dossier:dossiers!inner(
@@ -86,7 +87,7 @@ export default function FDIncomingRequests() {
 
       if (error) throw error;
 
-      setRequests(data || []);
+      setRequests((data || []) as FDRequest[]);
     } catch (error: any) {
       console.error("Error fetching requests:", error);
       toast({
@@ -101,16 +102,16 @@ export default function FDIncomingRequests() {
 
   const setupRealtimeSubscription = () => {
     const channel = supabase
-      .channel("fd_requests_changes")
+      .channel("dossier_claims_changes")
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
-          table: "fd_requests",
+          table: "dossier_claims",
         },
         (payload) => {
-          console.log("FD request change:", payload);
+          console.log("Dossier claim change:", payload);
           fetchRequests();
           
           if (payload.eventType === "INSERT") {
@@ -131,12 +132,9 @@ export default function FDIncomingRequests() {
   const handleAccept = async (requestId: string) => {
     setProcessing(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const { data, error } = await supabase.rpc("accept_fd_request" as any, {
-        p_request_id: requestId,
-        p_user_id: user.id,
+      const { data, error } = await supabase.rpc("approve_dossier_claim", {
+        p_claim_id: requestId,
+        p_approved: true,
       });
 
       if (error) throw error;
@@ -174,13 +172,9 @@ export default function FDIncomingRequests() {
 
     setProcessing(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const { data, error } = await supabase.rpc("decline_fd_request" as any, {
-        p_request_id: selectedRequest.id,
-        p_user_id: user.id,
-        p_reason: declineReason,
+      const { data, error } = await supabase.rpc("approve_dossier_claim", {
+        p_claim_id: selectedRequest.id,
+        p_approved: false,
       });
 
       if (error) throw error;
@@ -212,8 +206,8 @@ export default function FDIncomingRequests() {
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: any; labelKey: string; icon: any }> = {
       PENDING: { variant: "default", labelKey: "fdRequests.status.pending", icon: Clock },
-      ACCEPTED: { variant: "success", labelKey: "fdRequests.status.accepted", icon: CheckCircle },
-      DECLINED: { variant: "destructive", labelKey: "fdRequests.status.declined", icon: XCircle },
+      APPROVED: { variant: "success", labelKey: "fdRequests.status.accepted", icon: CheckCircle },
+      REJECTED: { variant: "destructive", labelKey: "fdRequests.status.declined", icon: XCircle },
       EXPIRED: { variant: "secondary", labelKey: "fdRequests.status.expired", icon: Clock },
     };
 
@@ -318,7 +312,7 @@ export default function FDIncomingRequests() {
                   <Clock className="h-3 w-3" />
                   <span>
                     {t("fdRequests.expiresAt")}{" "}
-                    {format(new Date(request.expires_at), "HH:mm", { locale: getDateLocale() })}
+                    {format(new Date(request.expire_at), "HH:mm", { locale: getDateLocale() })}
                   </span>
                 </div>
 

@@ -102,15 +102,6 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   };
 
   const handleStatusChange = async () => {
-    if (!reason.trim() && newStatus !== currentStatus) {
-      toast({
-        title: "Reden vereist",
-        description: "Geef een reden voor de statuswijziging",
-        variant: "destructive",
-      });
-      return;
-    }
-
     // Special confirmation for archiving
     if (newStatus === "archived" && !isAdmin) {
       setAdvisoryConfig({
@@ -317,7 +308,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             </Select>
           </div>
           <div>
-            <Label>Reden voor wijziging *</Label>
+            <Label>Reden voor wijziging (optioneel)</Label>
             <Textarea
               placeholder="Bijv. 'Documenten ontvangen van familie'"
               value={reason}

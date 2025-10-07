@@ -3,6 +3,9 @@ project_id = "yupqrawkrpyfrdzxssdk"
 [functions.reset-demo-passwords]
 verify_jwt = false
 
+[functions.create-pending-fd]
+verify_jwt = true
+
 [functions.whatsapp-webhook]
 verify_jwt = false
 

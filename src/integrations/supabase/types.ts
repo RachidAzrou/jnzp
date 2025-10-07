@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          metadata: Json | null
+          related_id: string | null
+          related_type: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          metadata?: Json | null
+          related_id?: string | null
+          related_type?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          metadata?: Json | null
+          related_id?: string | null
+          related_type?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
       audit_events: {
         Row: {
           actor_role: string | null
@@ -2181,14 +2217,27 @@ export type Database = {
       organizations: {
         Row: {
           address: string | null
+          address_city: string | null
+          address_country: string | null
+          address_postcode: string | null
+          address_street: string | null
           approved_at: string | null
           approved_by: string | null
+          billing_email: string | null
+          business_number: string | null
           city: string | null
+          company_name: string | null
           contact_email: string | null
+          contact_first_name: string | null
+          contact_last_name: string | null
           contact_phone: string | null
           country: string | null
           created_at: string
+          created_by_role: string | null
+          iban: string | null
           id: string
+          language: string | null
+          legal_name: string | null
           name: string
           postal_code: string | null
           registration_number: string | null
@@ -2196,23 +2245,38 @@ export type Database = {
           requested_at: string | null
           requested_by: string | null
           slug: string | null
+          status: string | null
           type: Database["public"]["Enums"]["org_type"]
           updated_at: string
           vat_number: string | null
           verification_status: string | null
           verified_at: string | null
           verified_by: string | null
+          website: string | null
         }
         Insert: {
           address?: string | null
+          address_city?: string | null
+          address_country?: string | null
+          address_postcode?: string | null
+          address_street?: string | null
           approved_at?: string | null
           approved_by?: string | null
+          billing_email?: string | null
+          business_number?: string | null
           city?: string | null
+          company_name?: string | null
           contact_email?: string | null
+          contact_first_name?: string | null
+          contact_last_name?: string | null
           contact_phone?: string | null
           country?: string | null
           created_at?: string
+          created_by_role?: string | null
+          iban?: string | null
           id?: string
+          language?: string | null
+          legal_name?: string | null
           name: string
           postal_code?: string | null
           registration_number?: string | null
@@ -2220,23 +2284,38 @@ export type Database = {
           requested_at?: string | null
           requested_by?: string | null
           slug?: string | null
+          status?: string | null
           type: Database["public"]["Enums"]["org_type"]
           updated_at?: string
           vat_number?: string | null
           verification_status?: string | null
           verified_at?: string | null
           verified_by?: string | null
+          website?: string | null
         }
         Update: {
           address?: string | null
+          address_city?: string | null
+          address_country?: string | null
+          address_postcode?: string | null
+          address_street?: string | null
           approved_at?: string | null
           approved_by?: string | null
+          billing_email?: string | null
+          business_number?: string | null
           city?: string | null
+          company_name?: string | null
           contact_email?: string | null
+          contact_first_name?: string | null
+          contact_last_name?: string | null
           contact_phone?: string | null
           country?: string | null
           created_at?: string
+          created_by_role?: string | null
+          iban?: string | null
           id?: string
+          language?: string | null
+          legal_name?: string | null
           name?: string
           postal_code?: string | null
           registration_number?: string | null
@@ -2244,12 +2323,14 @@ export type Database = {
           requested_at?: string | null
           requested_by?: string | null
           slug?: string | null
+          status?: string | null
           type?: Database["public"]["Enums"]["org_type"]
           updated_at?: string
           vat_number?: string | null
           verification_status?: string | null
           verified_at?: string | null
           verified_by?: string | null
+          website?: string | null
         }
         Relationships: []
       }

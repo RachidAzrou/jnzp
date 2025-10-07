@@ -9,8 +9,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CheckCircle2, ChevronLeft, ChevronRight, Loader2, Mail, QrCode, FolderOpen } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight, Loader2, Mail, QrCode, FolderOpen, Plus } from "lucide-react";
 import { createQRToken, generateQRCodeURL } from "@/utils/qrToken";
+import { NewFDDialog } from "./NewFDDialog";
 
 type WizardStep = 1 | 2 | 3 | 4;
 
@@ -22,11 +23,8 @@ interface DossierData {
 
 interface FDData {
   mode: "new" | "existing";
-  existingFdId?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
+  existingFdOrgId?: string;
+  newFdOrgId?: string;
 }
 
 interface CoolCellAllocation {
@@ -57,12 +55,12 @@ export function AdHocDossierWizard() {
   });
 
   const [fdData, setFDData] = useState<FDData>({
-    mode: "new",
-    email: "",
-    firstName: "",
-    lastName: "",
-    phone: "",
+    mode: "existing",
   });
+  
+  const [showNewFDDialog, setShowNewFDDialog] = useState(false);
+  const [mortuariumOrgId, setMortuariumOrgId] = useState<string>("");
+  const [mortuariumName, setMortuariumName] = useState<string>("");
 
   const [coolCellData, setCoolCellData] = useState<CoolCellAllocation>({
     coolCellId: "",
@@ -95,12 +93,29 @@ export function AdHocDossierWizard() {
     }
   };
 
-  // Load existing FDs
+  // Load existing FDs and mortuarium info
   const loadExistingFDs = async () => {
-    const { data } = await supabase
+    // Get current user's org
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: userRole } = await supabase
       .from("user_roles")
-      .select("user_id, profiles(id, first_name, last_name, email)")
-      .eq("role", "funeral_director");
+      .select("organization_id, organizations(id, name)")
+      .eq("user_id", user.id)
+      .single();
+
+    if (userRole?.organizations) {
+      setMortuariumOrgId(userRole.organization_id);
+      setMortuariumName((userRole.organizations as any).name);
+    }
+
+    // Load active FD organizations
+    const { data } = await supabase
+      .from("organizations")
+      .select("id, company_name, name, status")
+      .eq("type", "FUNERAL_DIRECTOR")
+      .eq("status", "active");
 
     if (data) {
       setExistingFDs(data as any);
@@ -141,11 +156,11 @@ export function AdHocDossierWizard() {
       await loadExistingFDs();
       setStep(2);
     } else if (step === 2) {
-      if (fdData.mode === "new" && (!fdData.email || !fdData.firstName || !fdData.lastName)) {
-        toast.error("Vul alle verplichte velden voor de nieuwe FD in");
+      if (fdData.mode === "new" && !fdData.newFdOrgId) {
+        toast.error("Voeg eerst een nieuwe FD toe");
         return;
       }
-      if (fdData.mode === "existing" && !fdData.existingFdId) {
+      if (fdData.mode === "existing" && !fdData.existingFdOrgId) {
         toast.error("Selecteer een bestaande uitvaartondernemer");
         return;
       }
@@ -197,57 +212,11 @@ export function AdHocDossierWizard() {
       if (dossierError) throw dossierError;
       setCreatedDossierId(dossier.id);
 
-      // Handle FD (new or existing)
-      let fdUserId = fdData.existingFdId;
-
-      if (fdData.mode === "new") {
-        const tempPassword = generateTempPassword();
-        
-        // Create auth user
-        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-          email: fdData.email!,
-          password: tempPassword,
-          email_confirm: true,
-          user_metadata: {
-            first_name: fdData.firstName,
-            last_name: fdData.lastName,
-            force_password_reset: true,
-          },
-        });
-
-        if (authError) throw authError;
-        fdUserId = authData.user.id;
-
-        // Assign FD role
-        await supabase.from("user_roles").insert({
-          user_id: fdUserId,
-          organization_id: userRole.organization_id,
-          role: "funeral_director",
-        });
-
-        // Send invitation email
-        const { data: orgData } = await supabase
-          .from("organizations")
-          .select("name")
-          .eq("id", userRole.organization_id)
-          .single();
-
-        await supabase.functions.invoke("send-fd-invitation", {
-          body: {
-            email: fdData.email,
-            firstName: fdData.firstName,
-            lastName: fdData.lastName,
-            mortuariumName: orgData?.name || "Mortuarium",
-            dossierRef: dossier.display_id || dossier.ref_number,
-            tempPassword,
-            appUrl: window.location.origin,
-          },
-        });
-      }
-
-      // Link FD to dossier
+      // Link FD organization to dossier
+      const fdOrgId = fdData.mode === "new" ? fdData.newFdOrgId : fdData.existingFdOrgId;
+      
       await supabase.from("dossiers").update({
-        assigned_fd_org_id: userRole.organization_id,
+        assigned_fd_org_id: fdOrgId,
       }).eq("id", dossier.id);
 
       // Create cool cell reservation
@@ -334,57 +303,58 @@ export function AdHocDossierWizard() {
             </RadioGroup>
 
             {fdData.mode === "new" ? (
-              <>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="firstName">Voornaam *</Label>
-                    <Input
-                      id="firstName"
-                      value={fdData.firstName}
-                      onChange={(e) => setFDData({ ...fdData, firstName: e.target.value })}
-                    />
+              <div className="space-y-3">
+                {fdData.newFdOrgId ? (
+                  <div className="p-4 bg-muted rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">Nieuwe FD toegevoegd</p>
+                        <p className="text-sm text-muted-foreground">
+                          Uitnodiging verstuurd naar de FD
+                        </p>
+                        <Badge variant="secondary" className="mt-2">In afwachting van goedkeuring</Badge>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setFDData({ ...fdData, newFdOrgId: undefined })}
+                      >
+                        Wijzigen
+                      </Button>
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="lastName">Achternaam *</Label>
-                    <Input
-                      id="lastName"
-                      value={fdData.lastName}
-                      onChange={(e) => setFDData({ ...fdData, lastName: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="email">E-mail *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={fdData.email}
-                    onChange={(e) => setFDData({ ...fdData, email: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Telefoon</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={fdData.phone}
-                    onChange={(e) => setFDData({ ...fdData, phone: e.target.value })}
-                  />
-                </div>
-              </>
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setShowNewFDDialog(true)}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nieuwe FD toevoegen
+                  </Button>
+                )}
+              </div>
             ) : (
               <div>
                 <Label>Selecteer uitvaartondernemer *</Label>
-                <RadioGroup value={fdData.existingFdId} onValueChange={(v) => setFDData({ ...fdData, existingFdId: v })}>
-                  {existingFDs.map((fd: any) => (
-                    <div key={fd.user_id} className="flex items-center space-x-2">
-                      <RadioGroupItem value={fd.user_id} id={fd.user_id} />
-                      <Label htmlFor={fd.user_id}>
-                        {fd.profiles?.first_name} {fd.profiles?.last_name} ({fd.profiles?.email})
-                      </Label>
-                    </div>
-                  ))}
+                <RadioGroup value={fdData.existingFdOrgId} onValueChange={(v) => setFDData({ ...fdData, existingFdOrgId: v })}>
+                  <div className="grid gap-2">
+                    {existingFDs.map((org: any) => (
+                      <div key={org.id} className="flex items-center space-x-2 p-3 border rounded hover:bg-accent">
+                        <RadioGroupItem value={org.id} id={org.id} />
+                        <Label htmlFor={org.id} className="flex-1 cursor-pointer">
+                          <span className="font-medium">{org.company_name || org.name}</span>
+                          <Badge variant="default" className="ml-2">Actief</Badge>
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
                 </RadioGroup>
+                {existingFDs.length === 0 && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Geen actieve uitvaartondernemers gevonden. Maak een nieuwe aan.
+                  </p>
+                )}
               </div>
             )}
           </div>
@@ -461,11 +431,11 @@ export function AdHocDossierWizard() {
               <div className="text-sm space-y-1">
                 {fdData.mode === "new" ? (
                   <>
-                    <p><span className="text-muted-foreground">Nieuw:</span> {fdData.firstName} {fdData.lastName}</p>
-                    <p><span className="text-muted-foreground">E-mail:</span> {fdData.email}</p>
+                    <p><span className="text-muted-foreground">Status:</span> Nieuwe FD (in afwachting goedkeuring)</p>
+                    <Badge variant="secondary">Pending</Badge>
                   </>
                 ) : (
-                  <p><span className="text-muted-foreground">Bestaand:</span> {existingFDs.find(f => f.user_id === fdData.existingFdId)?.profiles?.first_name} {existingFDs.find(f => f.user_id === fdData.existingFdId)?.profiles?.last_name}</p>
+                  <p><span className="text-muted-foreground">Organisatie:</span> {existingFDs.find(f => f.id === fdData.existingFdOrgId)?.company_name || existingFDs.find(f => f.id === fdData.existingFdOrgId)?.name}</p>
                 )}
               </div>
             </div>
@@ -515,62 +485,76 @@ export function AdHocDossierWizard() {
   ];
 
   return (
-    <Card className="max-w-3xl mx-auto p-6">
-      {/* Progress indicator */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          {steps.map((s, idx) => (
-            <div key={s.number} className="flex items-center flex-1">
-              <div className="flex flex-col items-center">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                    step >= s.number
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {step > s.number ? <CheckCircle2 className="h-5 w-5" /> : s.number}
+    <>
+      <Card className="max-w-3xl mx-auto p-6">
+        {/* Progress indicator */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            {steps.map((s, idx) => (
+              <div key={s.number} className="flex items-center flex-1">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                      step >= s.number
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {step > s.number ? <CheckCircle2 className="h-5 w-5" /> : s.number}
+                  </div>
+                  <span className="text-xs mt-2 font-medium">{s.label}</span>
                 </div>
-                <span className="text-xs mt-2 font-medium">{s.label}</span>
+                {idx < steps.length - 1 && (
+                  <div
+                    className={`flex-1 h-0.5 mx-2 ${
+                      step > s.number ? "bg-primary" : "bg-muted"
+                    }`}
+                  />
+                )}
               </div>
-              {idx < steps.length - 1 && (
-                <div
-                  className={`flex-1 h-0.5 mx-2 ${
-                    step > s.number ? "bg-primary" : "bg-muted"
-                  }`}
-                />
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Step content */}
-      <div className="mb-6">{renderStep()}</div>
+        {/* Step content */}
+        <div className="mb-6">{renderStep()}</div>
 
-      {/* Navigation */}
-      <div className="flex justify-between pt-4 border-t">
-        <Button
-          variant="outline"
-          onClick={handleBack}
-          disabled={step === 1 || loading || !!createdDossierId}
-        >
-          <ChevronLeft className="h-4 w-4 mr-2" />
-          Terug
-        </Button>
-
-        {step < 4 ? (
-          <Button onClick={handleNext} disabled={loading}>
-            Volgende
-            <ChevronRight className="h-4 w-4 ml-2" />
+        {/* Navigation */}
+        <div className="flex justify-between pt-4 border-t">
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={step === 1 || loading || !!createdDossierId}
+          >
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Terug
           </Button>
-        ) : (
-          <Button onClick={handleSubmit} disabled={loading || !!createdDossierId}>
-            {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-            Bevestigen & Aanmaken
-          </Button>
-        )}
-      </div>
-    </Card>
+
+          {step < 4 ? (
+            <Button onClick={handleNext} disabled={loading}>
+              Volgende
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
+          ) : (
+            <Button onClick={handleSubmit} disabled={loading || !!createdDossierId}>
+              {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Bevestigen & Aanmaken
+            </Button>
+          )}
+        </div>
+      </Card>
+
+      <NewFDDialog
+        open={showNewFDDialog}
+        onOpenChange={setShowNewFDDialog}
+        onSuccess={(orgId) => {
+          setFDData({ ...fdData, newFdOrgId: orgId });
+          toast.success("Nieuwe FD succesvol toegevoegd!");
+        }}
+        mortuariumOrgId={mortuariumOrgId}
+        mortuariumName={mortuariumName}
+        dossierRef={dossierData.deceasedName || "AD-HOC"}
+      />
+    </>
   );
 }

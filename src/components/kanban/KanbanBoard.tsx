@@ -131,9 +131,9 @@ export function KanbanBoard({
 
       // Ensure the default columns always exist
       const defaultColumns = [
-        { key: 'todo', label: 'Te doen', order_idx: 0, is_done: false },
-        { key: 'in_progress', label: 'Bezig', order_idx: 1, is_done: false },
-        { key: 'done', label: 'Afgerond', order_idx: 2, is_done: true },
+        { key: 'TE_DOEN', label: 'Te doen', order_idx: 0, is_done: false },
+        { key: 'BEZIG', label: 'Bezig', order_idx: 1, is_done: false },
+        { key: 'AFGEROND', label: 'Afgerond', order_idx: 2, is_done: true },
       ];
 
       for (const defaultCol of defaultColumns) {

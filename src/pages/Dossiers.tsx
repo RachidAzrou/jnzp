@@ -204,10 +204,11 @@ const Dossiers = () => {
     if (searchQuery) {
       filtered = filtered.filter((d) => {
         const dossier = activeTab === "incoming" ? d.dossier : d;
+        if (!dossier) return false;
         return (
           (dossier.display_id && dossier.display_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
           (dossier.ref_number && dossier.ref_number.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          dossier.deceased_name.toLowerCase().includes(searchQuery.toLowerCase())
+          (dossier.deceased_name && dossier.deceased_name.toLowerCase().includes(searchQuery.toLowerCase()))
         );
       });
     }

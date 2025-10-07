@@ -33,11 +33,8 @@ const ROUTE_ACCESS: Record<string, {
   // Insurer-specific routes
   '/insurer': { roles: ['insurer', 'org_admin'], orgTypes: ['INSURER'], requireOrgType: true },
   
-  // Family routes
-  '/familie': { roles: ['family'] },
-  
-  // Shared routes (accessible by all authenticated users)
-  '/instellingen': { roles: ['funeral_director', 'family', 'insurer', 'wasplaats', 'mosque', 'org_admin'] },
+  // Shared routes (accessible by all authenticated users except family)
+  '/instellingen': { roles: ['funeral_director', 'insurer', 'wasplaats', 'mosque', 'org_admin'] },
   '/team': { roles: ['org_admin'] },
 };
 
@@ -48,6 +45,14 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
 
   useEffect(() => {
     if (loading) return;
+
+    // Redirect family users to mobile app download page
+    if (roles.includes('family')) {
+      if (location.pathname !== '/familie') {
+        navigate('/familie');
+      }
+      return;
+    }
 
     // Find matching route config
     const matchedRoute = Object.entries(ROUTE_ACCESS).find(([path]) => 

@@ -15,14 +15,8 @@ import Dossiers from "./pages/Dossiers";
 import Taken from "./pages/Taken";
 import Documenten from "./pages/Documenten";
 import Planning from "./pages/Planning";
-
 import Instellingen from "./pages/Instellingen";
-import MijnDocumenten from "./pages/MijnDocumenten";
-import FamilieDashboard from "./pages/FamilieDashboard";
-import FamilieIdentificatie from "./pages/FamilieIdentificatie";
-import FamiliePolis from "./pages/FamiliePolis";
-import FamilieLocatie from "./pages/FamilieLocatie";
-import FamilieChat from "./pages/FamilieChat";
+import FamilieAppDownload from "./pages/FamilieAppDownload";
 import FDChat from "./pages/FDChat";
 import FDChatOverview from "./pages/FDChatOverview";
 import InsurerChatOverview from "./pages/InsurerChatOverview";
@@ -168,7 +162,7 @@ const RoleBasedHome = () => {
     return <Navigate to="/dashboard" replace />;
   }
   
-  // Family role (no organization)
+  // Family role -> redirect to mobile app download
   if (roles.includes('family')) {
     return <Navigate to="/familie" replace />;
   }
@@ -199,6 +193,9 @@ const App = () => (
               <MoskeePubiekScherm />
             </ProtectedRoute>
           } />
+          
+          {/* Family redirect to mobile app */}
+          <Route path="/familie" element={<FamilieAppDownload />} />
           
           {/* Protected routes with sidebar - wrapped in AppGate */}
           <Route
@@ -241,7 +238,7 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           <Route path="/documenten" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'family']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <Documenten />
                             </RoleProtectedRoute>
                           } />
@@ -256,36 +253,6 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           {/* Beoordelingen removed - only for insurers/admins */}
-                          <Route path="/mijn-documenten" element={
-                            <RoleProtectedRoute allowedRoles={['family']}>
-                              <MijnDocumenten />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/familie" element={
-                            <RoleProtectedRoute allowedRoles={['family']}>
-                              <FamilieDashboard />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/familie/identificatie" element={
-                            <RoleProtectedRoute allowedRoles={['family']}>
-                              <FamilieIdentificatie />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/familie/polis" element={
-                            <RoleProtectedRoute allowedRoles={['family']}>
-                              <FamiliePolis />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/familie/locatie" element={
-                            <RoleProtectedRoute allowedRoles={['family']}>
-                              <FamilieLocatie />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/familie/chat" element={
-                            <RoleProtectedRoute allowedRoles={['family']}>
-                              <FamilieChat />
-                            </RoleProtectedRoute>
-                          } />
                           <Route path="/wasplaats" element={
                             <RoleProtectedRoute allowedRoles={['wasplaats']}>
                               <WasplaatsDashboard />

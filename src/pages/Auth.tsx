@@ -19,7 +19,7 @@ import logoAuth from "@/assets/logo-vertical-new.png";
 import logoJanazApp from "@/assets/logo-janazapp.png";
 import authBackground from "@/assets/auth-background.jpg";
 
-type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
+type UserRole = "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
 
 const Auth = () => {
@@ -404,71 +404,6 @@ const Auth = () => {
     setPassword("");
   };
 
-  const handleFamilySignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // Check rate limits
-      const rateLimitCheck = await checkRateLimit(email, "signup");
-      if (!rateLimitCheck.allowed) {
-        toast({
-          variant: "destructive",
-          title: t("auth.error.tooManyAttempts"),
-          description: formatRetryAfter(rateLimitCheck.retry_after || 60),
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Validate password
-      const passwordValidation = await validatePassword(password);
-      if (!passwordValidation.valid) {
-        toast({
-          variant: "destructive",
-          title: t("auth.error.weakPassword"),
-          description: passwordValidation.error || t("auth.error.weakPassword"),
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Signup
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            full_name: `${firstName} ${lastName}`,
-            phone,
-            role: "family",
-          },
-        },
-      });
-
-      if (error) throw error;
-
-      // CRITICAL: Force sign out immediately after signup
-      await supabase.auth.signOut();
-
-      toast({
-        title: t("auth.success.signupComplete"),
-        description: t("auth.success.checkEmail"),
-      });
-
-      // Navigate to check-email page
-      navigate("/check-email");
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: t("auth.error.signupFailed"),
-        description: error.message,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleProfessionalSignup = async (e: React.FormEvent) => {
     e.preventDefault();

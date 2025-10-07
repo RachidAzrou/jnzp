@@ -11,14 +11,13 @@ import { PiMosque } from "react-icons/pi";
 import { LuHandshake } from "react-icons/lu";
 import { RiHandHeartLine } from "react-icons/ri";
 import { IoBusiness } from "react-icons/io5";
-import { Users } from "lucide-react";
 import logoAuth from "@/assets/logo-icon-new.png";
 import logoJanazApp from "@/assets/logo-janazapp.png";
 import authBackground from "@/assets/auth-background.jpg";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
-type UserRole = "family" | "funeral_director" | "mosque" | "wasplaats" | "insurer";
+type UserRole = "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
 type DetailsSubStep = "organization" | "contact";
 
@@ -81,52 +80,6 @@ const Register = () => {
       setInvitationCode(code);
     }
   }, [navigate, searchParams, toast]);
-
-  const handleFamilySignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            phone: phone,
-            role: "family",
-          },
-        },
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        await supabase.from("user_roles").insert({
-          user_id: data.user.id,
-          role: "family",
-          scope: "ORG",
-        });
-      }
-
-      toast({
-        title: t('auth.accountCreated'),
-        description: t('auth.checkEmail'),
-      });
-
-      navigate("/auth");
-    } catch (error: any) {
-      toast({
-        title: t('register.registrationFailed'),
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleProfessionalSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -215,7 +168,6 @@ const Register = () => {
 
   const getRoleIcon = (role: UserRole) => {
     switch (role) {
-      case "family": return <Users className="h-5 w-5" />;
       case "funeral_director": return <LuHandshake className="h-5 w-5" />;
       case "mosque": return <PiMosque className="h-5 w-5" />;
       case "wasplaats": return <RiHandHeartLine className="h-5 w-5" />;
@@ -225,7 +177,6 @@ const Register = () => {
 
   const getRoleLabel = (role: UserRole) => {
     switch (role) {
-      case "family": return t('roles.family');
       case "funeral_director": return t('roles.funeral_director');
       case "mosque": return t('roles.mosque');
       case "wasplaats": return t('roles.wasplaats');
@@ -307,7 +258,7 @@ const Register = () => {
                     </div>
 
                     <div className="grid gap-1.5">
-                      {(["family", "funeral_director", "mosque", "wasplaats", "insurer"] as UserRole[]).map((role) => (
+                      {(["funeral_director", "mosque", "wasplaats", "insurer"] as UserRole[]).map((role) => (
                         <button
                           key={role}
                           type="button"
@@ -358,128 +309,43 @@ const Register = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-              {/* Progress Indicator for Family */}
-              {selectedRole === "family" && (
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                      ✓
-                    </div>
-                    <span className="text-xs font-medium">{t('register.stepRole')}</span>
-                  </div>
-                  <div className="w-8 h-0.5 bg-primary"></div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                      2
-                    </div>
-                    <span className="text-xs font-medium">{t('register.stepDetails')}</span>
-                  </div>
-                </div>
-              )}
-
               {/* Progress Indicator for Professional */}
-              {selectedRole !== "family" && (
-                <div className="flex items-center justify-center gap-1.5 mb-4">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
-                      ✓
-                    </div>
-                    <span className="text-[10px] font-medium">{t('register.stepRole')}</span>
+              <div className="flex items-center justify-center gap-1.5 mb-4">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                    ✓
                   </div>
-                  <div className="w-6 h-0.5 bg-primary"></div>
-                  <div className="flex items-center gap-1.5">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${
-                      detailsSubStep === "organization" 
-                        ? "bg-primary text-primary-foreground" 
-                        : "bg-primary text-primary-foreground"
-                    }`}>
-                      {detailsSubStep === "contact" ? "✓" : "2"}
-                    </div>
-                    <span className={`text-[10px] ${detailsSubStep === "organization" ? "font-medium" : "font-medium"}`}>
-                      {t('register.stepOrganization')}
-                    </span>
-                  </div>
-                  <div className={`w-6 h-0.5 ${detailsSubStep === "contact" ? "bg-primary" : "bg-muted"}`}></div>
-                  <div className="flex items-center gap-1.5">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${
-                      detailsSubStep === "contact" 
-                        ? "bg-primary text-primary-foreground" 
-                        : "bg-muted text-muted-foreground"
-                    }`}>
-                      3
-                    </div>
-                    <span className={`text-[10px] ${detailsSubStep === "contact" ? "font-medium" : "text-muted-foreground"}`}>
-                      {t('register.stepContact')}
-                    </span>
-                  </div>
+                  <span className="text-[10px] font-medium">{t('register.stepRole')}</span>
                 </div>
-              )}
+                <div className="w-6 h-0.5 bg-primary"></div>
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${
+                    detailsSubStep === "organization" 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-primary text-primary-foreground"
+                  }`}>
+                    {detailsSubStep === "contact" ? "✓" : "2"}
+                  </div>
+                  <span className={`text-[10px] ${detailsSubStep === "organization" ? "font-medium" : "font-medium"}`}>
+                    {t('register.stepOrganization')}
+                  </span>
+                </div>
+                <div className={`w-6 h-0.5 ${detailsSubStep === "contact" ? "bg-primary" : "bg-muted"}`}></div>
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${
+                    detailsSubStep === "contact" 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-muted text-muted-foreground"
+                  }`}>
+                    3
+                  </div>
+                  <span className={`text-[10px] ${detailsSubStep === "contact" ? "font-medium" : "text-muted-foreground"}`}>
+                    {t('register.stepContact')}
+                  </span>
+                </div>
+              </div>
 
-              {selectedRole === "family" ? (
-                <form onSubmit={handleFamilySignup} className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="first-name" className="text-sm">{t('auth.firstName')}</Label>
-                      <Input
-                        id="first-name"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        required
-                        className="h-10"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="last-name" className="text-sm">{t('auth.lastName')}</Label>
-                      <Input
-                        id="last-name"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        required
-                        className="h-10"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-sm">{t('register.phoneNumber')}</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      required
-                      className="h-10"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm">{t('auth.email')}</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="h-10"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm">{t('auth.password')}</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      minLength={12}
-                      className="h-10"
-                    />
-                    <p className="text-xs text-muted-foreground">{t('auth.minLength')}</p>
-                  </div>
-                  <Button type="submit" className="w-full h-10 mt-4" disabled={loading}>
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    {t('register.createAccount')}
-                  </Button>
-                </form>
-              ) : detailsSubStep === "organization" ? (
+              {detailsSubStep === "organization" ? (
                 <div className="space-y-4">
                   <Button
                     variant="ghost"

@@ -30,6 +30,7 @@ interface DossierInfo {
   deceased_name: string;
   status: string;
   flow: string;
+  family_contact_name: string | null;
 }
 
 export default function FDChat() {
@@ -58,16 +59,30 @@ export default function FDChat() {
         return;
       }
 
-      // Get dossier
+      // Get dossier with family contact
       const { data: dossierData } = await supabase
         .from('dossiers')
-        .select('id, display_id, ref_number, deceased_name, status, flow')
+        .select(`
+          id, 
+          display_id, 
+          ref_number, 
+          deceased_name, 
+          status, 
+          flow,
+          family_contacts (name)
+        `)
         .eq('id', dossierId)
         .maybeSingle();
 
-      if (dossierData) {
-        setDossier(dossierData);
-        await fetchMessages(dossierData.id);
+      // Transform the data to get family contact name
+      const transformedDossier = dossierData ? {
+        ...dossierData,
+        family_contact_name: (dossierData as any).family_contacts?.[0]?.name || null,
+      } : null;
+
+      if (transformedDossier) {
+        setDossier(transformedDossier);
+        await fetchMessages(transformedDossier.id);
       }
 
       setLoading(false);
@@ -280,7 +295,7 @@ export default function FDChat() {
             Chat — Dossier {dossier?.display_id || dossier?.ref_number}
           </h1>
           <p className="text-muted-foreground mt-1">
-            {dossier?.deceased_name || 'Nog in te vullen'}
+            {dossier?.family_contact_name || dossier?.deceased_name || 'Nog in te vullen'}
           </p>
         </div>
       </div>

@@ -127,6 +127,40 @@ export function KanbanBoard({
 
       if (columnsError) throw columnsError;
 
+      let finalColumns = (columnsData as any) || [];
+
+      // Ensure the default columns always exist
+      const defaultColumns = [
+        { key: 'todo', label: 'Te doen', order_idx: 0, is_done: false },
+        { key: 'in_progress', label: 'Bezig', order_idx: 1, is_done: false },
+        { key: 'done', label: 'Afgerond', order_idx: 2, is_done: true },
+      ];
+
+      for (const defaultCol of defaultColumns) {
+        const exists = finalColumns.some((col: Column) => col.key === defaultCol.key);
+        if (!exists) {
+          // Create the missing column
+          const { data: newColumn, error: createError } = await supabase
+            .from('task_board_columns' as any)
+            .insert({
+              board_id: boardId,
+              key: defaultCol.key,
+              label: defaultCol.label,
+              order_idx: defaultCol.order_idx,
+              is_done: defaultCol.is_done,
+            })
+            .select()
+            .single();
+
+          if (!createError && newColumn) {
+            finalColumns.push(newColumn);
+          }
+        }
+      }
+
+      // Sort columns by order_idx
+      finalColumns.sort((a: Column, b: Column) => a.order_idx - b.order_idx);
+
       // Fetch tasks
       const { data: tasksData, error: tasksError } = await supabase
         .from('kanban_tasks' as any)
@@ -137,7 +171,7 @@ export function KanbanBoard({
 
       if (tasksError) throw tasksError;
 
-      setColumns((columnsData as any) || []);
+      setColumns(finalColumns);
       setTasks((tasksData as any) || []);
     } catch (error: any) {
       toast({

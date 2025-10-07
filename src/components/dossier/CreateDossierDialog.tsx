@@ -31,8 +31,9 @@ import { Separator } from "@/components/ui/separator";
 const dossierSchema = z.object({
   first_name: z.string().trim().min(1, "Voornaam is verplicht").max(100, "Voornaam mag maximaal 100 karakters zijn"),
   last_name: z.string().trim().min(1, "Achternaam is verplicht").max(100, "Achternaam mag maximaal 100 karakters zijn"),
+  gender: z.union([z.literal("M"), z.literal("V"), z.literal("X")]),
   flow: z.union([z.literal("LOC"), z.literal("REP")]),
-  place_of_death: z.string().trim().min(1, "Plaats van overlijden is verplicht").max(200),
+  address_of_death: z.string().trim().min(1, "Adres van overlijden is verplicht").max(200),
   contact_name: z.string().trim().min(1, "Naam contactpersoon is verplicht").max(100),
   contact_phone: z.string().trim().min(1, "Telefoonnummer is verplicht").max(20),
   contact_email: z.string().trim().email("Ongeldig e-mailadres").max(255).optional().or(z.literal("")),
@@ -58,8 +59,9 @@ export function CreateDossierDialog() {
   const [formData, setFormData] = useState<DossierFormData>({
     first_name: "",
     last_name: "",
+    gender: "M" as const,
     flow: "LOC" as const,
-    place_of_death: "",
+    address_of_death: "",
     contact_name: "",
     contact_phone: "",
     contact_email: "",
@@ -117,6 +119,7 @@ export function CreateDossierDialog() {
         .insert({
           ref_number: refNumber,
           deceased_name: deceasedName,
+          deceased_gender: validatedData.gender,
           flow: validatedData.flow,
           status: "CREATED" as any, // Use uppercase to match database enum
           assigned_fd_org_id: fdOrgId,
@@ -158,7 +161,7 @@ export function CreateDossierDialog() {
         event_description: `Dossier handmatig aangemaakt door FD`,
         created_by: user.id,
         metadata: {
-          place_of_death: validatedData.place_of_death,
+          address_of_death: validatedData.address_of_death,
           has_insurance: validatedData.has_insurance,
           destination: validatedData.destination,
           mosque: validatedData.mosque,
@@ -217,8 +220,9 @@ export function CreateDossierDialog() {
       setFormData({
         first_name: "",
         last_name: "",
+        gender: "M",
         flow: "LOC",
-        place_of_death: "",
+        address_of_death: "",
         contact_name: "",
         contact_phone: "",
         contact_email: "",
@@ -322,18 +326,40 @@ export function CreateDossierDialog() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="place_of_death">
-                Plaats van overlijden <span className="text-destructive">*</span>
+              <Label htmlFor="gender">
+                Geslacht <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={formData.gender}
+                onValueChange={(value) => handleInputChange("gender", value)}
+              >
+                <SelectTrigger className={errors.gender ? "border-destructive" : ""}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-background z-50">
+                  <SelectItem value="M">Man</SelectItem>
+                  <SelectItem value="V">Vrouw</SelectItem>
+                  <SelectItem value="X">Anders/Onbekend</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.gender && (
+                <p className="text-xs text-destructive">{errors.gender}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="address_of_death">
+                Adres van overlijden <span className="text-destructive">*</span>
               </Label>
               <Input
-                id="place_of_death"
-                value={formData.place_of_death}
-                onChange={(e) => handleInputChange("place_of_death", e.target.value)}
-                placeholder="Bijv. Amsterdam, Nederland"
-                className={errors.place_of_death ? "border-destructive" : ""}
+                id="address_of_death"
+                value={formData.address_of_death}
+                onChange={(e) => handleInputChange("address_of_death", e.target.value)}
+                placeholder="Bijv. Damrak 1, 1012 LG Amsterdam"
+                className={errors.address_of_death ? "border-destructive" : ""}
               />
-              {errors.place_of_death && (
-                <p className="text-xs text-destructive">{errors.place_of_death}</p>
+              {errors.address_of_death && (
+                <p className="text-xs text-destructive">{errors.address_of_death}</p>
               )}
             </div>
 

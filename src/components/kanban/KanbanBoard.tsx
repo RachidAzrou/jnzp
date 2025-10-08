@@ -30,7 +30,8 @@ interface Task {
   title: string;
   description: string | null;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
-  status: string;
+  column_id: string | null;
+  board_id: string;
   auto_complete_trigger: string | null;
   assignee_id: string | null;
   position: number;
@@ -113,13 +114,15 @@ export function KanbanBoard({
     try {
       setLoading(true);
 
-      // Use fixed columns based on status
-      const fixedColumns = [
-        { id: 'TE_DOEN', key: 'TE_DOEN', label: 'Te doen', order_idx: 0, wip_limit: null },
-        { id: 'BEZIG', key: 'BEZIG', label: 'Bezig', order_idx: 1, wip_limit: null },
-        { id: 'AFGEROND', key: 'AFGEROND', label: 'Afgerond', order_idx: 2, wip_limit: null },
-      ];
-      setColumns(fixedColumns);
+      // Fetch columns from database
+      const { data: columnsData, error: columnsError } = await supabase
+        .from('task_board_columns')
+        .select('*')
+        .eq('board_id', boardId)
+        .order('order_idx');
+
+      if (columnsError) throw columnsError;
+      setColumns(columnsData || []);
 
       // Fetch tasks
       const { data: { user } } = await supabase.auth.getUser();
@@ -136,7 +139,7 @@ export function KanbanBoard({
       const { data: tasksData, error: tasksError } = await supabase
         .from('kanban_tasks')
         .select('*')
-        .eq('org_id', userRole.organization_id)
+        .eq('board_id', boardId)
         .order('position');
 
       if (tasksError) throw tasksError;
@@ -170,7 +173,7 @@ export function KanbanBoard({
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
 
-    const oldColumnId = task.status;
+    const oldColumnId = task.column_id;
 
     // Check if we're moving to a different column
     if (oldColumnId === newColumnId) return;
@@ -178,10 +181,14 @@ export function KanbanBoard({
     // Save old state for rollback
     const previousTasks = [...tasks];
 
+    // Calculate new position (at the end of target column)
+    const targetColumnTasks = tasks.filter(t => t.column_id === newColumnId);
+    const newPosition = targetColumnTasks.length;
+
     // Optimistic update
     setTasks((current) =>
       current.map((t) =>
-        t.id === taskId ? { ...t, status: newColumnId } : t
+        t.id === taskId ? { ...t, column_id: newColumnId, position: newPosition } : t
       )
     );
 
@@ -191,14 +198,10 @@ export function KanbanBoard({
       } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
-      // Calculate new position (at the end)
-      const targetColumnTasks = tasks.filter(t => t.status === newColumnId);
-      const newPosition = targetColumnTasks.length;
-
-      // Update task status based on column
+      // Update task column_id and position
       const { error } = await supabase
         .from('kanban_tasks')
-        .update({ status: newColumnId, position: newPosition })
+        .update({ column_id: newColumnId, position: newPosition })
         .eq('id', taskId);
 
       if (error) {
@@ -212,11 +215,11 @@ export function KanbanBoard({
         task_id: taskId,
         user_id: user.id,
         action: 'MOVED',
-        from_value: oldColumnId,
+        from_value: oldColumnId || 'unassigned',
         to_value: newColumnId,
         metadata: {
-          from_column: columns.find((c) => c.id === oldColumnId)?.label,
-          to_column: columns.find((c) => c.id === newColumnId)?.label,
+          from_column: columns.find((c) => c.id === oldColumnId)?.label || 'Geen kolom',
+          to_column: columns.find((c) => c.id === newColumnId)?.label || 'Onbekend',
         },
       });
 
@@ -226,7 +229,7 @@ export function KanbanBoard({
     } catch (error: any) {
       toast({
         title: "Fout",
-        description: "Kon taak niet verplaatsen",
+        description: error.message || "Kon taak niet verplaatsen",
         variant: "destructive",
       });
       // Rollback on error
@@ -258,15 +261,20 @@ export function KanbanBoard({
     return true;
   });
 
-  // Organize tasks by status (which maps to columns)
-  const tasksByColumn = filteredTasks.reduce((acc, task) => {
-    const columnId = task.status || 'TE_DOEN';
-    if (!acc[columnId]) {
-      acc[columnId] = [];
+  // Organize tasks by column_id
+  const tasksByColumn: Record<string, Task[]> = {};
+  for (const task of filteredTasks) {
+    const colId = task.column_id || '__unassigned__';
+    if (!tasksByColumn[colId]) {
+      tasksByColumn[colId] = [];
     }
-    acc[columnId].push(task);
-    return acc;
-  }, {} as Record<string, Task[]>);
+    tasksByColumn[colId].push(task);
+  }
+  
+  // Sort tasks within each column by position
+  Object.keys(tasksByColumn).forEach(colId => {
+    tasksByColumn[colId].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+  });
 
   if (loading) {
     return (

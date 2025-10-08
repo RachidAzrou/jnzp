@@ -40,8 +40,8 @@ export function AppSidebar() {
           return t('rolePortals.mosque');
         case 'FUNERAL_DIRECTOR':
           return t('rolePortals.funeral_director');
-        case 'WASPLAATS':
-          return t('rolePortals.wasplaats');
+        case 'MORTUARIUM':
+          return t('rolePortals.mortuarium');
         case 'INSURER':
           return t('rolePortals.insurer');
       }
@@ -82,13 +82,13 @@ export function AppSidebar() {
     { titleKey: "navigation.invoicesTitle", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
     { titleKey: "navigation.reporting", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
     
-    // Wasplaats
-    { titleKey: "navigation.dashboard", url: "/wasplaats", icon: LayoutDashboard, roles: ['wasplaats'] },
-    { titleKey: "navigation.coolCells", url: "/wasplaats/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['wasplaats'] },
-    { titleKey: "navigation.adhocDossier", url: "/wasplaats/adhoc", icon: FolderOpen, roles: ['wasplaats'] },
-    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['wasplaats'], requireAdmin: true },
-    { titleKey: "navigation.facturatie", url: "/wasplaats/facturatie", icon: Receipt, roles: ['wasplaats'] },
-    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['wasplaats'] },
+    // Mortuarium
+    { titleKey: "navigation.dashboard", url: "/mortuarium", icon: LayoutDashboard, roles: ['mortuarium'] },
+    { titleKey: "navigation.coolCells", url: "/mortuarium/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['mortuarium'] },
+    { titleKey: "navigation.adhocDossier", url: "/mortuarium/adhoc", icon: FolderOpen, roles: ['mortuarium'] },
+    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['mortuarium'], requireAdmin: true },
+    { titleKey: "navigation.facturatie", url: "/mortuarium/facturatie", icon: Receipt, roles: ['mortuarium'] },
+    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['mortuarium'] },
     
     // Mosque
     { titleKey: "navigation.dashboard", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
@@ -126,7 +126,7 @@ export function AppSidebar() {
       if (item.roles.includes('funeral_director') && organizationType === 'FUNERAL_DIRECTOR') {
         return true;
       }
-      if (item.roles.includes('wasplaats') && organizationType === 'WASPLAATS') {
+      if (item.roles.includes('mortuarium') && organizationType === 'MORTUARIUM') {
         return true;
       }
       if (item.roles.includes('mosque') && organizationType === 'MOSQUE') {
@@ -147,8 +147,8 @@ export function AppSidebar() {
       if (item.roles.includes('mosque') && organizationType !== 'MOSQUE') {
         return false;
       }
-      // Wasplaats items alleen voor WASPLAATS orgs
-      if (item.roles.includes('wasplaats') && organizationType !== 'WASPLAATS') {
+      // Mortuarium items alleen voor MORTUARIUM orgs
+      if (item.roles.includes('mortuarium') && organizationType !== 'MORTUARIUM') {
         return false;
       }
       // Insurer items alleen voor INSURER orgs

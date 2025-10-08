@@ -58,7 +58,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
     const { data } = await supabase
       .from("organizations")
       .select("id, name")
-      .eq("type", "WASPLAATS")
+      .eq("type", "MORTUARIUM")
       .eq("verification_status", "ACTIVE");
     setMortuariums(data || []);
   };

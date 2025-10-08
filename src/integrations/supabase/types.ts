@@ -3960,7 +3960,7 @@ export type Database = {
         | "funeral_director"
         | "insurer"
         | "family"
-        | "wasplaats"
+        | "mortuarium"
         | "mosque"
         | "platform_admin"
         | "org_admin"
@@ -4016,7 +4016,7 @@ export type Database = {
         | "FAMILY"
         | "ADMIN"
         | "OTHER"
-        | "WASPLAATS"
+        | "MORTUARIUM"
       prayer_type: "FAJR" | "DHUHR" | "ASR" | "MAGHRIB" | "ISHA" | "JUMUAH"
       priority: "HIGH" | "MEDIUM" | "LOW"
       priority_source: "AUTO" | "MANUAL"
@@ -4185,7 +4185,7 @@ export const Constants = {
         "funeral_director",
         "insurer",
         "family",
-        "wasplaats",
+        "mortuarium",
         "mosque",
         "platform_admin",
         "org_admin",
@@ -4246,7 +4246,7 @@ export const Constants = {
         "FAMILY",
         "ADMIN",
         "OTHER",
-        "WASPLAATS",
+        "MORTUARIUM",
       ],
       prayer_type: ["FAJR", "DHUHR", "ASR", "MAGHRIB", "ISHA", "JUMUAH"],
       priority: ["HIGH", "MEDIUM", "LOW"],

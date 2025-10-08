@@ -177,7 +177,7 @@ export default function AdminDirectory() {
     const labels: Record<string, string> = {
       FD: "Uitvaartondernemer",
       MOSQUE: "Moskee",
-      WASPLAATS: "Mortuarium",
+      MORTUARIUM: "Mortuarium",
       INSURER: "Verzekeraar",
     };
     return labels[type] || type;
@@ -242,9 +242,9 @@ export default function AdminDirectory() {
               Moskeeën
             </Button>
             <Button
-              variant={typeFilter === "WASPLAATS" ? "default" : "outline"}
+              variant={typeFilter === "MORTUARIUM" ? "default" : "outline"}
               size="sm"
-              onClick={() => setTypeFilter("WASPLAATS")}
+              onClick={() => setTypeFilter("MORTUARIUM")}
             >
               Mortuaria
             </Button>

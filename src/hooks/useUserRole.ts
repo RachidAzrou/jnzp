@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 
-export type UserRole = 'platform_admin' | 'funeral_director' | 'insurer' | 'wasplaats' | 'mosque' | null;
+export type UserRole = 'platform_admin' | 'funeral_director' | 'insurer' | 'mortuarium' | 'mosque' | null;
 
 export interface UserRoleContext {
   role: UserRole; // Primary role for backwards compatibility
   roles: UserRole[]; // All roles of the user
-  organizationType: 'FUNERAL_DIRECTOR' | 'MOSQUE' | 'WASPLAATS' | 'INSURER' | null;
+  organizationType: 'FUNERAL_DIRECTOR' | 'MOSQUE' | 'MORTUARIUM' | 'INSURER' | null;
   organizationId: string | null;
   isAdmin: boolean; // Whether user has admin rights in their organization
 }
@@ -97,7 +97,7 @@ export const useUserRole = () => {
           console.log('[useUserRole] Roles found:', data.length);
           const allRoles = data.map(d => d.role as UserRole);
           
-          const priorityOrder = ['platform_admin', 'funeral_director', 'insurer', 'wasplaats', 'mosque'];
+          const priorityOrder = ['platform_admin', 'funeral_director', 'insurer', 'mortuarium', 'mosque'];
           
           const sortedData = data.sort((a, b) => {
             return priorityOrder.indexOf(a.role) - priorityOrder.indexOf(b.role);
@@ -115,7 +115,7 @@ export const useUserRole = () => {
           setRoleContext({
             role: primaryRole,
             roles: allRoles,
-            organizationType: orgType as 'FUNERAL_DIRECTOR' | 'MOSQUE' | 'WASPLAATS' | 'INSURER' | null,
+            organizationType: orgType as 'FUNERAL_DIRECTOR' | 'MOSQUE' | 'MORTUARIUM' | 'INSURER' | null,
             organizationId: primaryRoleData.organization_id,
             isAdmin
           });
@@ -181,8 +181,8 @@ export const useRoleDisplayName = (role: UserRole): string => {
       return t('roles.funeral_director');
     case 'insurer':
       return t('roles.insurer');
-    case 'wasplaats':
-      return t('roles.wasplaats');
+    case 'mortuarium':
+      return t('roles.mortuarium');
     case 'mosque':
       return t('roles.mosque');
     default:
@@ -200,8 +200,8 @@ export const useRolePortalName = (role: UserRole): string => {
       return t('rolePortals.funeral_director');
     case 'insurer':
       return t('rolePortals.insurer');
-    case 'wasplaats':
-      return t('rolePortals.wasplaats');
+    case 'mortuarium':
+      return t('rolePortals.mortuarium');
     case 'mosque':
       return t('rolePortals.mosque');
     default:

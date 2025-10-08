@@ -112,7 +112,7 @@ const Register = () => {
         .insert([{
           name: companyName,
           company_name: companyName,
-          type: orgType as "FUNERAL_DIRECTOR" | "MOSQUE" | "WASPLAATS" | "INSURER",
+          type: orgType as "FUNERAL_DIRECTOR" | "MOSQUE" | "MORTUARIUM" | "INSURER",
           verification_status: "PENDING_VERIFICATION",
           status: "pending",
           business_number: businessNumber,

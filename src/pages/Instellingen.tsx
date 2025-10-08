@@ -442,7 +442,7 @@ const Instellingen = () => {
               <Button variant="outline" size="sm">{t("settings.enabled")}</Button>
             </div>
 
-            {role !== 'wasplaats' && (
+            {role !== 'mortuarium' && (
               <>
                 <Separator />
 

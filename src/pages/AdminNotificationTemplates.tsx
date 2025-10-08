@@ -246,7 +246,7 @@ export default function AdminNotificationTemplates() {
                       <SelectItem value="FAMILY">Familie</SelectItem>
                       <SelectItem value="FD">Uitvaartondernemer</SelectItem>
                       <SelectItem value="INSURER">Verzekeraar</SelectItem>
-                      <SelectItem value="WASPLAATS">Wasplaats</SelectItem>
+                      <SelectItem value="MORTUARIUM">Mortuarium</SelectItem>
                       <SelectItem value="MOSQUE">Moskee</SelectItem>
                     </SelectContent>
                   </Select>

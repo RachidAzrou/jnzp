@@ -137,7 +137,7 @@ export default function WasplaatsKoelcellen() {
         .from("user_roles")
         .select("organization_id")
         .eq("user_id", user.id)
-        .eq("role", "wasplaats")
+        .eq("role", "mortuarium")
         .single();
 
       if (!userRole?.organization_id) throw new Error("Geen organisatie gevonden");

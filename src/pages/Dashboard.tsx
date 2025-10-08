@@ -60,7 +60,7 @@ const Dashboard = () => {
             setOrganizationId(roleData.organization_id);
 
             // Check onboarding status for professional roles
-            const professionalRoles = ["funeral_director", "mosque", "wasplaats", "insurer", "org_admin", "admin"];
+            const professionalRoles = ["funeral_director", "mosque", "mortuarium", "insurer", "org_admin", "admin"];
             if (professionalRoles.includes(roleData.role)) {
               // Check onboarding status
               try {

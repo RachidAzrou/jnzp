@@ -68,7 +68,7 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
         return "default";
       case "insurer":
         return "secondary";
-      case "wasplaats":
+      case "mortuarium":
       case "mosque":
         return "outline";
       default:
@@ -82,7 +82,7 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
       admin: "Admin",
       funeral_director: "Uitvaartleider",
       insurer: "Verzekeraar",
-      wasplaats: "Wasplaats",
+      mortuarium: "Mortuarium",
       mosque: "Moskee",
       org_admin: "Org Admin",
       family: "Familie",

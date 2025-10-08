@@ -9,7 +9,7 @@ interface RouteGuardProps {
 // Define which routes are accessible by which roles/org types
 const ROUTE_ACCESS: Record<string, {
   roles?: UserRole[];
-  orgTypes?: ('FUNERAL_DIRECTOR' | 'MOSQUE' | 'WASPLAATS' | 'INSURER')[];
+  orgTypes?: ('FUNERAL_DIRECTOR' | 'MOSQUE' | 'MORTUARIUM' | 'INSURER')[];
   requireOrgType?: boolean;
   requireAdmin?: boolean;
 }> = {
@@ -27,15 +27,15 @@ const ROUTE_ACCESS: Record<string, {
   // Mosque-specific routes
   '/moskee': { roles: ['mosque'], orgTypes: ['MOSQUE'], requireOrgType: true },
   
-  // Wasplaats-specific routes
-  '/wasplaats': { roles: ['wasplaats'], orgTypes: ['WASPLAATS'], requireOrgType: true },
+  // Mortuarium-specific routes
+  '/mortuarium': { roles: ['mortuarium'], orgTypes: ['MORTUARIUM'], requireOrgType: true },
   
   // Insurer-specific routes
   '/insurer': { roles: ['insurer'], orgTypes: ['INSURER'], requireOrgType: true },
   
   // Shared routes (accessible by all authenticated users except family)
-  '/instellingen': { roles: ['funeral_director', 'insurer', 'wasplaats', 'mosque'] },
-  '/team': { roles: ['funeral_director', 'insurer', 'wasplaats', 'mosque'], requireAdmin: true },
+  '/instellingen': { roles: ['funeral_director', 'insurer', 'mortuarium', 'mosque'] },
+  '/team': { roles: ['funeral_director', 'insurer', 'mortuarium', 'mosque'], requireAdmin: true },
 };
 
 export const RouteGuard = ({ children }: RouteGuardProps) => {

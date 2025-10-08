@@ -597,7 +597,7 @@
     "insurer": "Assureur",
     "invoicesTitle": "Factures",
     "reporting": "Rapports",
-    "wasplaats": "Mortuaire",
+    "mortuarium": "Mortuaire",
     "coolCells": "Cellules réfrigérées",
     "adhocDossier": "Dossier ad-hoc",
     "mosque": "Mosquée",
@@ -615,7 +615,7 @@
     "funeral_director": "Entrepreneur de pompes funèbres",
     "family": "Famille",
     "insurer": "Assureur",
-    "wasplaats": "Mortuaire",
+    "mortuarium": "Mortuaire",
     "mosque": "Mosquée",
     "reviewer": "Réviseur",
     "support": "Support",
@@ -628,7 +628,7 @@
     "funeral_director": "Portail des pompes funèbres",
     "family": "Portail familial",
     "insurer": "Portail de l'assureur",
-    "wasplaats": "Portail de la morgue",
+    "mortuarium": "Portail de la morgue",
     "mosque": "Portail de la mosquée",
     "reviewer": "Portail du réviseur",
     "support": "Portail du support",
@@ -938,7 +938,7 @@
       "availability": "Disponibilité"
     }
   },
-  "wasplaats": {
+  "mortuarium": {
     "dashboard": {
       "title": "Tableau de bord Mortuaire",
       "subtitle": "Aperçu des cellules froides et des réservations",

@@ -19,7 +19,7 @@ import logoAuth from "@/assets/logo-vertical-new.png";
 import logoJanazApp from "@/assets/logo-janazapp.png";
 import authBackground from "@/assets/auth-background.jpg";
 
-type UserRole = "funeral_director" | "mosque" | "wasplaats" | "insurer";
+type UserRole = "funeral_director" | "mosque" | "mortuarium" | "insurer";
 type RegistrationStep = "role" | "details";
 
 const Auth = () => {
@@ -104,7 +104,7 @@ const Auth = () => {
           if (roleData) {
             setUserRole(roleData.role);
             // Professionals need 2FA
-            const professionalRoles = ["funeral_director", "mosque", "wasplaats", "insurer", "org_admin", "admin", "platform_admin"];
+            const professionalRoles = ["funeral_director", "mosque", "mortuarium", "insurer", "org_admin", "admin", "platform_admin"];
             if (professionalRoles.includes(roleData.role)) {
               setRequires2FA(true);
             } else {
@@ -454,7 +454,7 @@ const Auth = () => {
       if (data.user) {
         const orgType = selectedRole === "funeral_director" ? "FUNERAL_DIRECTOR" : 
                        selectedRole === "mosque" ? "MOSQUE" :
-                       selectedRole === "wasplaats" ? "WASPLAATS" : "INSURER";
+                       selectedRole === "mortuarium" ? "MORTUARIUM" : "INSURER";
         
         const { data: orgData, error: orgError } = await supabase
           .from("organizations")
@@ -479,13 +479,13 @@ const Auth = () => {
         const rolesToInsert: Array<{
           user_id: string;
           organization_id: string;
-          role: 'org_admin' | 'funeral_director' | 'mosque' | 'wasplaats' | 'insurer';
+          role: 'org_admin' | 'funeral_director' | 'mosque' | 'mortuarium' | 'insurer';
         }> = [
           { user_id: data.user.id, organization_id: orgData.id, role: 'org_admin' as const }
         ];
 
         // Add operational role based on selected role
-        const operationalRole = selectedRole as 'funeral_director' | 'mosque' | 'wasplaats' | 'insurer';
+        const operationalRole = selectedRole as 'funeral_director' | 'mosque' | 'mortuarium' | 'insurer';
         rolesToInsert.push({
           user_id: data.user.id,
           organization_id: orgData.id,

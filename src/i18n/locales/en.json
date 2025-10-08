@@ -597,7 +597,7 @@
     "insurer": "Insurer",
     "invoicesTitle": "Invoices",
     "reporting": "Reporting",
-    "wasplaats": "Mortuary",
+    "mortuarium": "Mortuary",
     "coolCells": "Cool cells",
     "adhocDossier": "Ad-hoc Dossier",
     "mosque": "Mosque",
@@ -615,7 +615,7 @@
     "funeral_director": "Funeral Director",
     "family": "Family",
     "insurer": "Insurer",
-    "wasplaats": "Mortuary",
+    "mortuarium": "Mortuary",
     "mosque": "Mosque",
     "reviewer": "Reviewer",
     "support": "Support",
@@ -628,7 +628,7 @@
     "funeral_director": "Funeral director portal",
     "family": "Family portal",
     "insurer": "Insurer portal",
-    "wasplaats": "Mortuary portal",
+    "mortuarium": "Mortuary portal",
     "mosque": "Mosque portal",
     "reviewer": "Reviewer portal",
     "support": "Support portal",
@@ -938,7 +938,7 @@
       "availability": "Availability"
     }
   },
-  "wasplaats": {
+  "mortuarium": {
     "dashboard": {
       "title": "Mortuary Dashboard",
       "subtitle": "Overview of cool cells and reservations",

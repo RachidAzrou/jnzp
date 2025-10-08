@@ -149,8 +149,8 @@ const RoleBasedHome = () => {
   }
   
   // Redirect based on organization type (for multi-role users like org_admin + mosque)
-  if (organizationType === 'WASPLAATS') {
-    return <Navigate to="/wasplaats" replace />;
+  if (organizationType === 'MORTUARIUM') {
+    return <Navigate to="/mortuarium" replace />;
   }
   if (organizationType === 'MOSQUE') {
     return <Navigate to="/moskee" replace />;
@@ -253,28 +253,28 @@ const App = () => (
                             </RoleProtectedRoute>
                           } />
                           {/* Beoordelingen removed - only for insurers/admins */}
-                          <Route path="/wasplaats" element={
-                            <RoleProtectedRoute allowedRoles={['wasplaats']}>
+                          <Route path="/mortuarium" element={
+                            <RoleProtectedRoute allowedRoles={['mortuarium']}>
                               <WasplaatsDashboard />
                             </RoleProtectedRoute>
                           } />
-                          <Route path="/wasplaats/koelcellen" element={
-                            <RoleProtectedRoute allowedRoles={['wasplaats']}>
+                          <Route path="/mortuarium/koelcellen" element={
+                            <RoleProtectedRoute allowedRoles={['mortuarium']}>
                               <WasplaatsKoelcellen />
                             </RoleProtectedRoute>
                           } />
-                          <Route path="/wasplaats/reservaties/nieuw" element={
-                            <RoleProtectedRoute allowedRoles={['wasplaats']}>
+                          <Route path="/mortuarium/reservaties/nieuw" element={
+                            <RoleProtectedRoute allowedRoles={['mortuarium']}>
                               <WasplaatsReservaties />
                             </RoleProtectedRoute>
                           } />
-                          <Route path="/wasplaats/facturatie" element={
-                            <RoleProtectedRoute allowedRoles={['wasplaats']}>
+                          <Route path="/mortuarium/facturatie" element={
+                            <RoleProtectedRoute allowedRoles={['mortuarium']}>
                               <WasplaatsFacturatie />
                             </RoleProtectedRoute>
                           } />
-                          <Route path="/wasplaats/adhoc" element={
-                            <RoleProtectedRoute allowedRoles={['wasplaats']}>
+                          <Route path="/mortuarium/adhoc" element={
+                            <RoleProtectedRoute allowedRoles={['mortuarium']}>
                               <MortuariumAdHoc />
                             </RoleProtectedRoute>
                           } />
@@ -425,7 +425,7 @@ const App = () => (
                           } />
                           <Route path="/instellingen" element={<Instellingen />} />
                           <Route path="/team" element={
-                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'mosque', 'wasplaats', 'insurer']}>
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director', 'mosque', 'mortuarium', 'insurer']}>
                               <TeamManagement />
                             </RoleProtectedRoute>
                           } />

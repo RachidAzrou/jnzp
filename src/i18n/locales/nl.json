@@ -655,7 +655,7 @@
     "insurer": "Verzekeraar",
     "invoicesTitle": "Facturen",
     "reporting": "Rapportage",
-    "wasplaats": "Mortuarium",
+    "mortuarium": "Mortuarium",
     "coolCells": "Koelcellen",
     "adhocDossier": "Ad-hoc Dossier",
     "mosque": "Moskee",
@@ -674,7 +674,7 @@
     "funeral_director": "Uitvaartondernemer",
     "family": "Familie",
     "insurer": "Verzekeraar",
-    "wasplaats": "Mortuarium",
+    "mortuarium": "Mortuarium",
     "mosque": "Moskee",
     "reviewer": "Reviewer",
     "support": "Support",
@@ -687,7 +687,7 @@
     "funeral_director": "Uitvaartondernemersportaal",
     "family": "Familieportaal",
     "insurer": "Verzekeraarportaal",
-    "wasplaats": "Mortuariumportaal",
+    "mortuarium": "Mortuariumportaal",
     "mosque": "Moskeeportaal",
     "reviewer": "Reviewerportaal",
     "support": "Supportportaal",
@@ -997,7 +997,7 @@
       "availability": "Beschikbaarheid"
     }
   },
-  "wasplaats": {
+  "mortuarium": {
     "dashboard": {
       "title": "Mortuarium Dashboard",
       "subtitle": "Overzicht van koelcellen en reservaties",

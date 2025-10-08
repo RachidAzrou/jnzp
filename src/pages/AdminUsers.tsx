@@ -182,7 +182,7 @@ export default function AdminUsers() {
       'admin': 'Admin',
       'org_admin': 'Organisatie Admin',
       'funeral_director': 'Uitvaartondernemer',
-      'wasplaats': 'Mortuarium',
+      'mortuarium': 'Mortuarium',
       'mosque': 'Moskee',
       'insurer': 'Verzekeraar',
       'family': 'Familie'

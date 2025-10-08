@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -10,309 +11,393 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  X,
+  ArrowLeft,
+  Save,
+  CheckCircle,
   Send,
-  Clock,
-  User,
+  Upload,
   FileText,
-  MessageSquare,
-  Activity,
-  Trash2,
+  Download,
+  X,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
 
-interface TaskDetailDialogProps {
-  task: any;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onUpdate: () => void;
+interface Task {
+  id: string;
+  org_id: string;
+  board_id: string;
+  column_id: string;
+  dossier_id: string | null;
+  title: string;
+  description: string | null;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  assignee_id: string | null;
+  due_date: string | null;
+  is_blocked: boolean;
+  blocked_reason: string | null;
+  metadata: { auto?: boolean; source?: string };
+  created_at: string;
+  updated_at: string;
 }
 
 interface Comment {
   id: string;
+  task_id: string;
   user_id: string;
-  body: string;
-  mentions: string[];
+  message: string;
   created_at: string;
-  updated_at: string;
-  is_edited: boolean;
+  profiles?: any;
 }
 
-interface ActivityLog {
+interface Activity {
   id: string;
-  user_id: string;
-  type: string;
-  meta: any;
+  task_id: string;
+  user_id: string | null;
+  action: string;
+  from_value: any;
+  to_value: any;
+  metadata: any;
+  created_at: string;
+  profiles?: any;
+}
+
+interface Attachment {
+  id: string;
+  task_id: string;
+  file_url: string;
+  file_name: string;
+  file_size: number | null;
+  uploaded_by: string;
   created_at: string;
 }
 
-export function TaskDetailDialog({
-  task,
-  open,
-  onOpenChange,
-  onUpdate,
-}: TaskDetailDialogProps) {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [activities, setActivities] = useState<ActivityLog[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const [loading, setLoading] = useState(false);
+interface TaskDetailDialogProps {
+  task: Task | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onUpdate?: () => void;
+}
+
+export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDetailDialogProps) {
+  const { toast } = useToast();
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  // Form state
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    priority: "MEDIUM",
+    priority: "MEDIUM" as Task['priority'],
+    due_date: "",
   });
-  const { toast } = useToast();
 
   useEffect(() => {
-    if (open && task) {
+    if (task && open) {
       setFormData({
-        title: task.title || "",
+        title: task.title,
         description: task.description || "",
-        priority: task.priority || "MEDIUM",
+        priority: task.priority,
+        due_date: task.due_date || "",
       });
       fetchComments();
       fetchActivities();
+      fetchAttachments();
     }
-  }, [open, task]);
+  }, [task, open]);
 
+  // Realtime subscriptions
   useEffect(() => {
-    if (!task?.id || !open) return;
+    if (!task || !open) return;
 
-    // Realtime subscriptions
     const commentsChannel = supabase
       .channel(`task-comments-${task.id}`)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "task_comments",
+          event: '*',
+          schema: 'public',
+          table: 'task_comments' as any,
           filter: `task_id=eq.${task.id}`,
         },
-        () => {
-          fetchComments();
-        }
+        () => fetchComments()
       )
       .subscribe();
 
     const activitiesChannel = supabase
       .channel(`task-activities-${task.id}`)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "task_activities",
+          event: '*',
+          schema: 'public',
+          table: 'task_activities' as any,
           filter: `task_id=eq.${task.id}`,
         },
-        () => {
-          fetchActivities();
-        }
+        () => fetchActivities()
+      )
+      .subscribe();
+
+    const attachmentsChannel = supabase
+      .channel(`task-attachments-${task.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'task_attachments' as any,
+          filter: `task_id=eq.${task.id}`,
+        },
+        () => fetchAttachments()
       )
       .subscribe();
 
     return () => {
       supabase.removeChannel(commentsChannel);
       supabase.removeChannel(activitiesChannel);
+      supabase.removeChannel(attachmentsChannel);
     };
-  }, [task?.id, open]);
+  }, [task, open]);
 
   const fetchComments = async () => {
-    if (!task?.id) return;
+    if (!task) return;
+    const { data, error } = await (supabase
+      .from('task_comments') as any)
+      .select('*')
+      .eq('task_id', task.id)
+      .order('created_at', { ascending: true });
 
-    const { data } = await supabase
-      .from("task_comments")
-      .select("*")
-      .eq("task_id", task.id)
-      .order("created_at", { ascending: true });
-
-    if (data) {
-      setComments(data as any);
+    if (!error && data) {
+      setComments(data);
     }
   };
 
   const fetchActivities = async () => {
-    if (!task?.id) return;
-
-    const { data } = await supabase
-      .from("task_activities")
-      .select("*")
-      .eq("task_id", task.id)
-      .order("created_at", { ascending: false })
+    if (!task) return;
+    const { data, error } = await (supabase
+      .from('task_activities') as any)
+      .select('*')
+      .eq('task_id', task.id)
+      .order('created_at', { ascending: false })
       .limit(50);
 
-    if (data) {
-      setActivities(data as any);
+    if (!error && data) {
+      setActivities(data);
+    }
+  };
+
+  const fetchAttachments = async () => {
+    if (!task) return;
+    const { data, error } = await (supabase
+      .from('task_attachments') as any)
+      .select('*')
+      .eq('task_id', task.id)
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setAttachments(data);
     }
   };
 
   const handleAddComment = async () => {
-    if (!newComment.trim()) return;
+    if (!task || !newComment.trim()) return;
 
-    setLoading(true);
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-      // Extract @mentions
-      const mentionRegex = /@([a-zA-Z0-9_-]+)/g;
-      const mentions: string[] = [];
-      let match;
-      while ((match = mentionRegex.exec(newComment)) !== null) {
-        mentions.push(match[1]);
-      }
-
-      const { error } = await supabase.from("task_comments").insert({
-        task_id: task.id,
-        author_id: user.id,
-        body: newComment,
-      } as any);
-
-      if (error) throw error;
-
-      // Log activity
-      await supabase.from("task_activities").insert({
+    const { error } = await (supabase
+      .from('task_comments') as any)
+      .insert({
         task_id: task.id,
         user_id: user.id,
-        action: "COMMENTED",
-        metadata: { comment_preview: newComment.substring(0, 100) },
+        message: newComment.trim(),
       });
 
-      setNewComment("");
-      toast({
-        title: "Opmerking toegevoegd",
-      });
-    } catch (error: any) {
+    if (error) {
       toast({
         title: "Fout",
-        description: error.message,
+        description: "Kon commentaar niet toevoegen",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+    } else {
+      setNewComment("");
     }
   };
 
   const handleUpdateTask = async () => {
+    if (!task) return;
     setLoading(true);
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
 
-      const { error } = await supabase
-        .from("kanban_tasks")
-        .update({
-          title: formData.title,
-          description: formData.description,
-          priority: formData.priority as 'HIGH' | 'LOW' | 'MEDIUM' | 'URGENT',
-        })
-        .eq("id", task.id);
+    const { error } = await supabase
+      .from('kanban_tasks')
+      .update({
+        title: formData.title,
+        description: formData.description,
+        priority: formData.priority,
+        due_date: formData.due_date || null,
+      })
+      .eq('id', task.id);
 
-      if (error) throw error;
+    setLoading(false);
 
-      // Log activity
-      await supabase.from("task_activities").insert({
-        task_id: task.id,
-        user_id: user.id,
-        action: "UPDATED",
-        metadata: {
-          changes: {
-            title: task.title !== formData.title,
-            description: task.description !== formData.description,
-            priority: task.priority !== formData.priority,
-          },
-        },
+    if (error) {
+      toast({
+        title: "Fout",
+        description: "Kon taak niet bijwerken",
+        variant: "destructive",
       });
-
-      setEditMode(false);
-      onUpdate();
+    } else {
       toast({
         title: "Taak bijgewerkt",
       });
-    } catch (error: any) {
-      toast({
-        title: "Fout",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+      setEditMode(false);
+      onUpdate?.();
     }
   };
 
-  const handleDeleteTask = async () => {
-    if (!confirm("Weet je zeker dat je deze taak wilt verwijderen?")) {
+  const handleMarkAsDone = async () => {
+    if (!task) return;
+
+    const { data: doneColumn } = await supabase
+      .from('task_board_columns')
+      .select('id')
+      .eq('board_id', task.board_id)
+      .eq('is_done', true)
+      .single();
+
+    if (!doneColumn) {
+      toast({
+        title: "Fout",
+        description: "Kan 'Afgerond' kolom niet vinden",
+        variant: "destructive",
+      });
       return;
     }
 
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from("kanban_tasks")
-        .delete()
-        .eq("id", task.id);
+    const { error } = await supabase
+      .from('kanban_tasks')
+      .update({ column_id: doneColumn.id })
+      .eq('id', task.id);
 
-      if (error) throw error;
-
-      onOpenChange(false);
-      onUpdate();
-      toast({
-        title: "Taak verwijderd",
-      });
-    } catch (error: any) {
+    if (error) {
       toast({
         title: "Fout",
-        description: error.message,
+        description: "Kon taak niet afronden",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+    } else {
+      toast({
+        title: "Taak afgerond",
+      });
+      onUpdate?.();
+      onOpenChange(false);
     }
   };
 
-  const getActivityDescription = (activity: ActivityLog) => {
-    const meta = activity.meta || {};
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!task || !e.target.files || e.target.files.length === 0) return;
 
-    switch (activity.type) {
-      case "CREATED":
-        return "maakte deze taak aan";
-      case "UPDATED":
-        return "wijzigde de taak";
-      case "MOVED":
-        return `verplaatste de taak`;
-      case "ASSIGNED":
-        return "wees de taak toe";
-      case "UNASSIGNED":
-        return "verwijderde de toewijzing";
-      case "COMMENTED":
-        return "plaatste een opmerking";
-      case "LABELED":
-        return "wijzigde labels";
-      case "CLOSED":
-        return "sloot de taak";
-      case "REOPENED":
-        return "heropende de taak";
+    const file = e.target.files[0];
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    setUploading(true);
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${task.id}-${Date.now()}.${fileExt}`;
+    const filePath = `task-attachments/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('documents')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      toast({
+        title: "Upload fout",
+        description: uploadError.message,
+        variant: "destructive",
+      });
+      setUploading(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('documents')
+      .getPublicUrl(filePath);
+
+    const { error: dbError } = await (supabase
+      .from('task_attachments') as any)
+      .insert({
+        task_id: task.id,
+        file_url: publicUrl,
+        file_name: file.name,
+        file_size: file.size,
+        uploaded_by: user.id,
+      });
+
+    setUploading(false);
+
+    if (dbError) {
+      toast({
+        title: "Fout",
+        description: "Kon bijlage niet opslaan",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteAttachment = async (attachmentId: string) => {
+    const { error } = await (supabase
+      .from('task_attachments') as any)
+      .delete()
+      .eq('id', attachmentId);
+
+    if (error) {
+      toast({
+        title: "Fout",
+        description: "Kon bijlage niet verwijderen",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getActivityDescription = (activity: Activity) => {
+    const userName = activity.profiles?.display_name || 'Gebruiker';
+    
+    switch (activity.action) {
+      case 'CREATED':
+        return `${userName} heeft deze taak aangemaakt`;
+      case 'MOVED':
+        return `${userName} verplaatst van ${activity.from_value?.column_label} naar ${activity.to_value?.column_label}`;
+      case 'ASSIGNED':
+        return `${userName} heeft deze taak toegewezen`;
+      case 'UNASSIGNED':
+        return `${userName} heeft de toewijzing verwijderd`;
+      case 'BLOCKED':
+        return `${userName} heeft deze taak geblokkeerd`;
+      case 'UNBLOCKED':
+        return `${userName} heeft de blokkering opgeheven`;
+      case 'COMPLETED':
+        return `${userName} heeft deze taak afgerond`;
+      case 'REOPENED':
+        return `${userName} heeft deze taak heropend`;
+      case 'UPDATED':
+        return `${userName} heeft deze taak bijgewerkt`;
+      case 'COMMENTED':
+        return `${userName} heeft gereageerd`;
       default:
-        return activity.type;
+        return `${userName} - ${activity.action}`;
     }
   };
 
@@ -320,239 +405,278 @@ export function TaskDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh]">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5" />
-              {editMode ? (
-                <Input
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  className="text-lg font-semibold"
-                />
-              ) : (
-                <span>{task.title}</span>
-              )}
-            </div>
-            {editMode ? (
-              <div className="flex gap-2">
-                <Button size="sm" onClick={handleUpdateTask} disabled={loading}>
-                  Opslaan
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setEditMode(false)}
-                >
-                  Annuleren
-                </Button>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setEditMode(true)}>
-                  Bewerken
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="destructive" 
-                  onClick={handleDeleteTask}
-                  disabled={loading}
-                >
-                  <Trash2 className="h-4 w-4 mr-1" />
-                  Verwijderen
-                </Button>
-              </div>
-            )}
+            <span className="flex-1">{editMode ? "Taak bewerken" : task.title}</span>
+            <Badge variant={task.is_blocked ? "destructive" : "outline"}>
+              {task.is_blocked ? "Geblokkeerd" : "Actief"}
+            </Badge>
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="details" className="mt-4">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="details" className="flex-1 overflow-hidden flex flex-col">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="comments">
-              Opmerkingen ({comments.length})
+            <TabsTrigger value="activity">
+              Activiteit ({activities.length})
             </TabsTrigger>
-            <TabsTrigger value="activity">Activiteit</TabsTrigger>
+            <TabsTrigger value="comments">
+              Commentaar ({comments.length})
+            </TabsTrigger>
+            <TabsTrigger value="attachments">
+              Bestanden ({attachments.length})
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="details" className="space-y-4 py-4">
-            <ScrollArea className="h-[50vh]">
-              <div className="space-y-4 pr-4">
-                <div>
-                  <Label>Beschrijving</Label>
-                  {editMode ? (
-                    <Textarea
-                      value={formData.description}
-                      onChange={(e) =>
-                        setFormData({ ...formData, description: e.target.value })
-                      }
-                      rows={6}
-                      className="mt-2"
-                    />
-                  ) : (
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {task.description || "Geen beschrijving"}
-                    </p>
-                  )}
-                </div>
+          {/* Details Tab */}
+          <TabsContent value="details" className="flex-1 overflow-y-auto space-y-4 mt-4">
+            {task.dossier_id && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <FileText className="h-4 w-4" />
+                <span>Dossier: {task.dossier_id.substring(0, 8)}</span>
+              </div>
+            )}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Prioriteit</Label>
-                    {editMode ? (
-                      <Select
-                        value={formData.priority}
-                        onValueChange={(value: any) =>
-                          setFormData({ ...formData, priority: value })
-                        }
-                      >
-                        <SelectTrigger className="mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="LOW">Laag</SelectItem>
-                          <SelectItem value="MEDIUM">Normaal</SelectItem>
-                          <SelectItem value="HIGH">Hoog</SelectItem>
-                          <SelectItem value="URGENT">Urgent</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <div className="mt-2">
-                        <Badge>{task.priority}</Badge>
-                      </div>
-                    )}
-                  </div>
+            <div className="space-y-4">
+              <div>
+                <Label>Titel</Label>
+                {editMode ? (
+                  <Input
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="mt-1"
+                  />
+                ) : (
+                  <p className="text-sm mt-1">{task.title}</p>
+                )}
+              </div>
 
-                  <div>
-                    <Label>Dossier</Label>
-                    <p className="text-sm mt-2 font-mono text-muted-foreground">
-                      {task.dossier_id ? (
-                        <span className="text-foreground">{task.dossier_id.substring(0, 8)}...</span>
-                      ) : (
-                        "Niet gekoppeld"
-                      )}
-                    </p>
-                  </div>
-                </div>
+              <div>
+                <Label>Beschrijving</Label>
+                {editMode ? (
+                  <Textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={4}
+                    className="mt-1"
+                  />
+                ) : (
+                  <p className="text-sm mt-1 text-muted-foreground">
+                    {task.description || "Geen beschrijving"}
+                  </p>
+                )}
+              </div>
 
-                {task.labels && task.labels.length > 0 && (
-                  <div>
-                    <Label>Labels</Label>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {task.labels.map((label: string, index: number) => (
-                        <Badge key={index} variant="outline">
-                          {label}
-                        </Badge>
-                      ))}
-                    </div>
+              <div>
+                <Label>Prioriteit</Label>
+                {editMode ? (
+                  <Select
+                    value={formData.priority}
+                    onValueChange={(value) => setFormData({ ...formData, priority: value as Task['priority'] })}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="LOW">Laag</SelectItem>
+                      <SelectItem value="MEDIUM">Medium</SelectItem>
+                      <SelectItem value="HIGH">Hoog</SelectItem>
+                      <SelectItem value="CRITICAL">Kritisch</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="mt-1">
+                    <Badge>{task.priority}</Badge>
                   </div>
                 )}
+              </div>
 
-                <div>
-                  <Label>Aangemaakt</Label>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {formatDistanceToNow(new Date(task.created_at), {
-                      addSuffix: true,
-                      locale: nl,
-                    })}
+              <div>
+                <Label>Vervaldatum</Label>
+                {editMode ? (
+                  <Input
+                    type="datetime-local"
+                    value={formData.due_date}
+                    onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                    className="mt-1"
+                  />
+                ) : (
+                  <p className="text-sm mt-1 text-muted-foreground">
+                    {task.due_date
+                      ? format(new Date(task.due_date), "PPP", { locale: nl })
+                      : "Geen deadline"}
                   </p>
+                )}
+              </div>
+
+              {task.metadata?.auto && (
+                <div className="text-sm text-muted-foreground bg-muted p-2 rounded flex items-center gap-2">
+                  <span>⚙️</span>
+                  <span>Automatisch aangemaakt</span>
                 </div>
+              )}
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              {editMode ? (
+                <>
+                  <Button onClick={handleUpdateTask} disabled={loading}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Opslaan
+                  </Button>
+                  <Button variant="outline" onClick={() => setEditMode(false)}>
+                    Annuleren
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button onClick={() => setEditMode(true)}>
+                    Bewerken
+                  </Button>
+                  <Button onClick={handleMarkAsDone} variant="default">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Markeer als afgerond
+                  </Button>
+                </>
+              )}
+            </div>
+          </TabsContent>
+
+          {/* Activity Tab */}
+          <TabsContent value="activity" className="flex-1 overflow-hidden mt-4">
+            <ScrollArea className="h-[400px] pr-4">
+              <div className="space-y-3">
+                {activities.map((activity) => (
+                  <div key={activity.id} className="flex gap-3 text-sm">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="text-xs">
+                        {activity.profiles?.display_name?.[0] || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p>{getActivityDescription(activity)}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(activity.created_at), {
+                          addSuffix: true,
+                          locale: nl
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </ScrollArea>
           </TabsContent>
 
-          <TabsContent value="comments" className="space-y-4 py-4">
-            <ScrollArea className="h-[50vh]">
-              <div className="space-y-4 pr-4">
-                {comments.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    Nog geen opmerkingen
-                  </div>
-                ) : (
-                  comments.map((comment) => (
-                    <div
-                      key={comment.id}
-                      className="border rounded-lg p-4 space-y-2"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-6 w-6">
-                          <AvatarFallback className="text-xs">U</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm font-medium">Gebruiker</span>
-                        <span className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(new Date(comment.created_at), {
-                            addSuffix: true,
-                            locale: nl,
-                          })}
-                        </span>
-                        {comment.is_edited && (
-                          <Badge variant="outline" className="text-xs">
-                            Bewerkt
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm whitespace-pre-wrap">{comment.body}</p>
+          {/* Comments Tab */}
+          <TabsContent value="comments" className="flex-1 overflow-hidden flex flex-col gap-3 mt-4">
+            <ScrollArea className="flex-1 h-[350px] pr-4">
+              <div className="space-y-3">
+                {comments.map((comment) => (
+                  <div key={comment.id} className="flex gap-3 text-sm">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="text-xs">
+                        {comment.profiles?.display_name?.[0] || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 bg-muted rounded-lg p-3">
+                      <p className="font-medium text-xs mb-1">
+                        {comment.profiles?.display_name || 'Gebruiker'}
+                      </p>
+                      <p>{comment.message}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {formatDistanceToNow(new Date(comment.created_at), {
+                          addSuffix: true,
+                          locale: nl
+                        })}
+                      </p>
                     </div>
-                  ))
-                )}
+                  </div>
+                ))}
               </div>
             </ScrollArea>
 
-            <div className="flex gap-2">
-              <Textarea
-                placeholder="Voeg een opmerking toe... (@gebruiker voor mentions)"
+            <div className="flex gap-2 pt-2 border-t">
+              <Input
+                placeholder="Voeg een reactie toe..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                rows={3}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
               />
-              <Button
-                size="icon"
-                onClick={handleAddComment}
-                disabled={loading || !newComment.trim()}
-              >
+              <Button onClick={handleAddComment} size="icon">
                 <Send className="h-4 w-4" />
               </Button>
             </div>
           </TabsContent>
 
-          <TabsContent value="activity" className="py-4">
-            <ScrollArea className="h-[50vh]">
-              <div className="space-y-3 pr-4">
-                {activities.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    Geen activiteit
-                  </div>
-                ) : (
-                  activities.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className="flex gap-3 text-sm border-l-2 pl-3 py-2"
-                    >
-                      <Activity className="h-4 w-4 text-muted-foreground mt-0.5" />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">Gebruiker</span>
-                          <span className="text-muted-foreground">
-                            {getActivityDescription(activity)}
-                          </span>
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(new Date(activity.created_at), {
+          {/* Attachments Tab */}
+          <TabsContent value="attachments" className="flex-1 overflow-hidden flex flex-col gap-3 mt-4">
+            <ScrollArea className="flex-1 h-[350px] pr-4">
+              <div className="space-y-2">
+                {attachments.map((attachment) => (
+                  <div key={attachment.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <FileText className="h-5 w-5 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{attachment.file_name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {attachment.file_size ? `${(attachment.file_size / 1024).toFixed(1)} KB` : ''}
+                          {' · '}
+                          {formatDistanceToNow(new Date(attachment.created_at), {
                             addSuffix: true,
-                            locale: nl,
+                            locale: nl
                           })}
-                        </span>
+                        </p>
                       </div>
                     </div>
-                  ))
-                )}
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => window.open(attachment.file_url, '_blank')}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteAttachment(attachment.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </ScrollArea>
+
+            <div className="pt-2 border-t">
+              <label htmlFor="file-upload">
+                <Button variant="outline" className="w-full" disabled={uploading} asChild>
+                  <span>
+                    <Upload className="h-4 w-4 mr-2" />
+                    {uploading ? "Uploaden..." : "Bestand uploaden"}
+                  </span>
+                </Button>
+                <input
+                  id="file-upload"
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                />
+              </label>
+            </div>
           </TabsContent>
         </Tabs>
+
+        <div className="flex justify-between pt-4 border-t">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Terug
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

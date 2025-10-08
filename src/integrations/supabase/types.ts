@@ -128,6 +128,69 @@ export type Database = {
         }
         Relationships: []
       }
+      case_events: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          dossier_id: string
+          event_type: string
+          id: string
+          location: string | null
+          metadata: Json | null
+          notes: string | null
+          scheduled_at: string | null
+          started_at: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          dossier_id: string
+          event_type: string
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          notes?: string | null
+          scheduled_at?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          dossier_id?: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          notes?: string | null
+          scheduled_at?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "view_my_dossiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_items: {
         Row: {
           code: string

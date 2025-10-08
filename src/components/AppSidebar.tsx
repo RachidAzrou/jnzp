@@ -93,15 +93,17 @@ export function AppSidebar() {
     
     // Mosque
     { titleKey: "navigation.dashboard", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
-    { titleKey: "navigation.requests", url: "/moskee/aanvragen", icon: FolderOpen, roles: ['mosque'] },
-    { titleKey: "navigation.availability", url: "/moskee/beschikbaarheid", icon: PiMosque, roles: ['mosque'] },
-    { titleKey: "navigation.publicScreen", url: "/moskee/publiek-scherm", icon: Monitor, roles: ['mosque'] },
+    { titleKey: "navigation.availability", url: "/moskee/beschikbaarheid", icon: Calendar, roles: ['mosque'] },
+    { titleKey: "navigation.planning", url: "/moskee/planning", icon: FolderOpen, roles: ['mosque'] },
+    { titleKey: "navigation.publicScreen", url: "/moskee/publiek", icon: Monitor, roles: ['mosque'] },
+    { titleKey: "navigation.teamManagement", url: "/moskee/team", icon: Users, roles: ['mosque'], requireAdmin: true },
+    { titleKey: "navigation.settings", url: "/moskee/instellingen", icon: Settings, roles: ['mosque'] },
     
-    // Teambeheer - voor admins van niet-wasplaats orgs (wasplaats heeft het al in eigen sectie)
-    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['funeral_director', 'mosque', 'insurer'], requireAdmin: true },
+    // Teambeheer - voor admins van niet-wasplaats en niet-mosque orgs
+    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['funeral_director', 'insurer'], requireAdmin: true },
     
-    // Settings voor andere roles (wasplaats heeft het al in eigen sectie)
-    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'insurer', 'mosque'] },
+    // Settings voor andere roles (wasplaats en mosque hebben eigen settings)
+    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['funeral_director', 'insurer'] },
   ];
 
   // RBAC: Filter menu items based on ALL user roles and organization type

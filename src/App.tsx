@@ -32,6 +32,10 @@ import DossierDetail from "./pages/DossierDetail";
 import DossierZoeken from "./pages/DossierZoeken";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
 import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
+import MoskeePlanning from "./pages/MoskeePlanning";
+import MoskeePublicScreen from "./pages/MoskeePublicScreen";
+import MoskeeTeam from "./pages/MoskeeTeam";
+import MoskeeSettings from "./pages/MoskeeSettings";
 import InsurerDashboard from "./pages/InsurerDashboard";
 import InsurerClaims from "./pages/InsurerClaims";
 import InsurerDossierOverview from "./pages/InsurerDossierOverview";
@@ -275,10 +279,29 @@ const App = () => (
                               <MoskeeDashboard />
                             </RoleProtectedRoute>
                           } />
-                          {/* Oude moskee aanvragen routes verwijderd - alles via case_events */}
                           <Route path="/moskee/beschikbaarheid" element={
                             <RoleProtectedRoute allowedRoles={['mosque']}>
                               <MoskeeBeschikbaarheid />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/moskee/planning" element={
+                            <RoleProtectedRoute allowedRoles={['mosque']}>
+                              <MoskeePlanning />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/moskee/publiek" element={
+                            <RoleProtectedRoute allowedRoles={['mosque']}>
+                              <MoskeePublicScreen />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/moskee/team" element={
+                            <RoleProtectedRoute allowedRoles={['mosque']}>
+                              <MoskeeTeam />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/moskee/instellingen" element={
+                            <RoleProtectedRoute allowedRoles={['mosque']}>
+                              <MoskeeSettings />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/insurer" element={

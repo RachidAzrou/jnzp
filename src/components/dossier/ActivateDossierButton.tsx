@@ -33,8 +33,8 @@ export function ActivateDossierButton({
   const [reason, setReason] = useState("");
   const [activating, setActivating] = useState(false);
 
-  // Only show button for intake_in_progress status
-  if (currentStatus !== "intake_in_progress") {
+  // Show button for INTAKE status (uppercase to match database enum)
+  if (currentStatus !== "INTAKE") {
     return null;
   }
 
@@ -53,10 +53,10 @@ export function ActivateDossierButton({
     const { data: userData } = await supabase.auth.getUser();
     const userId = userData.user?.id;
 
-    // Update dossier status to operational
+    // Update dossier status to OPERATIONAL - tasks will be seeded automatically by trigger
     const { error } = await supabase
       .from("dossiers")
-      .update({ status: "operational" as any })
+      .update({ status: "OPERATIONAL" as any })
       .eq("id", dossierId);
 
     if (error) {
@@ -69,11 +69,11 @@ export function ActivateDossierButton({
       return;
     }
 
-    // Log event
+    // Log activation event
     await supabase.from("dossier_events").insert({
       dossier_id: dossierId,
       event_type: "DOSSIER_ACTIVATED",
-      event_description: `Dossier operationeel gemaakt. Automatische taken gegenereerd voor ${flow} flow.`,
+      event_description: `Dossier operationeel gemaakt. Reden: ${reason}`,
       created_by: userId,
       metadata: { reason, flow },
     });

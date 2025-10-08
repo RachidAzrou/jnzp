@@ -113,7 +113,7 @@ export function CreateDossierDialog() {
       const refNumber = `MAN-${Date.now()}`;
       const deceasedName = `${validatedData.first_name} ${validatedData.last_name}`;
 
-      // Create dossier
+      // Create dossier - status and tasks will be set automatically by database triggers
       const { data: dossier, error: dossierError } = await (supabase as any)
         .from("dossiers")
         .insert({
@@ -121,7 +121,7 @@ export function CreateDossierDialog() {
           deceased_name: deceasedName,
           deceased_gender: validatedData.gender,
           flow: validatedData.flow,
-          status: "CREATED" as any, // Use uppercase to match database enum
+          // Status will be set to INTAKE automatically by trigger if flow is LOC/REP
           assigned_fd_org_id: fdOrgId,
         })
         .select()
@@ -142,11 +142,11 @@ export function CreateDossierDialog() {
 
       if (contactError) throw contactError;
 
-      // Create dossier event for manual creation
+      // Store additional metadata (FD_CREATED event is logged automatically by trigger)
       await (supabase as any).from("dossier_events").insert({
         dossier_id: dossier.id,
-        event_type: "DOSSIER_CREATED_MANUALLY",
-        event_description: `Dossier handmatig aangemaakt door FD`,
+        event_type: "INTAKE_DETAILS_ADDED",
+        event_description: `Intake details toegevoegd`,
         created_by: user.id,
         metadata: {
           address_of_death: validatedData.address_of_death,

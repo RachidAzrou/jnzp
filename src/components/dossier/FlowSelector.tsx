@@ -13,6 +13,7 @@ export function FlowSelector({ dossierId, currentFlow, onFlowChanged }: FlowSele
   const { toast } = useToast();
 
   const handleFlowChange = async (newFlow: string) => {
+    // Update flow - status and tasks will be updated automatically by database triggers
     const { error } = await supabase
       .from("dossiers")
       .update({ flow: newFlow as "LOC" | "REP" | "UNSET" })
@@ -27,17 +28,10 @@ export function FlowSelector({ dossierId, currentFlow, onFlowChanged }: FlowSele
       return;
     }
 
-    // Log event
-    await supabase.from("dossier_events").insert({
-      dossier_id: dossierId,
-      event_type: "FLOW_CHANGED",
-      event_description: `Flowtype gewijzigd naar ${newFlow === 'REP' ? 'Repatriëring' : 'Lokaal'}`,
-      created_by: (await supabase.auth.getUser()).data.user?.id,
-    });
-
+    // Event logging and task seeding happens automatically via database triggers
     toast({
       title: "Flowtype gewijzigd",
-      description: `Dossier is nu ingesteld als ${newFlow === 'REP' ? 'Repatriëring' : 'Lokaal'}`,
+      description: `Dossier is nu ingesteld als ${newFlow === 'REP' ? 'Repatriëring' : 'Lokaal'}. Status en taken zijn automatisch bijgewerkt.`,
     });
 
     onFlowChanged();

@@ -913,6 +913,10 @@ export type Database = {
           insurer_org_id: string | null
           internal_notes: string | null
           legal_hold: boolean
+          legal_hold_active: boolean
+          legal_hold_authority: string | null
+          legal_hold_case_number: string | null
+          legal_hold_prev_status: string | null
           ref_number: string
           require_doc_ref: string | null
           status: Database["public"]["Enums"]["dossier_status"]
@@ -933,6 +937,10 @@ export type Database = {
           insurer_org_id?: string | null
           internal_notes?: string | null
           legal_hold?: boolean
+          legal_hold_active?: boolean
+          legal_hold_authority?: string | null
+          legal_hold_case_number?: string | null
+          legal_hold_prev_status?: string | null
           ref_number: string
           require_doc_ref?: string | null
           status?: Database["public"]["Enums"]["dossier_status"]
@@ -953,6 +961,10 @@ export type Database = {
           insurer_org_id?: string | null
           internal_notes?: string | null
           legal_hold?: boolean
+          legal_hold_active?: boolean
+          legal_hold_authority?: string | null
+          legal_hold_case_number?: string | null
+          legal_hold_prev_status?: string | null
           ref_number?: string
           require_doc_ref?: string | null
           status?: Database["public"]["Enums"]["dossier_status"]
@@ -1664,6 +1676,7 @@ export type Database = {
           due_date: string | null
           id: string
           is_archived: boolean
+          is_blocked: boolean
           labels: string[] | null
           org_id: string
           position: number
@@ -1682,6 +1695,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           is_archived?: boolean
+          is_blocked?: boolean
           labels?: string[] | null
           org_id: string
           position?: number
@@ -1700,6 +1714,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           is_archived?: boolean
+          is_blocked?: boolean
           labels?: string[] | null
           org_id?: string
           position?: number
@@ -1742,6 +1757,74 @@ export type Database = {
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_holds: {
+        Row: {
+          authority: string
+          case_number: string | null
+          dossier_id: string
+          id: string
+          placed_at: string
+          placed_by: string | null
+          reason: string | null
+          released_at: string | null
+          released_by: string | null
+          status: string
+        }
+        Insert: {
+          authority: string
+          case_number?: string | null
+          dossier_id: string
+          id?: string
+          placed_at?: string
+          placed_by?: string | null
+          reason?: string | null
+          released_at?: string | null
+          released_by?: string | null
+          status: string
+        }
+        Update: {
+          authority?: string
+          case_number?: string | null
+          dossier_id?: string
+          id?: string
+          placed_at?: string
+          placed_by?: string | null
+          reason?: string | null
+          released_at?: string | null
+          released_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_holds_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_holds_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "view_my_dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_holds_placed_by_fkey"
+            columns: ["placed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_holds_released_by_fkey"
+            columns: ["released_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -3782,6 +3865,24 @@ export type Database = {
       encrypt_field: {
         Args: { p_data: string; p_key?: string }
         Returns: string
+      }
+      fn_place_legal_hold: {
+        Args: {
+          p_actor: string
+          p_authority: string
+          p_case_number: string
+          p_dossier_id: string
+          p_reason: string
+        }
+        Returns: undefined
+      }
+      fn_release_legal_hold: {
+        Args: { p_actor: string; p_dossier_id: string; p_reason: string }
+        Returns: undefined
+      }
+      fn_seed_dossier_tasks_sql: {
+        Args: { p_dossier_id: string; p_flow: string; p_status: string }
+        Returns: undefined
       }
       generate_feedback_token: {
         Args: Record<PropertyKey, never>

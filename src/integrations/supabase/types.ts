@@ -3656,6 +3656,10 @@ export type Database = {
         Args: { p_admin_id: string; p_approved: boolean; p_org_id: string }
         Returns: undefined
       }
+      app_get_setting: {
+        Args: { key: string }
+        Returns: string
+      }
       apply_retention_policies: {
         Args: Record<PropertyKey, never>
         Returns: Json

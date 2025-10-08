@@ -3924,6 +3924,13 @@ export type Database = {
         Args: { password: string }
         Returns: Json
       }
+      validate_status_transition: {
+        Args: {
+          p_dossier_id: string
+          p_new_status: Database["public"]["Enums"]["dossier_status"]
+        }
+        Returns: Json
+      }
       verify_captcha: {
         Args: { p_endpoint: string; p_identifier: string; p_token: string }
         Returns: Json

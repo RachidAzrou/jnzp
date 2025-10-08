@@ -905,7 +905,9 @@ export type Database = {
           created_at: string
           date_of_death: string | null
           deceased_dob: string | null
+          deceased_first_name: string | null
           deceased_gender: string | null
+          deceased_last_name: string | null
           deceased_name: string
           display_id: string | null
           flow: Database["public"]["Enums"]["dossier_flow"]
@@ -929,7 +931,9 @@ export type Database = {
           created_at?: string
           date_of_death?: string | null
           deceased_dob?: string | null
+          deceased_first_name?: string | null
           deceased_gender?: string | null
+          deceased_last_name?: string | null
           deceased_name: string
           display_id?: string | null
           flow?: Database["public"]["Enums"]["dossier_flow"]
@@ -953,7 +957,9 @@ export type Database = {
           created_at?: string
           date_of_death?: string | null
           deceased_dob?: string | null
+          deceased_first_name?: string | null
           deceased_gender?: string | null
+          deceased_last_name?: string | null
           deceased_name?: string
           display_id?: string | null
           flow?: Database["public"]["Enums"]["dossier_flow"]

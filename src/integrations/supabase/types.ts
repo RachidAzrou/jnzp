@@ -4084,6 +4084,10 @@ export type Database = {
         Args: { p_data: string; p_key?: string }
         Returns: string
       }
+      ensure_task_board: {
+        Args: { p_org: string }
+        Returns: string
+      }
       fn_ensure_board_and_todo_col: {
         Args: { p_org: string }
         Returns: Record<string, unknown>

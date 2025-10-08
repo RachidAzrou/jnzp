@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Filter, Search, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUserRole } from "@/hooks/useUserRole";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
 import { TaskDialog } from "@/components/kanban/TaskDialog";
 import { TaskDetailDialog } from "@/components/kanban/TaskDetailDialog";
 import { Input } from "@/components/ui/input";
+import { getOrCreateBoardForOrg } from "@/utils/taskboard";
 import {
   Select,
   SelectContent,
@@ -32,40 +34,27 @@ const Taken = () => {
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const { toast } = useToast();
+  const { organizationId } = useUserRole();
 
   useEffect(() => {
-    fetchBoard();
-  }, []);
+    if (organizationId) {
+      fetchBoard();
+    }
+  }, [organizationId]);
 
   const fetchBoard = async () => {
+    if (!organizationId) return;
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Get user's organization
-      const { data: userRole } = await supabase
-        .from('user_roles')
-        .select('organization_id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (!userRole) {
-        toast({
-          title: "Geen organisatie",
-          description: "U bent niet gekoppeld aan een organisatie",
-          variant: "destructive"
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Use a simple board object - no need for DB storage since columns are fixed
+      setLoading(true);
+      const boardData = await getOrCreateBoardForOrg(organizationId);
       setBoard({
-        id: 'default',
-        org_id: userRole.organization_id,
+        id: boardData.id,
+        org_id: organizationId,
         name: 'Takenbord'
       });
     } catch (error: any) {
+      console.error("Error fetching board:", error);
       toast({
         title: "Fout",
         description: "Kon takenbord niet laden",

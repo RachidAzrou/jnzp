@@ -135,7 +135,7 @@ export function TaskDetailDialog({
     if (!task?.id) return;
 
     const { data } = await supabase
-      .from("task_comments" as any)
+      .from("task_comments")
       .select("*")
       .eq("task_id", task.id)
       .order("created_at", { ascending: true });
@@ -149,7 +149,7 @@ export function TaskDetailDialog({
     if (!task?.id) return;
 
     const { data } = await supabase
-      .from("task_activities" as any)
+      .from("task_activities")
       .select("*")
       .eq("task_id", task.id)
       .order("created_at", { ascending: false })
@@ -178,21 +178,20 @@ export function TaskDetailDialog({
         mentions.push(match[1]);
       }
 
-      const { error } = await supabase.from("task_comments" as any).insert({
+      const { error } = await supabase.from("task_comments").insert({
         task_id: task.id,
-        user_id: user.id,
+        author_id: user.id,
         body: newComment,
-        mentions: mentions,
-      });
+      } as any);
 
       if (error) throw error;
 
       // Log activity
-      await supabase.from("task_activities" as any).insert({
+      await supabase.from("task_activities").insert({
         task_id: task.id,
         user_id: user.id,
-        type: "COMMENTED",
-        meta: { comment_preview: newComment.substring(0, 100) },
+        action: "COMMENTED",
+        metadata: { comment_preview: newComment.substring(0, 100) },
       });
 
       setNewComment("");
@@ -219,22 +218,22 @@ export function TaskDetailDialog({
       if (!user) throw new Error("Not authenticated");
 
       const { error } = await supabase
-        .from("kanban_tasks" as any)
+        .from("kanban_tasks")
         .update({
           title: formData.title,
           description: formData.description,
-          priority: formData.priority,
+          priority: formData.priority as 'HIGH' | 'LOW' | 'MEDIUM' | 'URGENT',
         })
         .eq("id", task.id);
 
       if (error) throw error;
 
       // Log activity
-      await supabase.from("task_activities" as any).insert({
+      await supabase.from("task_activities").insert({
         task_id: task.id,
         user_id: user.id,
-        type: "UPDATED",
-        meta: {
+        action: "UPDATED",
+        metadata: {
           changes: {
             title: task.title !== formData.title,
             description: task.description !== formData.description,
@@ -268,9 +267,7 @@ export function TaskDetailDialog({
       case "UPDATED":
         return "wijzigde de taak";
       case "MOVED":
-        return `verplaatste van ${meta.from_column || "?"} naar ${
-          meta.to_column || "?"
-        }`;
+        return `verplaatste de taak`;
       case "ASSIGNED":
         return "wees de taak toe";
       case "UNASSIGNED":

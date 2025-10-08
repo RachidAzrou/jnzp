@@ -34,7 +34,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
     title: '',
     description: '',
     priority: 'MEDIUM',
-    column_id: '',
+    status: 'TE_DOEN',
     dossier_id: '',
     due_date: undefined as Date | undefined,
     labels: [] as string[]
@@ -43,14 +43,13 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
 
   useEffect(() => {
     if (open) {
-      fetchColumns();
       fetchDossiers();
       if (task) {
         setFormData({
           title: task.title || '',
           description: task.description || '',
           priority: task.priority || 'MEDIUM',
-          column_id: task.column_id || '',
+          status: task.status || 'TE_DOEN',
           dossier_id: task.dossier_id || '',
           due_date: task.due_date ? new Date(task.due_date) : undefined,
           labels: task.labels || []
@@ -61,20 +60,12 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
     }
   }, [open, task]);
 
-  const fetchColumns = async () => {
-    const { data } = await supabase
-      .from('task_board_columns' as any)
-      .select('*')
-      .eq('board_id', boardId)
-      .order('order_idx');
-
-    if (data) {
-      setColumns(data as any);
-      if (!task && (data as any).length > 0) {
-        setFormData((prev) => ({ ...prev, column_id: (data as any)[0].id }));
-      }
-    }
-  };
+  // Columns are fixed, no need to fetch
+  const fixedColumns = [
+    { id: 'TE_DOEN', label: 'Te doen' },
+    { id: 'BEZIG', label: 'Bezig' },
+    { id: 'AFGEROND', label: 'Afgerond' },
+  ];
 
   const fetchDossiers = async () => {
     const { data } = await supabase
@@ -93,7 +84,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
       title: '',
       description: '',
       priority: 'MEDIUM',
-      column_id: columns[0]?.id || '',
+      status: 'TE_DOEN',
       dossier_id: '',
       due_date: undefined,
       labels: []
@@ -127,12 +118,12 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
       if (task) {
         // Update existing task
         const { error } = await supabase
-          .from('kanban_tasks' as any)
+          .from('kanban_tasks')
           .update({
-          title: formData.title,
+            title: formData.title,
             description: formData.description,
-            priority: formData.priority,
-            column_id: formData.column_id,
+            priority: formData.priority as 'HIGH' | 'LOW' | 'MEDIUM' | 'URGENT',
+            status: formData.status,
             dossier_id: formData.dossier_id || null,
             due_date: formData.due_date?.toISOString().split('T')[0],
             labels: formData.labels
@@ -142,11 +133,11 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
         if (error) throw error;
 
         // Log activity
-        await supabase.from('task_activities' as any).insert({
+        await supabase.from('task_activities').insert({
           task_id: task.id,
           user_id: user.id,
-          type: 'UPDATED',
-          meta: { changes: 'Updated task details' }
+          action: 'UPDATED',
+          metadata: { changes: 'Updated task details' }
         });
 
         toast({
@@ -154,33 +145,32 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           description: "De taak is succesvol bijgewerkt"
         });
       } else {
-        // Create new task
+        // Create new manual task
         const { data: newTask, error } = await supabase
-          .from('kanban_tasks' as any)
+          .from('kanban_tasks')
           .insert({
-          board_id: boardId,
             org_id: userRole.organization_id,
-            column_id: formData.column_id,
             dossier_id: formData.dossier_id || null,
             title: formData.title,
             description: formData.description,
-            priority: formData.priority,
+            priority: formData.priority as 'HIGH' | 'LOW' | 'MEDIUM' | 'URGENT',
+            status: formData.status,
             reporter_id: user.id,
             due_date: formData.due_date?.toISOString().split('T')[0],
             labels: formData.labels
-          })
+          } as any)
           .select()
           .single();
 
         if (error) throw error;
 
         // Log activity
-        if (newTask && 'id' in newTask) {
-          await supabase.from('task_activities' as any).insert({
-            task_id: (newTask as any).id,
+        if (newTask) {
+          await supabase.from('task_activities').insert({
+            task_id: newTask.id,
             user_id: user.id,
-            type: 'CREATED',
-            meta: { title: formData.title }
+            action: 'CREATED',
+            metadata: { title: formData.title }
           });
         }
 
@@ -252,16 +242,16 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Kolom</Label>
+              <Label>Status</Label>
               <Select
-                value={formData.column_id}
-                onValueChange={(value) => setFormData({ ...formData, column_id: value })}
+                value={formData.status}
+                onValueChange={(value) => setFormData({ ...formData, status: value })}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {columns.map((col) => (
+                  {fixedColumns.map((col) => (
                     <SelectItem key={col.id} value={col.id}>
                       {col.label}
                     </SelectItem>

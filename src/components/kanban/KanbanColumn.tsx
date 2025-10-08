@@ -8,20 +8,20 @@ interface Column {
   key: string;
   label: string;
   order_idx: number;
-  is_done: boolean;
   wip_limit: number | null;
 }
 
 interface Task {
   id: string;
+  dossier_id: string | null;
+  task_type: string | null;
   title: string;
   description: string | null;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  status: string;
+  auto_complete_trigger: string | null;
   assignee_id: string | null;
-  column_id: string;
-  position: number;
   labels: string[];
-  dossier_id: string | null;
   due_date: string | null;
 }
 

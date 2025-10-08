@@ -5,22 +5,22 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   AlertCircle,
   Clock,
-  MessageSquare,
-  Paperclip,
+  Zap,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
 
 interface Task {
   id: string;
+  dossier_id: string | null;
+  task_type: string | null;
   title: string;
   description: string | null;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  status: string;
+  auto_complete_trigger: string | null;
   assignee_id: string | null;
-  column_id: string;
-  position: number;
   labels: string[];
-  dossier_id: string | null;
   due_date: string | null;
 }
 
@@ -83,6 +83,11 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       <CardContent className="p-3 space-y-2">
         {/* Title */}
         <div className="space-y-1">
+          {task.task_type && (
+            <Badge variant="outline" className="text-xs mb-1">
+              {task.task_type}
+            </Badge>
+          )}
           <h4 className="font-medium text-sm leading-tight">{task.title}</h4>
           {task.description && (
             <p className="text-xs text-muted-foreground line-clamp-2">
@@ -90,6 +95,14 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
             </p>
           )}
         </div>
+
+        {/* Auto-complete indicator */}
+        {task.auto_complete_trigger && (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1">
+            <Zap className="h-3 w-3 text-yellow-500" />
+            <span className="truncate">Auto: {task.auto_complete_trigger}</span>
+          </div>
+        )}
 
         {/* Labels */}
         {task.labels && task.labels.length > 0 && (

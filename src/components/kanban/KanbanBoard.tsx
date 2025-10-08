@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import {
   DndContext,
@@ -21,21 +20,23 @@ interface Column {
   key: string;
   label: string;
   order_idx: number;
-  is_done: boolean;
   wip_limit: number | null;
 }
 
 interface Task {
   id: string;
+  dossier_id: string | null;
+  task_type: string | null;
   title: string;
   description: string | null;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  status: string;
+  auto_complete_trigger: string | null;
   assignee_id: string | null;
-  column_id: string;
   position: number;
   labels: string[];
-  dossier_id: string | null;
   due_date: string | null;
+  created_at: string;
 }
 
 interface KanbanBoardProps {
@@ -68,35 +69,28 @@ export function KanbanBoard({
   );
 
   useEffect(() => {
-    if (boardId) {
-      fetchBoardData();
-    }
-  }, [boardId]);
+    fetchBoardData();
+  }, []);
 
   useEffect(() => {
-    if (!boardId) return;
-
-    // Realtime subscriptions
-    const tasksChannel = supabase
-      .channel(`kanban-tasks-${boardId}`)
+    // Realtime subscription for tasks
+    const channel = supabase
+      .channel('kanban-tasks')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'kanban_tasks',
-          filter: `board_id=eq.${boardId}`
         },
-        (payload) => {
-          handleTaskChange(payload);
-        }
+        (payload) => handleTaskChange(payload)
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(tasksChannel);
+      supabase.removeChannel(channel);
     };
-  }, [boardId]);
+  }, []);
 
   const handleTaskChange = (payload: any) => {
     const { eventType, new: newTask, old: oldTask } = payload;
@@ -116,64 +110,43 @@ export function KanbanBoard({
   };
 
   const fetchBoardData = async () => {
-    setLoading(true);
     try {
-      // Ensure default columns exist first
-      const defaultColumns = [
-        { key: 'TE_DOEN', label: 'Te doen', order_idx: 0, is_done: false },
-        { key: 'BEZIG', label: 'Bezig', order_idx: 1, is_done: false },
-        { key: 'AFGEROND', label: 'Afgerond', order_idx: 2, is_done: true },
+      setLoading(true);
+
+      // Use fixed columns based on status
+      const fixedColumns = [
+        { id: 'TE_DOEN', key: 'TE_DOEN', label: 'Te doen', order_idx: 0, wip_limit: null },
+        { id: 'BEZIG', key: 'BEZIG', label: 'Bezig', order_idx: 1, wip_limit: null },
+        { id: 'AFGEROND', key: 'AFGEROND', label: 'Afgerond', order_idx: 2, wip_limit: null },
       ];
-
-      // Create missing columns
-      for (const defaultCol of defaultColumns) {
-        const { data: existing } = await supabase
-          .from('task_board_columns' as any)
-          .select('id')
-          .eq('board_id', boardId)
-          .eq('key', defaultCol.key)
-          .maybeSingle();
-
-        if (!existing) {
-          await supabase
-            .from('task_board_columns' as any)
-            .insert({
-              board_id: boardId,
-              key: defaultCol.key,
-              label: defaultCol.label,
-              order_idx: defaultCol.order_idx,
-              is_done: defaultCol.is_done,
-            });
-        }
-      }
-
-      // Now fetch all columns
-      const { data: columnsData, error: columnsError } = await supabase
-        .from('task_board_columns' as any)
-        .select('*')
-        .eq('board_id', boardId)
-        .order('order_idx');
-
-      if (columnsError) throw columnsError;
+      setColumns(fixedColumns);
 
       // Fetch tasks
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: userRole } = await supabase
+        .from('user_roles')
+        .select('organization_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!userRole) return;
+
       const { data: tasksData, error: tasksError } = await supabase
-        .from('kanban_tasks' as any)
+        .from('kanban_tasks')
         .select('*')
-        .eq('board_id', boardId)
-        .eq('is_archived', false)
+        .eq('org_id', userRole.organization_id)
         .order('position');
 
       if (tasksError) throw tasksError;
-
-      setColumns((columnsData as any as Column[]) || []);
       setTasks((tasksData as any) || []);
     } catch (error: any) {
       console.error('Error fetching board data:', error);
       toast({
-        title: "Fout",
-        description: "Kon bord niet laden",
-        variant: "destructive"
+        title: 'Fout bij laden',
+        description: error.message,
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -192,22 +165,23 @@ export function KanbanBoard({
     if (!over || active.id === over.id) return;
 
     const taskId = active.id as string;
-    const targetColumnId = over.id as string;
+    const newColumnId = over.id as string;
 
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
 
-    const oldColumnId = task.column_id;
-    const targetColumn = columns.find((c) => c.id === targetColumnId);
-    const oldColumn = columns.find((c) => c.id === oldColumnId);
+    const oldColumnId = task.status;
 
     // Check if we're moving to a different column
-    if (oldColumnId === targetColumnId) return;
+    if (oldColumnId === newColumnId) return;
+
+    // Save old state for rollback
+    const previousTasks = [...tasks];
 
     // Optimistic update
     setTasks((current) =>
       current.map((t) =>
-        t.id === taskId ? { ...t, column_id: targetColumnId } : t
+        t.id === taskId ? { ...t, status: newColumnId } : t
       )
     );
 
@@ -217,38 +191,37 @@ export function KanbanBoard({
       } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
-      // Update task column
+      // Calculate new position (at the end)
+      const targetColumnTasks = tasks.filter(t => t.status === newColumnId);
+      const newPosition = targetColumnTasks.length;
+
+      // Update task status based on column
       const { error } = await supabase
-        .from("kanban_tasks" as any)
-        .update({
-          column_id: targetColumnId,
-          position: 0,
-        })
-        .eq("id", taskId);
+        .from('kanban_tasks')
+        .update({ status: newColumnId, position: newPosition })
+        .eq('id', taskId);
 
-      if (error) throw error;
-
-      // Determine activity type based on column transitions
-      let activityType = "MOVED";
-      if (targetColumn?.is_done && !oldColumn?.is_done) {
-        activityType = "CLOSED";
-      } else if (!targetColumn?.is_done && oldColumn?.is_done) {
-        activityType = "REOPENED";
+      if (error) {
+        // Rollback on error
+        setTasks(previousTasks);
+        throw error;
       }
 
       // Log activity
-      await supabase.from("task_activities" as any).insert({
+      await supabase.from('task_activities').insert({
         task_id: taskId,
         user_id: user.id,
-        type: activityType,
-        meta: {
-          from_column: oldColumn?.label || "Onbekend",
-          to_column: targetColumn?.label || "Onbekend",
+        action: 'MOVED',
+        from_value: oldColumnId,
+        to_value: newColumnId,
+        metadata: {
+          from_column: columns.find((c) => c.id === oldColumnId)?.label,
+          to_column: columns.find((c) => c.id === newColumnId)?.label,
         },
       });
 
       toast({
-        title: activityType === "CLOSED" ? "Taak afgesloten" : activityType === "REOPENED" ? "Taak heropend" : "Taak verplaatst",
+        title: "Taak verplaatst",
       });
     } catch (error: any) {
       toast({
@@ -257,7 +230,7 @@ export function KanbanBoard({
         variant: "destructive",
       });
       // Rollback on error
-      fetchBoardData();
+      setTasks(previousTasks);
     }
   };
 
@@ -285,9 +258,13 @@ export function KanbanBoard({
     return true;
   });
 
-  // Group tasks by column
-  const tasksByColumn = columns.reduce((acc, column) => {
-    acc[column.id] = filteredTasks.filter((task) => task.column_id === column.id);
+  // Organize tasks by status (which maps to columns)
+  const tasksByColumn = filteredTasks.reduce((acc, task) => {
+    const columnId = task.status || 'TE_DOEN';
+    if (!acc[columnId]) {
+      acc[columnId] = [];
+    }
+    acc[columnId].push(task);
     return acc;
   }, {} as Record<string, Task[]>);
 

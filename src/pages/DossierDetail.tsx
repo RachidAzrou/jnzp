@@ -407,6 +407,7 @@ const DossierDetail = () => {
         <TabsList>
           <TabsTrigger value="overview">Overzicht</TabsTrigger>
           <TabsTrigger value="documents">Documenten</TabsTrigger>
+          <TabsTrigger value="obituary">Overlijdensbericht</TabsTrigger>
           <TabsTrigger value="stakeholders">Stakeholders</TabsTrigger>
           <TabsTrigger value="chat">Communicatie</TabsTrigger>
           <TabsTrigger value="financial">Financieel</TabsTrigger>
@@ -519,9 +520,6 @@ const DossierDetail = () => {
           </div>
 
           <div className="space-y-4">
-            {/* Obituary Section */}
-            <ObituaryViewer dossierId={id!} />
-
             <div className="flex items-center justify-between border-b pb-2">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-muted-foreground" />
@@ -562,6 +560,11 @@ const DossierDetail = () => {
               <p className="text-center text-muted-foreground py-8">Geen documenten</p>
             )}
           </div>
+        </TabsContent>
+
+        {/* Obituary Tab */}
+        <TabsContent value="obituary" className="space-y-4">
+          <ObituaryViewer dossierId={id!} />
         </TabsContent>
 
         {/* Stakeholders Tab */}

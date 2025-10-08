@@ -97,6 +97,20 @@ export const STATUS_LABELS_FD = {
   },
 };
 
+export const STATUS_BADGES = {
+  CREATED: "yellow",
+  INTAKE_IN_PROGRESS: "green",
+  DOCS_PENDING: "orange",
+  DOCS_VERIFIED: "green",
+  APPROVED: "emerald",
+  LEGAL_HOLD: "red",
+  PLANNING: "blue",
+  READY_FOR_TRANSPORT: "cyan",
+  IN_TRANSIT: "purple",
+  SETTLEMENT: "brown",
+  ARCHIVED: "gray",
+};
+
 // Backward compatibility - simple label mapping
 const STATUS_LABELS: Record<string, string> = Object.fromEntries(
   Object.entries(STATUS_LABELS_FD).map(([key, value]) => [key, value.label])

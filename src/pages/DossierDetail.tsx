@@ -272,17 +272,17 @@ const DossierDetail = () => {
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      CREATED: "Aangemaakt",
-      INTAKE_IN_PROGRESS: "Intake lopend",
-      DOCS_PENDING: "Documenten vereist",
-      FD_ASSIGNED: "FD toegewezen",
-      DOCS_VERIFIED: "Docs geverifieerd",
+      CREATED: "Nieuw",
+      INTAKE_IN_PROGRESS: "Intake",
+      DOCS_PENDING: "Documenten in behandeling",
+      DOCS_VERIFIED: "Documenten volledig",
       APPROVED: "Goedgekeurd",
-      LEGAL_HOLD: "Legal Hold",
+      LEGAL_HOLD: "Juridisch geblokkeerd",
       PLANNING: "Planning",
-      READY_FOR_TRANSPORT: "Klaar voor transport",
-      IN_TRANSIT: "In transit",
-      ARCHIVED: "Gearchiveerd",
+      READY_FOR_TRANSPORT: "Klaar voor uitvoering",
+      IN_TRANSIT: "Uitvoering",
+      SETTLEMENT: "Facturatie",
+      ARCHIVED: "Afgerond",
     };
     return labels[status] || status.replace(/_/g, " ");
   };

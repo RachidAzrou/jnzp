@@ -363,15 +363,19 @@ const Dossiers = () => {
 
   const getStatusLabel = (status: string) => {
     const statusMap: Record<string, string> = {
-      'created': 'Aangemaakt',
-      'intake_in_progress': 'Intake lopend',
-      'operational': 'Operationeel',
-      'planning_in_progress': 'Planning bezig',
-      'execution_in_progress': 'Uitvoering bezig',
-      'settlement': 'Afronding / Facturatie',
-      'archived': 'Afgerond & Gearchiveerd',
+      'CREATED': 'Nieuw',
+      'INTAKE_IN_PROGRESS': 'Intake',
+      'DOCS_PENDING': 'Documenten in behandeling',
+      'DOCS_VERIFIED': 'Documenten volledig',
+      'APPROVED': 'Goedgekeurd',
+      'LEGAL_HOLD': 'Juridisch geblokkeerd',
+      'PLANNING': 'Planning',
+      'READY_FOR_TRANSPORT': 'Klaar voor uitvoering',
+      'IN_TRANSIT': 'Uitvoering',
+      'SETTLEMENT': 'Facturatie',
+      'ARCHIVED': 'Afgerond',
     };
-    return statusMap[status] || status;
+    return statusMap[status.toUpperCase()] || status;
   };
 
   const formatDate = (dateString: string | null) => {

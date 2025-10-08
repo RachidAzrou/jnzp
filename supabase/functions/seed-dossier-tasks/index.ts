@@ -108,6 +108,25 @@ Deno.serve(async (req) => {
 
     console.log(`[seed-dossier-tasks] Seeding tasks for dossier ${dossierId}, flow: ${flow}, status: ${status}`);
 
+    // Map dossier status to template key
+    const statusToTemplateKey: Record<string, string> = {
+      'CREATED': 'CREATED',
+      'INTAKE_IN_PROGRESS': 'INTAKE',
+      'INTAKE_COMPLETE': 'INTAKE',
+      'VERIFICATION_PENDING': 'VERIFY',
+      'VERIFICATION_COMPLETE': 'VERIFY',
+      'PLANNING': 'PREP',
+      'PREP_COMPLETE': 'PREP',
+      'EXECUTION': 'EXECUTE',
+      'EXECUTION_COMPLETE': 'EXECUTE',
+      'SETTLEMENT': 'SETTLE',
+      'COMPLETED': 'SETTLE',
+      'ON_HOLD': 'PREP',
+      'CANCELLED': 'SETTLE'
+    };
+
+    const templateKey = statusToTemplateKey[status];
+
     // Select the right template based on flow
     const templates = flow === 'LOC' ? LOC_TASK_TEMPLATES : flow === 'REP' ? REP_TASK_TEMPLATES : null;
 
@@ -120,7 +139,7 @@ Deno.serve(async (req) => {
     }
 
     // Get tasks that should exist for this status
-    const tasksToCreate = templates[status] || [];
+    const tasksToCreate = templateKey ? (templates[templateKey] || []) : [];
 
     if (tasksToCreate.length === 0) {
       console.log(`[seed-dossier-tasks] No tasks to create for status ${status}`);

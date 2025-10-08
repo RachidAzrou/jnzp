@@ -36,6 +36,7 @@ import MoskeePlanning from "./pages/MoskeePlanning";
 import MoskeePublicScreen from "./pages/MoskeePublicScreen";
 import MoskeeTeam from "./pages/MoskeeTeam";
 import MoskeeSettings from "./pages/MoskeeSettings";
+import PublicMosqueFeed from "./pages/PublicMosqueFeed";
 import InsurerDashboard from "./pages/InsurerDashboard";
 import InsurerClaims from "./pages/InsurerClaims";
 import InsurerDossierOverview from "./pages/InsurerDossierOverview";
@@ -188,6 +189,7 @@ const App = () => (
           <Route path="/feedback/:token" element={<Feedback />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/public/mosque/:token" element={<PublicMosqueFeed />} />
           {/* Publieke schermen verwijderd - vervangen door case_events systeem */}
           
           {/* Family redirect to mobile app */}

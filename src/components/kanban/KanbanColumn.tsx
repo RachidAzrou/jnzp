@@ -17,13 +17,18 @@ interface Task {
   task_type: string | null;
   title: string;
   description: string | null;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   column_id: string | null;
   board_id: string;
   auto_complete_trigger: string | null;
   assignee_id: string | null;
   labels: string[];
   due_date: string | null;
+  is_blocked?: boolean;
+  blocked_reason?: string | null;
+  metadata?: { auto?: boolean; source?: string };
+  comments_count?: number;
+  attachments_count?: number;
 }
 
 interface KanbanColumnProps {

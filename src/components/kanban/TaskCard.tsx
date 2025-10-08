@@ -2,10 +2,14 @@ import { useDraggable } from "@dnd-kit/core";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   AlertCircle,
   Clock,
-  Zap,
+  MessageSquare,
+  Paperclip,
+  Lock,
+  Settings,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -16,13 +20,18 @@ interface Task {
   task_type: string | null;
   title: string;
   description: string | null;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   column_id: string | null;
   board_id: string;
   auto_complete_trigger: string | null;
   assignee_id: string | null;
   labels: string[];
   due_date: string | null;
+  is_blocked?: boolean;
+  blocked_reason?: string | null;
+  metadata?: { auto?: boolean; source?: string };
+  comments_count?: number;
+  attachments_count?: number;
 }
 
 interface TaskCardProps {
@@ -43,114 +52,144 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       }
     : undefined;
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityConfig = (priority: string) => {
     switch (priority) {
-      case 'URGENT':
-        return 'destructive';
+      case 'CRITICAL':
+        return { 
+          variant: 'default' as const, 
+          label: 'Kritisch',
+          className: 'bg-blue-500 text-white hover:bg-blue-600'
+        };
       case 'HIGH':
-        return 'default';
+        return { 
+          variant: 'destructive' as const, 
+          label: 'Hoog',
+          className: 'bg-red-500 text-white hover:bg-red-600'
+        };
       case 'MEDIUM':
-        return 'secondary';
+        return { 
+          variant: 'default' as const, 
+          label: 'Medium',
+          className: 'bg-orange-500 text-white hover:bg-orange-600'
+        };
       case 'LOW':
-        return 'outline';
+        return { 
+          variant: 'secondary' as const, 
+          label: 'Laag',
+          className: 'bg-green-500 text-white hover:bg-green-600'
+        };
       default:
-        return 'secondary';
+        return { 
+          variant: 'secondary' as const, 
+          label: priority,
+          className: ''
+        };
     }
   };
 
-  const getPriorityLabel = (priority: string) => {
-    const labels: Record<string, string> = {
-      URGENT: 'Urgent',
-      HIGH: 'Hoog',
-      MEDIUM: 'Normaal',
-      LOW: 'Laag'
-    };
-    return labels[priority] || priority;
-  };
-
   const isOverdue = task.due_date && new Date(task.due_date) < new Date();
+  const priorityConfig = getPriorityConfig(task.priority);
+  const isAutomatic = task.metadata?.auto === true;
 
   return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-      onClick={onClick}
-      className={`cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow ${
-        isDragging ? 'opacity-50' : ''
-      }`}
-    >
-      <CardContent className="p-3 space-y-2">
-        {/* Title */}
-        <div className="space-y-1">
-          {task.task_type && (
-            <Badge variant="outline" className="text-xs mb-1">
-              {task.task_type}
-            </Badge>
-          )}
-          <h4 className="font-medium text-sm leading-tight">{task.title}</h4>
-          {task.description && (
-            <p className="text-xs text-muted-foreground line-clamp-2">
-              {task.description}
-            </p>
-          )}
-        </div>
-
-        {/* Auto-complete indicator */}
-        {task.auto_complete_trigger && (
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1">
-            <Zap className="h-3 w-3 text-yellow-500" />
-            <span className="truncate">Auto: {task.auto_complete_trigger}</span>
+    <TooltipProvider>
+      <Card
+        ref={setNodeRef}
+        style={style}
+        {...listeners}
+        {...attributes}
+        onClick={!task.is_blocked ? onClick : undefined}
+        className={`
+          cursor-grab active:cursor-grabbing 
+          hover:shadow-lg transition-all duration-200
+          ${isDragging ? 'opacity-50' : ''}
+          ${task.is_blocked ? 'opacity-60 cursor-not-allowed border-destructive ring-2 ring-destructive/20' : ''}
+          ${isOverdue && !task.is_blocked ? 'border-destructive/50' : ''}
+        `}
+      >
+        <CardContent className="p-3 space-y-2.5">
+          {/* Header: Title + Blocked/Auto indicator */}
+          <div className="flex items-start justify-between gap-2">
+            <h4 className={`font-semibold text-sm leading-tight flex-1 ${isOverdue ? 'text-destructive' : ''}`}>
+              {task.title}
+            </h4>
+            <div className="flex items-center gap-1">
+              {task.is_blocked && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Lock className="h-4 w-4 text-destructive flex-shrink-0" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs max-w-xs">
+                      {task.blocked_reason || 'Geblokkeerd door parket (Legal Hold)'}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              {isAutomatic && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Settings className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">Automatisch aangemaakt</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
           </div>
-        )}
 
-        {/* Labels */}
-        {task.labels && task.labels.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {task.labels.map((label, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                {label}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        {/* Metadata row */}
-        <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <Badge variant={getPriorityColor(task.priority)} className="text-xs">
-              {getPriorityLabel(task.priority)}
+          {/* Priority + Due date row */}
+          <div className="flex items-center justify-between gap-2 text-xs">
+            <Badge 
+              variant={priorityConfig.variant} 
+              className={`text-xs ${priorityConfig.className}`}
+            >
+              {priorityConfig.label}
             </Badge>
             
-            {isOverdue && (
-              <div className="flex items-center gap-1 text-destructive">
-                <AlertCircle className="h-3 w-3" />
-                <span className="text-xs">Te laat</span>
+            {task.due_date && (
+              <div className={`flex items-center gap-1 ${isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
+                <Clock className="h-3 w-3" />
+                <span>
+                  {new Date(task.due_date).toLocaleDateString("nl-BE", {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                  })}
+                </span>
+                {isOverdue && <AlertCircle className="h-3 w-3" />}
               </div>
             )}
           </div>
 
-          {task.assignee_id && (
-            <Avatar className="h-6 w-6">
-              <AvatarFallback className="text-xs">JD</AvatarFallback>
-            </Avatar>
-          )}
-        </div>
+          {/* Footer: Assignee + Badges */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5">
+              {task.assignee_id && (
+                <Avatar className="h-5 w-5">
+                  <AvatarFallback className="text-[10px]">FD</AvatarFallback>
+                </Avatar>
+              )}
+            </div>
 
-        {/* Due date */}
-        {task.due_date && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Clock className="h-3 w-3" />
-            <span>
-              {formatDistanceToNow(new Date(task.due_date), {
-                addSuffix: true,
-                locale: nl
-              })}
-            </span>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              {(task.comments_count ?? 0) > 0 && (
+                <div className="flex items-center gap-1">
+                  <MessageSquare className="h-3 w-3" />
+                  <span>{task.comments_count}</span>
+                </div>
+              )}
+              {(task.attachments_count ?? 0) > 0 && (
+                <div className="flex items-center gap-1">
+                  <Paperclip className="h-3 w-3" />
+                  <span>{task.attachments_count}</span>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </TooltipProvider>
   );
 }

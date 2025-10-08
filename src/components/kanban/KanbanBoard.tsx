@@ -29,7 +29,7 @@ interface Task {
   task_type: string | null;
   title: string;
   description: string | null;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   column_id: string | null;
   board_id: string;
   auto_complete_trigger: string | null;
@@ -38,6 +38,11 @@ interface Task {
   labels: string[];
   due_date: string | null;
   created_at: string;
+  is_blocked?: boolean;
+  blocked_reason?: string | null;
+  metadata?: { auto?: boolean; source?: string };
+  comments_count?: number;
+  attachments_count?: number;
 }
 
 interface KanbanBoardProps {

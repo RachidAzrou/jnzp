@@ -451,7 +451,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col" aria-describedby="task-detail-description">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span className="flex-1">{editMode ? "Taak bewerken" : task.title}</span>
@@ -459,6 +459,9 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
               {task.is_blocked ? "Geblokkeerd" : "Actief"}
             </Badge>
           </DialogTitle>
+          <p id="task-detail-description" className="sr-only">
+            Taakdetails voor {task.title}. {task.description || "Geen beschrijving beschikbaar."}
+          </p>
         </DialogHeader>
 
         <Tabs defaultValue="details" className="flex-1 overflow-hidden flex flex-col">

@@ -113,15 +113,7 @@ export function KanbanBoard({
     try {
       setLoading(true);
 
-      // Use fixed columns based on status
-      const fixedColumns = [
-        { id: 'TE_DOEN', key: 'TE_DOEN', label: 'Te doen', order_idx: 0, wip_limit: null },
-        { id: 'BEZIG', key: 'BEZIG', label: 'Bezig', order_idx: 1, wip_limit: null },
-        { id: 'AFGEROND', key: 'AFGEROND', label: 'Afgerond', order_idx: 2, wip_limit: null },
-      ];
-      setColumns(fixedColumns);
-
-      // Fetch tasks
+      // Fetch user and organization
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
@@ -133,6 +125,17 @@ export function KanbanBoard({
 
       if (!userRole) return;
 
+      // Fetch board columns from database
+      const { data: columnsData, error: columnsError } = await supabase
+        .from('task_board_columns')
+        .select('*')
+        .eq('board_id', boardId)
+        .order('order_idx');
+
+      if (columnsError) throw columnsError;
+      setColumns((columnsData as any) || []);
+
+      // Fetch tasks
       const { data: tasksData, error: tasksError } = await supabase
         .from('kanban_tasks')
         .select('*')

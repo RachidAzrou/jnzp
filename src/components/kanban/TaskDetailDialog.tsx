@@ -30,6 +30,7 @@ import {
   FileText,
   MessageSquare,
   Activity,
+  Trash2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -258,6 +259,36 @@ export function TaskDetailDialog({
     }
   };
 
+  const handleDeleteTask = async () => {
+    if (!confirm("Weet je zeker dat je deze taak wilt verwijderen?")) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from("kanban_tasks")
+        .delete()
+        .eq("id", task.id);
+
+      if (error) throw error;
+
+      onOpenChange(false);
+      onUpdate();
+      toast({
+        title: "Taak verwijderd",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Fout",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getActivityDescription = (activity: ActivityLog) => {
     const meta = activity.meta || {};
 
@@ -320,9 +351,20 @@ export function TaskDetailDialog({
                 </Button>
               </div>
             ) : (
-              <Button size="sm" variant="outline" onClick={() => setEditMode(true)}>
-                Bewerken
-              </Button>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => setEditMode(true)}>
+                  Bewerken
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="destructive" 
+                  onClick={handleDeleteTask}
+                  disabled={loading}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Verwijderen
+                </Button>
+              </div>
             )}
           </DialogTitle>
         </DialogHeader>

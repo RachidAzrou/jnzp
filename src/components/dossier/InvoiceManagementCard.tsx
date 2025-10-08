@@ -139,28 +139,16 @@ export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagement
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Facturen</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">Laden...</p>
-        </CardContent>
-      </Card>
+      <div className="text-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+      </div>
     );
   }
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Facturen Overzicht
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {invoices && invoices.length > 0 ? (
+      <div>
+        {invoices && invoices.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -213,15 +201,14 @@ export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagement
             </Table>
           ) : (
             <div className="text-center py-8">
-              <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-              <p className="text-muted-foreground">Nog geen facturen voor dit dossier</p>
-              <p className="text-sm text-muted-foreground mt-1">
+              <AlertCircle className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">Nog geen facturen voor dit dossier</p>
+              <p className="text-xs text-muted-foreground mt-1">
                 Facturen worden automatisch aangemaakt bij voltooiing van diensten
               </p>
             </div>
           )}
-        </CardContent>
-      </Card>
+      </div>
 
       <Dialog open={actionType !== null} onOpenChange={() => { setActionType(null); setSelectedInvoice(null); }}>
         <DialogContent>

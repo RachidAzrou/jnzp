@@ -271,7 +271,20 @@ const DossierDetail = () => {
   };
 
   const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
+    // Use admin labels if user is admin, otherwise use FD labels
+    const labels = isAdmin ? {
+      CREATED: "Nieuw dossier aangemaakt",
+      INTAKE_IN_PROGRESS: "Intake lopend",
+      DOCS_PENDING: "Documenten in behandeling",
+      DOCS_VERIFIED: "Documenten gecontroleerd",
+      APPROVED: "Goedgekeurd door verzekeraar",
+      LEGAL_HOLD: "Juridische blokkade (parket)",
+      PLANNING: "Planningfase gestart",
+      READY_FOR_TRANSPORT: "Klaar voor uitvoering",
+      IN_TRANSIT: "In uitvoering",
+      SETTLEMENT: "Financiële afhandeling",
+      ARCHIVED: "Afgerond & gearchiveerd",
+    } : {
       CREATED: "Nieuw",
       INTAKE_IN_PROGRESS: "Intake",
       DOCS_PENDING: "Documenten in behandeling",

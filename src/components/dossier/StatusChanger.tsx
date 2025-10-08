@@ -97,6 +97,64 @@ export const STATUS_LABELS_FD = {
   },
 };
 
+export const STATUS_LABELS_ADMIN = {
+  CREATED: {
+    label: "Nieuw dossier aangemaakt",
+    color: "yellow",
+    description: "Dossier is geregistreerd maar nog niet in behandeling."
+  },
+  INTAKE_IN_PROGRESS: {
+    label: "Intake lopend",
+    color: "green",
+    description: "De uitvaartondernemer voert de intake uit: gegevens en eerste documenten worden verzameld."
+  },
+  DOCS_PENDING: {
+    label: "Documenten in behandeling",
+    color: "orange",
+    description: "Er ontbreken nog vereiste documenten of ze wachten op goedkeuring."
+  },
+  DOCS_VERIFIED: {
+    label: "Documenten gecontroleerd",
+    color: "green",
+    description: "Alle documenten zijn gecontroleerd door de uitvaartondernemer of admin."
+  },
+  APPROVED: {
+    label: "Goedgekeurd door verzekeraar",
+    color: "emerald",
+    description: "De verzekeraar heeft het dossier goedgekeurd; verdere planning mag starten."
+  },
+  LEGAL_HOLD: {
+    label: "Juridische blokkade (parket)",
+    color: "red",
+    description: "Het dossier is tijdelijk geblokkeerd door een parket- of politieonderzoek."
+  },
+  PLANNING: {
+    label: "Planningfase gestart",
+    color: "blue",
+    description: "Mortuarium, moskee en begraafplaats worden ingepland."
+  },
+  READY_FOR_TRANSPORT: {
+    label: "Klaar voor uitvoering",
+    color: "cyan",
+    description: "Alle voorbereidingen zijn afgerond; het dossier is gereed voor uitvoering of transport."
+  },
+  IN_TRANSIT: {
+    label: "In uitvoering",
+    color: "purple",
+    description: "De uitvaart of repatriëring is momenteel in uitvoering."
+  },
+  SETTLEMENT: {
+    label: "Financiële afhandeling",
+    color: "brown",
+    description: "Facturen zijn in behandeling of wachten op betaling / goedkeuring."
+  },
+  ARCHIVED: {
+    label: "Afgerond & gearchiveerd",
+    color: "gray",
+    description: "Dossier volledig afgesloten; enkel-lezen archiefstatus."
+  },
+};
+
 export const STATUS_BADGES = {
   CREATED: "yellow",
   INTAKE_IN_PROGRESS: "green",
@@ -109,6 +167,11 @@ export const STATUS_BADGES = {
   IN_TRANSIT: "purple",
   SETTLEMENT: "brown",
   ARCHIVED: "gray",
+};
+
+// Helper function to get the right labels based on user role
+export const getStatusLabels = (isAdmin: boolean) => {
+  return isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
 };
 
 // Backward compatibility - simple label mapping
@@ -388,14 +451,17 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {STATUSES.map((status) => (
-                  <SelectItem key={status} value={status}>
-                    <div className="flex flex-col items-start">
-                      <span className="font-medium">{STATUS_LABELS_FD[status as keyof typeof STATUS_LABELS_FD].label}</span>
-                      <span className="text-xs text-muted-foreground">{STATUS_LABELS_FD[status as keyof typeof STATUS_LABELS_FD].description}</span>
-                    </div>
-                  </SelectItem>
-                ))}
+                {STATUSES.map((status) => {
+                  const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
+                  return (
+                    <SelectItem key={status} value={status}>
+                      <div className="flex flex-col items-start">
+                        <span className="font-medium">{labels[status as keyof typeof labels].label}</span>
+                        <span className="text-xs text-muted-foreground">{labels[status as keyof typeof labels].description}</span>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>

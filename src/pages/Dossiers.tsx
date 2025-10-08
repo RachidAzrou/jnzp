@@ -45,7 +45,7 @@ const ITEMS_PER_PAGE = 10;
 const Dossiers = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const { organizationId } = useUserRole();
+  const { organizationId, role: userRole } = useUserRole();
   const { toast } = useToast();
   
   const [activeTab, setActiveTab] = useState<"my" | "all" | "incoming">("my");
@@ -362,7 +362,22 @@ const Dossiers = () => {
   };
 
   const getStatusLabel = (status: string) => {
-    const statusMap: Record<string, string> = {
+    // Use admin labels if user is admin
+    const isAdminUser = userRole === 'platform_admin';
+    
+    const statusMap: Record<string, string> = isAdminUser ? {
+      'CREATED': 'Nieuw dossier aangemaakt',
+      'INTAKE_IN_PROGRESS': 'Intake lopend',
+      'DOCS_PENDING': 'Documenten in behandeling',
+      'DOCS_VERIFIED': 'Documenten gecontroleerd',
+      'APPROVED': 'Goedgekeurd door verzekeraar',
+      'LEGAL_HOLD': 'Juridische blokkade (parket)',
+      'PLANNING': 'Planningfase gestart',
+      'READY_FOR_TRANSPORT': 'Klaar voor uitvoering',
+      'IN_TRANSIT': 'In uitvoering',
+      'SETTLEMENT': 'Financiële afhandeling',
+      'ARCHIVED': 'Afgerond & gearchiveerd',
+    } : {
       'CREATED': 'Nieuw',
       'INTAKE_IN_PROGRESS': 'Intake',
       'DOCS_PENDING': 'Documenten in behandeling',

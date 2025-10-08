@@ -474,6 +474,12 @@ const DossierDetail = () => {
                     </p>
                   </div>
                 )}
+                {dossier.place_of_death && (
+                  <div>
+                    <Label className="text-muted-foreground">Plaats van overlijden</Label>
+                    <p className="font-medium mt-1">{dossier.place_of_death}</p>
+                  </div>
+                )}
               </div>
             </div>
 

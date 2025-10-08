@@ -391,7 +391,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       metadata: { reason },
     });
 
-    // Trigger task seeding for the new status
+    // Trigger task seeding via SQL function
     try {
       const { data: dossierData } = await supabase
         .from("dossiers")
@@ -400,13 +400,15 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
         .single();
 
       if (dossierData?.flow) {
-        await supabase.functions.invoke("seed-dossier-tasks", {
-          body: {
-            dossierId,
-            status: newStatus.toUpperCase(),
-            flow: dossierData.flow
-          }
+        const { error: seedError } = await supabase.rpc("fn_seed_dossier_tasks_sql", {
+          p_dossier_id: dossierId,
+          p_flow: dossierData.flow,
+          p_status: newStatus.toUpperCase()
         });
+
+        if (seedError) {
+          console.error("Error seeding tasks:", seedError);
+        }
       }
     } catch (taskError) {
       console.error("Error seeding tasks:", taskError);

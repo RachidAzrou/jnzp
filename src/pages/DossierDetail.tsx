@@ -584,76 +584,91 @@ const DossierDetail = () => {
         </TabsContent>
 
         {/* Documents Tab */}
-        <TabsContent value="documents" className="space-y-4">
+        <TabsContent value="documents" className="space-y-6">
           {/* Document Status Summary */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 border-b pb-2">
-              <FileText className="h-5 w-5 text-muted-foreground" />
-              <h3 className="text-lg font-semibold">Overzicht documentgoedkeuringen</h3>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-6 border bg-muted/30">
-                <p className="text-3xl font-bold text-green-600">
-                  {documents.filter(d => d.status === "APPROVED").length}
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">Goedgekeurd</p>
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Overzicht documentgoedkeuringen</CardTitle>
               </div>
-              <div className="text-center p-6 border bg-muted/30">
-                <p className="text-3xl font-bold text-orange-600">
-                  {documents.filter(d => d.status === "IN_REVIEW").length}
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">In Review</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center p-6 rounded-lg border bg-muted/30">
+                  <p className="text-3xl font-bold text-green-600">
+                    {documents.filter(d => d.status === "APPROVED").length}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">Goedgekeurd</p>
+                </div>
+                <div className="text-center p-6 rounded-lg border bg-muted/30">
+                  <p className="text-3xl font-bold text-orange-600">
+                    {documents.filter(d => d.status === "IN_REVIEW").length}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">In Review</p>
+                </div>
+                <div className="text-center p-6 rounded-lg border bg-muted/30">
+                  <p className="text-3xl font-bold text-red-600">
+                    {documents.filter(d => d.status === "REJECTED").length}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">Afgekeurd</p>
+                </div>
               </div>
-              <div className="text-center p-6 border bg-muted/30">
-                <p className="text-3xl font-bold text-red-600">
-                  {documents.filter(d => d.status === "REJECTED").length}
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">Afgekeurd</p>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b pb-2">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-muted-foreground" />
-                <h3 className="text-lg font-semibold">Documenten</h3>
-              </div>
-              <DocumentUploadDialog 
-                dossierId={id!} 
-                onDocumentUploaded={fetchDossierData}
-              />
-            </div>
-            {documents.length > 0 ? (
-              <div className="space-y-3">
-                {documents.map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between p-4 border bg-muted/30">
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">{doc.file_name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {doc.doc_type.replace(/_/g, " ")} • {formatDateTime(doc.uploaded_at)}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge 
-                      variant={getDocStatusColor(doc.status)}
-                      className={`min-w-[120px] justify-center ${
-                        getDocStatusColor(doc.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
-                      }`}
-                    >
-                      {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
-                      {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
-                      {getDocStatusLabel(doc.status)}
-                    </Badge>
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <FileText className="h-5 w-5 text-primary" />
                   </div>
-                ))}
+                  <CardTitle className="text-xl">Documenten</CardTitle>
+                </div>
+                <DocumentUploadDialog 
+                  dossierId={id!} 
+                  onDocumentUploaded={fetchDossierData}
+                />
               </div>
-            ) : (
-              <p className="text-center text-muted-foreground py-8">Geen documenten</p>
-            )}
-          </div>
+            </CardHeader>
+            <CardContent>
+              {documents.length > 0 ? (
+                <div className="space-y-3">
+                  {documents.map((doc) => (
+                    <div key={doc.id} className="flex items-center justify-between p-4 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <p className="font-medium">{doc.file_name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {doc.doc_type.replace(/_/g, " ")} • {formatDateTime(doc.uploaded_at)}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge 
+                        variant={getDocStatusColor(doc.status)}
+                        className={`min-w-[120px] justify-center ${
+                          getDocStatusColor(doc.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
+                        }`}
+                      >
+                        {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
+                        {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
+                        {getDocStatusLabel(doc.status)}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center">
+                  <FileText className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                  <p className="text-sm text-muted-foreground">Geen documenten</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Obituary Tab */}
@@ -662,102 +677,140 @@ const DossierDetail = () => {
         </TabsContent>
 
         {/* Stakeholders Tab */}
-        <TabsContent value="stakeholders" className="space-y-8">
-          <div className="grid gap-8 md:grid-cols-2">
+        <TabsContent value="stakeholders" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-2">
             {/* Moskee */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 border-b pb-2">
-                <Building2 className="h-5 w-5 text-muted-foreground" />
-                <h3 className="text-lg font-semibold">Moskee</h3>
-              </div>
-              {mosqueService ? (
-                <div className="space-y-4">
-                  <div>
-                    <Label className="text-muted-foreground">Moskee</Label>
-                    <p className="font-medium mt-1">{mosqueService.organizations?.name || "N/A"}</p>
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <Building2 className="h-5 w-5 text-accent" />
                   </div>
-                  <div>
-                    <Label className="text-muted-foreground">Status</Label>
-                    <div className="mt-1">
-                      <Badge>{mosqueService.status}</Badge>
-                    </div>
-                  </div>
-                  {mosqueService.prayer && (
-                    <div>
-                      <Label className="text-muted-foreground">Gebed</Label>
-                      <p className="font-medium mt-1">{mosqueService.prayer}</p>
-                    </div>
-                  )}
+                  <CardTitle className="text-xl">Moskee</CardTitle>
                 </div>
-              ) : (
-                <p className="text-sm text-muted-foreground py-4">Geen moskee dienst gepland</p>
-              )}
-            </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {mosqueService ? (
+                  <>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Moskee</Label>
+                      <p className="text-base font-semibold">{mosqueService.organizations?.name || "N/A"}</p>
+                    </div>
+                    <Separator />
+                    <div className="space-y-1.5">
+                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Status</Label>
+                      <div className="mt-1">
+                        <Badge>{mosqueService.status}</Badge>
+                      </div>
+                    </div>
+                    {mosqueService.prayer && (
+                      <>
+                        <Separator />
+                        <div className="space-y-1.5">
+                          <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Gebed</Label>
+                          <p className="text-base font-medium">{mosqueService.prayer}</p>
+                        </div>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <div className="py-8 text-center">
+                    <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                    <p className="text-sm text-muted-foreground">Geen moskee dienst gepland</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Mortuarium */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 border-b pb-2">
-                <Building2 className="h-5 w-5 text-muted-foreground" />
-                <h3 className="text-lg font-semibold">Mortuarium</h3>
-              </div>
-              {washService ? (
-                <div className="space-y-4">
-                  <div>
-                    <Label className="text-muted-foreground">Mortuarium</Label>
-                    <p className="font-medium mt-1">{washService.organizations?.name || "N/A"}</p>
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <Building2 className="h-5 w-5 text-accent" />
                   </div>
-                  <div>
-                    <Label className="text-muted-foreground">Status</Label>
-                    <div className="mt-1">
-                      <Badge>{washService.status}</Badge>
-                    </div>
-                  </div>
+                  <CardTitle className="text-xl">Mortuarium</CardTitle>
                 </div>
-              ) : (
-                <p className="text-sm text-muted-foreground py-4">Geen mortuarium dienst gepland</p>
-              )}
-            </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {washService ? (
+                  <>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Mortuarium</Label>
+                      <p className="text-base font-semibold">{washService.organizations?.name || "N/A"}</p>
+                    </div>
+                    <Separator />
+                    <div className="space-y-1.5">
+                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Status</Label>
+                      <div className="mt-1">
+                        <Badge>{washService.status}</Badge>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="py-8 text-center">
+                    <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                    <p className="text-sm text-muted-foreground">Geen mortuarium dienst gepland</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Verzekeraar */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 border-b pb-2">
-                <Building2 className="h-5 w-5 text-muted-foreground" />
-                <h3 className="text-lg font-semibold">Verzekeraar</h3>
-              </div>
-              {claim ? (
-                <div className="space-y-4">
-                  <div>
-                    <Label className="text-muted-foreground">Verzekeraar</Label>
-                    <p className="font-medium mt-1">{claim.organizations?.name || "N/A"}</p>
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <Building2 className="h-5 w-5 text-accent" />
                   </div>
-                  <div>
-                    <Label className="text-muted-foreground">Polisnummer</Label>
-                    <p className="font-medium font-mono mt-1">{claim.policy_number}</p>
-                  </div>
-                  <div>
-                    <Label className="text-muted-foreground">Status</Label>
-                    <div className="mt-1">
-                      <Badge>{claim.status}</Badge>
-                    </div>
-                  </div>
+                  <CardTitle className="text-xl">Verzekeraar</CardTitle>
                 </div>
-              ) : (
-                <p className="text-sm text-muted-foreground py-4">Geen verzekeraar gekoppeld</p>
-              )}
-            </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {claim ? (
+                  <>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Verzekeraar</Label>
+                      <p className="text-base font-semibold">{claim.organizations?.name || "N/A"}</p>
+                    </div>
+                    <Separator />
+                    <div className="space-y-1.5">
+                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Polisnummer</Label>
+                      <p className="text-base font-mono font-medium">{claim.policy_number}</p>
+                    </div>
+                    <Separator />
+                    <div className="space-y-1.5">
+                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Status</Label>
+                      <div className="mt-1">
+                        <Badge>{claim.status}</Badge>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="py-8 text-center">
+                    <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                    <p className="text-sm text-muted-foreground">Geen verzekeraar gekoppeld</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
         {/* Chat Tab */}
-        <TabsContent value="chat" className="space-y-4">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 border-b pb-2">
-              <MessageSquare className="h-5 w-5 text-muted-foreground" />
-              <h3 className="text-lg font-semibold">Communicatie met Familie</h3>
-            </div>
-            <div className="space-y-4">
-              <div className="bg-muted/30 border p-8 text-center">
-                <MessageSquare className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+        <TabsContent value="chat" className="space-y-6">
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <MessageSquare className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Communicatie met Familie</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-muted/30 border rounded-lg p-8 text-center">
+                <MessageSquare className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
                 <p className="text-sm text-muted-foreground">
                   Chat functionaliteit komt binnenkort
                 </p>
@@ -766,8 +819,8 @@ const DossierDetail = () => {
                 <Send className="mr-2 h-4 w-4" />
                 Start Chat
               </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Financial Tab */}
@@ -776,59 +829,68 @@ const DossierDetail = () => {
         </TabsContent>
 
         {/* Timeline Tab */}
-        <TabsContent value="timeline" className="space-y-4">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b pb-2">
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-muted-foreground" />
-                <h3 className="text-lg font-semibold">Tijdlijn</h3>
+        <TabsContent value="timeline" className="space-y-6">
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Tijdlijn</CardTitle>
+                </div>
+                <AddManualEventDialog 
+                  dossierId={id!}
+                  onEventAdded={fetchDossierData}
+                />
               </div>
-              <AddManualEventDialog 
-                dossierId={id!}
-                onEventAdded={fetchDossierData}
-              />
-            </div>
-            {(events.length > 0 || manualEvents.length > 0) ? (
-              <div className="space-y-4">
-                {/* Combine and sort all events */}
-                {[
-                  ...events.map(e => ({ ...e, type: 'system', time: e.created_at })),
-                  ...manualEvents.map(e => ({ ...e, type: 'manual', time: e.created_at }))
-                ]
-                  .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-                  .map((event, index, arr) => (
-                    <div key={`${event.type}-${event.id}`} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        <div className={`h-3 w-3 rounded-full ${
-                          event.type === 'manual' ? 'bg-blue-500' : 'bg-primary'
-                        }`} />
-                        {index < arr.length - 1 && (
-                          <div className="w-0.5 flex-1 bg-border mt-1" />
-                        )}
+            </CardHeader>
+            <CardContent>
+              {(events.length > 0 || manualEvents.length > 0) ? (
+                <div className="space-y-4">
+                  {/* Combine and sort all events */}
+                  {[
+                    ...events.map(e => ({ ...e, type: 'system', time: e.created_at })),
+                    ...manualEvents.map(e => ({ ...e, type: 'manual', time: e.created_at }))
+                  ]
+                    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+                    .map((event, index, arr) => (
+                      <div key={`${event.type}-${event.id}`} className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className={`h-3 w-3 rounded-full ${
+                            event.type === 'manual' ? 'bg-blue-500' : 'bg-primary'
+                          }`} />
+                          {index < arr.length - 1 && (
+                            <div className="w-0.5 flex-1 bg-border mt-1" />
+                          )}
+                        </div>
+                        <div className="flex-1 pb-4">
+                          {event.type === 'manual' ? (
+                            <>
+                              <p className="font-medium">{event.event_title}</p>
+                              {event.event_description && (
+                                <p className="text-sm mt-1">{event.event_description}</p>
+                              )}
+                              <Badge variant="outline" className="mt-1 text-xs">Handmatig toegevoegd</Badge>
+                            </>
+                          ) : (
+                            <p className="font-medium">{event.event_description}</p>
+                          )}
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {formatDateTime(event.time)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1 pb-4">
-                        {event.type === 'manual' ? (
-                          <>
-                            <p className="font-medium">{event.event_title}</p>
-                            {event.event_description && (
-                              <p className="text-sm mt-1">{event.event_description}</p>
-                            )}
-                            <Badge variant="outline" className="mt-1 text-xs">Handmatig toegevoegd</Badge>
-                          </>
-                        ) : (
-                          <p className="font-medium">{event.event_description}</p>
-                        )}
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {formatDateTime(event.time)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            ) : (
-              <p className="text-center text-muted-foreground py-8">Geen gebeurtenissen</p>
-            )}
-          </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center">
+                  <Clock className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                  <p className="text-sm text-muted-foreground">Geen gebeurtenissen</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Notes Tab */}
@@ -839,13 +901,22 @@ const DossierDetail = () => {
             onNotesSaved={fetchDossierData}
           />
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Opmerkingen & Discussie</h3>
-            <DossierComments
-              dossierId={id!}
-              organizationId={dossier.assigned_fd_org_id}
-            />
-          </div>
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <MessageSquare className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Opmerkingen & Discussie</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <DossierComments
+                dossierId={id!}
+                organizationId={dossier.assigned_fd_org_id}
+              />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 

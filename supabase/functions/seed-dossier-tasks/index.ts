@@ -8,7 +8,7 @@ const corsHeaders = {
 interface TaskTemplate {
   task_type: string;
   title: string;
-  description: string;
+  description?: string;
   auto_complete: boolean;
   auto_complete_trigger?: string;
   priority: number;
@@ -17,185 +17,79 @@ interface TaskTemplate {
 // Task templates for LOC flow
 const LOC_TASK_TEMPLATES: Record<string, TaskTemplate[]> = {
   'CREATED': [
-    {
-      task_type: 'INTAKE_WELCOME',
-      title: 'Welkom & casechat opstarten',
-      description: 'Start een gesprek met de familie en leg eerste contact',
-      auto_complete: false,
-      priority: 1
-    },
-    {
-      task_type: 'INTAKE_FAMILY_CONTACT',
-      title: 'Primair familiecontact bevestigen',
-      description: 'Controleer en bevestig de contactgegevens van de familie',
-      auto_complete: false,
-      priority: 2
-    },
-    {
-      task_type: 'INTAKE_GDPR',
-      title: 'Toestemming / GDPR registreren',
-      description: 'Verkrijg GDPR toestemming van de familie',
-      auto_complete: false,
-      priority: 3
-    }
+    { task_type: 'INTAKE_WELCOME', title: '1️⃣ Welkom & casechat opstarten', auto_complete: false, priority: 1 },
+    { task_type: 'INTAKE_FAMILY_CONTACT', title: '2️⃣ Primair familiecontact bevestigen', auto_complete: false, priority: 2 },
+    { task_type: 'INTAKE_GDPR', title: '3️⃣ Toestemming / GDPR registreren', auto_complete: false, priority: 3 }
   ],
   'INTAKE': [
-    {
-      task_type: 'INTAKE_DEATH_CERTIFICATE',
-      title: 'Overlijdensakte verzamelen & controleren',
-      description: 'Upload en controleer de overlijdensakte',
-      auto_complete: true,
-      auto_complete_trigger: 'DOCUMENT_OVERLIJDENSAKTE',
-      priority: 4
-    },
-    {
-      task_type: 'INTAKE_ID_DOCUMENT',
-      title: 'Identiteitsdocument vastleggen',
-      description: 'Upload ID of paspoort van de overledene',
-      auto_complete: true,
-      auto_complete_trigger: 'DOCUMENT_ID_PASPOORT',
-      priority: 5
-    },
-    {
-      task_type: 'INTAKE_FLOW_CONFIRM',
-      title: 'Flow bevestigen: Lokaal',
-      description: 'Bevestig dat dit een lokale begrafenis is',
-      auto_complete: false,
-      priority: 6
-    },
-    {
-      task_type: 'INTAKE_INSURANCE_INFO',
-      title: 'Verzekeringsgegevens toevoegen',
-      description: 'Verzamel en registreer verzekeringsgegevens indien van toepassing',
-      auto_complete: false,
-      priority: 7
-    }
+    { task_type: 'INTAKE_DEATH_CERTIFICATE', title: '4️⃣ Overlijdensakte verzamelen & controleren', auto_complete: true, auto_complete_trigger: 'documents.status=APPROVED AND doc_type=OVERLIJDENSAKTE', priority: 4 },
+    { task_type: 'INTAKE_ID_DOCUMENT', title: '5️⃣ Identiteitsdocument vastleggen', auto_complete: true, auto_complete_trigger: 'documents.status=APPROVED AND doc_type=ID_PASPOORT', priority: 5 },
+    { task_type: 'INTAKE_FLOW_CONFIRM', title: '6️⃣ Flow bevestigen: Lokaal', auto_complete: false, priority: 6 },
+    { task_type: 'INTAKE_INSURANCE_INFO', title: '7️⃣ Verzekeringsgegevens toevoegen', auto_complete: false, priority: 7 }
   ],
   'VERIFY': [
-    {
-      task_type: 'VERIFY_INSURANCE',
-      title: 'Verzekering verifiëren',
-      description: 'Verifieer dekking via API of handmatig',
-      auto_complete: true,
-      auto_complete_trigger: 'CLAIM_APPROVED',
-      priority: 8
-    },
-    {
-      task_type: 'VERIFY_OFFER',
-      title: 'Offerte laten tekenen',
-      description: 'Laat familie de offerte goedkeuren indien geen verzekering',
-      auto_complete: true,
-      auto_complete_trigger: 'INVOICE_SENT_FD',
-      priority: 9
-    }
+    { task_type: 'VERIFY_INSURANCE', title: '8️⃣ Verzekering verifiëren', auto_complete: true, auto_complete_trigger: 'claims.status IN (APPROVED, MANUAL_OVERRIDE)', priority: 8 },
+    { task_type: 'VERIFY_OFFER', title: '9️⃣ Offerte laten tekenen', auto_complete: false, priority: 9 }
   ],
   'PREP': [
-    {
-      task_type: 'PREP_MORTUARY',
-      title: 'Mortuarium plannen (koeling + wassing)',
-      description: 'Plan mortuarium dienst en reserveer koelcel',
-      auto_complete: true,
-      auto_complete_trigger: 'EVENT_PLANNED_MORTUARY_SERVICE',
-      priority: 10
-    },
-    {
-      task_type: 'PREP_MOSQUE',
-      title: 'Moskee & janazagebed plannen',
-      description: 'Plan het janazagebed in de moskee',
-      auto_complete: true,
-      auto_complete_trigger: 'EVENT_PLANNED_MOSQUE_SERVICE',
-      priority: 11
-    },
-    {
-      task_type: 'PREP_BURIAL',
-      title: 'Begrafenis & concessie bevestigen',
-      description: 'Reserveer grafplaats en bevestig begrafenis',
-      auto_complete: true,
-      auto_complete_trigger: 'EVENT_PLANNED_BURIAL',
-      priority: 12
-    },
-    {
-      task_type: 'PREP_TRANSPORT',
-      title: 'Vervoer regelen',
-      description: 'Organiseer het vervoer van de overledene',
-      auto_complete: true,
-      auto_complete_trigger: 'EVENT_PLANNED_PICKUP',
-      priority: 13
-    },
-    {
-      task_type: 'PREP_DOCUMENTS',
-      title: 'Documentenpakket voorbereiden (dag zelf)',
-      description: 'Bereid alle benodigde documenten voor',
-      auto_complete: false,
-      priority: 14
-    }
+    { task_type: 'PREP_MORTUARY', title: '🔟 Mortuarium plannen (koeling + wassing)', auto_complete: true, auto_complete_trigger: 'case_events.status=PLANNED AND event_type=MORTUARY_SERVICE', priority: 10 },
+    { task_type: 'PREP_MOSQUE', title: '1️⃣1️⃣ Moskee & janazagebed plannen', auto_complete: true, auto_complete_trigger: 'case_events.status=PLANNED AND event_type=MOSQUE_SERVICE', priority: 11 },
+    { task_type: 'PREP_BURIAL', title: '1️⃣2️⃣ Begrafenis & concessie bevestigen', auto_complete: true, auto_complete_trigger: 'case_events.status=PLANNED AND event_type=BURIAL', priority: 12 },
+    { task_type: 'PREP_TRANSPORT', title: '1️⃣3️⃣ Vervoer regelen', auto_complete: true, auto_complete_trigger: 'case_events.status=PLANNED AND event_type=PICKUP', priority: 13 },
+    { task_type: 'PREP_DOCUMENTS', title: '1️⃣4️⃣ Documentenpakket voorbereiden', auto_complete: false, priority: 14 }
   ],
   'EXECUTE': [
-    {
-      task_type: 'EXECUTE_PICKUP',
-      title: 'Ophalen & overbrenging',
-      description: 'Haal de overledene op en breng over naar mortuarium',
-      auto_complete: true,
-      auto_complete_trigger: 'EVENT_DONE_PICKUP',
-      priority: 15
-    },
-    {
-      task_type: 'EXECUTE_MORTUARY',
-      title: 'Mortuariumdienst (wassing + koeling) uitvoeren',
-      description: 'Voer de wassing uit en plaats in koelcel',
-      auto_complete: true,
-      auto_complete_trigger: 'EVENT_DONE_MORTUARY_SERVICE',
-      priority: 16
-    },
-    {
-      task_type: 'EXECUTE_MOSQUE',
-      title: 'Janazagebed uitvoeren',
-      description: 'Voer het janazagebed uit in de moskee',
-      auto_complete: true,
-      auto_complete_trigger: 'EVENT_DONE_MOSQUE_SERVICE',
-      priority: 17
-    },
-    {
-      task_type: 'EXECUTE_BURIAL',
-      title: 'Begrafenis uitvoeren & rapporteren',
-      description: 'Voer de begrafenis uit en documenteer',
-      auto_complete: true,
-      auto_complete_trigger: 'EVENT_DONE_BURIAL',
-      priority: 18
-    }
+    { task_type: 'EXECUTE_PICKUP', title: '1️⃣5️⃣ Ophalen & overbrenging', auto_complete: true, auto_complete_trigger: 'case_events.status=DONE AND event_type=PICKUP', priority: 15 },
+    { task_type: 'EXECUTE_MORTUARY', title: '1️⃣6️⃣ Mortuariumdienst uitvoeren', auto_complete: true, auto_complete_trigger: 'case_events.status=DONE AND event_type=MORTUARY_SERVICE', priority: 16 },
+    { task_type: 'EXECUTE_MOSQUE', title: '1️⃣7️⃣ Janazagebed uitvoeren', auto_complete: true, auto_complete_trigger: 'case_events.status=DONE AND event_type=MOSQUE_SERVICE', priority: 17 },
+    { task_type: 'EXECUTE_BURIAL', title: '1️⃣8️⃣ Begrafenis uitvoeren & rapporteren', auto_complete: true, auto_complete_trigger: 'case_events.status=DONE AND event_type=BURIAL', priority: 18 }
   ],
   'SETTLE': [
-    {
-      task_type: 'SETTLE_BURIAL_CERTIFICATE',
-      title: 'Begraafakte uploaden',
-      description: 'Upload de ondertekende begraafakte',
-      auto_complete: true,
-      auto_complete_trigger: 'DOCUMENT_BEGRAAFAKTE',
-      priority: 19
-    },
-    {
-      task_type: 'SETTLE_FD_INVOICE',
-      title: 'Eindfactuur FD verzenden',
-      description: 'Verstuur de factuur naar de verzekeraar of familie',
-      auto_complete: true,
-      auto_complete_trigger: 'INVOICE_SENT_FD',
-      priority: 20
-    },
-    {
-      task_type: 'SETTLE_MORTUARY_INVOICE',
-      title: 'Mortuarium-factuur verwerken',
-      description: 'Verwerk de factuur van het mortuarium',
-      auto_complete: true,
-      auto_complete_trigger: 'INVOICE_SENT_MORTUARIUM',
-      priority: 21
-    },
-    {
-      task_type: 'SETTLE_FEEDBACK',
-      title: 'Feedbackverzoek versturen',
-      description: 'Vraag feedback aan de familie',
-      auto_complete: false,
-      priority: 22
-    }
+    { task_type: 'SETTLE_BURIAL_CERTIFICATE', title: '1️⃣9️⃣ Begraafakte uploaden', auto_complete: true, auto_complete_trigger: 'documents.status=APPROVED AND doc_type=BEGRAAFAKTE', priority: 19 },
+    { task_type: 'SETTLE_FD_INVOICE', title: '2️⃣0️⃣ Eindfactuur FD verzenden', auto_complete: true, auto_complete_trigger: 'invoices.status=SENT AND invoice_type=FD', priority: 20 },
+    { task_type: 'SETTLE_MORTUARY_INVOICE', title: '2️⃣1️⃣ Mortuarium-factuur verwerken', auto_complete: true, auto_complete_trigger: 'invoices.status=SENT AND invoice_type=WASPLAATS', priority: 21 },
+    { task_type: 'SETTLE_FEEDBACK', title: '2️⃣2️⃣ Feedbackverzoek versturen', auto_complete: false, priority: 22 }
+  ]
+};
+
+// Task templates for REP (Repatriëring) flow
+const REP_TASK_TEMPLATES: Record<string, TaskTemplate[]> = {
+  'CREATED': [
+    { task_type: 'INTAKE_WELCOME', title: '1️⃣ Welkom & casechat opstarten', auto_complete: false, priority: 1 },
+    { task_type: 'INTAKE_FAMILY_CONTACT', title: '2️⃣ Primair familiecontact bevestigen', auto_complete: false, priority: 2 },
+    { task_type: 'INTAKE_GDPR', title: '3️⃣ GDPR / Toestemming registreren', auto_complete: false, priority: 3 }
+  ],
+  'INTAKE': [
+    { task_type: 'INTAKE_DEATH_CERTIFICATE', title: '4️⃣ Overlijdensakte controleren', auto_complete: true, auto_complete_trigger: 'documents.status=APPROVED AND doc_type=OVERLIJDENSAKTE', priority: 4 },
+    { task_type: 'INTAKE_PASSPORT_DECEASED', title: '5️⃣ Paspoort overledene controleren', auto_complete: true, auto_complete_trigger: 'documents.status=APPROVED AND doc_type=PASPOORT_OVERLEDENE', priority: 5 },
+    { task_type: 'INTAKE_FLOW_CONFIRM', title: '6️⃣ Flow bevestigen: repatriëring', auto_complete: false, priority: 6 },
+    { task_type: 'INTAKE_INSURANCE_CHECK', title: '7️⃣ Verzekeringsgegevens controleren/aanvullen', auto_complete: false, priority: 7 },
+    { task_type: 'INTAKE_DATA_CHECK', title: '8️⃣ Intakegegevens familie nakijken', description: 'Vluchtinfo, reizigers, voorkeuren', auto_complete: false, priority: 8 }
+  ],
+  'VERIFY': [
+    { task_type: 'VERIFY_INSURANCE', title: '9️⃣ Verzekering verifiëren', auto_complete: true, auto_complete_trigger: 'claims.status IN (APPROVED, MANUAL_OVERRIDE)', priority: 9 },
+    { task_type: 'VERIFY_OFFER', title: '🔟 Offerte laten tekenen', auto_complete: false, priority: 10 }
+  ],
+  'PREP': [
+    { task_type: 'PREP_MORTUARY', title: '1️⃣1️⃣ Mortuarium plannen (koeling + wassing)', auto_complete: true, auto_complete_trigger: 'case_events.status=PLANNED AND event_type=MORTUARY_SERVICE', priority: 11 },
+    { task_type: 'PREP_CONSULAR_DOCS', title: '1️⃣2️⃣ Consulaire documenten regelen', auto_complete: false, priority: 12 },
+    { task_type: 'PREP_FLIGHT_PROPOSAL', title: '1️⃣3️⃣ Vluchtvoorstel voorbereiden', auto_complete: true, auto_complete_trigger: 'case_events.status=PLANNED AND event_type=FLIGHT', priority: 13 },
+    { task_type: 'PREP_EXPORT_CLEARANCE', title: '1️⃣4️⃣ Douane/exportafhandeling organiseren', auto_complete: true, auto_complete_trigger: 'case_events.status=PLANNED AND event_type=EXPORT_CLEARANCE', priority: 14 },
+    { task_type: 'PREP_RECEIVING_PARTNER', title: '1️⃣5️⃣ Partner in bestemmingsland bevestigen', auto_complete: true, auto_complete_trigger: 'case_events.status=PLANNED AND event_type=PARTNER_RECEIVING', priority: 15 },
+    { task_type: 'PREP_DOCUMENT_PACKAGE', title: '1️⃣6️⃣ Documentenpakket voorbereiden', description: 'AWB, toestemmingen, verklaringen', auto_complete: false, priority: 16 }
+  ],
+  'EXECUTE': [
+    { task_type: 'EXECUTE_FLIGHT_BOOKING', title: '1️⃣7️⃣ Vlucht boeken & AWB vastleggen', auto_complete: true, auto_complete_trigger: 'flights.air_waybill IS NOT NULL', priority: 17 },
+    { task_type: 'EXECUTE_EXPORT', title: '1️⃣8️⃣ Exportafhandeling & luchthavenoverdracht uitvoeren', auto_complete: true, auto_complete_trigger: 'case_events.status=DONE AND event_type=EXPORT_CLEARANCE', priority: 18 },
+    { task_type: 'EXECUTE_FLIGHT_TRACKING', title: '1️⃣9️⃣ Vlucht opvolgen (vertrek/landing)', auto_complete: true, auto_complete_trigger: 'case_events.status=DONE AND event_type=FLIGHT', priority: 19 },
+    { task_type: 'EXECUTE_PARTNER_HANDOVER', title: '2️⃣0️⃣ Overdracht partner bevestigen', description: 'Bewijsdocument uploaden', auto_complete: true, auto_complete_trigger: 'case_events.status=DONE AND event_type=PARTNER_RECEIVING', priority: 20 }
+  ],
+  'SETTLE': [
+    { task_type: 'SETTLE_REPATRIATION_DOCS', title: '2️⃣1️⃣ Alle repatriëringsdocumenten uploaden & valideren', auto_complete: false, priority: 21 },
+    { task_type: 'SETTLE_FD_INVOICE', title: '2️⃣2️⃣ FD-factuur opstellen & versturen', auto_complete: true, auto_complete_trigger: 'invoices.status=SENT AND invoice_type=FD', priority: 22 },
+    { task_type: 'SETTLE_MORTUARY_INVOICE', title: '2️⃣3️⃣ Mortuariumfactuur verwerken', auto_complete: true, auto_complete_trigger: 'invoices.status=SENT AND invoice_type=WASPLAATS', priority: 23 },
+    { task_type: 'SETTLE_CLAIM_SETTLEMENT', title: '2️⃣4️⃣ Verzekeringsafrekening opvolgen', auto_complete: false, priority: 24 },
+    { task_type: 'SETTLE_FEEDBACK', title: '2️⃣5️⃣ Feedbackverzoek sturen', auto_complete: false, priority: 25 }
   ]
 };
 
@@ -214,7 +108,10 @@ Deno.serve(async (req) => {
 
     console.log(`[seed-dossier-tasks] Seeding tasks for dossier ${dossierId}, flow: ${flow}, status: ${status}`);
 
-    if (flow !== 'LOC') {
+    // Select the right template based on flow
+    const templates = flow === 'LOC' ? LOC_TASK_TEMPLATES : flow === 'REP' ? REP_TASK_TEMPLATES : null;
+
+    if (!templates) {
       console.log(`[seed-dossier-tasks] Flow ${flow} not supported yet, skipping task seeding`);
       return new Response(
         JSON.stringify({ success: true, message: 'Flow not supported yet', tasksCreated: 0 }),
@@ -223,7 +120,7 @@ Deno.serve(async (req) => {
     }
 
     // Get tasks that should exist for this status
-    const tasksToCreate = LOC_TASK_TEMPLATES[status] || [];
+    const tasksToCreate = templates[status] || [];
 
     if (tasksToCreate.length === 0) {
       console.log(`[seed-dossier-tasks] No tasks to create for status ${status}`);

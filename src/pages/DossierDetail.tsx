@@ -317,82 +317,107 @@ const DossierDetail = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/dossiers")}
-            className="mb-2"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Terug naar dossiers
-          </Button>
-          <h1 className="text-3xl font-bold">
-            Dossier {dossier.display_id || dossier.ref_number}
-          </h1>
-          <p className="text-xl text-muted-foreground">{dossier.deceased_name}</p>
-          {dossier.status === "archived" && (
-            <Badge variant="secondary" className="text-xs">
-              ⚠️ Alleen-lezen (gearchiveerd)
-            </Badge>
-          )}
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <QRCodeGenerator 
-            dossierId={id!}
-            displayId={dossier.display_id || dossier.ref_number}
-          />
-          <Badge 
-            variant={getStatusColor(dossier.status)} 
-            className={`text-sm px-3 py-1 min-w-[140px] justify-center ${
-              getStatusColor(dossier.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
-            }`}
-          >
-            {getStatusLabel(dossier.status)}
-          </Badge>
-          <LegalHoldBadge
-            legal_hold_active={dossier.legal_hold_active}
-            legal_hold_authority={dossier.legal_hold_authority}
-            legal_hold_case_number={dossier.legal_hold_case_number}
-            onViewDetails={handleViewLegalHoldDetails}
-          />
-          {dossier.status === "intake_in_progress" && (
-            <ActivateDossierButton
-              dossierId={id!}
-              currentStatus={dossier.status}
-              flow={dossier.flow}
-              onActivated={fetchDossierData}
-            />
-          )}
-          {dossier.status !== "archived" && (
-            <StatusChanger 
-              dossierId={id!} 
-              currentStatus={dossier.status}
-              onStatusChanged={fetchDossierData}
-              isAdmin={isAdmin}
-            />
-          )}
-          {dossier.status === "archived" && (
-            <SendFeedbackButton dossierId={id!} />
-          )}
-          {userRole === "funeral_director" && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setReleaseDialogOpen(true)}>
-                  Dossier vrijgeven
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-        </div>
-      </div>
+    <div className="space-y-6 pb-8">
+      {/* Professional Header with cleaner layout */}
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30">
+        <CardContent className="p-6">
+          <div className="flex flex-col gap-4">
+            {/* Back button */}
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/dossiers")}
+              className="w-fit -ml-2 text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Terug naar overzicht
+            </Button>
+            
+            {/* Main header content */}
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="space-y-2 flex-1 min-w-[280px]">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">Dossier</p>
+                    <h1 className="text-2xl font-bold tracking-tight">
+                      {dossier.display_id || dossier.ref_number}
+                    </h1>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pl-15">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-lg font-medium">{dossier.deceased_name}</p>
+                </div>
+                {dossier.status === "archived" && (
+                  <Badge variant="secondary" className="text-xs ml-15">
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    Alleen-lezen (gearchiveerd)
+                  </Badge>
+                )}
+              </div>
+              
+              {/* Action buttons */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <QRCodeGenerator 
+                  dossierId={id!}
+                  displayId={dossier.display_id || dossier.ref_number}
+                />
+                <Badge 
+                  variant={getStatusColor(dossier.status)} 
+                  className={`text-sm px-4 py-1.5 min-w-[160px] justify-center font-medium ${
+                    getStatusColor(dossier.status) !== "destructive" 
+                      ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" 
+                      : ""
+                  }`}
+                >
+                  {getStatusLabel(dossier.status)}
+                </Badge>
+                <LegalHoldBadge
+                  legal_hold_active={dossier.legal_hold_active}
+                  legal_hold_authority={dossier.legal_hold_authority}
+                  legal_hold_case_number={dossier.legal_hold_case_number}
+                  onViewDetails={handleViewLegalHoldDetails}
+                />
+                {dossier.status === "intake_in_progress" && (
+                  <ActivateDossierButton
+                    dossierId={id!}
+                    currentStatus={dossier.status}
+                    flow={dossier.flow}
+                    onActivated={fetchDossierData}
+                  />
+                )}
+                {dossier.status !== "archived" && (
+                  <StatusChanger 
+                    dossierId={id!} 
+                    currentStatus={dossier.status}
+                    onStatusChanged={fetchDossierData}
+                    isAdmin={isAdmin}
+                  />
+                )}
+                {dossier.status === "archived" && (
+                  <SendFeedbackButton dossierId={id!} />
+                )}
+                {userRole === "funeral_director" && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-popover">
+                      <DropdownMenuItem onClick={() => setReleaseDialogOpen(true)}>
+                        Dossier vrijgeven
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <ReleaseDossierDialog
         open={releaseDialogOpen}
@@ -419,46 +444,77 @@ const DossierDetail = () => {
       )}
 
 
-      {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overzicht</TabsTrigger>
-          <TabsTrigger value="documents">Documenten</TabsTrigger>
-          <TabsTrigger value="obituary">Overlijdensbericht</TabsTrigger>
-          <TabsTrigger value="stakeholders">Stakeholders</TabsTrigger>
-          <TabsTrigger value="chat">Communicatie</TabsTrigger>
-          <TabsTrigger value="financial">Financieel</TabsTrigger>
-          <TabsTrigger value="notes">Notities</TabsTrigger>
-          <TabsTrigger value="timeline">Tijdlijn</TabsTrigger>
-        </TabsList>
+      {/* Modern Tabs with icons */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Card className="p-1 bg-muted/50 border-none shadow-none">
+          <TabsList className="w-full grid grid-cols-4 lg:grid-cols-8 gap-1 bg-transparent h-auto p-0">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2 py-3">
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline">Overzicht</span>
+            </TabsTrigger>
+            <TabsTrigger value="documents" className="data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2 py-3">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Documenten</span>
+            </TabsTrigger>
+            <TabsTrigger value="obituary" className="data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2 py-3">
+              <Star className="h-4 w-4" />
+              <span className="hidden sm:inline">Bericht</span>
+            </TabsTrigger>
+            <TabsTrigger value="stakeholders" className="data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2 py-3">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Betrokkenen</span>
+            </TabsTrigger>
+            <TabsTrigger value="chat" className="data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2 py-3">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Chat</span>
+            </TabsTrigger>
+            <TabsTrigger value="financial" className="data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2 py-3">
+              <DollarSign className="h-4 w-4" />
+              <span className="hidden sm:inline">Financieel</span>
+            </TabsTrigger>
+            <TabsTrigger value="notes" className="data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2 py-3">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Notities</span>
+            </TabsTrigger>
+            <TabsTrigger value="timeline" className="data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2 py-3">
+              <Clock className="h-4 w-4" />
+              <span className="hidden sm:inline">Tijdlijn</span>
+            </TabsTrigger>
+          </TabsList>
+        </Card>
 
-        {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-8">
-          <div className="grid gap-8 md:grid-cols-2">
-            {/* Overledene */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 border-b pb-2">
-                <User className="h-5 w-5 text-muted-foreground" />
-                <h3 className="text-lg font-semibold">Overledene</h3>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-muted-foreground">Naam</Label>
-                  <p className="font-medium mt-1">{dossier.deceased_name}</p>
+        {/* Overview Tab - Professional Cards */}
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Overledene Card */}
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <User className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Overledene</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                <div className="space-y-1.5">
+                  <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Naam</Label>
+                  <p className="text-base font-semibold">{dossier.deceased_name}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-muted-foreground">Geboortedatum</Label>
-                    <p className="mt-1">{formatDate(dossier.deceased_dob)}</p>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Geboortedatum</Label>
+                    <p className="text-sm">{formatDate(dossier.deceased_dob)}</p>
                   </div>
-                  <div>
-                    <Label className="text-muted-foreground">Overlijdensdatum</Label>
-                    <p className="mt-1">{formatDate(dossier.date_of_death)}</p>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Overlijdensdatum</Label>
+                    <p className="text-sm">{formatDate(dossier.date_of_death)}</p>
                   </div>
                 </div>
-                <div>
-                  <Label className="text-muted-foreground">Flow type</Label>
-                  <div className="mt-1">
+                <Separator />
+                <div className="space-y-1.5">
+                  <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Flow type</Label>
+                  <div className="mt-2">
                     <FlowSelector 
                       dossierId={id!} 
                       currentFlow={dossier.flow} 
@@ -467,47 +523,62 @@ const DossierDetail = () => {
                   </div>
                 </div>
                 {dossier.deceased_gender && (
-                  <div>
-                    <Label className="text-muted-foreground">Geslacht</Label>
-                    <p className="font-medium mt-1">
-                      {dossier.deceased_gender === 'M' ? 'Man' : 'Vrouw'}
-                    </p>
-                  </div>
+                  <>
+                    <Separator />
+                    <div className="space-y-1.5">
+                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Geslacht</Label>
+                      <p className="text-sm font-medium">
+                        {dossier.deceased_gender === 'M' ? 'Man' : 'Vrouw'}
+                      </p>
+                    </div>
+                  </>
                 )}
                 {dossier.place_of_death && (
-                  <div>
-                    <Label className="text-muted-foreground">Plaats van overlijden</Label>
-                    <p className="font-medium mt-1">{dossier.place_of_death}</p>
+                  <>
+                    <Separator />
+                    <div className="space-y-1.5">
+                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Plaats van overlijden</Label>
+                      <p className="text-sm font-medium">{dossier.place_of_death}</p>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Familie & Contact Card */}
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <Users className="h-5 w-5 text-accent" />
+                  </div>
+                  <CardTitle className="text-xl">Familie & Contact</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {familyContacts.length > 0 ? (
+                  <div className="space-y-3">
+                    {familyContacts.map((contact) => (
+                      <div key={contact.id} className="p-4 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors">
+                        <p className="font-semibold text-sm">{contact.name}</p>
+                        <p className="text-xs text-muted-foreground capitalize">{contact.relationship}</p>
+                        {contact.phone && (
+                          <p className="text-sm mt-2">{contact.phone}</p>
+                        )}
+                        {contact.email && (
+                          <p className="text-sm text-muted-foreground">{contact.email}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-8 text-center">
+                    <Users className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                    <p className="text-sm text-muted-foreground">Geen contactpersonen geregistreerd</p>
                   </div>
                 )}
-              </div>
-            </div>
-
-            {/* Familie & Contact */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 border-b pb-2">
-                <Users className="h-5 w-5 text-muted-foreground" />
-                <h3 className="text-lg font-semibold">Familie & Contact</h3>
-              </div>
-              {familyContacts.length > 0 ? (
-                <div className="space-y-3">
-                  {familyContacts.map((contact) => (
-                    <div key={contact.id} className="p-4 border bg-muted/30">
-                      <p className="font-medium">{contact.name}</p>
-                      <p className="text-sm text-muted-foreground">{contact.relationship}</p>
-                      {contact.phone && (
-                        <p className="text-sm mt-1">{contact.phone}</p>
-                      )}
-                      {contact.email && (
-                        <p className="text-sm">{contact.email}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground py-4">Geen contactpersonen</p>
-              )}
-            </div>
+              </CardContent>
+            </Card>
           </div>
 
         </TabsContent>

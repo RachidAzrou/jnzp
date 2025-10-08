@@ -111,6 +111,19 @@ export function TaskCard({
   
   // Show complete button: in modal/list, on mobile/tablet, or when drag is disabled/blocked
   const showCompleteBtn = inModal || inList || !canDrag || !dragEnabled || task.is_blocked;
+  
+  // Debug logging
+  if (task.title.includes("Intake") && !inModal && !inList) {
+    console.log("TaskCard Debug:", {
+      title: task.title,
+      canDrag,
+      dragEnabled,
+      inModal,
+      inList,
+      isBlocked: task.is_blocked,
+      showCompleteBtn
+    });
+  }
 
   return (
     <TooltipProvider>

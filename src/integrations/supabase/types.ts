@@ -4003,6 +4003,10 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["priority"]
       }
+      case_event_belongs_to_user_mosque: {
+        Args: { _event_id: string; _user_id: string }
+        Returns: boolean
+      }
       check_2fa_requirement: {
         Args: { p_user_id: string }
         Returns: boolean
@@ -4255,6 +4259,10 @@ export type Database = {
       }
       user_in_org: {
         Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
+      user_mosque_has_event_for_dossier: {
+        Args: { _dossier_id: string; _user_id: string }
         Returns: boolean
       }
       user_org_is_approved: {

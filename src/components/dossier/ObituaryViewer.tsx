@@ -57,17 +57,12 @@ export function ObituaryViewer({ dossierId }: ObituaryViewerProps) {
 
   if (!obituaries || obituaries.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Overlijdensbericht
-          </CardTitle>
-          <CardDescription>
-            Het overlijdensbericht wordt automatisch gegenereerd zodra het janazagebed is gepland.
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      <div className="text-center py-8">
+        <FileText className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+        <p className="text-sm text-muted-foreground">
+          Het overlijdensbericht wordt automatisch gegenereerd zodra het janazagebed is gepland.
+        </p>
+      </div>
     );
   }
 
@@ -77,25 +72,13 @@ export function ObituaryViewer({ dossierId }: ObituaryViewerProps) {
   const hasOlderVersions = obituaries.some(o => o.version < latestVersion);
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Overlijdensbericht
-            </CardTitle>
-            <CardDescription>
-              Automatisch gegenereerd op basis van de janazah planning
-            </CardDescription>
-          </div>
-          {hasOlderVersions && (
-            <Badge variant="outline">Versie {latestVersion}</Badge>
-          )}
+    <div className="space-y-4">
+      {hasOlderVersions && (
+        <div className="flex justify-end">
+          <Badge variant="outline">Versie {latestVersion}</Badge>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {latestObituaries.map((doc) => (
             <div 
               key={doc.id}
@@ -155,35 +138,34 @@ export function ObituaryViewer({ dossierId }: ObituaryViewerProps) {
                 </Button>
               </div>
             </div>
-          ))}
-        </div>
+        ))}
+      </div>
 
-        {hasOlderVersions && (
-          <details className="text-sm">
-            <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-              Eerdere versies ({obituaries.length - latestObituaries.length})
-            </summary>
-            <div className="mt-3 space-y-2 pl-4 border-l-2">
-              {obituaries
-                .filter(o => o.version < latestVersion)
-                .map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between text-xs">
-                    <span>
-                      {doc.language === 'NL' ? '🇳🇱' : '🇸🇦'} Versie {doc.version} • {format(new Date(doc.uploaded_at), 'dd-MM-yyyy HH:mm')}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(doc.file_url, '_blank')}
-                    >
-                      <Download className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
-            </div>
-          </details>
-        )}
-      </CardContent>
-    </Card>
+      {hasOlderVersions && (
+        <details className="text-sm">
+          <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+            Eerdere versies ({obituaries.length - latestObituaries.length})
+          </summary>
+          <div className="mt-3 space-y-2 pl-4 border-l-2">
+            {obituaries
+              .filter(o => o.version < latestVersion)
+              .map((doc) => (
+                <div key={doc.id} className="flex items-center justify-between text-xs">
+                  <span>
+                    {doc.language === 'NL' ? '🇳🇱' : '🇸🇦'} Versie {doc.version} • {format(new Date(doc.uploaded_at), 'dd-MM-yyyy HH:mm')}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => window.open(doc.file_url, '_blank')}
+                  >
+                    <Download className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+          </div>
+        </details>
+      )}
+    </div>
   );
 }

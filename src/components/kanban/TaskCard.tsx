@@ -29,6 +29,8 @@ interface Task {
   due_date: string | null;
   is_blocked?: boolean;
   blocked_reason?: string | null;
+  is_deferred?: boolean;
+  deferred_reason?: string | null;
   metadata?: { auto?: boolean; source?: string };
   comments_count?: number;
   attachments_count?: number;
@@ -108,11 +110,19 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
         `}
       >
         <CardContent className="p-3 space-y-2.5">
-          {/* Header: Title + Blocked/Auto indicator */}
+          {/* Header: Title + Blocked/Auto/Deferred indicator */}
           <div className="flex items-start justify-between gap-2">
-            <h4 className={`font-semibold text-sm leading-tight flex-1 ${isOverdue ? 'text-destructive' : ''}`}>
-              {task.title}
-            </h4>
+            <div className="flex-1 min-w-0">
+              <h4 className={`font-semibold text-sm leading-tight ${isOverdue ? 'text-destructive' : ''}`}>
+                {task.title}
+              </h4>
+              {task.is_deferred && (
+                <div className="flex items-center gap-1 mt-1 text-xs text-amber-600 dark:text-amber-500">
+                  <Clock className="h-3 w-3" />
+                  <span className="font-medium">Uitgesteld</span>
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-1">
               {task.is_blocked && (
                 <Tooltip>

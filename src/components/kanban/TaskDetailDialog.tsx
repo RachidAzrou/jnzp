@@ -16,6 +16,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   ArrowLeft,
   Save,
@@ -25,6 +27,7 @@ import {
   FileText,
   Download,
   X,
+  AlertCircle,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -42,6 +45,8 @@ interface Task {
   due_date: string | null;
   is_blocked: boolean;
   blocked_reason: string | null;
+  is_deferred?: boolean;
+  deferred_reason?: string | null;
   metadata: { auto?: boolean; source?: string };
   created_at: string;
   updated_at: string;
@@ -101,6 +106,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
     description: "",
     priority: "MEDIUM" as Task['priority'],
     due_date: "",
+    is_deferred: false,
+    deferred_reason: "",
   });
 
   useEffect(() => {
@@ -110,6 +117,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
         description: task.description || "",
         priority: task.priority,
         due_date: task.due_date || "",
+        is_deferred: task.is_deferred || false,
+        deferred_reason: task.deferred_reason || "",
       });
       fetchComments();
       fetchActivities();
@@ -253,6 +262,16 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
   const handleUpdateTask = async () => {
     if (!task) return;
+    
+    if (formData.is_deferred && !formData.deferred_reason.trim()) {
+      toast({
+        title: "Reden verplicht",
+        description: "Geef een reden op voor het uitstellen van de taak",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setLoading(true);
 
     const { error } = await (supabase as any)
@@ -262,6 +281,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
         description: formData.description,
         priority: formData.priority,
         due_date: formData.due_date || null,
+        is_deferred: formData.is_deferred,
+        deferred_reason: formData.is_deferred ? formData.deferred_reason : null,
       })
       .eq('id', task.id);
 
@@ -534,6 +555,37 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                   </p>
                 )}
               </div>
+
+              {editMode && (
+                <div className="space-y-2 border-t pt-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="deferred"
+                      checked={formData.is_deferred}
+                      onCheckedChange={(checked) => setFormData({ ...formData, is_deferred: checked })}
+                    />
+                    <Label htmlFor="deferred" className="cursor-pointer">
+                      Taak uitstellen
+                    </Label>
+                  </div>
+                  {formData.is_deferred && (
+                    <Textarea
+                      placeholder="Reden voor uitstel (verplicht) - bijv. wachten op externe partij, ontbrekende documentatie, etc."
+                      value={formData.deferred_reason}
+                      onChange={(e) => setFormData({ ...formData, deferred_reason: e.target.value })}
+                      className="min-h-[80px]"
+                    />
+                  )}
+                </div>
+              )}
+
+              {!editMode && task.is_deferred && (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Taak uitgesteld</AlertTitle>
+                  <AlertDescription>{task.deferred_reason}</AlertDescription>
+                </Alert>
+              )}
 
               {task.metadata?.auto && (
                 <div className="text-sm text-muted-foreground bg-muted p-2 rounded flex items-center gap-2">

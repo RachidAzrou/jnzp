@@ -31,6 +31,7 @@ import ReleaseDossierDialog from "@/components/dossier/ReleaseDossierDialog";
 import FDManagementCard from "@/components/dossier/FDManagementCard";
 import { InvoiceManagementCard } from "@/components/dossier/InvoiceManagementCard";
 import { ObituaryViewer } from "@/components/dossier/ObituaryViewer";
+import { LegalHoldBadge } from "@/components/dossier/LegalHoldBadge";
 import { MoreVertical } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -52,6 +53,7 @@ const DossierDetail = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [progress, setProgress] = useState<any>(null);
   const [releaseDialogOpen, setReleaseDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     if (id) {
@@ -60,6 +62,15 @@ const DossierDetail = () => {
       handleAutoTransitions();
     }
   }, [id]);
+
+  const handleViewLegalHoldDetails = () => {
+    setActiveTab("timeline");
+    // Scroll to timeline tab
+    setTimeout(() => {
+      const timelineTab = document.querySelector('[value="timeline"]');
+      timelineTab?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  };
 
   const handleAutoTransitions = async () => {
     const { data: dossierData } = await supabase
@@ -328,7 +339,7 @@ const DossierDetail = () => {
             </Badge>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <QRCodeGenerator 
             dossierId={id!}
             displayId={dossier.display_id || dossier.ref_number}
@@ -341,6 +352,12 @@ const DossierDetail = () => {
           >
             {getStatusLabel(dossier.status)}
           </Badge>
+          <LegalHoldBadge
+            legal_hold_active={dossier.legal_hold_active}
+            legal_hold_authority={dossier.legal_hold_authority}
+            legal_hold_case_number={dossier.legal_hold_case_number}
+            onViewDetails={handleViewLegalHoldDetails}
+          />
           {dossier.status === "intake_in_progress" && (
             <ActivateDossierButton
               dossierId={id!}
@@ -403,7 +420,7 @@ const DossierDetail = () => {
 
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">Overzicht</TabsTrigger>
           <TabsTrigger value="documents">Documenten</TabsTrigger>

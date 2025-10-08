@@ -18,6 +18,8 @@ export default function InsurerDossierOverview() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [overrideReason, setOverrideReason] = useState("");
+  const [blockReason, setBlockReason] = useState("");
+  const [paymentNote, setPaymentNote] = useState("");
 
   const { data: dossier, isLoading, refetch } = useQuery({
     queryKey: ["insurer-dossier", id],
@@ -103,6 +105,160 @@ export default function InsurerDossierOverview() {
       toast({
         title: "Fout",
         description: "Kon claim niet bijwerken",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleBlockClaim = async () => {
+    if (!blockReason.trim()) {
+      toast({
+        title: "Fout",
+        description: "Reden is verplicht voor blokkering",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const claim = dossier?.claims;
+      if (!claim) throw new Error("No claim found");
+
+      const { error: updateError } = await supabase
+        .from("claims")
+        .update({
+          status: 'BLOCKED',
+          blocked_reason: blockReason,
+        })
+        .eq("id", claim.id);
+
+      if (updateError) throw updateError;
+
+      await supabase.from("claim_actions").insert({
+        claim_id: claim.id,
+        user_id: user.id,
+        action: 'BLOCKED',
+        reason: blockReason,
+        from_status: claim.status,
+        to_status: 'BLOCKED',
+      });
+
+      await supabase.from("dossier_events").insert({
+        dossier_id: id,
+        event_type: "CLAIM_BLOCKED",
+        event_description: "Claim geblokkeerd",
+        metadata: { reason: blockReason },
+        created_by: user.id,
+      });
+
+      toast({
+        title: "Succes",
+        description: "Claim geblokkeerd",
+      });
+
+      setBlockReason("");
+      refetch();
+    } catch (error) {
+      console.error("Error blocking claim:", error);
+      toast({
+        title: "Fout",
+        description: "Kon claim niet blokkeren",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUnblockClaim = async () => {
+    if (!blockReason.trim()) {
+      toast({
+        title: "Fout",
+        description: "Reden is verplicht voor opheffen blokkering",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const claim = dossier?.claims;
+      if (!claim) throw new Error("No claim found");
+
+      const { error: updateError } = await supabase
+        .from("claims")
+        .update({
+          status: 'MANUAL_APPROVED',
+          override_reason: blockReason,
+          blocked_reason: null,
+        })
+        .eq("id", claim.id);
+
+      if (updateError) throw updateError;
+
+      await supabase.from("claim_actions").insert({
+        claim_id: claim.id,
+        user_id: user.id,
+        action: 'UNBLOCKED',
+        reason: blockReason,
+        from_status: 'BLOCKED',
+        to_status: 'MANUAL_APPROVED',
+      });
+
+      await supabase.from("dossier_events").insert({
+        dossier_id: id,
+        event_type: "CLAIM_UNBLOCKED",
+        event_description: "Blokkering opgeheven",
+        metadata: { reason: blockReason },
+        created_by: user.id,
+      });
+
+      toast({
+        title: "Succes",
+        description: "Blokkering opgeheven",
+      });
+
+      setBlockReason("");
+      refetch();
+    } catch (error) {
+      console.error("Error unblocking claim:", error);
+      toast({
+        title: "Fout",
+        description: "Kon blokkering niet opheffen",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePayInvoice = async (invoiceId: string) => {
+    try {
+      const { data, error } = await supabase.rpc('mark_invoice_paid', {
+        p_invoice_id: invoiceId,
+        p_reason: paymentNote || null,
+      });
+
+      if (error) throw error;
+
+      const result = data as { success: boolean; error?: string };
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to mark invoice as paid');
+      }
+
+      toast({
+        title: "Succes",
+        description: "Factuur gemarkeerd als betaald",
+      });
+
+      setPaymentNote("");
+      refetch();
+    } catch (error) {
+      console.error("Error paying invoice:", error);
+      toast({
+        title: "Fout",
+        description: "Kon factuur niet betalen",
         variant: "destructive",
       });
     }
@@ -415,12 +571,45 @@ export default function InsurerDossierOverview() {
                           </div>
                         </div>
                       )}
+
+                      {dossier.claims.blocked_reason && (
+                        <div className="bg-red-50 dark:bg-red-950 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" />
+                            <div>
+                              <p className="font-medium text-red-900 dark:text-red-100">Blokkade Reden</p>
+                              <p className="text-sm text-red-800 dark:text-red-200 mt-1">
+                                {dossier.claims.blocked_reason}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="space-y-4 border-t pt-4">
                       <h4 className="font-medium">Acties</h4>
                       
-                      {dossier.claims.source === 'MANUAL' ? (
+                      {dossier.claims.status === 'BLOCKED' ? (
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="unblock-reason">Reden voor opheffen blokkering (verplicht)</Label>
+                            <Textarea
+                              id="unblock-reason"
+                              placeholder="Leg uit waarom je de blokkering opheft..."
+                              value={blockReason}
+                              onChange={(e) => setBlockReason(e.target.value)}
+                              rows={3}
+                            />
+                          </div>
+                          <Button
+                            onClick={handleUnblockClaim}
+                            className="w-full"
+                          >
+                            Blokkering Opheffen
+                          </Button>
+                        </div>
+                      ) : dossier.claims.source === 'MANUAL' ? (
                         <Button
                           variant="outline"
                           onClick={handleResetToAPI}
@@ -454,6 +643,23 @@ export default function InsurerDossierOverview() {
                               className="flex-1"
                             >
                               Afwijzen
+                            </Button>
+                          </div>
+                          <div className="border-t pt-4">
+                            <Label htmlFor="block-reason">Reden voor blokkering (optioneel)</Label>
+                            <Textarea
+                              id="block-reason"
+                              placeholder="Leg uit waarom je de claim blokkeert (bijv. fraude, onvolledige documenten)..."
+                              value={blockReason}
+                              onChange={(e) => setBlockReason(e.target.value)}
+                              rows={2}
+                            />
+                            <Button
+                              onClick={handleBlockClaim}
+                              variant="outline"
+                              className="w-full mt-2"
+                            >
+                              Blokkeren
                             </Button>
                           </div>
                         </div>
@@ -510,35 +716,63 @@ export default function InsurerDossierOverview() {
               <CardHeader>
                 <CardTitle>Facturen</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 {dossier.invoices && dossier.invoices.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Factuurnummer</TableHead>
-                        <TableHead>Datum</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Bedrag</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {dossier.invoices.map((invoice) => (
-                        <TableRow key={invoice.id}>
-                          <TableCell className="font-mono">{invoice.invoice_number}</TableCell>
-                          <TableCell>{new Date(invoice.created_at).toLocaleDateString("nl-NL")}</TableCell>
-                          <TableCell>
-                            <Badge>
-                              {invoice.status === "ISSUED" ? "Te accorderen" :
-                               invoice.status === "APPROVED" ? "Geaccordeerd" :
-                               invoice.status === "PAID" ? "Betaald" :
-                               invoice.status === "NEEDS_INFO" ? "Info nodig" : invoice.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>€{Number(invoice.total).toFixed(2)}</TableCell>
+                  <>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Factuurnummer</TableHead>
+                          <TableHead>Datum</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Bedrag</TableHead>
+                          <TableHead>Acties</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {dossier.invoices.map((invoice) => (
+                          <TableRow key={invoice.id}>
+                            <TableCell className="font-mono">{invoice.invoice_number}</TableCell>
+                            <TableCell>{new Date(invoice.created_at).toLocaleDateString("nl-NL")}</TableCell>
+                            <TableCell>
+                              <Badge className={
+                                invoice.status === "PAID" ? "bg-green-600" :
+                                invoice.status === "ISSUED" ? "bg-yellow-600" :
+                                invoice.status === "APPROVED" ? "bg-blue-600" :
+                                ""
+                              }>
+                                {invoice.status === "ISSUED" ? "Te accorderen" :
+                                 invoice.status === "APPROVED" ? "Geaccordeerd" :
+                                 invoice.status === "PAID" ? "Betaald" :
+                                 invoice.status === "NEEDS_INFO" ? "Info nodig" : invoice.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>€{Number(invoice.total).toFixed(2)}</TableCell>
+                            <TableCell>
+                              {invoice.status === "ISSUED" && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => handlePayInvoice(invoice.id)}
+                                >
+                                  Betalen
+                                </Button>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    <div className="border-t pt-4">
+                      <Label htmlFor="payment-note">Betalingsnotitie (optioneel)</Label>
+                      <Textarea
+                        id="payment-note"
+                        placeholder="Voeg een notitie toe bij de betaling..."
+                        value={paymentNote}
+                        onChange={(e) => setPaymentNote(e.target.value)}
+                        rows={2}
+                      />
+                    </div>
+                  </>
                 ) : (
                   <p className="text-muted-foreground">Geen facturen beschikbaar</p>
                 )}

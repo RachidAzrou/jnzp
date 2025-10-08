@@ -1,4 +1,4 @@
-import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, Flag, Monitor, Bell, Webhook, TrendingUp, Search } from "lucide-react";
+import { Home, FolderOpen, CheckSquare, FileText, Calendar, Settings, Upload, LayoutDashboard, Receipt, MessageSquare, BarChart3, Building2, Users, Activity, Flag, Monitor, Bell, Webhook, TrendingUp, Search, Shield } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { NavLink, useLocation } from "react-router-dom";
@@ -77,6 +77,7 @@ export function AppSidebar() {
     
     // Insurer
     { titleKey: "navigation.dashboard", url: "/insurer", icon: LayoutDashboard, roles: ['insurer'] },
+    { titleKey: "navigation.claims", url: "/insurer/claims", icon: Shield, roles: ['insurer'] },
     { titleKey: "navigation.dossiers", url: "/insurer/dossiers", icon: FolderOpen, roles: ['insurer'] },
     { titleKey: "navigation.chat", url: "/insurer/chat", icon: MessageSquare, roles: ['insurer'] },
     { titleKey: "navigation.invoicesTitle", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },

@@ -628,6 +628,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "dossiers": "Dossiers",
+    "claims": "Claims",
     "searchDossiers": "Dossier zoeken",
     "incomingRequests": "Inkomende Aanvragen",
     "planning": "Planning",

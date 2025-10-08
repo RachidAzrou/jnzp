@@ -379,6 +379,7 @@ export type Database = {
       claims: {
         Row: {
           api_response: Json | null
+          blocked_reason: string | null
           created_at: string
           dossier_id: string
           id: string
@@ -391,6 +392,7 @@ export type Database = {
         }
         Insert: {
           api_response?: Json | null
+          blocked_reason?: string | null
           created_at?: string
           dossier_id: string
           id?: string
@@ -403,6 +405,7 @@ export type Database = {
         }
         Update: {
           api_response?: Json | null
+          blocked_reason?: string | null
           created_at?: string
           dossier_id?: string
           id?: string
@@ -3850,6 +3853,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      mark_invoice_paid: {
+        Args: { p_invoice_id: string; p_reason?: string }
+        Returns: Json
+      }
       mark_password_reset_token_used: {
         Args: { p_token_hash: string }
         Returns: undefined
@@ -3971,6 +3978,7 @@ export type Database = {
         | "API_REJECTED"
         | "MANUAL_APPROVED"
         | "MANUAL_REJECTED"
+        | "BLOCKED"
       communication_channel: "PORTAL"
       cool_cell_status: "FREE" | "RESERVED" | "OCCUPIED" | "OUT_OF_SERVICE"
       delivery_status: "PENDING" | "SENT" | "FAILED"
@@ -4197,6 +4205,7 @@ export const Constants = {
         "API_REJECTED",
         "MANUAL_APPROVED",
         "MANUAL_REJECTED",
+        "BLOCKED",
       ],
       communication_channel: ["PORTAL"],
       cool_cell_status: ["FREE", "RESERVED", "OCCUPIED", "OUT_OF_SERVICE"],

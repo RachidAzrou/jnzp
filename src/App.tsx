@@ -33,6 +33,7 @@ import DossierZoeken from "./pages/DossierZoeken";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
 import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
 import InsurerDashboard from "./pages/InsurerDashboard";
+import InsurerClaims from "./pages/InsurerClaims";
 import InsurerDossierOverview from "./pages/InsurerDossierOverview";
 import InsurerDossierDocuments from "./pages/InsurerDossierDocuments";
 import InsurerDossiers from "./pages/InsurerDossiers";
@@ -283,6 +284,11 @@ const App = () => (
                           <Route path="/insurer" element={
                             <RoleProtectedRoute allowedRoles={['insurer']}>
                               <InsurerDashboard />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/insurer/claims" element={
+                            <RoleProtectedRoute allowedRoles={['insurer']}>
+                              <InsurerClaims />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/insurer/dossiers" element={

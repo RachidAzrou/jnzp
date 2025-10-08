@@ -30,7 +30,7 @@ export default function InsurerDossierOverview() {
           polis_checks(*),
           claims(*),
           documents(id, doc_type, status, uploaded_at, file_name),
-          mosque_services(status, confirmed_slot, mosque_org_id, mosque_org:organizations!mosque_services_mosque_org_id_fkey(name)),
+          case_events!case_events_dossier_id_fkey(id, event_type, status, scheduled_at, location_text),
           wash_services(status, scheduled_at),
           repatriations(*, flights(*)),
           invoices(id, invoice_number, status, total, created_at),
@@ -294,17 +294,17 @@ export default function InsurerDossierOverview() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Moskee:</span>
+                  <span className="text-muted-foreground">Janazah:</span>
                   <span className="font-medium">
-                    {dossier.mosque_services?.[0] ? (
-                      dossier.mosque_services[0].status === "CONFIRMED" ? (
-                        `CONFIRMED: ${dossier.mosque_services[0].mosque_org?.name}, ${new Date(dossier.mosque_services[0].confirmed_slot!).toLocaleString("nl-NL")}`
-                      ) : (
-                        dossier.mosque_services[0].status
-                      )
-                    ) : (
-                      "-"
-                    )}
+                    {(() => {
+                      const janazah = dossier.case_events?.find((e: any) => e.event_type === "MOSQUE_SERVICE");
+                      if (!janazah) return "-";
+                      if (janazah.status === "PLANNED" && janazah.scheduled_at) {
+                        return `GEPLAND: ${janazah.location_text || "Locatie onbekend"}, ${new Date(janazah.scheduled_at).toLocaleString("nl-NL")}`;
+                      }
+                      if (janazah.status === "DONE") return "VOLTOOID";
+                      return janazah.status;
+                    })()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">

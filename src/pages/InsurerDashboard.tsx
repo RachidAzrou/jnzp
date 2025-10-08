@@ -53,7 +53,7 @@ export default function InsurerDashboard() {
           organizations:assigned_fd_org_id(name),
           polis_checks(is_covered, num_travelers),
           documents(id, doc_type, status),
-          mosque_services(status, confirmed_slot),
+          case_events!case_events_dossier_id_fkey(id, event_type, status),
           wash_services(status),
           repatriations(id, flights(id))
         `)
@@ -105,13 +105,13 @@ export default function InsurerDashboard() {
   };
 
   const getPlanningStatus = (dossier: any) => {
-    const mosqueStatus = dossier.mosque_services?.[0]?.status;
-    const washStatus = dossier.wash_services?.[0]?.status;
+    const janazah = dossier.case_events?.find((e: any) => e.event_type === "MOSQUE_SERVICE");
+    const washService = dossier.case_events?.find((e: any) => e.event_type === "MORTUARY_SERVICE");
     const hasFlights = dossier.repatriations?.[0]?.flights?.length > 0;
 
     if (dossier.legal_hold) return "LEGAL_HOLD";
-    if (mosqueStatus === "CONFIRMED" && washStatus === "WASHED" && hasFlights) return "Compleet";
-    if (mosqueStatus === "CONFIRMED") return "Moskee bevestigd";
+    if (janazah?.status === "DONE" && washService?.status === "DONE" && hasFlights) return "Compleet";
+    if (janazah?.status === "PLANNED") return "Janazah gepland";
     return "In behandeling";
   };
 

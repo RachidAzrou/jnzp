@@ -69,12 +69,25 @@ export default function MoskeeDashboard() {
   const fetchServices = async () => {
     try {
       const { data, error } = await supabase
-        .from("mosque_services")
-        .select("*, dossiers(ref_number, deceased_name)")
-        .order("requested_at", { ascending: false });
+        .from("case_events")
+        .select("*, dossiers(ref_number, deceased_name, display_id)")
+        .eq("event_type", "MOSQUE_SERVICE")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
-      if (data) setServices(data as any);
+      if (data) {
+        // Map case_events to MosqueService format
+        const mapped = data.map(event => ({
+          id: event.id,
+          dossier_id: event.dossier_id,
+          requested_at: event.created_at,
+          requested_date: event.scheduled_at,
+          prayer: null, // Not stored in case_events
+          status: event.status,
+          dossiers: event.dossiers
+        }));
+        setServices(mapped as any);
+      }
     } catch (error) {
       console.error("Error fetching services:", error);
     } finally {
@@ -90,8 +103,8 @@ export default function MoskeeDashboard() {
       const service = services.find(s => s.id === serviceId);
 
       const { error } = await supabase
-        .from("mosque_services")
-        .update({ status: "CONFIRMED" })
+        .from("case_events")
+        .update({ status: "PLANNED" })
         .eq("id", serviceId);
 
       if (error) throw error;
@@ -103,9 +116,8 @@ export default function MoskeeDashboard() {
           dossier_id: service.dossier_id,
           description: `Moskee bevestigde janāza-gebed voor ${service.dossiers.deceased_name}`,
           metadata: {
-            mosque_service_id: serviceId,
-            prayer: service.prayer,
-            requested_date: service.requested_date,
+            case_event_id: serviceId,
+            scheduled_at: service.requested_date,
           },
         });
       }
@@ -143,10 +155,10 @@ export default function MoskeeDashboard() {
       const service = services.find(s => s.id === selectedService);
 
       const { error } = await supabase
-        .from("mosque_services")
+        .from("case_events")
         .update({ 
-          status: "DECLINED",
-          decline_reason: rejectReason 
+          status: "CANCELLED",
+          notes: (service as any)?.notes ? `${(service as any).notes}\n\nAfwijzing: ${rejectReason}` : `Afwijzing: ${rejectReason}`
         })
         .eq("id", selectedService);
 
@@ -159,9 +171,8 @@ export default function MoskeeDashboard() {
           dossier_id: service.dossier_id,
           description: `Moskee weigerde janāza-gebed voor ${service.dossiers.deceased_name}`,
           metadata: {
-            mosque_service_id: selectedService,
-            prayer: service.prayer,
-            requested_date: service.requested_date,
+            case_event_id: selectedService,
+            scheduled_at: service.requested_date,
             decline_reason: rejectReason,
           },
         });
@@ -187,9 +198,9 @@ export default function MoskeeDashboard() {
   };
 
   // KPI calculations
-  const openRequests = services.filter(s => s.status === "PENDING" || s.status === "OPEN").length;
+  const openRequests = services.filter(s => !["PLANNED", "STARTED", "DONE", "CANCELLED"].includes(s.status)).length;
   const todayPrayers = services.filter(s => 
-    s.status === "CONFIRMED" && 
+    ["PLANNED", "STARTED"].includes(s.status) && 
     s.requested_date && 
     isToday(new Date(s.requested_date))
   ).length;
@@ -207,9 +218,9 @@ export default function MoskeeDashboard() {
     return date >= weekStart && date < weekEnd;
   }).length;
 
-  // Active requests (PENDING/OPEN)
+  // Active requests (not PLANNED/STARTED/DONE/CANCELLED)
   const activeRequests = services
-    .filter(s => s.status === "PENDING" || s.status === "OPEN")
+    .filter(s => !["PLANNED", "STARTED", "DONE", "CANCELLED"].includes(s.status))
     .filter(s =>
       s.dossiers.ref_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       s.dossiers.deceased_name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -218,7 +229,7 @@ export default function MoskeeDashboard() {
   // Upcoming confirmed prayers (today + 3 days)
   const upcomingPrayers = services
     .filter(s => {
-      if (s.status !== "CONFIRMED" || !s.requested_date) return false;
+      if (!["PLANNED", "STARTED"].includes(s.status) || !s.requested_date) return false;
       const date = new Date(s.requested_date);
       const now = new Date();
       const threeDaysFromNow = addDays(now, 3);
@@ -425,10 +436,12 @@ export default function MoskeeDashboard() {
                     {format(new Date(service.requested_at), "HH:mm", { locale: nl })}
                   </div>
                   <div className="flex-1">
-                    {service.status === "CONFIRMED" ? (
-                      <span>Gebed bevestigd voor dossier {service.dossiers.ref_number}</span>
-                    ) : service.status === "DECLINED" ? (
-                      <span>Gebed geweigerd voor dossier {service.dossiers.ref_number}</span>
+                    {service.status === "PLANNED" ? (
+                      <span>Gebed gepland voor dossier {service.dossiers.ref_number}</span>
+                    ) : service.status === "DONE" ? (
+                      <span>Gebed voltooid voor dossier {service.dossiers.ref_number}</span>
+                    ) : service.status === "CANCELLED" ? (
+                      <span>Gebed geannuleerd voor dossier {service.dossiers.ref_number}</span>
                     ) : (
                       <span>Nieuwe aanvraag ontvangen ({service.dossiers.ref_number})</span>
                     )}

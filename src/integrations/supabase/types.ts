@@ -137,6 +137,7 @@ export type Database = {
           event_type: string
           id: string
           location: string | null
+          location_text: string | null
           metadata: Json | null
           notes: string | null
           scheduled_at: string | null
@@ -152,6 +153,7 @@ export type Database = {
           event_type: string
           id?: string
           location?: string | null
+          location_text?: string | null
           metadata?: Json | null
           notes?: string | null
           scheduled_at?: string | null
@@ -167,6 +169,7 @@ export type Database = {
           event_type?: string
           id?: string
           location?: string | null
+          location_text?: string | null
           metadata?: Json | null
           notes?: string | null
           scheduled_at?: string | null
@@ -1940,82 +1943,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "mosque_day_blocks_mosque_org_id_fkey"
-            columns: ["mosque_org_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      mosque_services: {
-        Row: {
-          confirmed_slot: string | null
-          created_at: string
-          decline_reason: string | null
-          dossier_id: string
-          id: string
-          mosque_org_id: string
-          note: string | null
-          prayer: Database["public"]["Enums"]["prayer_type"] | null
-          proposed_date: string | null
-          proposed_prayer: Database["public"]["Enums"]["prayer_type"] | null
-          requested_at: string
-          requested_date: string | null
-          requested_slot: string | null
-          status: Database["public"]["Enums"]["mosque_status"]
-          updated_at: string
-        }
-        Insert: {
-          confirmed_slot?: string | null
-          created_at?: string
-          decline_reason?: string | null
-          dossier_id: string
-          id?: string
-          mosque_org_id: string
-          note?: string | null
-          prayer?: Database["public"]["Enums"]["prayer_type"] | null
-          proposed_date?: string | null
-          proposed_prayer?: Database["public"]["Enums"]["prayer_type"] | null
-          requested_at?: string
-          requested_date?: string | null
-          requested_slot?: string | null
-          status?: Database["public"]["Enums"]["mosque_status"]
-          updated_at?: string
-        }
-        Update: {
-          confirmed_slot?: string | null
-          created_at?: string
-          decline_reason?: string | null
-          dossier_id?: string
-          id?: string
-          mosque_org_id?: string
-          note?: string | null
-          prayer?: Database["public"]["Enums"]["prayer_type"] | null
-          proposed_date?: string | null
-          proposed_prayer?: Database["public"]["Enums"]["prayer_type"] | null
-          requested_at?: string
-          requested_date?: string | null
-          requested_slot?: string | null
-          status?: Database["public"]["Enums"]["mosque_status"]
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "mosque_services_dossier_id_fkey"
-            columns: ["dossier_id"]
-            isOneToOne: false
-            referencedRelation: "dossiers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "mosque_services_dossier_id_fkey"
-            columns: ["dossier_id"]
-            isOneToOne: false
-            referencedRelation: "view_my_dossiers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "mosque_services_mosque_org_id_fkey"
             columns: ["mosque_org_id"]
             isOneToOne: false
             referencedRelation: "organizations"

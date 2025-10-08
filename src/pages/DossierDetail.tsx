@@ -161,11 +161,12 @@ const DossierDetail = () => {
       .eq("dossier_id", id)
       .order("created_at", { ascending: false });
 
-    // Fetch mosque service
+    // Fetch janazah service via case_events
     const { data: mosqueData } = await supabase
-      .from("mosque_services")
-      .select("*, organizations(name)")
+      .from("case_events")
+      .select("*")
       .eq("dossier_id", id)
+      .eq("event_type", "MOSQUE_SERVICE")
       .maybeSingle();
 
     // Fetch wash service

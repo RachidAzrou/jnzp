@@ -31,11 +31,7 @@ import FDFacturatie from "./pages/FDFacturatie";
 import DossierDetail from "./pages/DossierDetail";
 import DossierZoeken from "./pages/DossierZoeken";
 import MoskeeDashboard from "./pages/MoskeeDashboard";
-import MoskeeAanvragen from "./pages/MoskeeAanvragen";
-import MoskeeAanvraag from "./pages/MoskeeAanvraag";
 import MoskeeBeschikbaarheid from "./pages/MoskeeBeschikbaarheid";
-import MoskeePubiekScherm from "./pages/MoskeePubiekScherm";
-import PublicJanazaScreen from "./pages/PublicJanazaScreen";
 import InsurerDashboard from "./pages/InsurerDashboard";
 import InsurerDossierOverview from "./pages/InsurerDossierOverview";
 import InsurerDossierDocuments from "./pages/InsurerDossierDocuments";
@@ -187,12 +183,7 @@ const App = () => (
           <Route path="/feedback/:token" element={<Feedback />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
-          <Route path="/screen/:mosqueSlug" element={<PublicJanazaScreen />} />
-          <Route path="/moskee/publiek-scherm" element={
-            <ProtectedRoute>
-              <MoskeePubiekScherm />
-            </ProtectedRoute>
-          } />
+          {/* Publieke schermen verwijderd - vervangen door case_events systeem */}
           
           {/* Family redirect to mobile app */}
           <Route path="/familie" element={<FamilieAppDownload />} />
@@ -283,16 +274,7 @@ const App = () => (
                               <MoskeeDashboard />
                             </RoleProtectedRoute>
                           } />
-                          <Route path="/moskee/aanvragen" element={
-                            <RoleProtectedRoute allowedRoles={['mosque']}>
-                              <MoskeeAanvragen />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/moskee/aanvraag/:id" element={
-                            <RoleProtectedRoute allowedRoles={['mosque']}>
-                              <MoskeeAanvraag />
-                            </RoleProtectedRoute>
-                          } />
+                          {/* Oude moskee aanvragen routes verwijderd - alles via case_events */}
                           <Route path="/moskee/beschikbaarheid" element={
                             <RoleProtectedRoute allowedRoles={['mosque']}>
                               <MoskeeBeschikbaarheid />

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Calendar, Plane, Plus, Search, SlidersHorizontal } from "lucide-react";
 import { MdOutlineShower } from "react-icons/md";
-import { PiMosque } from "react-icons/pi";
+// PiMosque verwijderd - moskee services via case_events
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -21,15 +21,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 import { MortuariumReservationDialog } from "@/components/planning/MortuariumReservationDialog";
-import { MosqueServiceDialog } from "@/components/planning/MosqueServiceDialog";
 import { FlightPlanningDialog } from "@/components/planning/FlightPlanningDialog";
 import { EditMortuariumReservationDialog } from "@/components/planning/EditMortuariumReservationDialog";
-import { EditMosqueServiceDialog } from "@/components/planning/EditMosqueServiceDialog";
 import { EditFlightDialog } from "@/components/planning/EditFlightDialog";
 
 const Planning = () => {
   const { t } = useTranslation();
-  const [mosqueServices, setMosqueServices] = useState<any[]>([]);
   const [wasplaatsServices, setWasplaatsServices] = useState<any[]>([]);
   const [repatriations, setRepatriations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,13 +34,10 @@ const Planning = () => {
   const [searchName, setSearchName] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [mortuariumDialogOpen, setMortuariumDialogOpen] = useState(false);
-  const [mosqueDialogOpen, setMosqueDialogOpen] = useState(false);
   const [flightDialogOpen, setFlightDialogOpen] = useState(false);
   const [editMortuariumDialogOpen, setEditMortuariumDialogOpen] = useState(false);
-  const [editMosqueDialogOpen, setEditMosqueDialogOpen] = useState(false);
   const [editFlightDialogOpen, setEditFlightDialogOpen] = useState(false);
   const [selectedReservationId, setSelectedReservationId] = useState<string>("");
-  const [selectedServiceId, setSelectedServiceId] = useState<string>("");
   const [selectedFlightId, setSelectedFlightId] = useState<string>("");
   const { toast } = useToast();
 
@@ -54,20 +48,6 @@ const Planning = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-
-      // Fetch mosque services with dossier info
-      const { data: mosqueData, error: mosqueError } = await supabase
-        .from("janaz_services")
-        .select(`
-          *,
-          dossier:dossiers!inner(
-            display_id,
-            deceased_name
-          )
-        `)
-        .order("service_date", { ascending: true });
-
-      if (mosqueError) throw mosqueError;
 
       // Fetch wasplaats/mortuarium reservations with dossier info
       const { data: wasplaatsData, error: wasplaatsError } = await supabase
@@ -104,16 +84,6 @@ const Planning = () => {
       if (repatriationsError) throw repatriationsError;
 
       // Transform data to match component expectations
-      const transformedMosque = (mosqueData || []).map(service => ({
-        id: service.id,
-        dossier_ref: service.dossier?.display_id,
-        deceased_name: service.dossier?.deceased_name,
-        mosque_name: service.mosque_name,
-        service_date: service.service_date,
-        status: service.status,
-        notes: service.notes
-      }));
-
       const transformedWasplaats = (wasplaatsData || []).map(service => ({
         id: service.id,
         dossier_ref: service.dossier?.display_id,
@@ -136,7 +106,6 @@ const Planning = () => {
         created_at: rep.created_at
       }));
 
-      setMosqueServices(transformedMosque);
       setWasplaatsServices(transformedWasplaats);
       setRepatriations(transformedRepatriations);
     } catch (error: any) {
@@ -186,7 +155,6 @@ const Planning = () => {
     });
   };
 
-  const filteredMosqueServices = filterBySearch(mosqueServices);
   const filteredWasplaatsServices = filterBySearch(wasplaatsServices);
   const filteredRepatriations = filterBySearch(repatriations);
 
@@ -312,74 +280,7 @@ const Planning = () => {
           </CardContent>
         </Card>
 
-        {/* Mosque Services Section - SECOND */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <PiMosque className="h-5 w-5 text-muted-foreground" />
-                  {t("planning.mosquePlanning")}
-                </CardTitle>
-              </div>
-              <Button size="sm" variant="outline" onClick={() => setMosqueDialogOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Nieuwe afspraak
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {filteredMosqueServices.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">{t("planning.noMosqueCeremonies")}</p>
-              </div>
-            ) : (
-              <div className="hidden md:block">
-                <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Dossier</TableHead>
-                    <TableHead>Naam</TableHead>
-                    <TableHead>Moskee</TableHead>
-                    <TableHead>Datum & Tijd</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Notities</TableHead>
-                    <TableHead>Acties</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredMosqueServices.map((service) => (
-                    <TableRow key={service.id} className="hover:bg-muted/30">
-                      <TableCell className="font-medium font-mono text-sm">
-                        {service.dossier_ref}
-                      </TableCell>
-                      <TableCell className="text-sm">{service.deceased_name}</TableCell>
-                      <TableCell className="text-sm">{service.mosque_name}</TableCell>
-                      <TableCell className="text-sm">{formatDateTime(service.service_date)}</TableCell>
-                      <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
-                        {service.notes || "-"}
-                      </TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => {
-                            setSelectedServiceId(service.id);
-                            setEditMosqueDialogOpen(true);
-                          }}
-                        >
-                          {t("common.view")}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Moskee janazah services verplaatst naar case_events - beheer via dossier detail */}
 
         {/* Flights Section - THIRD */}
         <Card className="border-0 shadow-sm">
@@ -444,11 +345,6 @@ const Planning = () => {
         onOpenChange={setMortuariumDialogOpen}
         onSuccess={fetchData}
       />
-      <MosqueServiceDialog
-        open={mosqueDialogOpen}
-        onOpenChange={setMosqueDialogOpen}
-        onSuccess={fetchData}
-      />
       <FlightPlanningDialog
         open={flightDialogOpen}
         onOpenChange={setFlightDialogOpen}
@@ -461,14 +357,6 @@ const Planning = () => {
           open={editMortuariumDialogOpen}
           onOpenChange={setEditMortuariumDialogOpen}
           reservationId={selectedReservationId}
-          onSuccess={fetchData}
-        />
-      )}
-      {selectedServiceId && (
-        <EditMosqueServiceDialog
-          open={editMosqueDialogOpen}
-          onOpenChange={setEditMosqueDialogOpen}
-          serviceId={selectedServiceId}
           onSuccess={fetchData}
         />
       )}

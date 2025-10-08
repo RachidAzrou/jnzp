@@ -618,12 +618,14 @@ export type Database = {
           file_name: string
           file_url: string
           id: string
+          language: string | null
           rejection_reason: string | null
           reviewed_at: string | null
           reviewed_by: string | null
           status: Database["public"]["Enums"]["doc_status"]
           uploaded_at: string
           uploaded_by: string | null
+          version: number | null
         }
         Insert: {
           doc_type: Database["public"]["Enums"]["doc_type"]
@@ -631,12 +633,14 @@ export type Database = {
           file_name: string
           file_url: string
           id?: string
+          language?: string | null
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["doc_status"]
           uploaded_at?: string
           uploaded_by?: string | null
+          version?: number | null
         }
         Update: {
           doc_type?: Database["public"]["Enums"]["doc_type"]
@@ -644,12 +648,14 @@ export type Database = {
           file_name?: string
           file_url?: string
           id?: string
+          language?: string | null
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["doc_status"]
           uploaded_at?: string
           uploaded_by?: string | null
+          version?: number | null
         }
         Relationships: [
           {
@@ -3992,6 +3998,7 @@ export type Database = {
         | "CONSULAR_LASSEZ_PASSER"
         | "SEALING_CERTIFICATE"
         | "OTHER"
+        | "OBITUARY_JANAZAH"
       dossier_flow: "REP" | "LOC" | "UNSET"
       dossier_status:
         | "CREATED"
@@ -4220,6 +4227,7 @@ export const Constants = {
         "CONSULAR_LASSEZ_PASSER",
         "SEALING_CERTIFICATE",
         "OTHER",
+        "OBITUARY_JANAZAH",
       ],
       dossier_flow: ["REP", "LOC", "UNSET"],
       dossier_status: [

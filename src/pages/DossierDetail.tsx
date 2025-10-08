@@ -30,6 +30,7 @@ import { ActivateDossierButton } from "@/components/dossier/ActivateDossierButto
 import ReleaseDossierDialog from "@/components/dossier/ReleaseDossierDialog";
 import FDManagementCard from "@/components/dossier/FDManagementCard";
 import { InvoiceManagementCard } from "@/components/dossier/InvoiceManagementCard";
+import { ObituaryViewer } from "@/components/dossier/ObituaryViewer";
 import { MoreVertical } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -518,6 +519,9 @@ const DossierDetail = () => {
           </div>
 
           <div className="space-y-4">
+            {/* Obituary Section */}
+            <ObituaryViewer dossierId={id!} />
+
             <div className="flex items-center justify-between border-b pb-2">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-muted-foreground" />

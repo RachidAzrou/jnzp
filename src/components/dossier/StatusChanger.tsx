@@ -28,22 +28,79 @@ interface StatusChangerProps {
 const STATUSES = [
   "CREATED",
   "INTAKE_IN_PROGRESS",
-  "OPERATIONAL",
-  "PLANNING_IN_PROGRESS",
-  "EXECUTION_IN_PROGRESS",
+  "DOCS_PENDING",
+  "DOCS_VERIFIED",
+  "APPROVED",
+  "LEGAL_HOLD",
+  "PLANNING",
+  "READY_FOR_TRANSPORT",
+  "IN_TRANSIT",
   "SETTLEMENT",
   "ARCHIVED",
 ];
 
-const STATUS_LABELS: Record<string, string> = {
-  CREATED: "Aangemaakt",
-  INTAKE_IN_PROGRESS: "Intake lopend",
-  OPERATIONAL: "Operationeel",
-  PLANNING_IN_PROGRESS: "Planning bezig",
-  EXECUTION_IN_PROGRESS: "Uitvoering bezig",
-  SETTLEMENT: "Afronding / Facturatie",
-  ARCHIVED: "Afgerond & Gearchiveerd",
+export const STATUS_LABELS_FD = {
+  CREATED: {
+    label: "Nieuw",
+    color: "yellow",
+    description: "Dossier is aangemaakt maar nog niet gestart."
+  },
+  INTAKE_IN_PROGRESS: {
+    label: "Intake",
+    color: "green",
+    description: "De intake loopt: gegevens van de overledene en familie worden verzameld."
+  },
+  DOCS_PENDING: {
+    label: "Documenten in behandeling",
+    color: "orange",
+    description: "Nog niet alle vereiste documenten zijn toegevoegd of goedgekeurd."
+  },
+  DOCS_VERIFIED: {
+    label: "Documenten volledig",
+    color: "green",
+    description: "Alle documenten zijn ontvangen en gecontroleerd."
+  },
+  APPROVED: {
+    label: "Goedgekeurd",
+    color: "emerald",
+    description: "Het dossier is administratief goedgekeurd en klaar voor planning."
+  },
+  LEGAL_HOLD: {
+    label: "Juridisch geblokkeerd",
+    color: "red",
+    description: "Dossier tijdelijk vastgehouden door parket of gerechtelijk onderzoek."
+  },
+  PLANNING: {
+    label: "Planning",
+    color: "blue",
+    description: "Mortuarium, moskee en begraafplaats worden ingepland."
+  },
+  READY_FOR_TRANSPORT: {
+    label: "Klaar voor uitvoering",
+    color: "cyan",
+    description: "Alle afspraken liggen vast, klaar voor uitvaart of transport."
+  },
+  IN_TRANSIT: {
+    label: "Uitvoering",
+    color: "purple",
+    description: "De overledene is onderweg of de ceremonie is bezig."
+  },
+  SETTLEMENT: {
+    label: "Facturatie",
+    color: "brown",
+    description: "De uitvaart is afgerond; facturen en betalingen worden verwerkt."
+  },
+  ARCHIVED: {
+    label: "Afgerond",
+    color: "gray",
+    description: "Dossier is volledig afgesloten en gearchiveerd."
+  },
 };
+
+// Backward compatibility - simple label mapping
+const STATUS_LABELS: Record<string, string> = Object.fromEntries(
+  Object.entries(STATUS_LABELS_FD).map(([key, value]) => [key, value.label])
+);
 
 export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdmin = false }: StatusChangerProps) {
   const { toast } = useToast();
@@ -319,7 +376,10 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
               <SelectContent>
                 {STATUSES.map((status) => (
                   <SelectItem key={status} value={status}>
-                    {STATUS_LABELS[status]}
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium">{STATUS_LABELS_FD[status as keyof typeof STATUS_LABELS_FD].label}</span>
+                      <span className="text-xs text-muted-foreground">{STATUS_LABELS_FD[status as keyof typeof STATUS_LABELS_FD].description}</span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>

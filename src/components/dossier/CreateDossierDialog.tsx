@@ -129,18 +129,6 @@ export function CreateDossierDialog() {
 
       if (dossierError) throw dossierError;
 
-      // Create dossier_fd assignment with source='MANUAL'
-      const { error: assignError } = await (supabase as any)
-        .from("dossier_fd")
-        .insert({
-          dossier_id: dossier.id,
-          fd_org_id: fdOrgId,
-          source: "MANUAL",
-          assigned_by: user.id,
-        });
-
-      if (assignError) throw assignError;
-
       // Create family contact
       const { error: contactError } = await supabase
         .from("family_contacts")

@@ -25,6 +25,8 @@ import WasplaatsKoelcellen from "./pages/WasplaatsKoelcellen";
 import WasplaatsReservaties from "./pages/WasplaatsReservaties";
 import WasplaatsFacturatie from "./pages/WasplaatsFacturatie";
 import MortuariumAdHoc from "./pages/MortuariumAdHoc";
+import MortuariumTeam from "./pages/MortuariumTeam";
+import MortuariumInstellingen from "./pages/MortuariumInstellingen";
 import Facturatie from "./pages/Facturatie";
 import FDFacturatie from "./pages/FDFacturatie";
 // FDBeoordelingen removed - only for insurers/admins
@@ -274,6 +276,16 @@ const App = () => (
                           <Route path="/mortuarium/adhoc" element={
                             <RoleProtectedRoute allowedRoles={['mortuarium']}>
                               <MortuariumAdHoc />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/mortuarium/team" element={
+                            <RoleProtectedRoute allowedRoles={['mortuarium']}>
+                              <MortuariumTeam />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/mortuarium/instellingen" element={
+                            <RoleProtectedRoute allowedRoles={['mortuarium']}>
+                              <MortuariumInstellingen />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/moskee" element={

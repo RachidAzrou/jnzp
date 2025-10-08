@@ -323,7 +323,10 @@
     "noPlanningDescription": "Plan uw eerste uitvaart om te starten.",
     "date": "Datum",
     "location": "Locatie",
-    "transport": "Transport"
+    "transport": "Transport",
+    "mosque": "Moskee",
+    "service": "Dienst",
+    "schedule": "Inplannen"
   },
   "invoicing": {
     "title": "Facturatie",

@@ -99,6 +99,14 @@ export function AppSidebar() {
     { titleKey: "navigation.teamManagement", url: "/moskee/team", icon: Users, roles: ['mosque'], requireAdmin: true },
     { titleKey: "navigation.settings", url: "/moskee/instellingen", icon: Settings, roles: ['mosque'] },
     
+    // Mortuarium
+    { titleKey: "navigation.dashboard", url: "/mortuarium", icon: LayoutDashboard, roles: ['mortuarium'] },
+    { titleKey: "navigation.coolCells", url: "/mortuarium/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['mortuarium'] },
+    { titleKey: "navigation.adHocIntake", url: "/mortuarium/ad-hoc", icon: Upload, roles: ['mortuarium'] },
+    { titleKey: "navigation.invoicing", url: "/mortuarium/facturatie", icon: Receipt, roles: ['mortuarium'] },
+    { titleKey: "navigation.team", url: "/mortuarium/team", icon: Users, roles: ['mortuarium'] },
+    { titleKey: "navigation.settings", url: "/mortuarium/instellingen", icon: Settings, roles: ['mortuarium'] },
+    
     // Teambeheer - voor admins van niet-wasplaats en niet-mosque orgs
     { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['funeral_director', 'insurer'], requireAdmin: true },
     
@@ -147,6 +155,10 @@ export function AppSidebar() {
         return false;
       }
       // Mosque items alleen voor MOSQUE orgs
+      // Mortuarium items alleen voor MORTUARIUM orgs
+      if (item.roles.includes('mortuarium') && organizationType !== 'MORTUARIUM') {
+        return false;
+      }
       if (item.roles.includes('mosque') && organizationType !== 'MOSQUE') {
         return false;
       }

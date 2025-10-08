@@ -672,8 +672,20 @@ const DossierDetail = () => {
         </TabsContent>
 
         {/* Obituary Tab */}
-        <TabsContent value="obituary" className="space-y-4">
-          <ObituaryViewer dossierId={id!} />
+        <TabsContent value="obituary" className="space-y-6">
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Star className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Overlijdensbericht</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ObituaryViewer dossierId={id!} />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Stakeholders Tab */}
@@ -824,8 +836,20 @@ const DossierDetail = () => {
         </TabsContent>
 
         {/* Financial Tab */}
-        <TabsContent value="financial" className="space-y-4">
-          <InvoiceManagementCard dossierId={id!} userRole={userRole || ''} />
+        <TabsContent value="financial" className="space-y-6">
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Facturatie</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <InvoiceManagementCard dossierId={id!} userRole={userRole || ''} />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Timeline Tab */}

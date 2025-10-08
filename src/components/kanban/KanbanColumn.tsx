@@ -35,9 +35,11 @@ interface KanbanColumnProps {
   column: Column;
   tasks: Task[];
   onTaskClick?: (task: Task) => void;
+  onMarkTaskAsDone?: (taskId: string) => void;
+  dragEnabled?: boolean;
 }
 
-export function KanbanColumn({ column, tasks, onTaskClick }: KanbanColumnProps) {
+export function KanbanColumn({ column, tasks, onTaskClick, onMarkTaskAsDone, dragEnabled = true }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   });
@@ -72,6 +74,8 @@ export function KanbanColumn({ column, tasks, onTaskClick }: KanbanColumnProps) 
               key={task.id} 
               task={task} 
               onClick={() => onTaskClick?.(task)}
+              dragEnabled={dragEnabled && !task.is_blocked}
+              onMarkAsDone={() => onMarkTaskAsDone?.(task.id)}
             />
           ))}
           {tasks.length === 0 && (

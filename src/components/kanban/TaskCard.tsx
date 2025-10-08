@@ -2,6 +2,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   AlertCircle,
@@ -10,9 +11,11 @@ import {
   Paperclip,
   Lock,
   Settings,
+  CheckCircle,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
+import { useCanDrag } from "@/hooks/useCanDrag";
 
 interface Task {
   id: string;
@@ -39,12 +42,25 @@ interface Task {
 interface TaskCardProps {
   task: Task;
   onClick?: () => void;
+  inModal?: boolean;
+  inList?: boolean;
+  dragEnabled?: boolean;
+  onMarkAsDone?: () => void;
 }
 
-export function TaskCard({ task, onClick }: TaskCardProps) {
+export function TaskCard({ 
+  task, 
+  onClick, 
+  inModal = false, 
+  inList = false, 
+  dragEnabled = true,
+  onMarkAsDone 
+}: TaskCardProps) {
+  const canDrag = useCanDrag();
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: task.id,
+      disabled: !dragEnabled || task.is_blocked,
     });
 
   const style = transform
@@ -92,6 +108,9 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
   const isOverdue = task.due_date && new Date(task.due_date) < new Date();
   const priorityConfig = getPriorityConfig(task.priority);
   const isAutomatic = task.metadata?.auto === true;
+  
+  // Show complete button: in modal/list, on mobile/tablet, or when drag is disabled/blocked
+  const showCompleteBtn = inModal || inList || !canDrag || !dragEnabled || task.is_blocked;
 
   return (
     <TooltipProvider>
@@ -198,6 +217,23 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
               )}
             </div>
           </div>
+
+          {/* Complete button - shown on mobile/modal/list or when drag disabled */}
+          {showCompleteBtn && onMarkAsDone && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="w-full mt-2 text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMarkAsDone();
+              }}
+              disabled={task.is_blocked}
+            >
+              <CheckCircle className="h-3 w-3 mr-1" />
+              Markeer als afgerond
+            </Button>
+          )}
         </CardContent>
       </Card>
     </TooltipProvider>

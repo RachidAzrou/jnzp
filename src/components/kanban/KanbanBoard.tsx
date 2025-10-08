@@ -242,6 +242,53 @@ export function KanbanBoard({
     }
   };
 
+  const handleMarkTaskAsDone = async (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task || task.is_blocked) {
+      toast({
+        title: "Kan niet afronden",
+        description: task?.blocked_reason || "Deze taak kan niet afgerond worden",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Find the "done" column (is_done = true)
+    const { data: doneColumns } = await supabase
+      .from('task_board_columns')
+      .select('id')
+      .eq('board_id', boardId)
+      .eq('is_done', true)
+      .limit(1);
+
+    if (!doneColumns || doneColumns.length === 0) {
+      toast({
+        title: "Fout",
+        description: "Kan 'Afgerond' kolom niet vinden",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from("kanban_tasks")
+      .update({ column_id: doneColumns[0].id })
+      .eq("id", taskId);
+
+    if (error) {
+      toast({
+        title: "Fout",
+        description: "Kon taak niet afronden",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Taak afgerond",
+      });
+      fetchBoardData();
+    }
+  };
+
   // Filter tasks
   const filteredTasks = tasks.filter((task) => {
     // Search filter
@@ -317,6 +364,8 @@ export function KanbanBoard({
               column={column}
               tasks={tasksByColumn[column.id] || []}
               onTaskClick={onTaskClick}
+              onMarkTaskAsDone={handleMarkTaskAsDone}
+              dragEnabled={true}
             />
           ))}
       </div>

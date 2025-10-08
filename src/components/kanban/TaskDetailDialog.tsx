@@ -611,7 +611,11 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                   <Button onClick={() => setEditMode(true)}>
                     Bewerken
                   </Button>
-                  <Button onClick={handleMarkAsDone} variant="default">
+                  <Button 
+                    onClick={handleMarkAsDone} 
+                    variant="default"
+                    disabled={task.is_blocked}
+                  >
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Markeer als afgerond
                   </Button>

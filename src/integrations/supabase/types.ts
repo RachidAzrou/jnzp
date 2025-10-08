@@ -50,6 +50,21 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          key: string
+          value: string
+        }
+        Insert: {
+          key: string
+          value: string
+        }
+        Update: {
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       audit_events: {
         Row: {
           actor_role: string | null
@@ -3658,6 +3673,10 @@ export type Database = {
       }
       app_get_setting: {
         Args: { key: string }
+        Returns: string
+      }
+      app_setting: {
+        Args: { default_value?: string; key: string }
         Returns: string
       }
       apply_retention_policies: {

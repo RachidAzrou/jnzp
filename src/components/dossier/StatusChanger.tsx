@@ -28,21 +28,29 @@ interface StatusChangerProps {
 const STATUSES = [
   "CREATED",
   "INTAKE_IN_PROGRESS",
-  "OPERATIONAL",
-  "PLANNING_IN_PROGRESS",
-  "EXECUTION_IN_PROGRESS",
-  "SETTLEMENT",
+  "DOCS_PENDING",
+  "FD_ASSIGNED",
+  "DOCS_VERIFIED",
+  "APPROVED",
+  "LEGAL_HOLD",
+  "PLANNING",
+  "READY_FOR_TRANSPORT",
+  "IN_TRANSIT",
   "ARCHIVED",
 ];
 
 const STATUS_LABELS: Record<string, string> = {
   CREATED: "Aangemaakt",
   INTAKE_IN_PROGRESS: "Intake lopend",
-  OPERATIONAL: "Operationeel",
-  PLANNING_IN_PROGRESS: "Planning bezig",
-  EXECUTION_IN_PROGRESS: "Uitvoering bezig",
-  SETTLEMENT: "Afronding / Facturatie",
-  ARCHIVED: "Afgerond & Gearchiveerd",
+  DOCS_PENDING: "Documenten in afwachting",
+  FD_ASSIGNED: "FD toegewezen",
+  DOCS_VERIFIED: "Documenten geverifieerd",
+  APPROVED: "Goedgekeurd",
+  LEGAL_HOLD: "Legal Hold",
+  PLANNING: "Planning",
+  READY_FOR_TRANSPORT: "Klaar voor transport",
+  IN_TRANSIT: "In transit",
+  ARCHIVED: "Gearchiveerd",
 };
 
 export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdmin = false }: StatusChangerProps) {

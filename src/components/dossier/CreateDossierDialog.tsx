@@ -114,12 +114,15 @@ export function CreateDossierDialog() {
       const deceasedName = `${validatedData.first_name} ${validatedData.last_name}`;
 
       // Create dossier - status and tasks will be set automatically by database triggers
-      const { data: dossier, error: dossierError } = await (supabase as any)
+      const { data: dossier, error: dossierError} = await (supabase as any)
         .from("dossiers")
         .insert({
           ref_number: refNumber,
           deceased_name: deceasedName,
+          deceased_first_name: validatedData.first_name,
+          deceased_last_name: validatedData.last_name,
           deceased_gender: validatedData.gender,
+          place_of_death: validatedData.address_of_death,
           flow: validatedData.flow,
           // Status will be set to INTAKE automatically by trigger if flow is LOC/REP
           assigned_fd_org_id: fdOrgId,
@@ -142,6 +145,30 @@ export function CreateDossierDialog() {
 
       if (contactError) throw contactError;
 
+      // Create claims row if insurance = yes and policy_number provided
+      if (validatedData.has_insurance === 'yes' && validatedData.policy_number) {
+        const { data: insurer } = await supabase
+          .from("organizations")
+          .select("id")
+          .eq("type", "INSURER")
+          .limit(1)
+          .single();
+        
+        if (insurer) {
+          const { error: claimError } = await supabase.from("claims").insert({
+            dossier_id: dossier.id,
+            policy_number: validatedData.policy_number,
+            insurer_org_id: insurer.id,
+            status: 'API_PENDING',
+            source: 'MANUAL',
+          });
+          
+          if (claimError) {
+            console.error("Failed to create claim:", claimError);
+          }
+        }
+      }
+
       // Store additional metadata (FD_CREATED event is logged automatically by trigger)
       await (supabase as any).from("dossier_events").insert({
         dossier_id: dossier.id,
@@ -149,7 +176,6 @@ export function CreateDossierDialog() {
         event_description: `Intake details toegevoegd`,
         created_by: user.id,
         metadata: {
-          address_of_death: validatedData.address_of_death,
           has_insurance: validatedData.has_insurance,
           destination: validatedData.destination,
           mosque: validatedData.mosque,

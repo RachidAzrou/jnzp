@@ -26,23 +26,23 @@ interface StatusChangerProps {
 }
 
 const STATUSES = [
-  "created",
-  "intake_in_progress",
-  "operational",
-  "planning_in_progress",
-  "execution_in_progress",
-  "settlement",
-  "archived",
+  "CREATED",
+  "INTAKE_IN_PROGRESS",
+  "OPERATIONAL",
+  "PLANNING_IN_PROGRESS",
+  "EXECUTION_IN_PROGRESS",
+  "SETTLEMENT",
+  "ARCHIVED",
 ];
 
 const STATUS_LABELS: Record<string, string> = {
-  created: "Aangemaakt",
-  intake_in_progress: "Intake lopend",
-  operational: "Operationeel",
-  planning_in_progress: "Planning bezig",
-  execution_in_progress: "Uitvoering bezig",
-  settlement: "Afronding / Facturatie",
-  archived: "Afgerond & Gearchiveerd",
+  CREATED: "Aangemaakt",
+  INTAKE_IN_PROGRESS: "Intake lopend",
+  OPERATIONAL: "Operationeel",
+  PLANNING_IN_PROGRESS: "Planning bezig",
+  EXECUTION_IN_PROGRESS: "Uitvoering bezig",
+  SETTLEMENT: "Afronding / Facturatie",
+  ARCHIVED: "Afgerond & Gearchiveerd",
 };
 
 export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdmin = false }: StatusChangerProps) {
@@ -130,8 +130,26 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   };
 
   const performStatusChange = async () => {
+    // Check legal hold before status change
+    const { data: dossier } = await supabase
+      .from("dossiers")
+      .select("legal_hold_active")
+      .eq("id", dossierId)
+      .single();
+
+    if (dossier?.legal_hold_active && 
+        ["PLANNING", "READY_FOR_TRANSPORT", "IN_TRANSIT"].includes(newStatus)) {
+      toast({
+        title: "Geblokkeerd door Legal Hold",
+        description: "Status kan niet worden gewijzigd terwijl legal hold actief is. Hef de legal hold eerst op.",
+        variant: "destructive",
+      });
+      setOpen(false);
+      return;
+    }
+
     // Auto-close tasks when moving to settlement
-    if (newStatus === "settlement") {
+    if (newStatus === "SETTLEMENT") {
       await supabase
         .from("kanban_tasks")
         .update({ column_id: (await getClosedColumnId()) })

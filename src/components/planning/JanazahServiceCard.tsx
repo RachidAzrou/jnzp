@@ -117,6 +117,30 @@ export function JanazahServiceCard({ dossierId, service, onUpdate }: JanazahServ
         }`,
       });
 
+      // Trigger obituary generation when status becomes PLANNED
+      if (newStatus === 'PLANNED') {
+        const { error: funcError } = await supabase.functions.invoke('generate-obituary', {
+          body: { 
+            dossier_id: dossierId, 
+            service_id: service.id 
+          }
+        });
+
+        if (funcError) {
+          console.error('Obituary generation failed:', funcError);
+          toast({
+            title: "Waarschuwing",
+            description: "Overlijdensbericht kon niet automatisch worden gegenereerd.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Overlijdensbericht aangemaakt",
+            description: "NL en AR versies zijn toegevoegd aan documenten.",
+          });
+        }
+      }
+
       onUpdate?.();
     } catch (error: any) {
       toast({

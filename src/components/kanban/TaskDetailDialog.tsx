@@ -172,41 +172,53 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
   const fetchComments = async () => {
     if (!task) return;
-    const { data, error } = await (supabase
-      .from('task_comments') as any)
-      .select('*')
-      .eq('task_id', task.id)
-      .order('created_at', { ascending: true });
+    try {
+      const { data, error } = await (supabase as any)
+        .from('task_comments')
+        .select('*')
+        .eq('task_id', task.id)
+        .order('created_at', { ascending: true });
 
-    if (!error && data) {
-      setComments(data);
+      if (!error && data) {
+        setComments(data);
+      }
+    } catch (err) {
+      console.error('Error fetching comments:', err);
     }
   };
 
   const fetchActivities = async () => {
     if (!task) return;
-    const { data, error } = await (supabase
-      .from('task_activities') as any)
-      .select('*')
-      .eq('task_id', task.id)
-      .order('created_at', { ascending: false })
-      .limit(50);
+    try {
+      const { data, error } = await (supabase as any)
+        .from('task_activities')
+        .select('*')
+        .eq('task_id', task.id)
+        .order('created_at', { ascending: false })
+        .limit(50);
 
-    if (!error && data) {
-      setActivities(data);
+      if (!error && data) {
+        setActivities(data);
+      }
+    } catch (err) {
+      console.error('Error fetching activities:', err);
     }
   };
 
   const fetchAttachments = async () => {
     if (!task) return;
-    const { data, error } = await (supabase
-      .from('task_attachments') as any)
-      .select('*')
-      .eq('task_id', task.id)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await (supabase as any)
+        .from('task_attachments')
+        .select('*')
+        .eq('task_id', task.id)
+        .order('created_at', { ascending: false });
 
-    if (!error && data) {
-      setAttachments(data);
+      if (!error && data) {
+        setAttachments(data);
+      }
+    } catch (err) {
+      console.error('Error fetching attachments:', err);
     }
   };
 
@@ -216,22 +228,26 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { error } = await (supabase
-      .from('task_comments') as any)
-      .insert({
-        task_id: task.id,
-        user_id: user.id,
-        message: newComment.trim(),
-      });
+    try {
+      const { error } = await (supabase as any)
+        .from('task_comments')
+        .insert({
+          task_id: task.id,
+          user_id: user.id,
+          message: newComment.trim(),
+        });
 
-    if (error) {
-      toast({
-        title: "Fout",
-        description: "Kon commentaar niet toevoegen",
-        variant: "destructive",
-      });
-    } else {
-      setNewComment("");
+      if (error) {
+        toast({
+          title: "Fout",
+          description: "Kon commentaar niet toevoegen",
+          variant: "destructive",
+        });
+      } else {
+        setNewComment("");
+      }
+    } catch (err) {
+      console.error('Error adding comment:', err);
     }
   };
 
@@ -239,7 +255,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
     if (!task) return;
     setLoading(true);
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('kanban_tasks')
       .update({
         title: formData.title,
@@ -336,39 +352,48 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
       .from('documents')
       .getPublicUrl(filePath);
 
-    const { error: dbError } = await (supabase
-      .from('task_attachments') as any)
-      .insert({
-        task_id: task.id,
-        file_url: publicUrl,
-        file_name: file.name,
-        file_size: file.size,
-        uploaded_by: user.id,
-      });
+    try {
+      const { error: dbError } = await (supabase as any)
+        .from('task_attachments')
+        .insert({
+          task_id: task.id,
+          file_url: publicUrl,
+          file_name: file.name,
+          file_size: file.size,
+          uploaded_by: user.id,
+        });
 
-    setUploading(false);
+      setUploading(false);
 
-    if (dbError) {
-      toast({
-        title: "Fout",
-        description: "Kon bijlage niet opslaan",
-        variant: "destructive",
-      });
+      if (dbError) {
+        toast({
+          title: "Fout",
+          description: "Kon bijlage niet opslaan",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error('Error uploading attachment:', err);
+      setUploading(false);
     }
   };
 
   const handleDeleteAttachment = async (attachmentId: string) => {
-    const { error } = await (supabase
-      .from('task_attachments') as any)
-      .delete()
-      .eq('id', attachmentId);
+    try {
+      const { error } = await (supabase as any)
+        .from('task_attachments')
+        .delete()
+        .eq('id', attachmentId);
 
-    if (error) {
-      toast({
-        title: "Fout",
-        description: "Kon bijlage niet verwijderen",
-        variant: "destructive",
-      });
+      if (error) {
+        toast({
+          title: "Fout",
+          description: "Kon bijlage niet verwijderen",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error('Error deleting attachment:', err);
     }
   };
 

@@ -24,6 +24,7 @@ import WasplaatsDashboard from "./pages/WasplaatsDashboard";
 import WasplaatsKoelcellen from "./pages/WasplaatsKoelcellen";
 import WasplaatsReservaties from "./pages/WasplaatsReservaties";
 import WasplaatsFacturatie from "./pages/WasplaatsFacturatie";
+import MortuariumDashboard from "./pages/MortuariumDashboard";
 import MortuariumAdHoc from "./pages/MortuariumAdHoc";
 import MortuariumTeam from "./pages/MortuariumTeam";
 import MortuariumInstellingen from "./pages/MortuariumInstellingen";
@@ -255,7 +256,7 @@ const App = () => (
                           {/* Beoordelingen removed - only for insurers/admins */}
                           <Route path="/mortuarium" element={
                             <RoleProtectedRoute allowedRoles={['mortuarium']}>
-                              <WasplaatsDashboard />
+                              <MortuariumDashboard />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/mortuarium/koelcellen" element={
@@ -273,7 +274,7 @@ const App = () => (
                               <WasplaatsFacturatie />
                             </RoleProtectedRoute>
                           } />
-                          <Route path="/mortuarium/adhoc" element={
+                          <Route path="/mortuarium/ad-hoc" element={
                             <RoleProtectedRoute allowedRoles={['mortuarium']}>
                               <MortuariumAdHoc />
                             </RoleProtectedRoute>

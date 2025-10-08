@@ -1687,7 +1687,7 @@ export type Database = {
           is_archived: boolean
           is_blocked: boolean
           labels: string[] | null
-          org_id: string
+          org_id: string | null
           position: number
           priority: Database["public"]["Enums"]["task_priority"]
           reporter_id: string | null
@@ -1706,7 +1706,7 @@ export type Database = {
           is_archived?: boolean
           is_blocked?: boolean
           labels?: string[] | null
-          org_id: string
+          org_id?: string | null
           position?: number
           priority?: Database["public"]["Enums"]["task_priority"]
           reporter_id?: string | null
@@ -1725,7 +1725,7 @@ export type Database = {
           is_archived?: boolean
           is_blocked?: boolean
           labels?: string[] | null
-          org_id?: string
+          org_id?: string | null
           position?: number
           priority?: Database["public"]["Enums"]["task_priority"]
           reporter_id?: string | null
@@ -3874,6 +3874,10 @@ export type Database = {
       encrypt_field: {
         Args: { p_data: string; p_key?: string }
         Returns: string
+      }
+      fn_ensure_board_and_todo_col: {
+        Args: { p_org: string }
+        Returns: Record<string, unknown>
       }
       fn_place_legal_hold: {
         Args: {

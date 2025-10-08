@@ -29,16 +29,19 @@ export async function getOrCreateBoardForOrg(orgId: string) {
 
   if (colErr) throw colErr;
   
-  const have = new Set(cols?.map(c => c.key) ?? []);
-  const missing = ["todo", "doing", "done"].filter(k => !have.has(k));
+  const existingKeys = new Set(cols?.map(c => c.key) ?? []);
+  const requiredColumns = [
+    { key: "todo", label: "Te doen", order_idx: 1, is_done: false },
+    { key: "doing", label: "Bezig", order_idx: 2, is_done: false },
+    { key: "done", label: "Afgerond", order_idx: 3, is_done: true }
+  ];
   
-  if (missing.length) {
-    const payload = missing.map((k) => ({
+  const missingColumns = requiredColumns.filter(col => !existingKeys.has(col.key));
+  
+  if (missingColumns.length > 0) {
+    const payload = missingColumns.map(col => ({
       board_id: created.id,
-      key: k,
-      label: k === "todo" ? "Te doen" : k === "doing" ? "Bezig" : "Afgerond",
-      order_idx: k === "todo" ? 1 : k === "doing" ? 2 : 3,
-      is_done: k === "done"
+      ...col
     }));
     
     const { error: icErr } = await supabase

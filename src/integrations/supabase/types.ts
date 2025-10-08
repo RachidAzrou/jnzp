@@ -204,6 +204,13 @@ export type Database = {
             foreignKeyName: "case_events_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "case_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -309,6 +316,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "chat_messages_dossier_id_fkey"
@@ -443,6 +457,13 @@ export type Database = {
             foreignKeyName: "claims_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: true
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "claims_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: true
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -509,6 +530,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cool_cell_reservations_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "cool_cell_reservations_dossier_id_fkey"
@@ -684,6 +712,13 @@ export type Database = {
             foreignKeyName: "documents_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "documents_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -755,6 +790,13 @@ export type Database = {
             foreignKeyName: "dossier_claims_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "dossier_claims_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -805,6 +847,13 @@ export type Database = {
             foreignKeyName: "dossier_communication_preferences_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: true
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "dossier_communication_preferences_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: true
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -850,6 +899,13 @@ export type Database = {
             foreignKeyName: "dossier_events_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "dossier_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -887,6 +943,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dossier_release_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "dossier_release_events_dossier_id_fkey"
@@ -1074,6 +1137,13 @@ export type Database = {
             foreignKeyName: "family_contacts_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "family_contacts_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -1114,6 +1184,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fd_reviews_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "fd_reviews_dossier_id_fkey"
@@ -1196,6 +1273,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feedback_tokens_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "feedback_tokens_dossier_id_fkey"
@@ -1597,6 +1681,13 @@ export type Database = {
             foreignKeyName: "invoices_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "invoices_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -1657,6 +1748,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "janaz_services_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "janaz_services_dossier_id_fkey"
@@ -1758,6 +1856,13 @@ export type Database = {
             foreignKeyName: "kanban_tasks_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "kanban_tasks_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -1814,6 +1919,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_holds_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "legal_holds_dossier_id_fkey"
@@ -1902,6 +2014,13 @@ export type Database = {
             foreignKeyName: "manual_events_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "manual_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -1942,6 +2061,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_docs_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "medical_docs_dossier_id_fkey"
@@ -2163,6 +2289,13 @@ export type Database = {
             foreignKeyName: "notification_log_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "notification_log_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -2261,6 +2394,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "notifications_dossier_id_fkey"
@@ -2727,6 +2867,13 @@ export type Database = {
             foreignKeyName: "polis_checks_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "polis_checks_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -2861,6 +3008,13 @@ export type Database = {
             foreignKeyName: "qr_tags_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "qr_tags_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -2926,6 +3080,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qr_tokens_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "qr_tokens_dossier_id_fkey"
@@ -2998,6 +3159,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "repatriations_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "repatriations_dossier_id_fkey"
@@ -3286,6 +3454,13 @@ export type Database = {
             foreignKeyName: "tasks_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "tasks_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -3373,6 +3548,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "threads_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
           },
           {
             foreignKeyName: "threads_dossier_id_fkey"
@@ -3635,6 +3817,13 @@ export type Database = {
             foreignKeyName: "wash_services_dossier_id_fkey"
             columns: ["dossier_id"]
             isOneToOne: false
+            referencedRelation: "dossiers_mosque_view"
+            referencedColumns: ["dossier_id"]
+          },
+          {
+            foreignKeyName: "wash_services_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
             referencedRelation: "view_my_dossiers"
             referencedColumns: ["id"]
           },
@@ -3691,6 +3880,22 @@ export type Database = {
           target_id?: string | null
           target_type?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      dossiers_mosque_view: {
+        Row: {
+          deceased_name: string | null
+          display_id: string | null
+          dossier_id: string | null
+          family_name_for_notice: string | null
+          fd_org_name: string | null
+          flow: Database["public"]["Enums"]["dossier_flow"] | null
+          janazah_at: string | null
+          janazah_location: string | null
+          mosque_event_id: string | null
+          mosque_event_status: string | null
+          status: Database["public"]["Enums"]["dossier_status"] | null
         }
         Relationships: []
       }

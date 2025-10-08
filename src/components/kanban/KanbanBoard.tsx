@@ -30,7 +30,7 @@ interface Task {
   title: string;
   description: string | null;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
-  column_id: string; // Changed from status to column_id
+  status: string;
   auto_complete_trigger: string | null;
   assignee_id: string | null;
   position: number;
@@ -113,7 +113,15 @@ export function KanbanBoard({
     try {
       setLoading(true);
 
-      // Fetch user and organization
+      // Use fixed columns based on status
+      const fixedColumns = [
+        { id: 'TE_DOEN', key: 'TE_DOEN', label: 'Te doen', order_idx: 0, wip_limit: null },
+        { id: 'BEZIG', key: 'BEZIG', label: 'Bezig', order_idx: 1, wip_limit: null },
+        { id: 'AFGEROND', key: 'AFGEROND', label: 'Afgerond', order_idx: 2, wip_limit: null },
+      ];
+      setColumns(fixedColumns);
+
+      // Fetch tasks
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
@@ -125,17 +133,6 @@ export function KanbanBoard({
 
       if (!userRole) return;
 
-      // Fetch board columns from database
-      const { data: columnsData, error: columnsError } = await supabase
-        .from('task_board_columns')
-        .select('*')
-        .eq('board_id', boardId)
-        .order('order_idx');
-
-      if (columnsError) throw columnsError;
-      setColumns((columnsData as any) || []);
-
-      // Fetch tasks
       const { data: tasksData, error: tasksError } = await supabase
         .from('kanban_tasks')
         .select('*')
@@ -173,7 +170,7 @@ export function KanbanBoard({
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
 
-    const oldColumnId = task.column_id;
+    const oldColumnId = task.status;
 
     // Check if we're moving to a different column
     if (oldColumnId === newColumnId) return;
@@ -184,7 +181,7 @@ export function KanbanBoard({
     // Optimistic update
     setTasks((current) =>
       current.map((t) =>
-        t.id === taskId ? { ...t, column_id: newColumnId } : t
+        t.id === taskId ? { ...t, status: newColumnId } : t
       )
     );
 
@@ -195,13 +192,13 @@ export function KanbanBoard({
       if (!user) throw new Error("Not authenticated");
 
       // Calculate new position (at the end)
-      const targetColumnTasks = tasks.filter(t => t.column_id === newColumnId);
+      const targetColumnTasks = tasks.filter(t => t.status === newColumnId);
       const newPosition = targetColumnTasks.length;
 
-      // Update task column_id
+      // Update task status based on column
       const { error } = await supabase
         .from('kanban_tasks')
-        .update({ column_id: newColumnId, position: newPosition })
+        .update({ status: newColumnId, position: newPosition })
         .eq('id', taskId);
 
       if (error) {
@@ -261,9 +258,9 @@ export function KanbanBoard({
     return true;
   });
 
-  // Organize tasks by column_id
+  // Organize tasks by status (which maps to columns)
   const tasksByColumn = filteredTasks.reduce((acc, task) => {
-    const columnId = task.column_id;
+    const columnId = task.status || 'TE_DOEN';
     if (!acc[columnId]) {
       acc[columnId] = [];
     }

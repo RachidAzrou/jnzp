@@ -18,7 +18,7 @@ interface Task {
   title: string;
   description: string | null;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
-  column_id: string;
+  status: string;
   auto_complete_trigger: string | null;
   assignee_id: string | null;
   labels: string[];

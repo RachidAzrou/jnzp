@@ -66,7 +66,7 @@ export default function FDIncomingRequests() {
     try {
       setLoading(true);
       
-      // Fetch dossier claims (FD requests) with dossier and family contact information
+      // Fetch only pending dossier claims (FD requests) with dossier and family contact information
       const { data, error } = await supabase
         .from("dossier_claims")
         .select(`
@@ -83,6 +83,7 @@ export default function FDIncomingRequests() {
             )
           )
         `)
+        .eq("status", "PENDING")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -222,8 +223,8 @@ export default function FDIncomingRequests() {
     );
   };
 
-  const pendingRequests = requests.filter((r) => r.status === "PENDING");
-  const processedRequests = requests.filter((r) => r.status !== "PENDING");
+  // All fetched requests are pending now
+  const pendingRequests = requests;
 
   if (loading) {
     return (
@@ -253,7 +254,7 @@ export default function FDIncomingRequests() {
       </div>
 
       {/* Pending Requests */}
-      {pendingRequests.length > 0 && (
+      {pendingRequests.length > 0 ? (
         <div className="space-y-3">
           <h2 className="text-lg sm:text-xl font-semibold">{t("fdRequests.newRequestsSection")}</h2>
           {pendingRequests.map((request) => (
@@ -342,32 +343,15 @@ export default function FDIncomingRequests() {
             </Card>
           ))}
         </div>
+      ) : (
+        <Card>
+          <CardContent className="pt-6 text-center text-muted-foreground">
+            <p className="text-sm sm:text-base">{t("fdRequests.noRequests")}</p>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Processed Requests */}
-      {processedRequests.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="text-lg sm:text-xl font-semibold">{t("fdRequests.processedRequestsSection")}</h2>
-          {processedRequests.map((request) => (
-            <Card key={request.id} className="opacity-60">
-              <CardHeader className="pb-3">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-                  <div>
-                    <CardTitle className="text-base sm:text-lg">
-                      {request.dossier.deceased_name}
-                    </CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">
-                      {t("fdRequests.dossier")} {request.dossier.display_id}
-                    </CardDescription>
-                  </div>
-                  {getStatusBadge(request.status)}
-                </div>
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
-      )}
-
+      {/* No longer show processed requests section */}
       {requests.length === 0 && (
         <Card>
           <CardContent className="pt-6 text-center text-muted-foreground">

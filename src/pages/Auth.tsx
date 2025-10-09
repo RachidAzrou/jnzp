@@ -236,25 +236,41 @@ const Auth = () => {
           user_agent: navigator.userAgent,
         });
 
-        // CRITICAL: Check if user's organization is approved BEFORE allowing access
-        const { data: roleData, error: roleError } = await supabase
+        // CRITICAL: Check if user has professional role
+        const { data: allRoles, error: rolesError } = await supabase
           .from("user_roles")
           .select("role, organization_id")
-          .eq("user_id", data.user.id)
-          .not('organization_id', 'is', null)
-          .order('role')
-          .limit(1)
-          .maybeSingle();
+          .eq("user_id", data.user.id);
 
-        if (roleError) {
-          console.error('[Auth] Error fetching user roles:', roleError);
+        if (rolesError) {
+          console.error('[Auth] Error fetching user roles:', rolesError);
         }
 
-        if (roleData?.organization_id) {
+        // Check if user has a professional role
+        const professionalRoles = ['funeral_director', 'org_admin', 'admin', 'platform_admin', 'mortuarium', 'mosque', 'insurer'];
+        const hasProfessionalRole = allRoles?.some(r => professionalRoles.includes(r.role));
+
+        if (hasProfessionalRole) {
+          // Professional users MUST have an organization_id
+          const roleWithOrg = allRoles?.find(r => r.organization_id !== null);
+          
+          if (!roleWithOrg) {
+            // Professional user has NO organization - block login
+            await supabase.auth.signOut();
+            toast({
+              title: t("auth.error.accountNotActive"),
+              description: "Uw organisatie registratie is nog niet voltooid. Neem contact op met support.",
+              variant: "destructive",
+            });
+            setLoading(false);
+            return;
+          }
+
+          // Check organization status
           const { data: orgData, error: orgError } = await supabase
             .from("organizations")
             .select("verification_status, name")
-            .eq("id", roleData.organization_id)
+            .eq("id", roleWithOrg.organization_id)
             .maybeSingle();
 
           if (orgError) {
@@ -291,7 +307,7 @@ const Auth = () => {
           }
         }
 
-        // Check if user requires 2FA AND has it enabled
+        // Check if user requires 2FA
         const { data: requires2FA } = await supabase.rpc('user_requires_2fa', {
           user_id: data.user.id
         });
@@ -336,6 +352,17 @@ const Auth = () => {
                 description: t("auth.loggedInTrustedDevice"),
               });
             }
+          } else {
+            // Professional user requires 2FA but hasn't set it up yet
+            // CRITICAL: Sign out and show error - they must setup 2FA first
+            await supabase.auth.signOut();
+            toast({
+              title: t("auth.error.twoFARequired"),
+              description: "U moet eerst twee-factor authenticatie instellen. Neem contact op met de beheerder.",
+              variant: "destructive",
+            });
+            setLoading(false);
+            return;
           }
         }
       }

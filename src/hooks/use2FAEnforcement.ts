@@ -36,6 +36,24 @@ export const use2FAEnforcement = () => {
         return;
       }
 
+      // CRITICAL: Check if user has organization_id before enforcing 2FA
+      // Users without approved organizations cannot use the app yet
+      const { data: userRoles } = await supabase
+        .from('user_roles')
+        .select('organization_id')
+        .eq('user_id', user.id)
+        .not('organization_id', 'is', null)
+        .limit(1)
+        .maybeSingle();
+
+      // If user has professional role but NO organization, they're pending approval
+      // Don't enforce 2FA setup - let AppGate handle this
+      if (!userRoles) {
+        console.log('[use2FAEnforcement] User has no organization - skipping 2FA enforcement');
+        setStatus({ ...status, loading: false });
+        return;
+      }
+
       // Check 2FA status
       const { data, error } = await supabase.rpc('user_2fa_status', {
         p_user_id: user.id
@@ -56,7 +74,8 @@ export const use2FAEnforcement = () => {
         loading: false,
       });
 
-      // Enforce 2FA setup for professionals
+      // Enforce 2FA setup for professionals - but DON'T logout
+      // Just redirect to settings page
       if (twoFAStatus.must_setup_2fa) {
         toast({
           title: '2FA vereist',

@@ -81,11 +81,23 @@ const Register = () => {
     }
   }, [navigate, searchParams, toast]);
 
+  // Map frontend role to backend org type
+  const mapRoleToOrgType = (role: UserRole): "FD" | "MOSQUE" | "MORTUARIUM" | "INSURER" => {
+    switch (role) {
+      case "funeral_director": return "FD";
+      case "mosque": return "MOSQUE";
+      case "wasplaats": return "MORTUARIUM";
+      case "insurer": return "INSURER";
+      default: return "FD";
+    }
+  };
+
   const handleProfessionalSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // 1) Create auth user
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -94,72 +106,69 @@ const Register = () => {
           data: {
             first_name: firstName,
             last_name: lastName,
-            phone: phone,
+            phone,
             role: selectedRole,
           },
         },
       });
-
+      
       if (error) throw error;
       if (!data.user) throw new Error("User creation failed");
 
-      const orgType = selectedRole === "funeral_director" ? "FUNERAL_DIRECTOR" : 
-                      selectedRole === "mosque" ? "MOSQUE" :
-                      selectedRole === "wasplaats" ? "WASPLAATS" : "INSURER";
+      const orgType = mapRoleToOrgType(selectedRole!);
+      const fullName = `${firstName} ${lastName}`.trim();
 
-      const { data: orgData, error: orgError } = await supabase
-        .from("organizations")
-        .insert([{
-          name: companyName,
+      // 2) Create organization + contact person via RPC
+      const { data: reg, error: regErr } = await supabase.rpc('fn_register_org_with_contact', {
+        p_org_type: orgType,
+        p_org_name: companyName,
+        p_contact_full_name: fullName,
+        p_contact_email: email,
+        p_kvk: businessNumber || null,
+        p_vat: null,
+        p_contact_phone: phone || null,
+        p_set_active: false
+      });
+      
+      if (regErr) throw regErr;
+      const { org_id } = reg as any;
+
+      // 3) Update organization with address and contact details
+      await supabase.from("organizations")
+        .update({
           company_name: companyName,
-          type: orgType as "FUNERAL_DIRECTOR" | "MOSQUE" | "MORTUARIUM" | "INSURER",
-          verification_status: "PENDING_VERIFICATION",
-          status: "pending",
-          business_number: businessNumber,
           address_street: addressStreet,
           address_city: addressCity,
           address_postcode: addressPostcode,
           address_country: addressCountry,
           contact_email: email,
           contact_phone: phone,
-          phone: phone,
           contact_first_name: firstName,
           contact_last_name: lastName,
-          language: language,
-          requested_by: data.user.id,
-        }])
-        .select()
-        .single();
+          language,
+        })
+        .eq("id", org_id);
 
-      if (orgError) throw orgError;
-
-      await supabase.from("user_roles").insert({
-        user_id: data.user.id,
-        role: "org_admin",
-        organization_id: orgData.id,
-        scope: "ORG",
+      // 4) Log registration action
+      await supabase.rpc("log_admin_action", {
+        p_action: "ORG_REGISTRATION_REQUEST",
+        p_target_type: "Organization",
+        p_target_id: org_id,
+        p_metadata: { org_type: orgType, email },
       });
-
-      if (orgData) {
-        await supabase.rpc("log_admin_action", {
-          p_action: "ORG_REGISTRATION_REQUEST",
-          p_target_type: "Organization",
-          p_target_id: orgData.id,
-          p_metadata: { org_type: orgType, email: email },
-        });
-      }
 
       toast({
-        title: t('register.requestSubmitted'),
-        description: t('register.requestSubmittedDescription'),
+        title: t("register.requestSubmitted"),
+        description: t("register.requestSubmittedDescription"),
       });
-
+      
       navigate("/auth");
     } catch (error: any) {
+      console.error("Registration error:", error);
       toast({
-        title: t('register.registrationFailed'),
-        description: error.message,
         variant: "destructive",
+        title: t("register.registrationFailed"),
+        description: error.message || t("register.errorDescription"),
       });
     } finally {
       setLoading(false);

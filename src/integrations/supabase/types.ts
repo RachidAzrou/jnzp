@@ -4129,6 +4129,19 @@ export type Database = {
         }
         Returns: undefined
       }
+      fn_register_org_with_contact: {
+        Args: {
+          p_contact_email: string
+          p_contact_full_name: string
+          p_contact_phone?: string
+          p_kvk?: string
+          p_org_name: string
+          p_org_type: string
+          p_set_active?: boolean
+          p_vat?: string
+        }
+        Returns: Json
+      }
       fn_release_legal_hold: {
         Args: { p_actor: string; p_dossier_id: string; p_reason: string }
         Returns: undefined

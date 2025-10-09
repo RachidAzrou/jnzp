@@ -83,14 +83,6 @@ export function AppSidebar() {
     { titleKey: "navigation.invoicesTitle", url: "/insurer/facturen", icon: Receipt, roles: ['insurer'] },
     { titleKey: "navigation.reporting", url: "/insurer/rapportage", icon: BarChart3, roles: ['insurer'] },
     
-    // Mortuarium
-    { titleKey: "navigation.dashboard", url: "/mortuarium", icon: LayoutDashboard, roles: ['mortuarium'] },
-    { titleKey: "navigation.coolCells", url: "/mortuarium/koelcellen", icon: CgSmartHomeRefrigerator, roles: ['mortuarium'] },
-    { titleKey: "navigation.adhocDossier", url: "/mortuarium/adhoc", icon: FolderOpen, roles: ['mortuarium'] },
-    { titleKey: "navigation.teamManagement", url: "/team", icon: Users, roles: ['mortuarium'], requireAdmin: true },
-    { titleKey: "navigation.facturatie", url: "/mortuarium/facturatie", icon: Receipt, roles: ['mortuarium'] },
-    { titleKey: "navigation.settings", url: "/instellingen", icon: Settings, roles: ['mortuarium'] },
-    
     // Mosque
     { titleKey: "navigation.dashboard", url: "/moskee", icon: LayoutDashboard, roles: ['mosque'] },
     { titleKey: "navigation.availability", url: "/moskee/beschikbaarheid", icon: Calendar, roles: ['mosque'] },

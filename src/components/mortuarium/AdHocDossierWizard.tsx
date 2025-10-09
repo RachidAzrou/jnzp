@@ -12,11 +12,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
-import { CalendarIcon, Loader2, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { CalendarIcon, Loader2, CheckCircle, ArrowLeft, ArrowRight, UserPlus, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { NewFDDialog } from "./NewFDDialog";
 
 interface CoolCell {
   id: string;
@@ -44,6 +46,7 @@ export function AdHocDossierWizard() {
   // Step 3: FD toewijzing (optioneel)
   const [assignFD, setAssignFD] = useState(false);
   const [selectedFDOrgId, setSelectedFDOrgId] = useState<string>("");
+  const [showNewFDDialog, setShowNewFDDialog] = useState(false);
 
   // Fetch current user's organization
   const { data: userOrg } = useQuery({
@@ -83,14 +86,15 @@ export function AdHocDossierWizard() {
     enabled: !!userOrg && reserveCoolCell,
   });
 
-  // Fetch FD organizations
+  // Fetch FD organizations (including provisional)
   const { data: fdOrganizations } = useQuery({
     queryKey: ["fd-organizations"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("organizations")
-        .select("id, name")
+        .select("id, name, provisional, verification_status")
         .eq("type", "FUNERAL_DIRECTOR")
+        .in("verification_status", ["PENDING", "ACTIVE"])
         .order("name");
 
       if (error) throw error;
@@ -177,9 +181,10 @@ export function AdHocDossierWizard() {
     },
   });
 
-  const canProceedStep1 = deceasedName.trim().length > 0;
+  const canProceedStep1 = deceasedName.trim().length > 2;
   const canProceedStep2 = !reserveCoolCell || (reserveCoolCell && selectedCoolCellId);
-  const canSubmit = canProceedStep1 && canProceedStep2;
+  const canProceedStep3 = !assignFD || (assignFD && selectedFDOrgId);
+  const canSubmit = canProceedStep1 && canProceedStep2 && canProceedStep3;
 
   const handleNext = () => {
     if (step === 1 && canProceedStep1) setStep(2);
@@ -191,7 +196,10 @@ export function AdHocDossierWizard() {
   };
 
   const handleSubmit = () => {
-    if (!canSubmit) return;
+    if (!canSubmit) {
+      toast.error("Vul alle verplichte velden correct in");
+      return;
+    }
     createDossierMutation.mutate();
   };
 
@@ -248,9 +256,15 @@ export function AdHocDossierWizard() {
                 id="deceased-name"
                 value={deceasedName}
                 onChange={(e) => setDeceasedName(e.target.value)}
-                placeholder="Volledige naam"
+                placeholder="Volledige naam (min. 3 karakters)"
                 required
+                minLength={3}
               />
+              {deceasedName.length > 0 && deceasedName.length < 3 && (
+                <p className="text-sm text-destructive">
+                  Voer minimaal 3 karakters in
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -465,37 +479,51 @@ export function AdHocDossierWizard() {
             </div>
 
             {assignFD && (
-              <div className="space-y-2">
-                <Label htmlFor="fd-org">Uitvaartondernemer</Label>
-                <Select value={selectedFDOrgId} onValueChange={setSelectedFDOrgId}>
-                  <SelectTrigger id="fd-org">
-                    <SelectValue placeholder="Selecteer een FD" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {fdOrganizations?.map((org) => (
-                      <SelectItem key={org.id} value={org.id}>
-                        {org.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="fd-org">Uitvaartondernemer</Label>
+                  <div className="flex gap-2">
+                    <Select value={selectedFDOrgId} onValueChange={setSelectedFDOrgId}>
+                      <SelectTrigger id="fd-org" className="flex-1">
+                        <SelectValue placeholder="Selecteer een FD" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fdOrganizations?.map((org) => (
+                          <SelectItem key={org.id} value={org.id}>
+                            {org.name}
+                            {org.provisional && " (Voorlopig)"}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowNewFDDialog(true)}
+                    >
+                      <UserPlus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  {fdOrganizations?.length === 0 && (
+                    <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        Geen FD-organisaties gevonden. Maak een nieuwe aan.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
 
-            <div className="bg-muted p-4 rounded-lg space-y-2">
-              <h4 className="font-medium text-sm">Samenvatting</h4>
-              <div className="text-sm space-y-1">
-                <p><span className="font-medium">Naam:</span> {deceasedName}</p>
-                <p><span className="font-medium">Ontvangst:</span> {format(receivedAt, "PPP HH:mm", { locale: nl })}</p>
-                {note && <p><span className="font-medium">Notitie:</span> {note}</p>}
-                {reserveCoolCell && selectedCoolCellId && (
-                  <p><span className="font-medium">Koelcel:</span> {coolCells?.find(c => c.id === selectedCoolCellId)?.label}</p>
+                {selectedFDOrgId && fdOrganizations?.find(o => o.id === selectedFDOrgId)?.provisional && (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Deze FD is voorlopig en moet nog geverifieerd worden door een admin.
+                    </AlertDescription>
+                  </Alert>
                 )}
-                {assignFD && selectedFDOrgId && (
-                  <p><span className="font-medium">FD:</span> {fdOrganizations?.find(o => o.id === selectedFDOrgId)?.name}</p>
-                )}
-              </div>
-            </div>
+              </>
+            )}
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={handleBack}>
@@ -509,7 +537,7 @@ export function AdHocDossierWizard() {
               {createDossierMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Aanmaken...
+                  Bezig...
                 </>
               ) : (
                 "Dossier aanmaken"
@@ -518,6 +546,16 @@ export function AdHocDossierWizard() {
           </CardFooter>
         </Card>
       )}
+
+      {/* New FD Dialog */}
+      <NewFDDialog
+        open={showNewFDDialog}
+        onOpenChange={setShowNewFDDialog}
+        onFDCreated={(fdOrgId) => {
+          setSelectedFDOrgId(fdOrgId);
+          setAssignFD(true);
+        }}
+      />
     </div>
   );
 }

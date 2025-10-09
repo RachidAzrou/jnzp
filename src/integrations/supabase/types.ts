@@ -962,6 +962,8 @@ export type Database = {
       }
       dossiers: {
         Row: {
+          adhoc_fd_org_id: string | null
+          adhoc_limited_access: boolean | null
           advisory_checks: Json | null
           assigned_fd_org_id: string | null
           assignment_status: string
@@ -977,6 +979,7 @@ export type Database = {
           id: string
           insurer_org_id: string | null
           internal_notes: string | null
+          is_adhoc: boolean | null
           legal_hold: boolean
           legal_hold_active: boolean
           legal_hold_authority: string | null
@@ -989,6 +992,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          adhoc_fd_org_id?: string | null
+          adhoc_limited_access?: boolean | null
           advisory_checks?: Json | null
           assigned_fd_org_id?: string | null
           assignment_status?: string
@@ -1004,6 +1009,7 @@ export type Database = {
           id?: string
           insurer_org_id?: string | null
           internal_notes?: string | null
+          is_adhoc?: boolean | null
           legal_hold?: boolean
           legal_hold_active?: boolean
           legal_hold_authority?: string | null
@@ -1016,6 +1022,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          adhoc_fd_org_id?: string | null
+          adhoc_limited_access?: boolean | null
           advisory_checks?: Json | null
           assigned_fd_org_id?: string | null
           assignment_status?: string
@@ -1031,6 +1039,7 @@ export type Database = {
           id?: string
           insurer_org_id?: string | null
           internal_notes?: string | null
+          is_adhoc?: boolean | null
           legal_hold?: boolean
           legal_hold_active?: boolean
           legal_hold_authority?: string | null
@@ -1043,6 +1052,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "dossiers_adhoc_fd_org_id_fkey"
+            columns: ["adhoc_fd_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "dossiers_assigned_fd_org_id_fkey"
             columns: ["assigned_fd_org_id"]
@@ -2664,6 +2680,7 @@ export type Database = {
           legal_name: string | null
           name: string
           postal_code: string | null
+          provisional: boolean | null
           registration_number: string | null
           rejection_reason: string | null
           requested_at: string | null
@@ -2703,6 +2720,7 @@ export type Database = {
           legal_name?: string | null
           name: string
           postal_code?: string | null
+          provisional?: boolean | null
           registration_number?: string | null
           rejection_reason?: string | null
           requested_at?: string | null
@@ -2742,6 +2760,7 @@ export type Database = {
           legal_name?: string | null
           name?: string
           postal_code?: string | null
+          provisional?: boolean | null
           registration_number?: string | null
           rejection_reason?: string | null
           requested_at?: string | null
@@ -4092,6 +4111,14 @@ export type Database = {
         Args: { p_org: string }
         Returns: Record<string, unknown>
       }
+      fn_invoice_mark_paid: {
+        Args: { p_invoice_id: string; p_note?: string }
+        Returns: undefined
+      }
+      fn_invoice_send: {
+        Args: { p_invoice_id: string; p_message?: string }
+        Returns: undefined
+      }
       fn_place_legal_hold: {
         Args: {
           p_actor: string
@@ -4383,6 +4410,7 @@ export type Database = {
         | "ADMIN"
         | "OTHER"
         | "MORTUARIUM"
+      org_ver_status: "PENDING" | "ACTIVE" | "REJECTED" | "REVIEW_REQUIRED"
       prayer_type: "FAJR" | "DHUHR" | "ASR" | "MAGHRIB" | "ISHA" | "JUMUAH"
       priority: "HIGH" | "MEDIUM" | "LOW"
       priority_source: "AUTO" | "MANUAL"
@@ -4616,6 +4644,7 @@ export const Constants = {
         "OTHER",
         "MORTUARIUM",
       ],
+      org_ver_status: ["PENDING", "ACTIVE", "REJECTED", "REVIEW_REQUIRED"],
       prayer_type: ["FAJR", "DHUHR", "ASR", "MAGHRIB", "ISHA", "JUMUAH"],
       priority: ["HIGH", "MEDIUM", "LOW"],
       priority_source: ["AUTO", "MANUAL"],

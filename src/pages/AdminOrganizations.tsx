@@ -1,275 +1,69 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, CheckCircle, XCircle, Building2 } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Building2, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { OrganizationVerificationCard } from "@/components/admin/OrganizationVerificationCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Organization {
   id: string;
   name: string;
   type: string;
   verification_status: string;
-  registration_number: string;
-  address: string;
-  city: string;
-  postal_code: string;
-  contact_email: string;
-  contact_phone: string;
-  requested_at: string;
-  requested_by: string | null;
+  provisional: boolean;
+  created_at: string;
+  contact_email?: string;
+  contact_phone?: string;
+  contact_first_name?: string;
+  contact_last_name?: string;
+  business_number?: string;
+  address_street?: string;
+  address_city?: string;
+  address_postcode?: string;
 }
 
-const AdminOrganizations = () => {
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
-  const [actionType, setActionType] = useState<"approve" | "reject" | null>(null);
-  const [rejectionReason, setRejectionReason] = useState("");
-  const [processing, setProcessing] = useState(false);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    fetchOrganizations();
-  }, []);
-
-  const fetchOrganizations = async () => {
-    try {
+export default function AdminOrganizations() {
+  const { data: organizations, isLoading } = useQuery({
+    queryKey: ["admin-organizations"],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from("organizations")
         .select("*")
-        .order("requested_at", { ascending: false });
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setOrganizations(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Fout bij laden",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+      return data as Organization[];
+    },
+  });
 
-  const handleApprove = async () => {
-    if (!selectedOrg) return;
-    setProcessing(true);
+  const pendingOrgs = organizations?.filter(o => o.verification_status === "PENDING") || [];
+  const reviewRequiredOrgs = organizations?.filter(o => o.verification_status === "REVIEW_REQUIRED") || [];
+  const activeOrgs = organizations?.filter(o => o.verification_status === "ACTIVE") || [];
+  const rejectedOrgs = organizations?.filter(o => o.verification_status === "REJECTED") || [];
 
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No authenticated user");
-
-      // Use admin function to approve organization
-      const { error: approveError } = await supabase.rpc('admin_approve_organization', {
-        p_org_id: selectedOrg.id,
-        p_admin_id: user.id,
-        p_approved: true
-      });
-
-      if (approveError) throw approveError;
-
-      await supabase.rpc("log_admin_action", {
-        p_action: "ORG_APPROVED",
-        p_target_type: "Organization",
-        p_target_id: selectedOrg.id,
-        p_metadata: { org_name: selectedOrg.name },
-      });
-
-      // Send email notification to the requester
-      if (selectedOrg.requested_by) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("first_name, id")
-          .eq("id", selectedOrg.requested_by)
-          .single();
-
-        const { data: { user: reqUser } } = await supabase.auth.admin.getUserById(selectedOrg.requested_by);
-
-        if (reqUser?.email && profile?.first_name) {
-          await supabase.functions.invoke('send-org-decision-email', {
-            body: {
-              email: reqUser.email,
-              firstName: profile.first_name,
-              organizationName: selectedOrg.name,
-              decision: 'approved',
-            },
-          });
-        }
-      }
-
-      toast({
-        title: "Organisatie goedgekeurd",
-        description: `${selectedOrg.name} is geactiveerd en aanvrager is per e-mail geïnformeerd.`,
-      });
-
-      fetchOrganizations();
-      setSelectedOrg(null);
-      setActionType(null);
-    } catch (error: any) {
-      toast({
-        title: "Fout bij goedkeuren",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleReject = async () => {
-    if (!selectedOrg || !rejectionReason.trim()) {
-      toast({
-        title: "Reden verplicht",
-        description: "Geef een reden op voor afwijzing",
-        variant: "destructive",
-      });
-      return;
-    }
-    setProcessing(true);
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No authenticated user");
-
-      // Use admin function to reject organization
-      const { error: rejectError } = await supabase.rpc('admin_approve_organization', {
-        p_org_id: selectedOrg.id,
-        p_admin_id: user.id,
-        p_approved: false
-      });
-
-      if (rejectError) throw rejectError;
-
-      // Update rejection reason separately
-      const { error: updateError } = await supabase
-        .from("organizations")
-        .update({ rejection_reason: rejectionReason })
-        .eq("id", selectedOrg.id);
-
-      if (updateError) throw updateError;
-
-      await supabase.rpc("log_admin_action", {
-        p_action: "ORG_REJECTED",
-        p_target_type: "Organization",
-        p_target_id: selectedOrg.id,
-        p_reason: rejectionReason,
-        p_metadata: { org_name: selectedOrg.name },
-      });
-
-      // Send email notification to the requester
-      if (selectedOrg.requested_by) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("first_name, id")
-          .eq("id", selectedOrg.requested_by)
-          .single();
-
-        const { data: { user: reqUser } } = await supabase.auth.admin.getUserById(selectedOrg.requested_by);
-
-        if (reqUser?.email && profile?.first_name) {
-          await supabase.functions.invoke('send-org-decision-email', {
-            body: {
-              email: reqUser.email,
-              firstName: profile.first_name,
-              organizationName: selectedOrg.name,
-              decision: 'rejected',
-              rejectionReason: rejectionReason,
-            },
-          });
-        }
-      }
-
-      toast({
-        title: "Organisatie afgewezen",
-        description: `${selectedOrg.name} is afgewezen en aanvrager is per e-mail geïnformeerd.`,
-      });
-
-      fetchOrganizations();
-      setSelectedOrg(null);
-      setActionType(null);
-      setRejectionReason("");
-    } catch (error: any) {
-      toast({
-        title: "Fout bij afwijzen",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleDeactivate = async (org: Organization) => {
-    try {
-      const { error } = await supabase
-        .from("organizations")
-        .update({ verification_status: "INACTIVE" })
-        .eq("id", org.id);
-
-      if (error) throw error;
-
-      await supabase.rpc("log_admin_action", {
-        p_action: "ORG_DEACTIVATED",
-        p_target_type: "Organization",
-        p_target_id: org.id,
-        p_metadata: { org_name: org.name },
-      });
-
-      toast({
-        title: "Organisatie gedeactiveerd",
-        description: `${org.name} is gedeactiveerd.`,
-      });
-
-      fetchOrganizations();
-    } catch (error: any) {
-      toast({
-        title: "Fout",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "PENDING_VERIFICATION":
-        return <Badge variant="outline" className="bg-yellow-50">In afwachting</Badge>;
-      case "ACTIVE":
-        return <Badge variant="outline" className="bg-green-50">Actief</Badge>;
-      case "INACTIVE":
-        return <Badge variant="outline" className="bg-gray-50">Inactief</Badge>;
-      case "REJECTED":
-        return <Badge variant="outline" className="bg-red-50">Afgewezen</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Organisaties</h1>
+          <p className="text-muted-foreground mt-2">
+            Beheer organisatie verificaties en activering
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-20 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
@@ -277,152 +71,160 @@ const AdminOrganizations = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold flex items-center gap-2">
-          <Building2 className="h-6 w-6" />
-          Organisatiebeheer
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">Beheer en controleer organisatieaanvragen</p>
+        <h1 className="text-3xl font-bold">Organisaties</h1>
+        <p className="text-muted-foreground mt-2">
+          Beheer organisatie verificaties en activering
+        </p>
       </div>
 
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Organisaties</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Organisatie</TableHead>
-                <TableHead className="font-medium text-sm">Type</TableHead>
-                <TableHead className="font-medium text-sm">Contact</TableHead>
-                <TableHead className="font-medium text-sm">Status</TableHead>
-                <TableHead className="font-medium text-sm">Aangevraagd</TableHead>
-                <TableHead className="font-medium text-sm">Acties</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {organizations.map((org) => (
-                <TableRow key={org.id} className="hover:bg-muted/30">
-                  <TableCell>
-                    <div>
-                      <div className="font-medium text-sm">{org.name}</div>
-                      <div className="text-xs text-muted-foreground font-mono">
-                        {org.registration_number}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm">{org.type}</TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div>{org.contact_email}</div>
-                      <div className="text-xs text-muted-foreground">{org.contact_phone}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(org.verification_status)}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {new Date(org.requested_at).toLocaleDateString("nl-NL")}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      {org.verification_status === "PENDING_VERIFICATION" && (
-                        <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedOrg(org);
-                              setActionType("approve");
-                            }}
-                          >
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Goedkeuren
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedOrg(org);
-                              setActionType("reject");
-                            }}
-                          >
-                            <XCircle className="h-4 w-4 mr-1" />
-                            Afwijzen
-                          </Button>
-                        </>
-                      )}
-                      {org.verification_status === "ACTIVE" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDeactivate(org)}
-                        >
-                          Deactiveren
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              In afwachting
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-amber-500" />
+              <span className="text-2xl font-bold">{pendingOrgs.length}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Extra info
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-blue-500" />
+              <span className="text-2xl font-bold">{reviewRequiredOrgs.length}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Actief
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-500" />
+              <span className="text-2xl font-bold">{activeOrgs.length}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Afgewezen
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <XCircle className="h-5 w-5 text-red-500" />
+              <span className="text-2xl font-bold">{rejectedOrgs.length}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tabs for different statuses */}
+      <Tabs defaultValue="pending" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="pending" className="gap-2">
+            <AlertCircle className="h-4 w-4" />
+            In afwachting ({pendingOrgs.length})
+          </TabsTrigger>
+          <TabsTrigger value="review" className="gap-2">
+            <AlertCircle className="h-4 w-4" />
+            Extra info ({reviewRequiredOrgs.length})
+          </TabsTrigger>
+          <TabsTrigger value="active" className="gap-2">
+            <CheckCircle className="h-4 w-4" />
+            Actief ({activeOrgs.length})
+          </TabsTrigger>
+          <TabsTrigger value="rejected" className="gap-2">
+            <XCircle className="h-4 w-4" />
+            Afgewezen ({rejectedOrgs.length})
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="pending" className="space-y-4">
+          {pendingOrgs.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-8 text-muted-foreground">
+                <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Geen organisaties in afwachting</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {pendingOrgs.map((org) => (
+                <OrganizationVerificationCard key={org.id} organization={org} />
               ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Dialog
-        open={actionType !== null}
-        onOpenChange={() => {
-          setActionType(null);
-          setSelectedOrg(null);
-          setRejectionReason("");
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {actionType === "approve" ? "Organisatie goedkeuren" : "Organisatie afwijzen"}
-            </DialogTitle>
-            <DialogDescription>
-              {selectedOrg?.name}
-            </DialogDescription>
-          </DialogHeader>
-
-          {actionType === "reject" && (
-            <div className="space-y-2">
-              <Label htmlFor="rejection-reason">Reden voor afwijzing</Label>
-              <Textarea
-                id="rejection-reason"
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Geef een duidelijke reden op..."
-                rows={4}
-              />
             </div>
           )}
+        </TabsContent>
 
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setActionType(null);
-                setSelectedOrg(null);
-                setRejectionReason("");
-              }}
-            >
-              Annuleren
-            </Button>
-            <Button
-              onClick={actionType === "approve" ? handleApprove : handleReject}
-              disabled={processing}
-              variant={actionType === "approve" ? "default" : "destructive"}
-            >
-              {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Bevestigen
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <TabsContent value="review" className="space-y-4">
+          {reviewRequiredOrgs.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-8 text-muted-foreground">
+                <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Geen organisaties met extra info aanvraag</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {reviewRequiredOrgs.map((org) => (
+                <OrganizationVerificationCard key={org.id} organization={org} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="active" className="space-y-4">
+          {activeOrgs.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-8 text-muted-foreground">
+                <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Geen actieve organisaties</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {activeOrgs.map((org) => (
+                <OrganizationVerificationCard key={org.id} organization={org} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="rejected" className="space-y-4">
+          {rejectedOrgs.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-8 text-muted-foreground">
+                <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Geen afgewezen organisaties</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {rejectedOrgs.map((org) => (
+                <OrganizationVerificationCard key={org.id} organization={org} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
-};
-
-export default AdminOrganizations;
+}

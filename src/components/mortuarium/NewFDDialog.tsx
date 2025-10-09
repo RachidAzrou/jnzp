@@ -33,14 +33,15 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
   const createFDMutation = useMutation({
     mutationFn: async () => {
       // Use the RPC function to create provisional FD
+      // Nieuwe parameter-volgorde: verplichte eerst, defaults aan einde
       const { data, error } = await supabase.rpc('fn_register_org_with_contact', {
         p_org_type: 'FD',
         p_org_name: fdName.trim(),
         p_contact_full_name: contactName.trim(),
         p_contact_email: contactEmail.trim(),
-        p_contact_phone: contactPhone.trim() || null,
         p_kvk: null,
         p_vat: null,
+        p_contact_phone: contactPhone.trim() || null,
         p_set_active: false // Provisional
       });
 

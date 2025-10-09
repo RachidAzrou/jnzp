@@ -119,6 +119,7 @@ const Register = () => {
       const fullName = `${firstName} ${lastName}`.trim();
 
       // 2) Create organization + contact person via RPC
+      // Nieuwe parameter-volgorde: verplichte eerst, defaults aan einde
       const { data: reg, error: regErr } = await supabase.rpc('fn_register_org_with_contact', {
         p_org_type: orgType,
         p_org_name: companyName,

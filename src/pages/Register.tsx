@@ -98,6 +98,9 @@ const Register = () => {
 
     try {
       // 1) Create auth user
+      // Map frontend role to app_role enum value
+      const appRole = selectedRole === "wasplaats" ? "mortuarium" : selectedRole;
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -107,7 +110,7 @@ const Register = () => {
             first_name: firstName,
             last_name: lastName,
             phone,
-            role: selectedRole,
+            role: appRole,
           },
         },
       });

@@ -1,571 +1,523 @@
 import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { CheckCircle2, ChevronLeft, ChevronRight, Loader2, Mail, QrCode, FolderOpen, Plus } from "lucide-react";
-import { createQRToken, generateQRCodeURL } from "@/utils/qrToken";
-import { NewFDDialog } from "./NewFDDialog";
-import { DatePicker } from "@/components/ui/date-picker";
-import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-
-type WizardStep = 1 | 2 | 3 | 4;
-
-interface DossierData {
-  deceasedName: string;
-  dateOfDeath: Date | undefined;
-  notes: string;
-}
-
-interface FDData {
-  mode: "new" | "existing";
-  existingFdOrgId?: string;
-  newFdOrgId?: string;
-}
-
-interface CoolCellAllocation {
-  coolCellId: string;
-  startAt: Date | undefined;
-  endAt: Date | undefined;
-  note: string;
-}
+import { nl } from "date-fns/locale";
+import { CalendarIcon, Loader2, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface CoolCell {
   id: string;
   label: string;
   status: string;
-  facility_org_id: string;
 }
 
 export function AdHocDossierWizard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [step, setStep] = useState<WizardStep>(1);
-  const [loading, setLoading] = useState(false);
-  const [createdDossierId, setCreatedDossierId] = useState<string>("");
-  const [qrUrl, setQrUrl] = useState<string>("");
+  const queryClient = useQueryClient();
+  const [step, setStep] = useState(1);
 
-  const [dossierData, setDossierData] = useState<DossierData>({
-    deceasedName: "",
-    dateOfDeath: new Date(),
-    notes: "",
-  });
+  // Step 1: Dossier basis info
+  const [deceasedName, setDeceasedName] = useState("");
+  const [receivedAt, setReceivedAt] = useState<Date>(new Date());
+  const [note, setNote] = useState("");
 
-  const [fdData, setFDData] = useState<FDData>({
-    mode: "existing",
-  });
-  
-  const [showNewFDDialog, setShowNewFDDialog] = useState(false);
-  const [mortuariumOrgId, setMortuariumOrgId] = useState<string>("");
-  const [mortuariumName, setMortuariumName] = useState<string>("");
+  // Step 2: Koelcel reservering (optioneel)
+  const [reserveCoolCell, setReserveCoolCell] = useState(false);
+  const [selectedCoolCellId, setSelectedCoolCellId] = useState<string>("");
+  const [startAt, setStartAt] = useState<Date>(new Date());
+  const [endAt, setEndAt] = useState<Date>(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)); // +7 dagen
 
-  const [coolCellData, setCoolCellData] = useState<CoolCellAllocation>({
-    coolCellId: "",
-    startAt: new Date(),
-    endAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    note: "",
-  });
+  // Step 3: FD toewijzing (optioneel)
+  const [assignFD, setAssignFD] = useState(false);
+  const [selectedFDOrgId, setSelectedFDOrgId] = useState<string>("");
 
-  const [availableCells, setAvailableCells] = useState<CoolCell[]>([]);
-  const [existingFDs, setExistingFDs] = useState<any[]>([]);
-
-  // Load available cool cells
-  const loadCoolCells = async () => {
-    const { data: userRoles } = await supabase
-      .from("user_roles")
-      .select("organization_id")
-      .eq("user_id", (await supabase.auth.getUser()).data.user?.id || "")
-      .single();
-
-    if (!userRoles) return;
-
-    const { data, error } = await supabase
-      .from("cool_cells")
-      .select("*")
-      .eq("facility_org_id", userRoles.organization_id)
-      .in("status", ["FREE", "RESERVED"]);
-
-    if (!error && data) {
-      setAvailableCells(data as any);
-    }
-  };
-
-  // Load existing FDs and mortuarium info
-  const loadExistingFDs = async () => {
-    // Get current user's org
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data: userRole } = await supabase
-      .from("user_roles")
-      .select("organization_id, organizations(id, name)")
-      .eq("user_id", user.id)
-      .single();
-
-    if (userRole?.organizations) {
-      setMortuariumOrgId(userRole.organization_id);
-      setMortuariumName((userRole.organizations as any).name);
-    }
-
-    // Load active FD organizations
-    const { data } = await supabase
-      .from("organizations")
-      .select("id, company_name, name, status")
-      .eq("type", "FUNERAL_DIRECTOR")
-      .eq("status", "active");
-
-    if (data) {
-      setExistingFDs(data as any);
-    }
-  };
-
-  // Check cool cell overlap
-  const checkCoolCellOverlap = async (): Promise<boolean> => {
-    if (!coolCellData.startAt || !coolCellData.endAt) {
-      toast.error("Selecteer start en eind datum/tijd");
-      return false;
-    }
-
-    const { data } = await supabase
-      .from("cool_cell_reservations")
-      .select("*")
-      .eq("cool_cell_id", coolCellData.coolCellId)
-      .or(`start_at.lte.${coolCellData.endAt.toISOString()},end_at.gte.${coolCellData.startAt.toISOString()}`);
-
-    if (data && data.length > 0) {
-      toast.error("Deze koelcel is al gereserveerd in het gekozen tijdsinterval");
-      return false;
-    }
-    return true;
-  };
-
-  // Generate temporary password
-  const generateTempPassword = (): string => {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%";
-    let password = "";
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return password;
-  };
-
-  const handleNext = async () => {
-    if (step === 1) {
-      if (!dossierData.deceasedName || !dossierData.dateOfDeath) {
-        toast.error("Vul alle verplichte velden in");
-        return;
-      }
-      await loadExistingFDs();
-      setStep(2);
-    } else if (step === 2) {
-      if (fdData.mode === "new" && !fdData.newFdOrgId) {
-        toast.error("Voeg eerst een nieuwe FD toe");
-        return;
-      }
-      if (fdData.mode === "existing" && !fdData.existingFdOrgId) {
-        toast.error("Selecteer een bestaande uitvaartondernemer");
-        return;
-      }
-      await loadCoolCells();
-      setStep(3);
-    } else if (step === 3) {
-      if (!coolCellData.coolCellId || !coolCellData.startAt || !coolCellData.endAt) {
-        toast.error("Vul alle verplichte velden in");
-        return;
-      }
-      if (coolCellData.startAt >= coolCellData.endAt) {
-        toast.error("Einddatum moet na startdatum liggen");
-        return;
-      }
-      const noOverlap = await checkCoolCellOverlap();
-      if (!noOverlap) return;
-      setStep(4);
-    }
-  };
-
-  const handleBack = () => {
-    if (step > 1) setStep((step - 1) as WizardStep);
-  };
-
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
+  // Fetch current user's organization
+  const { data: userOrg } = useQuery({
+    queryKey: ["user-org"],
+    queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
-      const { data: userRole } = await supabase
+      const { data, error } = await supabase
         .from("user_roles")
         .select("organization_id")
         .eq("user_id", user.id)
+        .eq("role", "mortuarium")
         .single();
 
-      if (!userRole) throw new Error("No organization found");
+      if (error) throw error;
+      return data.organization_id;
+    },
+  });
 
-      // Create dossier
+  // Fetch available cool cells
+  const { data: coolCells } = useQuery({
+    queryKey: ["cool-cells-available", userOrg],
+    queryFn: async () => {
+      if (!userOrg) return [];
+      
+      const { data, error } = await supabase
+        .from("cool_cells")
+        .select("*")
+        .eq("facility_org_id", userOrg)
+        .eq("status", "FREE")
+        .order("label");
+
+      if (error) throw error;
+      return data as CoolCell[];
+    },
+    enabled: !!userOrg && reserveCoolCell,
+  });
+
+  // Fetch FD organizations
+  const { data: fdOrganizations } = useQuery({
+    queryKey: ["fd-organizations"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("organizations")
+        .select("id, name")
+        .eq("type", "FUNERAL_DIRECTOR")
+        .order("name");
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: assignFD,
+  });
+
+  // Create ad-hoc dossier mutation
+  const createDossierMutation = useMutation({
+    mutationFn: async () => {
+      if (!userOrg) throw new Error("Organization not found");
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      // Create dossier manually
       const { data: dossier, error: dossierError } = await supabase
         .from("dossiers")
         .insert({
-          deceased_name: dossierData.deceasedName,
-          date_of_death: dossierData.dateOfDeath ? format(dossierData.dateOfDeath, "yyyy-MM-dd") : null,
-          internal_notes: dossierData.notes,
-          ref_number: `AD-${Date.now()}`,
+          deceased_name: deceasedName.trim(),
           flow: "LOC",
-          status: "CREATED",
+          status: "INTAKE_IN_PROGRESS",
+          assignment_status: "UNASSIGNED",
+          is_adhoc: true,
+          internal_notes: note.trim() || null,
+          ref_number: `ADHOC-${Date.now()}`,
         })
         .select()
         .single();
 
       if (dossierError) throw dossierError;
-      setCreatedDossierId(dossier.id);
 
-      // Link FD organization to dossier
-      const fdOrgId = fdData.mode === "new" ? fdData.newFdOrgId : fdData.existingFdOrgId;
-      
-      await supabase.from("dossiers").update({
-        assigned_fd_org_id: fdOrgId,
-      }).eq("id", dossier.id);
-
-      // Create cool cell reservation
-      await supabase.from("cool_cell_reservations").insert({
+      // Create dossier event for timeline
+      await supabase.from("dossier_events").insert({
         dossier_id: dossier.id,
-        cool_cell_id: coolCellData.coolCellId,
-        start_at: coolCellData.startAt?.toISOString(),
-        end_at: coolCellData.endAt?.toISOString(),
-        note: coolCellData.note,
-        facility_org_id: userRole.organization_id,
-        created_by_user_id: user.id,
-        status: "CONFIRMED",
+        event_type: "MORTUARY_INTAKE",
+        event_description: "Ad-hoc ontvangst mortuarium",
+        created_by: user.id,
+        metadata: {
+          note: note.trim() || null,
+          received_at: receivedAt.toISOString(),
+          facility_org_id: userOrg,
+        },
       });
 
-      // Generate QR code (reuse existing flow)
-      const qrToken = await createQRToken({
-        dossierId: dossier.id,
-        expiresInHours: 168, // 7 days
-        scopes: { basic_info: true, documents: true, status: true },
-      });
-
-      if (qrToken) {
-        const url = generateQRCodeURL(qrToken.token);
-        setQrUrl(url);
+      // If cool cell reservation is requested
+      if (reserveCoolCell && selectedCoolCellId) {
+        await supabase.from("cool_cell_reservations").insert({
+          dossier_id: dossier.id,
+          cool_cell_id: selectedCoolCellId,
+          facility_org_id: userOrg,
+          start_at: startAt.toISOString(),
+          end_at: endAt.toISOString(),
+          status: "PENDING",
+          created_by_user_id: user.id,
+        });
       }
 
-      toast.success("Ad-hoc dossier succesvol aangemaakt!");
-    } catch (error: any) {
-      console.error("Error creating ad-hoc dossier:", error);
-      toast.error(error.message || "Fout bij aanmaken van dossier");
-    } finally {
-      setLoading(false);
-    }
+      // If FD is assigned, update dossier
+      if (assignFD && selectedFDOrgId) {
+        await supabase
+          .from("dossiers")
+          .update({
+            adhoc_fd_org_id: selectedFDOrgId,
+            assignment_status: "ASSIGNED",
+          })
+          .eq("id", dossier.id);
+      }
+
+      return dossier.id;
+    },
+    onSuccess: (dossierId) => {
+      toast.success("Ad-hoc dossier succesvol aangemaakt");
+      queryClient.invalidateQueries({ queryKey: ["mortuarium-dossiers"] });
+      queryClient.invalidateQueries({ queryKey: ["cool-cells"] });
+      queryClient.invalidateQueries({ queryKey: ["cool-cell-reservations"] });
+      
+      // Navigate to dossier detail
+      navigate(`/dossier/${dossierId}`);
+    },
+    onError: (error: any) => {
+      toast.error("Fout bij aanmaken dossier: " + error.message);
+    },
+  });
+
+  const canProceedStep1 = deceasedName.trim().length > 0;
+  const canProceedStep2 = !reserveCoolCell || (reserveCoolCell && selectedCoolCellId);
+  const canSubmit = canProceedStep1 && canProceedStep2;
+
+  const handleNext = () => {
+    if (step === 1 && canProceedStep1) setStep(2);
+    else if (step === 2 && canProceedStep2) setStep(3);
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="deceasedName">Naam overledene *</Label>
-              <Input
-                id="deceasedName"
-                value={dossierData.deceasedName}
-                onChange={(e) => setDossierData({ ...dossierData, deceasedName: e.target.value })}
-                placeholder="Volledige naam"
-              />
-            </div>
-            <div>
-              <Label>Overlijdensdatum *</Label>
-              <DatePicker
-                date={dossierData.dateOfDeath}
-                onSelect={(date) => setDossierData({ ...dossierData, dateOfDeath: date })}
-                placeholder="Selecteer overlijdensdatum"
-                disabled={(date) => date > new Date()}
-              />
-            </div>
-            <div>
-              <Label htmlFor="notes">Notities</Label>
-              <Textarea
-                id="notes"
-                value={dossierData.notes}
-                onChange={(e) => setDossierData({ ...dossierData, notes: e.target.value })}
-                placeholder="Extra informatie..."
-                rows={3}
-              />
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="space-y-4">
-            <RadioGroup value={fdData.mode} onValueChange={(v) => setFDData({ ...fdData, mode: v as any })}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="new" id="new" />
-                <Label htmlFor="new">Nieuwe uitvaartondernemer aanmaken</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="existing" id="existing" />
-                <Label htmlFor="existing">Bestaande uitvaartondernemer selecteren</Label>
-              </div>
-            </RadioGroup>
-
-            {fdData.mode === "new" ? (
-              <div className="space-y-3">
-                {fdData.newFdOrgId ? (
-                  <div className="p-4 bg-muted rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Nieuwe FD toegevoegd</p>
-                        <p className="text-sm text-muted-foreground">
-                          Uitnodiging verstuurd naar de FD
-                        </p>
-                        <Badge variant="secondary" className="mt-2">In afwachting van goedkeuring</Badge>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setFDData({ ...fdData, newFdOrgId: undefined })}
-                      >
-                        Wijzigen
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setShowNewFDDialog(true)}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nieuwe FD toevoegen
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div>
-                <Label>Selecteer uitvaartondernemer *</Label>
-                <RadioGroup value={fdData.existingFdOrgId} onValueChange={(v) => setFDData({ ...fdData, existingFdOrgId: v })}>
-                  <div className="grid gap-2">
-                    {existingFDs.map((org: any) => (
-                      <div key={org.id} className="flex items-center space-x-2 p-3 border rounded hover:bg-accent">
-                        <RadioGroupItem value={org.id} id={org.id} />
-                        <Label htmlFor={org.id} className="flex-1 cursor-pointer">
-                          <span className="font-medium">{org.company_name || org.name}</span>
-                          <Badge variant="default" className="ml-2">Actief</Badge>
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </RadioGroup>
-                {existingFDs.length === 0 && (
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Geen actieve uitvaartondernemers gevonden. Maak een nieuwe aan.
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label>Selecteer koelcel *</Label>
-              <RadioGroup value={coolCellData.coolCellId} onValueChange={(v) => setCoolCellData({ ...coolCellData, coolCellId: v })}>
-                <div className="grid gap-2">
-                  {availableCells.map((cell) => (
-                    <div key={cell.id} className="flex items-center space-x-2 p-3 border rounded hover:bg-accent">
-                      <RadioGroupItem value={cell.id} id={cell.id} />
-                      <Label htmlFor={cell.id} className="flex-1 cursor-pointer">
-                        <span className="font-medium">{cell.label}</span>
-                        <Badge variant={cell.status === "FREE" ? "default" : "secondary"} className="ml-2">
-                          {cell.status === "FREE" ? "Vrij" : "Gereserveerd"}
-                        </Badge>
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </RadioGroup>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Start datum/tijd *</Label>
-                <DateTimePicker
-                  date={coolCellData.startAt}
-                  onSelect={(date) => setCoolCellData({ ...coolCellData, startAt: date })}
-                  placeholder="Selecteer start"
-                />
-              </div>
-              <div>
-                <Label>Eind datum/tijd *</Label>
-                <DateTimePicker
-                  date={coolCellData.endAt}
-                  onSelect={(date) => setCoolCellData({ ...coolCellData, endAt: date })}
-                  placeholder="Selecteer einde"
-                  disabled={(date) => coolCellData.startAt ? date < coolCellData.startAt : false}
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="cellNote">Notities</Label>
-              <Textarea
-                id="cellNote"
-                value={coolCellData.note}
-                onChange={(e) => setCoolCellData({ ...coolCellData, note: e.target.value })}
-                placeholder="Extra informatie over de reservering..."
-                rows={2}
-              />
-            </div>
-          </div>
-        );
-
-      case 4:
-        return (
-          <div className="space-y-6">
-            <div className="bg-muted p-4 rounded-lg space-y-3">
-              <h3 className="font-semibold">Dossier</h3>
-              <div className="text-sm space-y-1">
-                <p><span className="text-muted-foreground">Naam:</span> {dossierData.deceasedName}</p>
-                <p><span className="text-muted-foreground">Overlijdensdatum:</span> {dossierData.dateOfDeath ? format(dossierData.dateOfDeath, "PPP", { locale: require("date-fns/locale/nl").nl }) : "-"}</p>
-                {dossierData.notes && <p><span className="text-muted-foreground">Notities:</span> {dossierData.notes}</p>}
-              </div>
-            </div>
-
-            <div className="bg-muted p-4 rounded-lg space-y-3">
-              <h3 className="font-semibold">Uitvaartondernemer</h3>
-              <div className="text-sm space-y-1">
-                {fdData.mode === "new" ? (
-                  <>
-                    <p><span className="text-muted-foreground">Status:</span> Nieuwe FD (in afwachting goedkeuring)</p>
-                    <Badge variant="secondary">Pending</Badge>
-                  </>
-                ) : (
-                  <p><span className="text-muted-foreground">Organisatie:</span> {existingFDs.find(f => f.id === fdData.existingFdOrgId)?.company_name || existingFDs.find(f => f.id === fdData.existingFdOrgId)?.name}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="bg-muted p-4 rounded-lg space-y-3">
-              <h3 className="font-semibold">Koelcel</h3>
-              <div className="text-sm space-y-1">
-                <p><span className="text-muted-foreground">Label:</span> {availableCells.find(c => c.id === coolCellData.coolCellId)?.label}</p>
-                <p><span className="text-muted-foreground">Periode:</span> {coolCellData.startAt && coolCellData.endAt ? `${format(coolCellData.startAt, "PPP 'om' HH:mm", { locale: require("date-fns/locale/nl").nl })} - ${format(coolCellData.endAt, "PPP 'om' HH:mm", { locale: require("date-fns/locale/nl").nl })}` : "-"}</p>
-              </div>
-            </div>
-
-            {createdDossierId && (
-              <div className="flex flex-col gap-3 pt-4 border-t">
-                <Button variant="outline" onClick={async () => {
-                  if (fdData.mode === "new") {
-                    toast.info("Uitnodigingsmail wordt verzonden...");
-                  }
-                }}>
-                  <Mail className="h-4 w-4 mr-2" />
-                  Verstuur uitnodiging
-                </Button>
-                
-                {qrUrl && (
-                  <Button variant="outline" onClick={() => window.open(qrUrl, "_blank")}>
-                    <QrCode className="h-4 w-4 mr-2" />
-                    Genereer QR
-                  </Button>
-                )}
-
-                <Button onClick={() => navigate(`/dossiers/${createdDossierId}`)}>
-                  <FolderOpen className="h-4 w-4 mr-2" />
-                  Open dossier
-                </Button>
-              </div>
-            )}
-          </div>
-        );
-    }
+  const handleBack = () => {
+    if (step > 1) setStep(step - 1);
   };
 
-  const steps = [
-    { number: 1, label: "Dossier" },
-    { number: 2, label: "FD" },
-    { number: 3, label: "Koelcel" },
-    { number: 4, label: "Bevestig" },
-  ];
+  const handleSubmit = () => {
+    if (!canSubmit) return;
+    createDossierMutation.mutate();
+  };
 
   return (
-    <>
-      <Card className="max-w-3xl mx-auto p-6">
-        {/* Progress indicator */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            {steps.map((s, idx) => (
-              <div key={s.number} className="flex items-center flex-1">
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                      step >= s.number
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground"
-                    }`}
+    <div className="max-w-3xl mx-auto space-y-6">
+      {/* Progress indicator */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center space-x-2">
+          <div className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
+            step >= 1 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          )}>
+            {step > 1 ? <CheckCircle className="h-5 w-5" /> : "1"}
+          </div>
+          <span className="text-sm font-medium">Basis informatie</span>
+        </div>
+        <div className="flex-1 h-0.5 bg-muted mx-4" />
+        <div className="flex items-center space-x-2">
+          <div className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
+            step >= 2 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          )}>
+            {step > 2 ? <CheckCircle className="h-5 w-5" /> : "2"}
+          </div>
+          <span className="text-sm font-medium">Koelcel</span>
+        </div>
+        <div className="flex-1 h-0.5 bg-muted mx-4" />
+        <div className="flex items-center space-x-2">
+          <div className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
+            step >= 3 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          )}>
+            3
+          </div>
+          <span className="text-sm font-medium">FD Toewijzing</span>
+        </div>
+      </div>
+
+      {/* Step 1: Basis informatie */}
+      {step === 1 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Basis informatie</CardTitle>
+            <CardDescription>
+              Voer de basisgegevens in van de overledene
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="deceased-name">
+                Naam overledene <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="deceased-name"
+                value={deceasedName}
+                onChange={(e) => setDeceasedName(e.target.value)}
+                placeholder="Volledige naam"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>
+                Ontvangst datum/tijd <span className="text-destructive">*</span>
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !receivedAt && "text-muted-foreground"
+                    )}
                   >
-                    {step > s.number ? <CheckCircle2 className="h-5 w-5" /> : s.number}
-                  </div>
-                  <span className="text-xs mt-2 font-medium">{s.label}</span>
-                </div>
-                {idx < steps.length - 1 && (
-                  <div
-                    className={`flex-1 h-0.5 mx-2 ${
-                      step > s.number ? "bg-primary" : "bg-muted"
-                    }`}
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {receivedAt ? format(receivedAt, "PPP HH:mm", { locale: nl }) : "Selecteer datum"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={receivedAt}
+                    onSelect={(date) => date && setReceivedAt(date)}
+                    locale={nl}
                   />
+                  <div className="p-3 border-t">
+                    <Input
+                      type="time"
+                      value={format(receivedAt, "HH:mm")}
+                      onChange={(e) => {
+                        const [hours, minutes] = e.target.value.split(":");
+                        const newDate = new Date(receivedAt);
+                        newDate.setHours(parseInt(hours), parseInt(minutes));
+                        setReceivedAt(newDate);
+                      }}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="note">Notities</Label>
+              <Textarea
+                id="note"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Aanvullende informatie, bijzonderheden, etc."
+                rows={4}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button
+              onClick={handleNext}
+              disabled={!canProceedStep1}
+            >
+              Volgende
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
+
+      {/* Step 2: Koelcel reservering */}
+      {step === 2 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Koelcel reservering</CardTitle>
+            <CardDescription>
+              Reserveer optioneel direct een koelcel
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="reserve-cell"
+                checked={reserveCoolCell}
+                onCheckedChange={(checked) => setReserveCoolCell(checked as boolean)}
+              />
+              <Label htmlFor="reserve-cell" className="font-normal cursor-pointer">
+                Reserveer koelcel
+              </Label>
+            </div>
+
+            {reserveCoolCell && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="cool-cell">
+                    Koelcel <span className="text-destructive">*</span>
+                  </Label>
+                  <Select value={selectedCoolCellId} onValueChange={setSelectedCoolCellId}>
+                    <SelectTrigger id="cool-cell">
+                      <SelectValue placeholder="Selecteer een koelcel" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {coolCells?.map((cell) => (
+                        <SelectItem key={cell.id} value={cell.id}>
+                          {cell.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {coolCells?.length === 0 && (
+                    <p className="text-sm text-muted-foreground">
+                      Geen vrije koelcellen beschikbaar
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Start datum/tijd</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {format(startAt, "PPP HH:mm", { locale: nl })}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={startAt}
+                          onSelect={(date) => date && setStartAt(date)}
+                          locale={nl}
+                        />
+                        <div className="p-3 border-t">
+                          <Input
+                            type="time"
+                            value={format(startAt, "HH:mm")}
+                            onChange={(e) => {
+                              const [hours, minutes] = e.target.value.split(":");
+                              const newDate = new Date(startAt);
+                              newDate.setHours(parseInt(hours), parseInt(minutes));
+                              setStartAt(newDate);
+                            }}
+                          />
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Eind datum/tijd</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {format(endAt, "PPP HH:mm", { locale: nl })}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={endAt}
+                          onSelect={(date) => date && setEndAt(date)}
+                          locale={nl}
+                        />
+                        <div className="p-3 border-t">
+                          <Input
+                            type="time"
+                            value={format(endAt, "HH:mm")}
+                            onChange={(e) => {
+                              const [hours, minutes] = e.target.value.split(":");
+                              const newDate = new Date(endAt);
+                              newDate.setHours(parseInt(hours), parseInt(minutes));
+                              setEndAt(newDate);
+                            }}
+                          />
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+              </>
+            )}
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline" onClick={handleBack}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Vorige
+            </Button>
+            <Button onClick={handleNext} disabled={!canProceedStep2}>
+              Volgende
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
+
+      {/* Step 3: FD Toewijzing */}
+      {step === 3 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>FD Toewijzing</CardTitle>
+            <CardDescription>
+              Wijs optioneel direct een uitvaartondernemer toe
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="assign-fd"
+                checked={assignFD}
+                onCheckedChange={(checked) => setAssignFD(checked as boolean)}
+              />
+              <Label htmlFor="assign-fd" className="font-normal cursor-pointer">
+                Wijs FD toe
+              </Label>
+            </div>
+
+            {assignFD && (
+              <div className="space-y-2">
+                <Label htmlFor="fd-org">Uitvaartondernemer</Label>
+                <Select value={selectedFDOrgId} onValueChange={setSelectedFDOrgId}>
+                  <SelectTrigger id="fd-org">
+                    <SelectValue placeholder="Selecteer een FD" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fdOrganizations?.map((org) => (
+                      <SelectItem key={org.id} value={org.id}>
+                        {org.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="bg-muted p-4 rounded-lg space-y-2">
+              <h4 className="font-medium text-sm">Samenvatting</h4>
+              <div className="text-sm space-y-1">
+                <p><span className="font-medium">Naam:</span> {deceasedName}</p>
+                <p><span className="font-medium">Ontvangst:</span> {format(receivedAt, "PPP HH:mm", { locale: nl })}</p>
+                {note && <p><span className="font-medium">Notitie:</span> {note}</p>}
+                {reserveCoolCell && selectedCoolCellId && (
+                  <p><span className="font-medium">Koelcel:</span> {coolCells?.find(c => c.id === selectedCoolCellId)?.label}</p>
+                )}
+                {assignFD && selectedFDOrgId && (
+                  <p><span className="font-medium">FD:</span> {fdOrganizations?.find(o => o.id === selectedFDOrgId)?.name}</p>
                 )}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Step content */}
-        <div className="mb-6">{renderStep()}</div>
-
-        {/* Navigation */}
-        <div className="flex justify-between pt-4 border-t">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={step === 1 || loading || !!createdDossierId}
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Terug
-          </Button>
-
-          {step < 4 ? (
-            <Button onClick={handleNext} disabled={loading}>
-              Volgende
-              <ChevronRight className="h-4 w-4 ml-2" />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline" onClick={handleBack}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Vorige
             </Button>
-          ) : (
-            <Button onClick={handleSubmit} disabled={loading || !!createdDossierId}>
-              {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Bevestigen & Aanmaken
+            <Button
+              onClick={handleSubmit}
+              disabled={!canSubmit || createDossierMutation.isPending}
+            >
+              {createDossierMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Aanmaken...
+                </>
+              ) : (
+                "Dossier aanmaken"
+              )}
             </Button>
-          )}
-        </div>
-      </Card>
-
-      <NewFDDialog
-        open={showNewFDDialog}
-        onOpenChange={setShowNewFDDialog}
-        onSuccess={(orgId) => {
-          setFDData({ ...fdData, newFdOrgId: orgId });
-          toast.success("Nieuwe FD succesvol toegevoegd!");
-        }}
-        mortuariumOrgId={mortuariumOrgId}
-        mortuariumName={mortuariumName}
-        dossierRef={dossierData.deceasedName || "AD-HOC"}
-      />
-    </>
+          </CardFooter>
+        </Card>
+      )}
+    </div>
   );
 }

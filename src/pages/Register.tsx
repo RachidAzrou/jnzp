@@ -124,13 +124,12 @@ const Register = () => {
         {
           p_user_id: data.user.id,
           p_org_type: orgType,
-          p_org_name: companyName,
+          p_company_name: companyName,
           p_contact_first_name: firstName,
           p_contact_last_name: lastName,
-          p_contact_email: email,
+          p_phone: phone || null,
+          p_email: email,
           p_business_number: businessNumber || null,
-          p_vat_number: null,
-          p_contact_phone: phone || null,
           p_set_active: false,
         }
       );

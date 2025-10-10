@@ -42,16 +42,15 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
       const tempUserId = crypto.randomUUID();
 
       const { data, error } = await supabase.rpc('fn_register_org_with_contact', {
-        p_user_id: tempUserId,
         p_org_type: 'FD',
-        p_org_name: fdName.trim(),
+        p_company_name: fdName.trim(),
+        p_business_number: null,
+        p_email: contactEmail.trim(),
         p_contact_first_name: firstName,
         p_contact_last_name: lastName,
-        p_contact_email: contactEmail.trim(),
-        p_business_number: null,
-        p_vat_number: null,
-        p_contact_phone: contactPhone.trim() || null,
-        p_set_active: false // Provisional
+        p_user_id: tempUserId,
+        p_phone: contactPhone.trim() || null,
+        p_set_active: false
       });
 
       if (error) throw error;

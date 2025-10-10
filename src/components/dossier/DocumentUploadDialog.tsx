@@ -89,16 +89,12 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
       return;
     }
 
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from("dossier-documents")
-      .getPublicUrl(fileName);
-
+    // Store file path only - signed URLs will be generated on-demand for security
     // Create document record
     const { error: dbError } = await supabase.from("documents").insert({
       doc_type: docType as any,
       file_name: file.name,
-      file_url: publicUrl,
+      file_url: fileName, // Store path, not public URL
       uploaded_by: userId,
       status: "IN_REVIEW",
     } as any);

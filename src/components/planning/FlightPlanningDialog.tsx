@@ -153,9 +153,7 @@ export function FlightPlanningDialog({ open, onOpenChange, onSuccess }: FlightPl
           continue;
         }
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('flight-attachments')
-          .getPublicUrl(fileName);
+        // Store file path only - signed URLs will be generated on-demand for security
 
         // Save attachment record
         await supabase
@@ -163,7 +161,7 @@ export function FlightPlanningDialog({ open, onOpenChange, onSuccess }: FlightPl
           .insert({
             repatriation_id: repatriation.id,
             file_name: attachment.file.name,
-            file_url: publicUrl,
+            file_url: fileName, // Store path, not public URL
             file_size: attachment.file.size,
             uploaded_by: user.id
           });

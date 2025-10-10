@@ -58,9 +58,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('dossier-documents')
-        .getPublicUrl(filePath);
+      // Store file path only - signed URLs will be generated on-demand for security
 
       // Create external invoice record
       const { error: insertError } = await supabase
@@ -70,7 +68,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
           fd_org_id: userRole.organization_id,
           facility_org_id: userRole.organization_id,
           is_external: true,
-          external_file_url: publicUrl,
+          external_file_url: filePath, // Store path, not public URL
           external_file_name: file.name,
           uploaded_by: user.id,
           status,

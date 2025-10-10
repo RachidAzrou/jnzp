@@ -369,16 +369,14 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
       return;
     }
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('documents')
-      .getPublicUrl(filePath);
+    // Store file path only - signed URLs will be generated on-demand for security
 
     try {
       const { error: dbError } = await (supabase as any)
         .from('task_attachments')
         .insert({
           task_id: task.id,
-          file_url: publicUrl,
+          file_url: filePath, // Store path, not public URL
           file_name: file.name,
           file_size: file.size,
           uploaded_by: user.id,

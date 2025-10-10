@@ -106,17 +106,13 @@ export function DocumentUploadDialog({
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from("dossier-documents")
-        .getPublicUrl(filePath);
-
+      // Store file path only - signed URLs will be generated on-demand for security
       // Create document record
       const { data: session } = await supabase.auth.getSession();
       const { error: dbError } = await supabase.from("documents").insert([{
         dossier_id: selectedDossier,
         doc_type: selectedType as any,
-        file_url: publicUrl,
+        file_url: filePath, // Store path, not public URL
         file_name: file.name,
         status: "IN_REVIEW" as any,
         uploaded_by: session.session?.user.id

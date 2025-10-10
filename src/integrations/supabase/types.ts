@@ -4145,10 +4145,10 @@ export type Database = {
       fn_register_org_with_contact: {
         Args: {
           p_business_number?: string
-          p_company_name: string
           p_contact_first_name?: string
           p_contact_last_name?: string
           p_email?: string
+          p_org_name: string
           p_org_type: string
           p_phone?: string
           p_set_active?: boolean

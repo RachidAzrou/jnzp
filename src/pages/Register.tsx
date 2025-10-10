@@ -125,13 +125,13 @@ const Register = () => {
         "fn_register_org_with_contact",
         {
           p_org_type: orgType,
-          p_company_name: companyName,
-          p_business_number: businessNumber || null,
-          p_contact_first_name: firstName,
-          p_contact_last_name: lastName,
-          p_phone: phone || null,
-          p_email: email,
-          p_user_id: data.user.id, // Echte user ID van auth.users
+          p_company_name: companyName.trim(),
+          p_business_number: businessNumber.trim() || null,
+          p_contact_first_name: firstName.trim(),
+          p_contact_last_name: lastName.trim(),
+          p_phone: phone.trim() || null,
+          p_email: email.trim(),
+          p_user_id: data.user.id,
           p_set_active: false,
         }
       );

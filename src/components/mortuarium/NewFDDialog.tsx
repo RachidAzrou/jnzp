@@ -33,14 +33,23 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
   const createFDMutation = useMutation({
     mutationFn: async () => {
       // Use the RPC function to create provisional FD
-      // Nieuwe parameter-volgorde: verplichte eerst, defaults aan einde
+      // Split contact name into first and last name
+      const nameParts = contactName.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      // Create a temporary user ID for this FD (will be replaced when they sign up)
+      const tempUserId = crypto.randomUUID();
+
       const { data, error } = await supabase.rpc('fn_register_org_with_contact', {
+        p_user_id: tempUserId,
         p_org_type: 'FD',
         p_org_name: fdName.trim(),
-        p_contact_full_name: contactName.trim(),
+        p_contact_first_name: firstName,
+        p_contact_last_name: lastName,
         p_contact_email: contactEmail.trim(),
-        p_kvk: null,
-        p_vat: null,
+        p_business_number: null,
+        p_vat_number: null,
         p_contact_phone: contactPhone.trim() || null,
         p_set_active: false // Provisional
       });

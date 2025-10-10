@@ -118,7 +118,7 @@ const Register = () => {
       // 2. Get organization type
       const orgType = mapRoleToOrgType(selectedRole!);
 
-      // 3. Validate required fields before RPC call
+      // 3. Build and validate payload
       const payload = {
         p_org_type: orgType,
         p_company_name: companyName.trim(),
@@ -131,20 +131,22 @@ const Register = () => {
         p_set_active: false,
       };
 
-      // Validate required fields
-      const missingFields = [];
-      if (!payload.p_org_type) missingFields.push('org_type');
-      if (!payload.p_company_name) missingFields.push('company_name');
-      if (!payload.p_contact_first_name) missingFields.push('contact_first_name');
-      if (!payload.p_contact_last_name) missingFields.push('contact_last_name');
-      if (!payload.p_email) missingFields.push('email');
-      if (!payload.p_user_id) missingFields.push('user_id');
+      // Client-side validation
+      const requiredFields = [
+        'p_org_type', 'p_company_name', 'p_contact_first_name', 
+        'p_contact_last_name', 'p_email', 'p_user_id'
+      ];
+      const missingFields = requiredFields.filter(
+        key => !payload[key as keyof typeof payload] || 
+               String(payload[key as keyof typeof payload]).trim() === ''
+      );
 
       if (missingFields.length > 0) {
-        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+        console.error('❌ Missing required fields:', missingFields);
+        throw new Error(`Ontbrekende verplichte velden: ${missingFields.join(', ')}`);
       }
 
-      console.log('🔧 Calling fn_register_org_with_contact with payload:', payload);
+      console.log('🔧 RPC payload voor fn_register_org_with_contact:', JSON.stringify(payload, null, 2));
       
       const { data: orgData, error: orgError } = await supabase.rpc(
         "fn_register_org_with_contact",

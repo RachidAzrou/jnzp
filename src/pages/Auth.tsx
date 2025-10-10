@@ -246,28 +246,22 @@ const Auth = () => {
           console.error('[Auth] Error fetching user roles:', rolesError);
         }
 
-        // Check if user has a professional role
-        const professionalRoles = ['funeral_director', 'org_admin', 'admin', 'platform_admin', 'mortuarium', 'mosque', 'insurer'];
-        const hasProfessionalRole = allRoles?.some(r => professionalRoles.includes(r.role));
+        // Check if user has professional scope (ORG) - these users MUST have organization_id
+        const hasProfessionalScope = allRoles?.some(r => r.scope === 'ORG');
         
         // Check if user is platform_admin (no organization required)
         const isPlatformAdmin = allRoles?.some(r => r.role === 'platform_admin');
 
-        if (hasProfessionalRole && !isPlatformAdmin) {
-          // Professional users (NOT platform_admin) MUST have an organization_id
+        if (hasProfessionalScope && !isPlatformAdmin) {
+          // Professional users (scope='ORG', NOT platform_admin) MUST have an organization_id
           const roleWithOrg = allRoles?.find(r => r.organization_id !== null);
           
           if (!roleWithOrg) {
-            // Check if user has scope='ORG' (professional) - incomplete registration
-            const hasOrgScope = allRoles?.some(r => r.scope === 'ORG');
-            
-            // Professional user has NO organization - block login
+            // Professional user (scope='ORG') has NO organization - incomplete registration
             await supabase.auth.signOut();
             toast({
-              title: hasOrgScope ? "Registratie Incompleet" : t("auth.error.accountNotActive"),
-              description: hasOrgScope 
-                ? "Uw registratie is niet compleet. Neem contact op met support." 
-                : "Uw organisatie registratie is nog niet voltooid. Neem contact op met support.",
+              title: "Registratie Incompleet",
+              description: "Uw registratie is niet compleet. Neem contact op met support.",
               variant: "destructive",
             });
             setLoading(false);

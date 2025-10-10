@@ -46,6 +46,28 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
       return;
     }
 
+    // Client-side validation
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    
+    if (file.size > MAX_FILE_SIZE) {
+      toast({
+        title: "Bestand te groot",
+        description: "Het bestand mag maximaal 10MB zijn",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      toast({
+        title: "Ongeldig bestandstype",
+        description: "Alleen PDF, JPG, PNG, DOC en DOCX bestanden zijn toegestaan",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setUploading(true);
     const userId = (await supabase.auth.getUser()).data.user?.id;
     

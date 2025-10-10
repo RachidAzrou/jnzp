@@ -122,7 +122,15 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // 1. Create auth user with Supabase
+      // 1. Valideer business_number afhankelijk van rol
+      const orgType = mapRoleToOrgType(selectedRole!);
+      const requiresBusinessNumber = ["INSURER", "FUNERAL_DIRECTOR", "MORTUARIUM"].includes(orgType);
+      
+      if (requiresBusinessNumber && !businessNumber.trim()) {
+        throw new Error("Ondernemingsnummer is verplicht voor deze organisatietype.");
+      }
+
+      // 2. Create auth user with Supabase
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -138,9 +146,9 @@ const Register = () => {
       });
 
       if (error) throw error;
-      if (!data.user) throw new Error("User creation failed");
+      if (!data.user) throw new Error("Gebruiker kon niet worden aangemaakt.");
 
-      // 2. Verify session and get user_id
+      // 3. Verify session and get user_id
       const { data: sessionData } = await supabase.auth.getSession();
       const userId = sessionData?.session?.user?.id || data.user.id;
       
@@ -148,25 +156,22 @@ const Register = () => {
         throw new Error("Geen gebruikerssessie beschikbaar. Probeer opnieuw.");
       }
 
-      // 3. Get organization type
-      const orgType = mapRoleToOrgType(selectedRole!);
-
-      // 4. Build and validate payload - exacte parameter namen zoals DB functie verwacht
+      // 4. Build payload - exacte parameter mapping
       const payload = {
         p_org_type: orgType,
-        p_company_name: companyName.trim(),
+        p_org_name: companyName.trim(),
         p_business_number: businessNumber.trim() || null,
         p_contact_first_name: firstName.trim(),
         p_contact_last_name: lastName.trim(),
-        p_phone: phone.trim() || null,
         p_email: email.trim(),
-        p_user_id: userId,  // ← essentieel voor user_roles.user_id
+        p_phone: phone.trim() || null,
+        p_user_id: userId,
         p_set_active: false,
       };
 
-      // Client-side validation
+      // 5. Client-side validation van verplichte velden
       const requiredFields = [
-        'p_org_type', 'p_company_name', 'p_contact_first_name', 
+        'p_org_type', 'p_org_name', 'p_contact_first_name', 
         'p_contact_last_name', 'p_email', 'p_user_id'
       ];
       const missingFields = requiredFields.filter(
@@ -175,26 +180,19 @@ const Register = () => {
       );
 
       if (missingFields.length > 0) {
-        console.error('❌ Missing required fields:', missingFields);
+        console.error('❌ Ontbrekende verplichte velden:', missingFields);
         throw new Error(`Ontbrekende verplichte velden: ${missingFields.join(', ')}`);
       }
 
-      // Debug: zie exact wat je naar Postgres stuurt
-      console.table(payload);
-      console.log('📋 Payload controle:', {
-        'Lege/undefined waarden': Object.entries(payload)
-          .filter(([_, v]) => !v || (typeof v === 'string' && v.trim() === ''))
-          .map(([k]) => k),
-        'p_org_name (MOET NIET LEEG ZIJN!)': payload.p_company_name
-      });
+      console.log('📤 Registratie payload:', payload);
       
-      // Gebruik strikte RPC wrapper
+      // 6. Roep RPC aan
       const orgData = await rpcStrict(
         "fn_register_org_with_contact",
         payload
       ) as { organization_id: string; user_id: string; role: string };
       
-      console.log('✅ Organization created successfully:', orgData);
+      console.log('✅ Organisatie aangemaakt:', orgData);
 
       const organizationId = orgData.organization_id;
 
@@ -483,15 +481,25 @@ const Register = () => {
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="business-number" className="text-sm">{t('register.businessNumber')}</Label>
+                        <Label htmlFor="business-number" className="text-sm">
+                          {t('register.businessNumber')}
+                          {selectedRole === "mosque" && (
+                            <span className="text-muted-foreground text-xs ml-1">(optioneel)</span>
+                          )}
+                        </Label>
                         <Input
                           id="business-number"
                           value={businessNumber}
                           onChange={(e) => setBusinessNumber(e.target.value)}
-                          placeholder={t('register.registrationNumberPlaceholder')}
-                          required
+                          placeholder={selectedRole === "mosque" ? "Optioneel" : "BE 0123.456.789 of 0123456789"}
+                          required={selectedRole !== "mosque"}
                           className="h-10"
                         />
+                        {selectedRole !== "mosque" && (
+                          <p className="text-xs text-muted-foreground">
+                            KBO/BTW-nummer verplicht
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="address-street" className="text-sm">{t('register.addressStreet')}</Label>
@@ -530,7 +538,13 @@ const Register = () => {
 
                   <Button
                     onClick={() => setDetailsSubStep("contact")}
-                    disabled={!companyName || !businessNumber || !addressStreet || !addressCity || !addressPostcode}
+                    disabled={
+                      !companyName || 
+                      !addressStreet || 
+                      !addressCity || 
+                      !addressPostcode ||
+                      (selectedRole !== "mosque" && !businessNumber)
+                    }
                     className="w-full h-10 mt-4"
                   >
                     {t('register.nextStep')}

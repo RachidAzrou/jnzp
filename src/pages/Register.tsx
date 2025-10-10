@@ -92,6 +92,31 @@ const Register = () => {
     }
   };
 
+  // Strikte RPC wrapper met volledige error logging
+  async function rpcStrict(name: string, params: Record<string, any>) {
+    console.log('📤 RPC →', name, params);
+    const { data, error } = await supabase.rpc(name as any, params);
+    if (error) {
+      // Supabase-js error object goed leesbaar maken:
+      const printable = {
+        code: error.code,
+        message: error.message,
+        details: (error as any).details,
+        hint: (error as any).hint,
+        status: (error as any).status
+      };
+      console.error('🛑 RPC error:', printable);
+      console.dir(error, { depth: null }); // Safety: volledige error
+      throw new Error(
+        printable.message ||
+        printable.details ||
+        'Onbekende RPC-fout'
+      );
+    }
+    console.log('✅ RPC OK:', data);
+    return data;
+  }
+
   const handleProfessionalSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -155,32 +180,15 @@ const Register = () => {
         'p_org_name (MOET NIET LEEG ZIJN!)': payload.p_company_name
       });
       
-      const { data: orgData, error: orgError } = await supabase.rpc(
+      // Gebruik strikte RPC wrapper
+      const orgData = await rpcStrict(
         "fn_register_org_with_contact",
         payload
-      );
-
-      if (orgError) {
-        console.error('❌ fn_register_org_with_contact error:', orgError);
-        
-        // Better error messages
-        if (orgError.message.includes('violates check constraint')) {
-          throw new Error(
-            'Organisatie type is ongeldig. Neem contact op met support.'
-          );
-        }
-        if (orgError.message.includes('user_id')) {
-          throw new Error(
-            'Probleem met gebruikersaccount. Probeer opnieuw of neem contact op met support.'
-          );
-        }
-        throw orgError;
-      }
+      ) as { organization_id: string; user_id: string; role: string };
       
       console.log('✅ Organization created successfully:', orgData);
 
-      const result = orgData as { org_id: string; user_id: string; already_existed: boolean };
-      const organizationId = result.org_id;
+      const organizationId = orgData.organization_id;
 
       // Verify user_roles was created with correct scope and organization_id
       const { data: roleCheck, error: roleError } = await supabase

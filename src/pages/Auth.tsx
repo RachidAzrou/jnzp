@@ -356,15 +356,27 @@ const Auth = () => {
             }
           } else {
             // Professional user requires 2FA but hasn't set it up yet
-            // CRITICAL: Sign out and show error - they must setup 2FA first
-            await supabase.auth.signOut();
-            toast({
-              title: t("auth.error.twoFARequired"),
-              description: "U moet eerst twee-factor authenticatie instellen. Neem contact op met de beheerder.",
-              variant: "destructive",
-            });
-            setLoading(false);
-            return;
+            // Check if this is a platform admin - they can setup 2FA themselves
+            if (isPlatformAdmin) {
+              // Platform admin: allow login and redirect to 2FA setup
+              toast({
+                title: "2FA Setup Vereist",
+                description: "U moet twee-factor authenticatie instellen voor uw account.",
+                variant: "default",
+              });
+              navigate("/instellingen?setup2fa=true");
+              return;
+            } else {
+              // Other professional users: block and require admin assistance
+              await supabase.auth.signOut();
+              toast({
+                title: t("auth.error.twoFARequired"),
+                description: "U moet eerst twee-factor authenticatie instellen. Neem contact op met de beheerder.",
+                variant: "destructive",
+              });
+              setLoading(false);
+              return;
+            }
           }
         }
       }

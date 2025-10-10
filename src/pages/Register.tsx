@@ -118,22 +118,37 @@ const Register = () => {
       // 2. Get organization type
       const orgType = mapRoleToOrgType(selectedRole!);
 
-      // 3. Create organization and link user (FINAL FIX - NO DELETE!)
-      console.log('🔧 Calling fn_register_org_with_contact with user_id:', data.user.id);
+      // 3. Validate required fields before RPC call
+      const payload = {
+        p_org_type: orgType,
+        p_company_name: companyName.trim(),
+        p_business_number: businessNumber.trim() || null,
+        p_contact_first_name: firstName.trim(),
+        p_contact_last_name: lastName.trim(),
+        p_phone: phone.trim() || null,
+        p_email: email.trim(),
+        p_user_id: data.user.id,
+        p_set_active: false,
+      };
+
+      // Validate required fields
+      const missingFields = [];
+      if (!payload.p_org_type) missingFields.push('org_type');
+      if (!payload.p_company_name) missingFields.push('company_name');
+      if (!payload.p_contact_first_name) missingFields.push('contact_first_name');
+      if (!payload.p_contact_last_name) missingFields.push('contact_last_name');
+      if (!payload.p_email) missingFields.push('email');
+      if (!payload.p_user_id) missingFields.push('user_id');
+
+      if (missingFields.length > 0) {
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+
+      console.log('🔧 Calling fn_register_org_with_contact with payload:', payload);
       
       const { data: orgData, error: orgError } = await supabase.rpc(
         "fn_register_org_with_contact",
-        {
-          p_org_type: orgType,
-          p_company_name: companyName.trim(),
-          p_business_number: businessNumber.trim() || null,
-          p_contact_first_name: firstName.trim(),
-          p_contact_last_name: lastName.trim(),
-          p_phone: phone.trim() || null,
-          p_email: email.trim(),
-          p_user_id: data.user.id,
-          p_set_active: false,
-        }
+        payload
       );
 
       if (orgError) {

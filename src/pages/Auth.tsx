@@ -239,7 +239,7 @@ const Auth = () => {
         // CRITICAL: Check if user has professional role
         const { data: allRoles, error: rolesError } = await supabase
           .from("user_roles")
-          .select("role, organization_id")
+          .select("role, organization_id, scope")
           .eq("user_id", data.user.id);
 
         if (rolesError) {
@@ -258,11 +258,16 @@ const Auth = () => {
           const roleWithOrg = allRoles?.find(r => r.organization_id !== null);
           
           if (!roleWithOrg) {
+            // Check if user has scope='ORG' (professional) - incomplete registration
+            const hasOrgScope = allRoles?.some(r => r.scope === 'ORG');
+            
             // Professional user has NO organization - block login
             await supabase.auth.signOut();
             toast({
-              title: t("auth.error.accountNotActive"),
-              description: "Uw organisatie registratie is nog niet voltooid. Neem contact op met support.",
+              title: hasOrgScope ? "Registratie Incompleet" : t("auth.error.accountNotActive"),
+              description: hasOrgScope 
+                ? "Uw registratie is niet compleet. Neem contact op met support." 
+                : "Uw organisatie registratie is nog niet voltooid. Neem contact op met support.",
               variant: "destructive",
             });
             setLoading(false);

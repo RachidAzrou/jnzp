@@ -135,10 +135,37 @@ const Register = () => {
         }
       );
 
-      if (orgError) throw orgError;
+      if (orgError) {
+        // Better error messages for constraint violations
+        if (orgError.message.includes('violates check constraint')) {
+          throw new Error(
+            'Organisatie type is ongeldig. Neem contact op met support.'
+          );
+        }
+        throw orgError;
+      }
 
       const result = orgData as { org_id: string; user_id: string; already_existed: boolean };
       const organizationId = result.org_id;
+
+      // Verify user_roles was created with correct scope and organization_id
+      const { data: roleCheck, error: roleError } = await supabase
+        .from('user_roles')
+        .select('id, scope, organization_id')
+        .eq('user_id', data.user.id)
+        .maybeSingle();
+
+      if (roleError || !roleCheck) {
+        throw new Error(
+          'Registratie is niet compleet. Probeer opnieuw of neem contact op met support.'
+        );
+      }
+
+      if (roleCheck.scope !== 'ORG' || !roleCheck.organization_id) {
+        throw new Error(
+          'Registratie is niet correct voltooid. Neem contact op met support.'
+        );
+      }
 
       // 4. Update organization with additional details
       const { error: updateError } = await supabase

@@ -53,12 +53,11 @@ export const AppGate = ({ children }: AppGateProps) => {
       console.log('[AppGate] Session found for user:', session.user.id);
 
       try {
-        // Get all professional roles for this user that have an organization
+        // Get all professional roles for this user
         const { data: userRoles, error } = await supabase
           .from('user_roles')
-          .select('organization_id')
-          .eq('user_id', session.user.id)
-          .not('organization_id', 'is', null);
+          .select('organization_id, scope')
+          .eq('user_id', session.user.id);
 
         if (error) {
           console.error('[AppGate] Error fetching user roles:', error);
@@ -66,10 +65,19 @@ export const AppGate = ({ children }: AppGateProps) => {
           return;
         }
 
-        console.log('[AppGate] Found roles with org:', userRoles?.length || 0);
+        console.log('[AppGate] Found user roles:', userRoles?.length || 0);
+
+        // Check for incomplete professional registrations (scope='ORG' but organization_id IS NULL)
+        const incompleteRole = userRoles?.find(r => r.scope === 'ORG' && !r.organization_id);
+        if (incompleteRole) {
+          console.log('[AppGate] ❌ Incomplete registration detected - signing out');
+          await supabase.auth.signOut();
+          navigate('/auth');
+          return;
+        }
 
         // If user has any professional role with organization, check that org
-        const professionalRole = userRoles?.[0];
+        const professionalRole = userRoles?.find(r => r.scope === 'ORG' && r.organization_id);
 
         if (!professionalRole?.organization_id) {
           console.log('[AppGate] No professional role with org - allowing access');

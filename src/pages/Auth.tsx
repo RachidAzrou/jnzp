@@ -249,9 +249,12 @@ const Auth = () => {
         // Check if user has a professional role
         const professionalRoles = ['funeral_director', 'org_admin', 'admin', 'platform_admin', 'mortuarium', 'mosque', 'insurer'];
         const hasProfessionalRole = allRoles?.some(r => professionalRoles.includes(r.role));
+        
+        // Check if user is platform_admin (no organization required)
+        const isPlatformAdmin = allRoles?.some(r => r.role === 'platform_admin');
 
-        if (hasProfessionalRole) {
-          // Professional users MUST have an organization_id
+        if (hasProfessionalRole && !isPlatformAdmin) {
+          // Professional users (NOT platform_admin) MUST have an organization_id
           const roleWithOrg = allRoles?.find(r => r.organization_id !== null);
           
           if (!roleWithOrg) {

@@ -38,17 +38,20 @@ export const use2FAEnforcement = () => {
 
       // CRITICAL: Check if user has organization_id before enforcing 2FA
       // Users without approved organizations cannot use the app yet
+      // EXCEPT: platform_admin users (scope=PLATFORM) don't need organization_id
       const { data: userRoles } = await supabase
         .from('user_roles')
-        .select('organization_id')
+        .select('organization_id, scope, role')
         .eq('user_id', user.id)
-        .not('organization_id', 'is', null)
-        .limit(1)
         .maybeSingle();
+
+      // Check if this is a platform admin (they don't need organization_id)
+      const isPlatformAdmin = userRoles?.role === 'platform_admin' || userRoles?.scope === 'PLATFORM';
 
       // If user has professional role but NO organization, they're pending approval
       // Don't enforce 2FA setup - let AppGate handle this
-      if (!userRoles) {
+      // EXCEPT for platform_admin who don't need an organization
+      if (!isPlatformAdmin && !userRoles?.organization_id) {
         console.log('[use2FAEnforcement] User has no organization - skipping 2FA enforcement');
         setStatus({ ...status, loading: false });
         return;

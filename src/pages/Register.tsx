@@ -140,10 +140,18 @@ const Register = () => {
       if (error) throw error;
       if (!data.user) throw new Error("User creation failed");
 
-      // 2. Get organization type
+      // 2. Verify session and get user_id
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData?.session?.user?.id || data.user.id;
+      
+      if (!userId) {
+        throw new Error("Geen gebruikerssessie beschikbaar. Probeer opnieuw.");
+      }
+
+      // 3. Get organization type
       const orgType = mapRoleToOrgType(selectedRole!);
 
-      // 3. Build and validate payload
+      // 4. Build and validate payload - exacte parameter namen zoals DB functie verwacht
       const payload = {
         p_org_type: orgType,
         p_company_name: companyName.trim(),
@@ -152,7 +160,7 @@ const Register = () => {
         p_contact_last_name: lastName.trim(),
         p_phone: phone.trim() || null,
         p_email: email.trim(),
-        p_user_id: data.user.id,
+        p_user_id: userId,  // ← essentieel voor user_roles.user_id
         p_set_active: false,
       };
 

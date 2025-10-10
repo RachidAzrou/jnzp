@@ -118,18 +118,18 @@ const Register = () => {
       // 2. Get organization type
       const orgType = mapRoleToOrgType(selectedRole!);
 
-      // 3. Create organization and link user
+      // 3. Create organization and link user (correcte parameter volgorde!)
       const { data: orgData, error: orgError } = await supabase.rpc(
         "fn_register_org_with_contact",
         {
           p_user_id: data.user.id,
           p_org_type: orgType,
           p_org_name: companyName,
+          p_business_number: businessNumber || null,
+          p_vat_number: null,
           p_contact_first_name: firstName,
           p_contact_last_name: lastName,
           p_contact_email: email,
-          p_business_number: businessNumber || null,
-          p_vat_number: null,
           p_contact_phone: phone || null,
           p_set_active: false,
         }

@@ -118,7 +118,9 @@ const Register = () => {
       // 2. Get organization type
       const orgType = mapRoleToOrgType(selectedRole!);
 
-      // 3. Create organization and link user (UNIFIED FUNCTIE!)
+      // 3. Create organization and link user (FINAL FIX - NO DELETE!)
+      console.log('🔧 Calling fn_register_org_with_contact with user_id:', data.user.id);
+      
       const { data: orgData, error: orgError } = await supabase.rpc(
         "fn_register_org_with_contact",
         {
@@ -129,20 +131,29 @@ const Register = () => {
           p_contact_last_name: lastName,
           p_phone: phone || null,
           p_email: email,
-          p_user_id: data.user.id,
+          p_user_id: data.user.id, // Echte user ID van auth.users
           p_set_active: false,
         }
       );
 
       if (orgError) {
-        // Better error messages for constraint violations
+        console.error('❌ fn_register_org_with_contact error:', orgError);
+        
+        // Better error messages
         if (orgError.message.includes('violates check constraint')) {
           throw new Error(
             'Organisatie type is ongeldig. Neem contact op met support.'
           );
         }
+        if (orgError.message.includes('user_id')) {
+          throw new Error(
+            'Probleem met gebruikersaccount. Probeer opnieuw of neem contact op met support.'
+          );
+        }
         throw orgError;
       }
+      
+      console.log('✅ Organization created successfully:', orgData);
 
       const result = orgData as { org_id: string; user_id: string; already_existed: boolean };
       const organizationId = result.org_id;

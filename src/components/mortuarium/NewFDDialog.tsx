@@ -32,15 +32,42 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
 
   const createFDMutation = useMutation({
     mutationFn: async () => {
-      // Use the RPC function to create provisional FD
+      // BELANGRIJK: Voor provisional FDs moeten we eerst een auth user aanmaken
       // Split contact name into first and last name
       const nameParts = contactName.trim().split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
 
-      // Create a temporary user ID for this FD (will be replaced when they sign up)
-      const tempUserId = crypto.randomUUID();
+      // 1. Maak eerst een echte auth user aan met tijdelijk wachtwoord
+      const tempPassword = crypto.randomUUID(); // Random password
+      
+      console.log('🔧 Creating provisional FD user for:', contactEmail.trim());
+      
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: contactEmail.trim(),
+        password: tempPassword,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            phone: contactPhone.trim(),
+          },
+        },
+      });
 
+      if (authError) {
+        console.error('❌ Auth signup error:', authError);
+        throw authError;
+      }
+      
+      if (!authData.user) {
+        throw new Error('User creation failed');
+      }
+
+      console.log('✅ Provisional user created:', authData.user.id);
+
+      // 2. Nu organization aanmaken met echte user_id
       const { data, error } = await supabase.rpc('fn_register_org_with_contact', {
         p_org_type: 'FD',
         p_company_name: fdName.trim(),
@@ -48,12 +75,17 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
         p_email: contactEmail.trim(),
         p_contact_first_name: firstName,
         p_contact_last_name: lastName,
-        p_user_id: tempUserId,
+        p_user_id: authData.user.id, // ECHTE user_id
         p_phone: contactPhone.trim() || null,
         p_set_active: false
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ fn_register_org_with_contact error:', error);
+        throw error;
+      }
+      
+      console.log('✅ Provisional FD organization created');
       return data as { org_id: string; user_id: string };
     },
     onSuccess: (data) => {

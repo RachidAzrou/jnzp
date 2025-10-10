@@ -4154,7 +4154,7 @@ export type Database = {
           p_set_active?: boolean
           p_user_id?: string
         }
-        Returns: Json
+        Returns: string
       }
       fn_release_legal_hold: {
         Args: { p_actor: string; p_dossier_id: string; p_reason: string }

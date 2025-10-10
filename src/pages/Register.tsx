@@ -186,15 +186,13 @@ const Register = () => {
 
       console.log('📤 Registratie payload:', payload);
       
-      // 6. Roep RPC aan
-      const orgData = await rpcStrict(
+      // 6. Roep RPC aan - functie retourneert nu direct een UUID
+      const organizationId = await rpcStrict(
         "fn_register_org_with_contact",
         payload
-      ) as { organization_id: string; user_id: string; role: string };
+      ) as string;
       
-      console.log('✅ Organisatie aangemaakt:', orgData);
-
-      const organizationId = orgData.organization_id;
+      console.log('✅ Organisatie aangemaakt:', organizationId);
 
       // Verify user_roles was created with correct scope and organization_id
       const { data: roleCheck, error: roleError } = await supabase

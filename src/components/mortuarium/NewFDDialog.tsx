@@ -68,9 +68,9 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
       console.log('✅ Provisional user created:', authData.user.id);
 
       // 2. Nu organization aanmaken met echte user_id
-      const { data, error } = await supabase.rpc('fn_register_org_with_contact', {
-        p_org_type: 'FD',
-        p_company_name: fdName.trim(),
+      const { data: orgId, error } = await supabase.rpc('fn_register_org_with_contact', {
+        p_org_type: 'FUNERAL_DIRECTOR',
+        p_org_name: fdName.trim(),
         p_business_number: null,
         p_email: contactEmail.trim(),
         p_contact_first_name: firstName,
@@ -85,13 +85,17 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
         throw error;
       }
       
-      console.log('✅ Provisional FD organization created');
-      return data as { org_id: string; user_id: string };
+      if (!orgId) {
+        throw new Error('Organization creation returned no ID');
+      }
+      
+      console.log('✅ Provisional FD organization created:', orgId);
+      return orgId as string;
     },
-    onSuccess: (data) => {
+    onSuccess: (orgId) => {
       toast.success("Voorlopige FD succesvol aangemaakt");
       queryClient.invalidateQueries({ queryKey: ["fd-organizations"] });
-      onFDCreated(data.org_id);
+      onFDCreated(orgId);
       handleClose();
     },
     onError: (error: any) => {

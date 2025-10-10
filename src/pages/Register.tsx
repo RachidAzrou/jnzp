@@ -146,7 +146,14 @@ const Register = () => {
         throw new Error(`Ontbrekende verplichte velden: ${missingFields.join(', ')}`);
       }
 
-      console.log('🔧 RPC payload voor fn_register_org_with_contact:', JSON.stringify(payload, null, 2));
+      // Debug: zie exact wat je naar Postgres stuurt
+      console.table(payload);
+      console.log('📋 Payload controle:', {
+        'Lege/undefined waarden': Object.entries(payload)
+          .filter(([_, v]) => !v || (typeof v === 'string' && v.trim() === ''))
+          .map(([k]) => k),
+        'p_org_name (MOET NIET LEEG ZIJN!)': payload.p_company_name
+      });
       
       const { data: orgData, error: orgError } = await supabase.rpc(
         "fn_register_org_with_contact",

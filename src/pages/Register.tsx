@@ -97,10 +97,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // 1) Create auth user
-      // Map frontend role to app_role enum value
-      const appRole = selectedRole === "wasplaats" ? "mortuarium" : selectedRole;
-      
+      // 1. Create auth user with Supabase
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -110,55 +107,62 @@ const Register = () => {
             first_name: firstName,
             last_name: lastName,
             phone,
-            role: appRole,
+            role: selectedRole,
           },
         },
       });
-      
+
       if (error) throw error;
       if (!data.user) throw new Error("User creation failed");
 
+      // 2. Get organization type
       const orgType = mapRoleToOrgType(selectedRole!);
-      const fullName = `${firstName} ${lastName}`.trim();
 
-      // 2) Create organization + contact person via RPC
-      // Nieuwe parameter-volgorde: verplichte eerst, defaults aan einde
-      const { data: reg, error: regErr } = await supabase.rpc('fn_register_org_with_contact', {
-        p_org_type: orgType,
-        p_org_name: companyName,
-        p_contact_full_name: fullName,
-        p_contact_email: email,
-        p_kvk: businessNumber || null,
-        p_vat: null,
-        p_contact_phone: phone || null,
-        p_set_active: false
-      });
-      
-      if (regErr) throw regErr;
-      const { org_id } = reg as any;
+      // 3. Create organization and link user
+      const { data: orgData, error: orgError } = await supabase.rpc(
+        "fn_register_org_with_contact",
+        {
+          p_user_id: data.user.id,
+          p_org_type: orgType,
+          p_org_name: companyName,
+          p_contact_first_name: firstName,
+          p_contact_last_name: lastName,
+          p_contact_email: email,
+          p_business_number: businessNumber || null,
+          p_vat_number: null,
+          p_contact_phone: phone || null,
+          p_set_active: false,
+        }
+      );
 
-      // 3) Update organization with address and contact details
-      await supabase.from("organizations")
+      if (orgError) throw orgError;
+
+      const result = orgData as { org_id: string; user_id: string; already_existed: boolean };
+      const organizationId = result.org_id;
+
+      // 4. Update organization with additional details
+      const { error: updateError } = await supabase
+        .from("organizations")
         .update({
-          company_name: companyName,
           address_street: addressStreet,
           address_city: addressCity,
           address_postcode: addressPostcode,
           address_country: addressCountry,
-          contact_email: email,
-          contact_phone: phone,
-          contact_first_name: firstName,
-          contact_last_name: lastName,
           language,
         })
-        .eq("id", org_id);
+        .eq("id", organizationId);
 
-      // 4) Log registration action
+      if (updateError) throw updateError;
+
+      // 5. Log the action
       await supabase.rpc("log_admin_action", {
         p_action: "ORG_REGISTRATION_REQUEST",
         p_target_type: "Organization",
-        p_target_id: org_id,
-        p_metadata: { org_type: orgType, email },
+        p_target_id: organizationId,
+        p_metadata: {
+          org_type: orgType,
+          email: email,
+        },
       });
 
       toast({

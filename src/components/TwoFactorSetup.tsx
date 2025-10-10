@@ -151,11 +151,15 @@ export const TwoFactorSetup = () => {
             variant: "destructive",
           });
         } else {
-          // ===== CRITICAL: Clear grace mode after successful setup =====
-          console.log('[2FA Setup] Clearing grace mode flags');
-          sessionStorage.removeItem('2fa_grace_mode');
-          sessionStorage.removeItem('2fa_grace_expires');
-          sessionStorage.removeItem('2fa_grace_user_id');
+          // ✅ SECURITY FIX: Clear grace period SERVER-SIDE after successful setup
+          console.log('[2FA Setup] Clearing grace period (server-side)');
+          const { error: clearError } = await supabase.rpc('clear_2fa_grace_period', {
+            p_user_id: user.id
+          });
+          
+          if (clearError) {
+            console.error('[2FA Setup] Failed to clear grace period:', clearError);
+          }
           
           setEnabled(true);
           setSetupMode(false);

@@ -371,14 +371,18 @@ const Auth = () => {
             if (hasApprovedOrg) {
               // ✅ GRACE MODE: User has approved org → Allow 24h to setup 2FA
               
-              // Store grace period in sessionStorage
-              const graceExpiry = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
-              sessionStorage.setItem('2fa_grace_mode', 'true');
-              sessionStorage.setItem('2fa_grace_expires', graceExpiry.toString());
-              sessionStorage.setItem('2fa_grace_user_id', data.user.id);
+              // ✅ SECURITY FIX: Store grace period SERVER-SIDE (not in sessionStorage)
+              const { error: graceError } = await supabase.rpc('set_2fa_grace_period', {
+                p_user_id: data.user.id,
+                p_hours: 24
+              });
               
-              console.log('[Auth] Grace mode activated for user:', data.user.email);
-              console.log('[Auth] Grace expires at:', new Date(graceExpiry).toISOString());
+              if (graceError) {
+                console.error('[Auth] Failed to set grace period:', graceError);
+              } else {
+                console.log('[Auth] Grace mode activated for user:', data.user.email);
+                console.log('[Auth] Grace expires in 24 hours (server-side)');
+              }
               
               toast({
                 title: "⚠️ 2FA Vereist",

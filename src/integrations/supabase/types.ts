@@ -2912,6 +2912,8 @@ export type Database = {
           ssn_encrypted: string | null
           status: Database["public"]["Enums"]["user_status"] | null
           two_fa_enabled: boolean | null
+          two_fa_grace_expires_at: string | null
+          two_fa_grace_granted_at: string | null
           updated_at: string
         }
         Insert: {
@@ -2927,6 +2929,8 @@ export type Database = {
           ssn_encrypted?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
           two_fa_enabled?: boolean | null
+          two_fa_grace_expires_at?: string | null
+          two_fa_grace_granted_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -2942,6 +2946,8 @@ export type Database = {
           ssn_encrypted?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
           two_fa_enabled?: boolean | null
+          two_fa_grace_expires_at?: string | null
+          two_fa_grace_granted_at?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -4090,6 +4096,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      clear_2fa_grace_period: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       count_claimable_dossiers: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -4234,6 +4244,10 @@ export type Database = {
         Args: { p_thread_id: string; p_user_id: string }
         Returns: boolean
       }
+      is_within_2fa_grace_period: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
       log_admin_action: {
         Args: {
           p_action: string
@@ -4287,6 +4301,10 @@ export type Database = {
       }
       revoke_qr_token: {
         Args: { p_reason: string; p_token_id: string }
+        Returns: undefined
+      }
+      set_2fa_grace_period: {
+        Args: { p_hours?: number; p_user_id: string }
         Returns: undefined
       }
       set_encrypted_nis: {

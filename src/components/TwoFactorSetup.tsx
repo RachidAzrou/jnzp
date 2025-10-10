@@ -151,11 +151,18 @@ export const TwoFactorSetup = () => {
             variant: "destructive",
           });
         } else {
+          // ===== CRITICAL: Clear grace mode after successful setup =====
+          console.log('[2FA Setup] Clearing grace mode flags');
+          sessionStorage.removeItem('2fa_grace_mode');
+          sessionStorage.removeItem('2fa_grace_expires');
+          sessionStorage.removeItem('2fa_grace_user_id');
+          
           setEnabled(true);
           setSetupMode(false);
           toast({
-            title: "2FA ingeschakeld",
-            description: "Tweefactorauthenticatie is nu actief voor uw account.",
+            title: "✅ 2FA Succesvol Ingesteld",
+            description: "Twee-factor authenticatie is geconfigureerd. Uw account is nu volledig beveiligd.",
+            duration: 5000,
           });
         }
       }

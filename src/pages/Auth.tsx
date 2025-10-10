@@ -356,23 +356,51 @@ const Auth = () => {
             }
           } else {
             // Professional user requires 2FA but hasn't set it up yet
-            // Check if this is a platform admin - they can setup 2FA themselves
-            if (isPlatformAdmin) {
-              // Platform admin: allow login and redirect to 2FA setup
+            
+            // Fetch user roles to check organization status
+            const { data: userRolesData } = await supabase
+              .from('user_roles')
+              .select('organization_id, scope, role')
+              .eq('user_id', data.user.id)
+              .maybeSingle();
+            
+            // Check organization status to determine if user can setup their own 2FA
+            const hasApprovedOrg = isPlatformAdmin || 
+                                   (userRolesData?.scope === 'ORG' && userRolesData?.organization_id != null);
+            
+            if (hasApprovedOrg) {
+              // ✅ GRACE MODE: User has approved org → Allow 24h to setup 2FA
+              
+              // Store grace period in sessionStorage
+              const graceExpiry = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+              sessionStorage.setItem('2fa_grace_mode', 'true');
+              sessionStorage.setItem('2fa_grace_expires', graceExpiry.toString());
+              sessionStorage.setItem('2fa_grace_user_id', data.user.id);
+              
+              console.log('[Auth] Grace mode activated for user:', data.user.email);
+              console.log('[Auth] Grace expires at:', new Date(graceExpiry).toISOString());
+              
               toast({
-                title: "2FA Setup Vereist",
-                description: "U moet twee-factor authenticatie instellen voor uw account.",
+                title: "⚠️ 2FA Vereist",
+                description: "U heeft 24 uur om twee-factor authenticatie in te stellen. Tijdelijke toegang tot instellingen is verleend.",
                 variant: "default",
+                duration: 6000,
               });
+              
+              // Navigate to settings WITHOUT signing out
+              // User stays logged in but with restricted access
               navigate("/instellingen?setup2fa=true");
+              setLoading(false);
               return;
             } else {
-              // Other professional users: block and require admin assistance
+              // ❌ No approved organization → Block completely
+              // These users cannot setup 2FA themselves (pending approval)
               await supabase.auth.signOut();
               toast({
-                title: t("auth.error.twoFARequired"),
-                description: "U moet eerst twee-factor authenticatie instellen. Neem contact op met de beheerder.",
+                title: "⛔ Toegang Geweigerd",
+                description: "Uw organisatie is nog in behandeling. U ontvangt een e-mail wanneer uw account is goedgekeurd.",
                 variant: "destructive",
+                duration: 8000,
               });
               setLoading(false);
               return;

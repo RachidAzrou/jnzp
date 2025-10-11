@@ -4,8 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MessageSquare, Search, ExternalLink, Calendar, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { nl } from "date-fns/locale";
 
 type DossierWithMessages = {
   id: string;
@@ -103,59 +106,118 @@ export default function FDChatOverview() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Berichten</h1>
-        <p className="text-muted-foreground">
-          Communiceer met families per dossier
-        </p>
+    <div className="container max-w-5xl mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Chat Overzicht</h1>
+          <p className="text-muted-foreground">
+            Communiceer met families per dossier
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="text-sm">
+            {filteredDossiers.length} {filteredDossiers.length === 1 ? 'dossier' : 'dossiers'}
+          </Badge>
+        </div>
       </div>
 
+      {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Zoek op naam of dossier nummer..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-9"
+          className="pl-10 h-12"
         />
       </div>
 
-      <div className="grid gap-4">
+      {/* Chat List */}
+      <div className="space-y-3">
         {filteredDossiers.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Geen dossiers gevonden</p>
+          <Card className="border-dashed">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                <MessageSquare className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <p className="text-lg font-medium mb-1">Geen chats gevonden</p>
+              <p className="text-sm text-muted-foreground">
+                {searchTerm ? 'Probeer een andere zoekterm' : 'Start een chat door een dossier te openen'}
+              </p>
             </CardContent>
           </Card>
         ) : (
           filteredDossiers.map((dossier) => (
             <Card
               key={dossier.id}
-              className="cursor-pointer hover:bg-accent transition-colors"
+              className="cursor-pointer hover:shadow-md hover:border-primary/50 transition-all group"
               onClick={() => navigate(`/chat/${dossier.id}`)}
             >
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">
-                      {dossier.family_contact_name || dossier.deceased_name}
-                    </CardTitle>
-                    <CardDescription>
-                      Dossier: {dossier.display_id}
-                    </CardDescription>
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between gap-4">
+                  {/* Left: Main Info */}
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <MessageSquare className="h-6 w-6 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-lg group-hover:text-primary transition-colors truncate">
+                          {dossier.family_contact_name || dossier.deceased_name}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="outline" className="text-xs font-mono">
+                            {dossier.display_id}
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {dossier.status.replace(/_/g, ' ')}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Additional Info Row */}
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground pl-15">
+                      {dossier.family_contact_name && dossier.family_contact_name !== dossier.deceased_name && (
+                        <div className="flex items-center gap-1.5">
+                          <User className="h-3.5 w-3.5" />
+                          <span className="truncate">{dossier.deceased_name}</span>
+                        </div>
+                      )}
+                      {dossier.last_message_at && (
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span>
+                            {format(new Date(dossier.last_message_at), "d MMM, HH:mm", { locale: nl })}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  {/* Right: Actions & Badge */}
+                  <div className="flex flex-col items-end gap-3">
                     {dossier.unread_count > 0 && (
-                      <Badge variant="default">
+                      <Badge className="bg-primary text-primary-foreground">
                         {dossier.unread_count} nieuw
                       </Badge>
                     )}
-                    <MessageSquare className="h-5 w-5 text-muted-foreground" />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/chat/${dossier.id}`);
+                      }}
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Open
+                    </Button>
                   </div>
                 </div>
-              </CardHeader>
+              </CardContent>
             </Card>
           ))
         )}

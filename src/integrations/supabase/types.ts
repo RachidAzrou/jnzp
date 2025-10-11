@@ -4152,7 +4152,7 @@ export type Database = {
           p_org_type: string
           p_phone: string
           p_set_active?: boolean
-          p_user_id?: string
+          p_user_id: string
         }
         Returns: string
       }

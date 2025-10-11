@@ -165,25 +165,7 @@ serve(async (req) => {
       const organizationId = orgData.id;
       console.log('Organization created:', organizationId);
 
-      // STEP 5: Create contact
-      console.log('Creating contact...');
-      const { error: contactError } = await supabaseAdmin
-        .from('contacts')
-        .insert({
-          organization_id: organizationId,
-          first_name: body.firstName.trim(),
-          last_name: body.lastName.trim(),
-          email: body.email.trim(),
-          phone: body.phone.trim(),
-          is_primary: true
-        });
-
-      if (contactError) {
-        console.error('Contact error:', contactError);
-        throw new Error(`Contact aanmaken mislukt: ${contactError.message}`);
-      }
-
-      // STEP 6: Map org_type to app_role
+      // STEP 5: Map org_type to app_role
       const roleMap = {
         'FUNERAL_DIRECTOR': 'funeral_director',
         'MOSQUE': 'mosque',

@@ -193,15 +193,24 @@ serve(async (req) => {
       const userRole = roleMap[body.orgType];
 
       // STEP 7: Create user_role
-      console.log('Creating user role...');
-      const { error: roleError } = await supabaseAdmin
+      console.log('Creating user role with:', { 
+        user_id: userId, 
+        organization_id: organizationId, 
+        role: userRole 
+      });
+      
+      const { data: roleData, error: roleError } = await supabaseAdmin
         .from('user_roles')
         .insert({
           user_id: userId,
           organization_id: organizationId,
           role: userRole,
           is_admin: true // First user is always org admin
-        });
+        })
+        .select();
+      
+      console.log('User role created:', roleData);
+      console.log('Role error if any:', roleError);
 
       if (roleError) {
         console.error('Role error:', roleError);

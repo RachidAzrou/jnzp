@@ -730,11 +730,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "documents_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_mfa_status"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "documents_uploaded_by_fkey"
             columns: ["uploaded_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_mfa_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -806,6 +820,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dossier_claims_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_mfa_status"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "dossier_claims_requesting_org_id_fkey"
@@ -1958,11 +1979,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "legal_holds_placed_by_fkey"
+            columns: ["placed_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_mfa_status"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "legal_holds_released_by_fkey"
             columns: ["released_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_holds_released_by_fkey"
+            columns: ["released_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_mfa_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -2431,6 +2466,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_mfa_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -3209,6 +3251,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "repatriations_traveler_id_fkey"
+            columns: ["traveler_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_mfa_status"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       task_activities: {
@@ -3657,6 +3706,7 @@ export type Database = {
           created_at: string
           id: string
           last_verified_at: string | null
+          mfa_grace_expires_at: string | null
           recovery_codes: string[] | null
           sms_enabled: boolean
           totp_enabled: boolean
@@ -3669,6 +3719,7 @@ export type Database = {
           created_at?: string
           id?: string
           last_verified_at?: string | null
+          mfa_grace_expires_at?: string | null
           recovery_codes?: string[] | null
           sms_enabled?: boolean
           totp_enabled?: boolean
@@ -3681,6 +3732,7 @@ export type Database = {
           created_at?: string
           id?: string
           last_verified_at?: string | null
+          mfa_grace_expires_at?: string | null
           recovery_codes?: string[] | null
           sms_enabled?: boolean
           totp_enabled?: boolean
@@ -3735,6 +3787,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_mfa_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -3944,6 +4003,14 @@ export type Database = {
           },
         ]
       }
+      v_user_mfa_status: {
+        Row: {
+          mfa_grace_expires_at: string | null
+          totp_enabled: boolean | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
       view_my_dossiers: {
         Row: {
           advisory_checks: Json | null
@@ -4030,6 +4097,10 @@ export type Database = {
           _task_type: Database["public"]["Enums"]["task_type"]
         }
         Returns: Database["public"]["Enums"]["priority"]
+      }
+      can_access_with_mfa: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
       case_event_belongs_to_user_mosque: {
         Args: { _event_id: string; _user_id: string }
@@ -4205,6 +4276,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      insurer_block_dossier: {
+        Args: { p_dossier_id: string; p_reason: string }
+        Returns: undefined
       }
       is_account_locked: {
         Args: { p_email: string }

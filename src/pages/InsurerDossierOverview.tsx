@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Receipt, Shield, RefreshCw, AlertCircle } from "lucide-react";
+import { BlockDossierDialog } from "@/components/BlockDossierDialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -339,9 +340,14 @@ export default function InsurerDossierOverview() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Dossier {dossier.ref_number}</h1>
-            <p className="text-sm text-muted-foreground mt-1">Details van het dossier</p>
+            <p className="text-sm text-muted-foreground mt-1">{dossier.deceased_name}</p>
           </div>
           <div className="flex gap-2">
+            <BlockDossierDialog 
+              dossierId={dossier.id} 
+              dossierRef={dossier.ref_number}
+              onSuccess={() => refetch()}
+            />
             <Button
               variant="outline"
               onClick={() => navigate(`/insurer/dossier/${id}/documenten`)}
@@ -355,6 +361,9 @@ export default function InsurerDossierOverview() {
             >
               <Receipt className="mr-2 h-4 w-4" />
               Facturen
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/insurer/dossiers')}>
+              Terug naar Overzicht
             </Button>
           </div>
         </div>

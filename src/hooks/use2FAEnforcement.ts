@@ -36,25 +36,20 @@ export const use2FAEnforcement = () => {
         return;
       }
 
-      // ===== GRACE MODE CHECK (SERVER-SIDE) =====
-      const { data: graceCheck } = await supabase.rpc('is_within_2fa_grace_period', {
-        p_user_id: user.id
-      });
+      // ===== MFA GRACE CHECK (SERVER-SIDE via view) =====
+      const { data: mfaStatus } = await supabase
+        .from('v_user_mfa_status')
+        .select('totp_enabled, mfa_grace_expires_at')
+        .eq('user_id', user.id)
+        .maybeSingle();
       
-      if (graceCheck === true) {
-        // Get expiration time for user feedback
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('two_fa_grace_expires_at')
-          .eq('id', user.id)
-          .single();
+      if (mfaStatus?.mfa_grace_expires_at && !mfaStatus.totp_enabled) {
+        const expiresAt = new Date(mfaStatus.mfa_grace_expires_at).getTime();
+        const now = Date.now();
+        const timeLeft = expiresAt - now;
         
-        if (profile?.two_fa_grace_expires_at) {
-          const expiresAt = new Date(profile.two_fa_grace_expires_at).getTime();
-          const now = Date.now();
-          const timeLeft = expiresAt - now;
-          
-          console.log('[2FA Enforcement] Grace mode active (server-side)');
+        if (timeLeft > 0) {
+          console.log('[2FA Enforcement] MFA grace mode active');
           console.log('[2FA Enforcement] Time left:', Math.round(timeLeft / 1000 / 60), 'minutes');
           
           // ✅ Grace period ACTIVE → Restrict to /instellingen only
@@ -86,6 +81,17 @@ export const use2FAEnforcement = () => {
             mustSetup2FA: true,
             loading: false,
           });
+          return;
+        } else {
+          // Grace expired → block access
+          console.log('[2FA Enforcement] Grace period expired, blocking access');
+          await supabase.auth.signOut();
+          toast({
+            title: '🔒 2FA Verplicht',
+            description: 'Uw grace periode is verlopen. Log opnieuw in om 2FA in te stellen.',
+            variant: 'destructive',
+          });
+          navigate('/auth');
           return;
         }
       }
@@ -126,10 +132,10 @@ export const use2FAEnforcement = () => {
         loading: false,
       });
 
-      // If 2FA required but not setup, user should have been caught by Auth.tsx
+      // If 2FA required but not setup, user should have been caught by grace check
       // This is a safety net - should never happen
       if (twoFAStatus.must_setup_2fa) {
-        console.error('[2FA Enforcement] User bypassed Auth.tsx grace mode check!');
+        console.error('[2FA Enforcement] User bypassed grace mode check!');
         await supabase.auth.signOut();
         toast({
           title: '🔒 Beveiligingsfout',

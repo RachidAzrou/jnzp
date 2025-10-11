@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, FileBarChart, FolderOpen, CheckCircle, XCircle, Clock, Receipt } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Search, FileBarChart, FolderOpen, CheckCircle, XCircle, Clock, Receipt, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { KPICard } from "@/components/KPICard";
 import { Database } from "@/integrations/supabase/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
@@ -18,10 +20,42 @@ import { useTranslation } from "react-i18next";
 export default function InsurerDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("30");
   const [chartPeriod, setChartPeriod] = useState<"week" | "month" | "today">("week");
+  const [mfaGraceWarning, setMfaGraceWarning] = useState<{ show: boolean; hoursLeft: number }>({ 
+    show: false, 
+    hoursLeft: 0 
+  });
+
+  // Check MFA grace period
+  useEffect(() => {
+    const checkMfaGrace = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: mfaStatus } = await supabase
+        .from('v_user_mfa_status')
+        .select('totp_enabled, mfa_grace_expires_at')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (mfaStatus?.mfa_grace_expires_at && !mfaStatus.totp_enabled) {
+        const expiresAt = new Date(mfaStatus.mfa_grace_expires_at).getTime();
+        const now = Date.now();
+        const timeLeft = expiresAt - now;
+
+        if (timeLeft > 0) {
+          const hoursLeft = Math.ceil(timeLeft / 1000 / 60 / 60);
+          setMfaGraceWarning({ show: true, hoursLeft });
+        }
+      }
+    };
+
+    checkMfaGrace();
+  }, []);
 
   const { data: userRoles } = useQuery({
     queryKey: ["userRoles"],
@@ -190,6 +224,22 @@ export default function InsurerDashboard() {
             </Button>
           </div>
         </div>
+
+        {mfaGraceWarning.show && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              <strong>2FA Vereist:</strong> U heeft nog {mfaGraceWarning.hoursLeft} uur om tweefactorauthenticatie in te stellen.{' '}
+              <Button 
+                variant="link" 
+                className="p-0 h-auto font-semibold text-destructive-foreground underline"
+                onClick={() => navigate('/instellingen?setup2fa=true')}
+              >
+                Stel nu in
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Filters */}
         <Card className="border-0 shadow-sm">

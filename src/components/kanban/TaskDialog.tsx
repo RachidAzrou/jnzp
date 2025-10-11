@@ -30,12 +30,15 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
   const [loading, setLoading] = useState(false);
   const [columns, setColumns] = useState<any[]>([]);
   const [dossiers, setDossiers] = useState<any[]>([]);
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     priority: 'MEDIUM',
     status: 'TE_DOEN',
     dossier_id: '',
+    assignee_id: '',
     due_date: undefined as Date | undefined,
     labels: [] as string[]
   });
@@ -44,6 +47,8 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
   useEffect(() => {
     if (open) {
       fetchDossiers();
+      fetchTeamMembers();
+      fetchCurrentUser();
       if (task) {
         setFormData({
           title: task.title || '',
@@ -51,6 +56,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           priority: task.priority || 'MEDIUM',
           status: task.status || 'TE_DOEN',
           dossier_id: task.dossier_id || '',
+          assignee_id: task.assignee_id || '',
           due_date: task.due_date ? new Date(task.due_date) : undefined,
           labels: task.labels || []
         });
@@ -79,6 +85,38 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
     }
   };
 
+  const fetchTeamMembers = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: userRole } = await supabase
+      .from('user_roles')
+      .select('organization_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (!userRole) return;
+
+    const { data } = await supabase
+      .from('user_roles')
+      .select('user_id, profiles(id, display_name, email)')
+      .eq('organization_id', userRole.organization_id);
+
+    if (data) {
+      setTeamMembers(data.map((r: any) => ({
+        id: r.user_id,
+        name: r.profiles?.display_name || r.profiles?.email || 'Onbekend',
+      })));
+    }
+  };
+
+  const fetchCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setCurrentUserId(user.id);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       title: '',
@@ -86,6 +124,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
       priority: 'MEDIUM',
       status: 'TE_DOEN',
       dossier_id: '',
+      assignee_id: currentUserId || '',
       due_date: undefined,
       labels: []
     });
@@ -125,6 +164,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
             priority: formData.priority as 'HIGH' | 'LOW' | 'MEDIUM' | 'URGENT',
             status: formData.status,
             dossier_id: formData.dossier_id || null,
+            assignee_id: formData.assignee_id || null,
             due_date: formData.due_date?.toISOString().split('T')[0],
             labels: formData.labels
           })
@@ -145,7 +185,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           description: "De taak is succesvol bijgewerkt"
         });
       } else {
-        // Create new manual task with assignee default
+        // Create new manual task with assignee default to current user
         const { data: newTask, error } = await supabase
           .from('kanban_tasks')
           .insert({
@@ -156,7 +196,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
             priority: formData.priority as 'HIGH' | 'LOW' | 'MEDIUM' | 'URGENT',
             status: formData.status,
             reporter_id: user.id,
-            assignee_id: user.id, // ✅ Default assignee aan creator
+            assignee_id: formData.assignee_id || user.id,
             created_by: user.id,
             due_date: formData.due_date?.toISOString().split('T')[0],
             labels: formData.labels
@@ -236,6 +276,26 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
                 {dossiers.map((dossier) => (
                   <SelectItem key={dossier.id} value={dossier.id}>
                     {dossier.display_id || dossier.ref_number} - {dossier.deceased_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Toegewezen aan</Label>
+            <Select
+              value={formData.assignee_id || "none"}
+              onValueChange={(value) => setFormData({ ...formData, assignee_id: value === "none" ? "" : value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecteer teamlid" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Niet toegewezen</SelectItem>
+                {teamMembers.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.name}
                   </SelectItem>
                 ))}
               </SelectContent>

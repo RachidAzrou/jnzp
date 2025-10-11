@@ -99,12 +99,15 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [assignedUser, setAssignedUser] = useState<any>(null);
 
   // Form state
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     priority: "MEDIUM" as Task['priority'],
+    assignee_id: "",
     due_date: "",
     is_deferred: false,
     deferred_reason: "",
@@ -116,6 +119,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
         title: task.title,
         description: task.description || "",
         priority: task.priority,
+        assignee_id: task.assignee_id || "",
         due_date: task.due_date || "",
         is_deferred: task.is_deferred || false,
         deferred_reason: task.deferred_reason || "",
@@ -123,6 +127,10 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
       fetchComments();
       fetchActivities();
       fetchAttachments();
+      fetchTeamMembers();
+      if (task.assignee_id) {
+        fetchAssignedUser(task.assignee_id);
+      }
     }
   }, [task, open]);
 
@@ -231,6 +239,34 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
     }
   };
 
+  const fetchTeamMembers = async () => {
+    if (!task) return;
+    
+    const { data } = await supabase
+      .from('user_roles')
+      .select('user_id, profiles(id, display_name, email)')
+      .eq('organization_id', task.org_id);
+
+    if (data) {
+      setTeamMembers(data.map((r: any) => ({
+        id: r.user_id,
+        name: r.profiles?.display_name || r.profiles?.email || 'Onbekend',
+      })));
+    }
+  };
+
+  const fetchAssignedUser = async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, display_name, email')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (data) {
+      setAssignedUser(data);
+    }
+  };
+
   const handleAddComment = async () => {
     if (!task || !newComment.trim()) return;
 
@@ -280,6 +316,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
         title: formData.title,
         description: formData.description,
         priority: formData.priority,
+        assignee_id: formData.assignee_id || null,
         due_date: formData.due_date || null,
         is_deferred: formData.is_deferred,
         deferred_reason: formData.is_deferred ? formData.deferred_reason : null,
@@ -515,6 +552,32 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                 ) : (
                   <p className="text-sm mt-1 text-muted-foreground">
                     {task.description || "Geen beschrijving"}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label>Toegewezen aan</Label>
+                {editMode ? (
+                  <Select
+                    value={formData.assignee_id || "none"}
+                    onValueChange={(value) => setFormData({ ...formData, assignee_id: value === "none" ? "" : value })}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Selecteer teamlid" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Niet toegewezen</SelectItem>
+                      {teamMembers.map((member) => (
+                        <SelectItem key={member.id} value={member.id}>
+                          {member.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <p className="text-sm mt-1">
+                    {assignedUser ? (assignedUser.display_name || assignedUser.email) : "Niet toegewezen"}
                   </p>
                 )}
               </div>

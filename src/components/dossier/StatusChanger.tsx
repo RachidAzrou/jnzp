@@ -637,30 +637,62 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
           Status wijzigen
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Status wijzigen</DialogTitle>
+          <DialogTitle className="text-xl">Status wijzigen</DialogTitle>
           <DialogDescription>
             {isAdmin 
               ? "Als admin kun je elke status instellen. Deze actie wordt gelogd."
               : "Wijzig de dossier status volgens de workflow."}
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label>Nieuwe status</Label>
+        
+        <div className="space-y-6">
+          {/* Current Status Badge */}
+          <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/50 border">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Huidige status:</span>
+              <Badge variant={STATUS_BADGES[currentStatus as keyof typeof STATUS_BADGES] as any}>
+                {STATUS_LABELS[currentStatus]}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Status Selection */}
+          <div className="space-y-3">
+            <Label className="text-base font-semibold">Nieuwe status</Label>
             <Select value={newStatus} onValueChange={setNewStatus}>
-              <SelectTrigger>
+              <SelectTrigger className="h-auto">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[400px]">
                 {STATUSES.map((status) => {
                   const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
+                  const statusInfo = labels[status as keyof typeof labels];
+                  const isCurrentStatus = status === currentStatus;
+                  
                   return (
-                    <SelectItem key={status} value={status}>
-                      <div className="flex flex-col items-start">
-                        <span className="font-medium">{labels[status as keyof typeof labels].label}</span>
-                        <span className="text-xs text-muted-foreground">{labels[status as keyof typeof labels].description}</span>
+                    <SelectItem 
+                      key={status} 
+                      value={status}
+                      disabled={isCurrentStatus}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-start gap-3 py-2">
+                        <Badge 
+                          variant={STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any}
+                          className="mt-0.5"
+                        >
+                          {statusInfo.label}
+                        </Badge>
+                        <div className="flex-1">
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {statusInfo.description}
+                          </p>
+                          {isCurrentStatus && (
+                            <p className="text-xs text-primary mt-1 font-medium">Huidige status</p>
+                          )}
+                        </div>
                       </div>
                     </SelectItem>
                   );
@@ -668,20 +700,29 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label>Reden voor wijziging (optioneel)</Label>
+
+          {/* Reason Input */}
+          <div className="space-y-3">
+            <Label className="text-base font-semibold">
+              Reden voor wijziging 
+              <span className="text-sm font-normal text-muted-foreground ml-2">(optioneel)</span>
+            </Label>
             <Textarea
-              placeholder="Bijv. 'Documenten ontvangen van familie'"
+              placeholder="Bijv. 'Documenten ontvangen van familie' of 'Planning afgerond'"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
+              rows={3}
+              className="resize-none"
             />
           </div>
         </div>
-        <DialogFooter>
+
+        <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={() => setOpen(false)}>
             Annuleren
           </Button>
-          <Button onClick={handleStatusChange}>
+          <Button onClick={handleStatusChange} disabled={newStatus === currentStatus}>
+            <CheckCircle2 className="mr-2 h-4 w-4" />
             Status wijzigen
           </Button>
         </DialogFooter>

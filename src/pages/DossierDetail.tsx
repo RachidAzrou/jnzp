@@ -37,6 +37,7 @@ import { DossierTimeline } from "@/components/dossier/DossierTimeline";
 import { MoreVertical, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { DeleteDossierDialog } from "@/components/dossier/DeleteDossierDialog";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -415,6 +416,15 @@ const DossierDetail = () => {
                 )}
                 {dossier.status === "archived" && (
                   <SendFeedbackButton dossierId={id!} />
+                )}
+                {userRole === "funeral_director" && (
+                  <DeleteDossierDialog
+                    dossierId={id!}
+                    dossierDisplayId={dossier.display_id || dossier.ref_number}
+                    currentStatus={dossier.status}
+                    currentFlow={dossier.flow}
+                    isFD={true}
+                  />
                 )}
                 {userRole === "funeral_director" && (
                   <DropdownMenu>

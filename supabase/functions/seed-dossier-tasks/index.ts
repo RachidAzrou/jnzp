@@ -108,6 +108,86 @@ Deno.serve(async (req) => {
 
     console.log(`[seed-dossier-tasks] Seeding tasks for dossier ${dossierId}, flow: ${flow}, status: ${status}`);
 
+    // Get the dossier to find the organization
+    const { data: dossier, error: dossierError } = await supabaseClient
+      .from('dossiers')
+      .select('assigned_fd_org_id')
+      .eq('id', dossierId)
+      .single();
+
+    if (dossierError || !dossier?.assigned_fd_org_id) {
+      console.error('[seed-dossier-tasks] Could not find dossier organization:', dossierError);
+      throw new Error('Dossier organization not found');
+    }
+
+    const orgId = dossier.assigned_fd_org_id;
+
+    // Get or create board for this organization
+    let { data: board, error: boardError } = await supabaseClient
+      .from('task_boards')
+      .select('id')
+      .eq('org_id', orgId)
+      .maybeSingle();
+
+    if (boardError) {
+      console.error('[seed-dossier-tasks] Error fetching board:', boardError);
+      throw boardError;
+    }
+
+    // Create board if it doesn't exist
+    if (!board) {
+      const { data: newBoard, error: createBoardError } = await supabaseClient
+        .from('task_boards')
+        .insert({ org_id: orgId, name: 'Taken' })
+        .select('id')
+        .single();
+
+      if (createBoardError) {
+        console.error('[seed-dossier-tasks] Error creating board:', createBoardError);
+        throw createBoardError;
+      }
+
+      board = newBoard;
+    }
+
+    // Get or create the TODO column
+    let { data: columns, error: columnsError } = await supabaseClient
+      .from('task_board_columns')
+      .select('id, key')
+      .eq('board_id', board.id);
+
+    if (columnsError) {
+      console.error('[seed-dossier-tasks] Error fetching columns:', columnsError);
+      throw columnsError;
+    }
+
+    let todoColumn = columns?.find(c => c.key === 'todo');
+
+    // Create columns if they don't exist
+    if (!todoColumn) {
+      const requiredColumns = [
+        { key: 'todo', label: 'Te doen', order_idx: 1, is_done: false },
+        { key: 'doing', label: 'Bezig', order_idx: 2, is_done: false },
+        { key: 'done', label: 'Afgerond', order_idx: 3, is_done: true }
+      ];
+
+      const { data: newColumns, error: createColumnsError } = await supabaseClient
+        .from('task_board_columns')
+        .insert(requiredColumns.map(col => ({ board_id: board.id, ...col })))
+        .select('id, key');
+
+      if (createColumnsError) {
+        console.error('[seed-dossier-tasks] Error creating columns:', createColumnsError);
+        throw createColumnsError;
+      }
+
+      todoColumn = newColumns?.find(c => c.key === 'todo');
+    }
+
+    if (!todoColumn) {
+      throw new Error('Could not create or find TODO column');
+    }
+
     // Map dossier status to template key
     const statusToTemplateKey: Record<string, string> = {
       'CREATED': 'CREATED',
@@ -168,12 +248,19 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Create new tasks with explicit status
-    const tasksWithDossierId = newTasks.map(task => ({
-      ...task,
+    // Create new tasks with board_id, column_id, and status
+    const tasksWithDossierId = newTasks.map((task, index) => ({
+      board_id: board.id,
+      column_id: todoColumn.id,
+      org_id: orgId,
       dossier_id: dossierId,
-      status: 'TODO', // Explicitly set status for new tasks
-      created_by: null // Edge function runs as service role
+      title: task.title,
+      description: task.description || '',
+      priority: 'MEDIUM' as const,
+      status: 'TODO',
+      position: index,
+      labels: [task.task_type],
+      reporter_id: null
     }));
 
     const { error: insertError } = await supabaseClient

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   ArrowLeft, Star, AlertCircle, User, Users, FileText, 
   Building2, DollarSign, Clock, MessageSquare,
@@ -32,8 +33,10 @@ import FDManagementCard from "@/components/dossier/FDManagementCard";
 import { InvoiceManagementCard } from "@/components/dossier/InvoiceManagementCard";
 import { ObituaryViewer } from "@/components/dossier/ObituaryViewer";
 import { LegalHoldBadge } from "@/components/dossier/LegalHoldBadge";
-import { MoreVertical } from "lucide-react";
+import { DossierTimeline } from "@/components/dossier/DossierTimeline";
+import { MoreVertical, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -54,6 +57,7 @@ const DossierDetail = () => {
   const [progress, setProgress] = useState<any>(null);
   const [releaseDialogOpen, setReleaseDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [deleteReason, setDeleteReason] = useState("");
 
   useEffect(() => {
     if (id) {
@@ -419,10 +423,23 @@ const DossierDetail = () => {
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-popover">
+                     <DropdownMenuContent align="end" className="bg-popover">
                       <DropdownMenuItem onClick={() => setReleaseDialogOpen(true)}>
                         Dossier vrijgeven
                       </DropdownMenuItem>
+                      {dossier.status === 'CREATED' || dossier.status === 'INTAKE_IN_PROGRESS' ? (
+                        <DropdownMenuItem 
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => {
+                            // Open soft-delete dialog via state
+                            const deleteBtn = document.getElementById('soft-delete-trigger');
+                            deleteBtn?.click();
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Verwijder Draft
+                        </DropdownMenuItem>
+                      ) : null}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
@@ -442,6 +459,76 @@ const DossierDetail = () => {
         }}
       />
 
+      {/* Soft Delete Dialog */}
+      {(dossier.status === 'CREATED' || dossier.status === 'INTAKE_IN_PROGRESS') && (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button id="soft-delete-trigger" className="hidden" />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Dossier verwijderen?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Dit is een onomkeerbare actie. Het dossier wordt gearchiveerd en verborgen.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="py-4">
+              <Label htmlFor="delete-reason">Reden voor verwijdering *</Label>
+              <Textarea
+                id="delete-reason"
+                placeholder="Bijv. 'Foutief aangemaakt', 'Dubbel dossier'..."
+                value={deleteReason}
+                onChange={(e) => setDeleteReason(e.target.value)}
+                className="mt-2"
+                rows={3}
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setDeleteReason("")}>
+                Annuleren
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={async () => {
+                  if (!deleteReason.trim()) {
+                    toast({
+                      title: "Reden verplicht",
+                      description: "Geef een reden op voor het verwijderen",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+
+                  try {
+                    const { error } = await supabase.rpc('soft_delete_dossier', {
+                      p_dossier_id: id,
+                      p_reason: deleteReason.trim(),
+                    });
+
+                    if (error) throw error;
+
+                    toast({
+                      title: "Dossier verwijderd",
+                      description: "Het dossier is gearchiveerd",
+                    });
+
+                    navigate("/dossiers");
+                  } catch (error: any) {
+                    toast({
+                      title: "Fout",
+                      description: error.message || "Kon dossier niet verwijderen",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                className="bg-destructive hover:bg-destructive/90"
+              >
+                Verwijderen
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
       {/* Progress Card */}
       {progress && (
         <DossierProgressCard
@@ -460,7 +547,7 @@ const DossierDetail = () => {
       {/* Modern Tabs with icons */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <Card className="p-1 bg-muted/50 border-none shadow-none">
-          <TabsList className="w-full grid grid-cols-4 lg:grid-cols-8 gap-1 bg-transparent h-auto p-0">
+          <TabsList className="w-full grid grid-cols-5 lg:grid-cols-9 gap-1 bg-transparent h-auto p-0">
             <TabsTrigger value="overview" className="data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2 py-3">
               <User className="h-4 w-4" />
               <span className="hidden sm:inline">Overzicht</span>
@@ -822,7 +909,7 @@ const DossierDetail = () => {
           </div>
         </TabsContent>
 
-        {/* Chat Tab */}
+        {/* Chat Tab - Integratie */}
         <TabsContent value="chat" className="space-y-6">
           <Card>
             <CardHeader className="pb-4">
@@ -834,15 +921,15 @@ const DossierDetail = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="bg-muted/30 border rounded-lg p-8 text-center">
-                <MessageSquare className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
-                <p className="text-sm text-muted-foreground">
-                  Chat functionaliteit komt binnenkort
-                </p>
-              </div>
-              <Button className="w-full">
-                <Send className="mr-2 h-4 w-4" />
-                Start Chat
+              <p className="text-sm text-muted-foreground">
+                Chat met familie en collega's over dit dossier.
+              </p>
+              <Button 
+                onClick={() => navigate(`/fd/chat/${id}`)}
+                className="w-full"
+              >
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Open Chat voor {dossier.display_id || dossier.ref_number}
               </Button>
             </CardContent>
           </Card>
@@ -865,8 +952,58 @@ const DossierDetail = () => {
           </Card>
         </TabsContent>
 
-        {/* Timeline Tab */}
+        {/* Timeline Tab - Nieuwe component */}
         <TabsContent value="timeline" className="space-y-6">
+          <DossierTimeline dossierId={id!} />
+          
+          {/* Manual events toevoegen optie */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Handmatige gebeurtenis toevoegen</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AddManualEventDialog 
+                dossierId={id!}
+                onEventAdded={fetchDossierData}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Notes Tab - Split naar Interne Notities + Discussie */}
+        <TabsContent value="notes" className="space-y-6">
+          <Tabs defaultValue="internal_notes">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="internal_notes">Interne Notities</TabsTrigger>
+              <TabsTrigger value="discussion">Discussie</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="internal_notes" className="mt-6">
+              <InternalNotesCard 
+                dossierId={id!} 
+                initialNotes={dossier?.internal_notes || ''}
+                onNotesSaved={fetchDossierData}
+              />
+            </TabsContent>
+
+            <TabsContent value="discussion" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Discussie</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DossierComments 
+                    dossierId={id!} 
+                    organizationId={dossier?.assigned_fd_org_id || ''}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        {/* OLD Timeline Tab logic removed - replaced above */}
+        <TabsContent value="old_timeline_hidden" className="hidden space-y-6">
           <Card>
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
@@ -874,7 +1011,7 @@ const DossierDetail = () => {
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                     <Clock className="h-5 w-5 text-primary" />
                   </div>
-                  <CardTitle className="text-xl">Tijdlijn</CardTitle>
+                  <CardTitle className="text-xl">Tijdlijn (Oud)</CardTitle>
                 </div>
                 <AddManualEventDialog 
                   dossierId={id!}

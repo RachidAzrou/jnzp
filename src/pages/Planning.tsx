@@ -67,7 +67,21 @@ const Planning = () => {
         `)
         .order("start_at", { ascending: true });
 
+      // Fetch mosque services
+      const { data: mosqueData, error: mosqueError } = await supabase
+        .from("case_events")
+        .select(`
+          *,
+          dossier:dossiers!inner(
+            display_id,
+            deceased_name
+          )
+        `)
+        .eq("event_type", "MOSQUE_SERVICE")
+        .order("scheduled_at", { ascending: true });
+
       if (wasplaatsError) throw wasplaatsError;
+      if (mosqueError) throw mosqueError;
 
       // Fetch repatriations (flight planning preferences)
       const { data: repatriationsData, error: repatriationsError } = await supabase

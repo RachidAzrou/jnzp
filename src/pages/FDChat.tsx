@@ -298,7 +298,7 @@ export default function FDChat() {
           <ArrowLeft className="h-4 w-4" />
           <span>Terug naar overzicht</span>
         </Button>
-        <div>
+        <div className="flex-1">
           <h1 className="text-3xl font-bold">
             Chat — Dossier {dossier?.display_id || dossier?.ref_number}
           </h1>
@@ -306,6 +306,14 @@ export default function FDChat() {
             {dossier?.family_contact_name || dossier?.deceased_name || 'Nog in te vullen'}
           </p>
         </div>
+        {dossier && (
+          <Button
+            variant="outline"
+            onClick={() => navigate(`/dossiers/${dossier.id}`)}
+          >
+            Open Dossier
+          </Button>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-[1fr,300px] gap-6">

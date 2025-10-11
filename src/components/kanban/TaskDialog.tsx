@@ -145,7 +145,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           description: "De taak is succesvol bijgewerkt"
         });
       } else {
-        // Create new manual task
+        // Create new manual task with assignee default
         const { data: newTask, error } = await supabase
           .from('kanban_tasks')
           .insert({
@@ -156,6 +156,8 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
             priority: formData.priority as 'HIGH' | 'LOW' | 'MEDIUM' | 'URGENT',
             status: formData.status,
             reporter_id: user.id,
+            assignee_id: user.id, // ✅ Default assignee aan creator
+            created_by: user.id,
             due_date: formData.due_date?.toISOString().split('T')[0],
             labels: formData.labels
           } as any)

@@ -423,7 +423,9 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
       case 'CREATED':
         return `${userName} heeft deze taak aangemaakt`;
       case 'MOVED':
-        return `${userName} verplaatst van ${activity.from_value?.column_label} naar ${activity.to_value?.column_label}`;
+        const fromCol = activity.from_value || 'Onbekend';
+        const toCol = activity.to_value || 'Onbekend';
+        return `${userName} verplaatst van ${fromCol} naar ${toCol}`;
       case 'ASSIGNED':
         return `${userName} heeft deze taak toegewezen`;
       case 'UNASSIGNED':

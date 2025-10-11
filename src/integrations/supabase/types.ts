@@ -995,6 +995,9 @@ export type Database = {
           deceased_gender: string | null
           deceased_last_name: string | null
           deceased_name: string
+          delete_reason: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           display_id: string | null
           flow: Database["public"]["Enums"]["dossier_flow"]
           id: string
@@ -1025,6 +1028,9 @@ export type Database = {
           deceased_gender?: string | null
           deceased_last_name?: string | null
           deceased_name: string
+          delete_reason?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           display_id?: string | null
           flow?: Database["public"]["Enums"]["dossier_flow"]
           id?: string
@@ -1055,6 +1061,9 @@ export type Database = {
           deceased_gender?: string | null
           deceased_last_name?: string | null
           deceased_name?: string
+          delete_reason?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           display_id?: string | null
           flow?: Database["public"]["Enums"]["dossier_flow"]
           id?: string
@@ -4138,6 +4147,10 @@ export type Database = {
         Args: { p_nonce: string; p_period: number }
         Returns: Json
       }
+      cleanup_completed_auto_tasks: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_device_tokens: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -4386,6 +4399,10 @@ export type Database = {
       }
       set_encrypted_nis: {
         Args: { p_nis: string; p_profile_id: string }
+        Returns: undefined
+      }
+      soft_delete_dossier: {
+        Args: { p_dossier_id: string; p_reason: string }
         Returns: undefined
       }
       update_2fa_verification: {

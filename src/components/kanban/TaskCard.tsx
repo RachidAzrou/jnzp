@@ -231,22 +231,7 @@ export function TaskCard({
             </div>
           </div>
 
-          {/* Complete button - shown on mobile/modal/list or when drag disabled */}
-          {showCompleteBtn && onMarkAsDone && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="w-full mt-2 text-xs"
-              onClick={(e) => {
-                e.stopPropagation();
-                onMarkAsDone();
-              }}
-              disabled={task.is_blocked}
-            >
-              <CheckCircle className="h-3 w-3 mr-1" />
-              Markeer als afgerond
-            </Button>
-          )}
+          {/* Complete button verborgen - gebruik drag-and-drop */}
         </CardContent>
       </Card>
     </TooltipProvider>

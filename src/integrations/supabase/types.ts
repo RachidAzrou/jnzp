@@ -656,7 +656,7 @@ export type Database = {
       }
       documents: {
         Row: {
-          doc_type: Database["public"]["Enums"]["doc_type"]
+          doc_type: string | null
           dossier_id: string
           file_name: string
           file_url: string
@@ -671,7 +671,7 @@ export type Database = {
           version: number | null
         }
         Insert: {
-          doc_type: Database["public"]["Enums"]["doc_type"]
+          doc_type?: string | null
           dossier_id: string
           file_name: string
           file_url: string
@@ -686,7 +686,7 @@ export type Database = {
           version?: number | null
         }
         Update: {
-          doc_type?: Database["public"]["Enums"]["doc_type"]
+          doc_type?: string | null
           dossier_id?: string
           file_name?: string
           file_url?: string
@@ -1826,6 +1826,7 @@ export type Database = {
           position: number
           priority: Database["public"]["Enums"]["task_priority"]
           reporter_id: string | null
+          status: string | null
           title: string
           updated_at: string
         }
@@ -1845,6 +1846,7 @@ export type Database = {
           position?: number
           priority?: Database["public"]["Enums"]["task_priority"]
           reporter_id?: string | null
+          status?: string | null
           title: string
           updated_at?: string
         }
@@ -1864,6 +1866,7 @@ export type Database = {
           position?: number
           priority?: Database["public"]["Enums"]["task_priority"]
           reporter_id?: string | null
+          status?: string | null
           title?: string
           updated_at?: string
         }
@@ -4236,6 +4239,19 @@ export type Database = {
       generate_qr_token: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      generate_qr_token_rpc: {
+        Args: {
+          p_dossier_id: string
+          p_expires_hours?: number
+          p_max_scans?: number
+          p_scopes?: Json
+        }
+        Returns: {
+          expires_at: string
+          qr_url: string
+          token: string
+        }[]
       }
       get_2fa_settings_with_nonce: {
         Args: { p_nonce: string }

@@ -32,41 +32,29 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // First generate a token
-      const { data: tokenData, error: tokenError } = await supabase.rpc('generate_qr_token');
-      
-      if (tokenError || !tokenData) {
-        throw new Error('Failed to generate token');
-      }
-
-      // Create QR token record
-      const { data, error } = await supabase
-        .from('qr_tokens')
-        .insert({
-          token: tokenData,
-          dossier_id: dossierId,
-          created_by: user.id,
-          max_scans: maxScans,
-          scopes: scopes,
-          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        })
-        .select()
-        .single();
+      // Use RPC endpoint to generate QR token
+      const { data, error } = await supabase.rpc('generate_qr_token_rpc', {
+        p_dossier_id: dossierId,
+        p_scopes: scopes,
+        p_max_scans: maxScans || null,
+        p_expires_hours: 168, // 7 days
+      });
 
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Geen QR data ontvangen');
 
-      // Generate URL for QR code
+      const result = data[0];
       const baseUrl = window.location.origin;
-      const qrUrl = `${baseUrl}/qr-scan/${data.token}`;
+      const qrUrl = `${baseUrl}${result.qr_url}`;
 
       setQrData({
-        token: data.token,
+        token: result.token,
         url: qrUrl
       });
 
       toast({
         title: "QR Code gegenereerd",
-        description: "U kunt de QR code nu downloaden of delen"
+        description: `Verloopt op ${new Date(result.expires_at).toLocaleDateString('nl-NL')}`,
       });
     } catch (error: any) {
       console.error('QR generation error:', error);

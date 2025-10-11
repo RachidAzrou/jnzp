@@ -21,13 +21,7 @@ interface DocumentUploadDialogProps {
   onDocumentUploaded: () => void;
 }
 
-const DOC_TYPES = [
-  { value: "ID_CARD", label: "Identiteitsbewijs" },
-  { value: "DEATH_CERTIFICATE", label: "Overlijdensakte" },
-  { value: "INSURANCE_POLICY", label: "Verzekeringspolis" },
-  { value: "BURIAL_PERMIT", label: "Vergunning" },
-  { value: "OTHER", label: "Overig" },
-];
+// Removed DOC_TYPES - now using free text input
 
 export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: DocumentUploadDialogProps) {
   const { toast } = useToast();
@@ -37,10 +31,21 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
   const [uploading, setUploading] = useState(false);
 
   const handleUpload = async () => {
-    if (!file || !docType) {
+    // Validation
+    if (!file || !docType.trim()) {
       toast({
-        title: "Incomplete",
-        description: "Selecteer een document type en bestand",
+        title: "Ontbrekende gegevens",
+        description: "Vul documenttype in en selecteer een bestand",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Document type length check
+    if (docType.trim().length > 100) {
+      toast({
+        title: "Documenttype te lang",
+        description: "Maximaal 100 karakters toegestaan",
         variant: "destructive",
       });
       return;
@@ -89,15 +94,15 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
       return;
     }
 
-    // Store file path only - signed URLs will be generated on-demand for security
-    // Create document record
+    // Create document record with free text doc_type
     const { error: dbError } = await supabase.from("documents").insert({
-      doc_type: docType as any,
+      dossier_id: dossierId,
+      doc_type: docType.trim(), // Free text input
       file_name: file.name,
       file_url: fileName, // Store path, not public URL
       uploaded_by: userId,
       status: "IN_REVIEW",
-    } as any);
+    });
 
     if (dbError) {
       toast({
@@ -146,20 +151,18 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
-          <div>
-            <Label>Document type</Label>
-            <Select value={docType} onValueChange={setDocType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecteer type" />
-              </SelectTrigger>
-              <SelectContent>
-                {DOC_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="space-y-2">
+            <Label htmlFor="docType">Documenttype</Label>
+            <Input
+              id="docType"
+              placeholder="bijv. Overlijdensakte, Paspoort, Volmacht..."
+              value={docType}
+              onChange={(e) => setDocType(e.target.value)}
+              required
+            />
+            <p className="text-xs text-muted-foreground">
+              Geef een duidelijke naam voor het document
+            </p>
           </div>
           <div>
             <Label>Bestand</Label>

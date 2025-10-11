@@ -168,10 +168,12 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Create new tasks
+    // Create new tasks with explicit status
     const tasksWithDossierId = newTasks.map(task => ({
       ...task,
-      dossier_id: dossierId
+      dossier_id: dossierId,
+      status: 'TODO', // Explicitly set status for new tasks
+      created_by: null // Edge function runs as service role
     }));
 
     const { error: insertError } = await supabaseClient

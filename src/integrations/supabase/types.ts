@@ -4094,6 +4094,10 @@ export type Database = {
         Args: { p_approved: boolean; p_claim_id: string }
         Returns: Json
       }
+      armor: {
+        Args: { "": string }
+        Returns: string
+      }
       calculate_device_risk: {
         Args: {
           p_current_ip: string
@@ -4198,6 +4202,10 @@ export type Database = {
         Args: { p_ip?: string; p_user_agent?: string; p_user_id: string }
         Returns: string
       }
+      dearmor: {
+        Args: { "": string }
+        Returns: string
+      }
       decrypt_field: {
         Args: { p_encrypted: string; p_key?: string }
         Returns: string
@@ -4239,6 +4247,18 @@ export type Database = {
       fn_seed_dossier_tasks_sql: {
         Args: { _dossier_id: string; _flow: string; _status: string }
         Returns: undefined
+      }
+      gen_random_bytes: {
+        Args: { "": number }
+        Returns: string
+      }
+      gen_random_uuid: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      gen_salt: {
+        Args: { "": string }
+        Returns: string
       }
       generate_feedback_token: {
         Args: Record<PropertyKey, never>
@@ -4363,6 +4383,14 @@ export type Database = {
       mark_password_reset_token_used: {
         Args: { p_token_hash: string }
         Returns: undefined
+      }
+      pgp_armor_headers: {
+        Args: { "": string }
+        Returns: Record<string, unknown>[]
+      }
+      pgp_key_id: {
+        Args: { "": string }
+        Returns: string
       }
       register_device_token: {
         Args: {

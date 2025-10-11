@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { TopBar } from "@/components/TopBar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 
@@ -123,30 +122,22 @@ export default function InsurerDossierDocuments() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <TopBar />
-        <div className="container mx-auto p-6">
-          <div className="text-center py-12">Laden...</div>
-        </div>
+      <div className="container mx-auto p-6">
+        <div className="text-center py-12">Laden...</div>
       </div>
     );
   }
 
   if (!dossier) {
     return (
-      <div className="min-h-screen bg-background">
-        <TopBar />
-        <div className="container mx-auto p-6">
-          <div className="text-center py-12">Dossier niet gevonden</div>
-        </div>
+      <div className="container mx-auto p-6">
+        <div className="text-center py-12">Dossier niet gevonden</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar />
-      <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6">
         <div>
           <h1 className="text-2xl font-semibold">Dossier {dossier.ref_number} - Documenten</h1>
           <p className="text-sm text-muted-foreground mt-1">Bekijk en beoordeel documenten</p>
@@ -274,6 +265,5 @@ export default function InsurerDossierDocuments() {
           </Card>
         </div>
       </div>
-    </div>
   );
 }

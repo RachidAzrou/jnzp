@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Receipt, Shield, RefreshCw, AlertCircle } from "lucide-react";
-import { TopBar } from "@/components/TopBar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -321,30 +320,22 @@ export default function InsurerDossierOverview() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <TopBar />
-        <div className="container mx-auto p-6">
-          <div className="text-center py-12">Laden...</div>
-        </div>
+      <div className="container mx-auto p-6">
+        <div className="text-center py-12">Laden...</div>
       </div>
     );
   }
 
   if (!dossier) {
     return (
-      <div className="min-h-screen bg-background">
-        <TopBar />
-        <div className="container mx-auto p-6">
-          <div className="text-center py-12">Dossier niet gevonden</div>
-        </div>
+      <div className="container mx-auto p-6">
+        <div className="text-center py-12">Dossier niet gevonden</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar />
-      <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Dossier {dossier.ref_number}</h1>
@@ -781,6 +772,5 @@ export default function InsurerDossierOverview() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
   );
 }

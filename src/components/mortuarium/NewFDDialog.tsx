@@ -32,7 +32,7 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
 
   const createFDMutation = useMutation({
     mutationFn: async () => {
-      console.log('🚀 Creating new FD with data:', {
+      console.log('🚀 Creating new FD via Edge Function:', {
         fdName,
         contactName,
         contactEmail,
@@ -44,55 +44,31 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
       const [firstName, ...lastNameParts] = contactName.trim().split(' ');
       const lastName = lastNameParts.join(' ') || firstName;
 
-      // STAP 1: Maak auth user aan
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: contactEmail.trim(),
-        password: tempPassword,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            first_name: firstName,
-            last_name: lastName
-          }
+      // Call Edge Function (handles all user creation + rollback)
+      const { data, error } = await supabase.functions.invoke('register-professional', {
+        body: {
+          email: contactEmail.trim(),
+          password: tempPassword,
+          firstName: firstName,
+          lastName: lastName,
+          phone: contactPhone.trim(),
+          orgType: 'FUNERAL_DIRECTOR',
+          orgName: fdName.trim(),
+          businessNumber: undefined
         }
       });
 
-      if (authError) {
-        console.error('❌ Auth signup failed:', authError);
-        throw authError;
+      if (error) {
+        console.error('❌ Edge Function error:', error);
+        throw new Error(error.message || 'Kon FD niet aanmaken');
       }
 
-      if (!authData.user) {
-        throw new Error("Kon gebruiker niet aanmaken");
+      if (!data?.success) {
+        console.error('❌ Registration failed:', data);
+        throw new Error(data?.error || 'Kon FD niet aanmaken');
       }
 
-      console.log('✅ Auth user created:', authData.user.id);
-
-      // STAP 2: Registreer via atomische RPC functie
-      const { data: result, error: rpcError } = await supabase.rpc('register_professional_user', {
-        p_user_id: authData.user.id,
-        p_email: contactEmail.trim(),
-        p_first_name: firstName,
-        p_last_name: lastName,
-        p_phone: contactPhone.trim(),
-        p_org_type: 'FUNERAL_DIRECTOR',
-        p_org_name: fdName.trim(),
-        p_business_number: null // Ad-hoc FD heeft geen business number nodig
-      });
-
-      if (rpcError) {
-        console.error('❌ Registration RPC failed:', rpcError);
-        throw new Error(rpcError.message || 'Kon FD niet aanmaken');
-      }
-
-      const resultData = result as { success: boolean; organization_id: string; error?: string } | null;
-
-      if (!resultData || !resultData.success) {
-        console.error('❌ Registration failed:', resultData);
-        throw new Error(resultData?.error || 'Kon FD niet aanmaken');
-      }
-
-      const orgId = resultData.organization_id;
+      const orgId = data.organizationId;
       console.log('✅ FD created successfully:', orgId);
       return orgId;
     },

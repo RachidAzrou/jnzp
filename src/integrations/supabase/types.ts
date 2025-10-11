@@ -4273,19 +4273,6 @@ export type Database = {
         }
         Returns: string
       }
-      register_professional_user: {
-        Args: {
-          p_business_number?: string
-          p_email: string
-          p_first_name: string
-          p_last_name: string
-          p_org_name: string
-          p_org_type: string
-          p_phone: string
-          p_user_id: string
-        }
-        Returns: Json
-      }
       release_dossier: {
         Args: { p_action: string; p_dossier_id: string; p_reason?: string }
         Returns: Json

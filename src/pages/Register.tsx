@@ -123,63 +123,36 @@ const Register = () => {
 
     try {
       const orgType = mapRoleToOrgType(selectedRole!);
+      console.log('🚀 Start registration via Edge Function:', orgType);
 
-      console.log('🚀 Start registration for:', orgType);
-
-      // STAP 1: Maak auth user aan
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            first_name: firstName.trim(),
-            last_name: lastName.trim()
-          }
+      // Call Edge Function (handles all user creation + rollback)
+      const { data, error } = await supabase.functions.invoke('register-professional', {
+        body: {
+          email: email.trim(),
+          password: password,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phone: phone.trim(),
+          orgType: orgType,
+          orgName: companyName.trim(),
+          businessNumber: businessNumber.trim() || undefined
         }
       });
 
-      if (authError) {
-        console.error('❌ Auth signup failed:', authError);
-        throw authError;
+      if (error) {
+        console.error('❌ Edge Function error:', error);
+        throw new Error(error.message || 'Registratie mislukt');
       }
 
-      if (!authData.user) {
-        throw new Error("Kon gebruiker niet aanmaken.");
+      if (!data?.success) {
+        console.error('❌ Registration failed:', data);
+        throw new Error(data?.error || 'Registratie mislukt');
       }
 
-      console.log('✅ Auth user created:', authData.user.id);
-
-      // STAP 2: Registreer via atomische RPC functie
-      const { data: result, error: rpcError } = await supabase.rpc('register_professional_user', {
-        p_user_id: authData.user.id,
-        p_email: email.trim(),
-        p_first_name: firstName.trim(),
-        p_last_name: lastName.trim(),
-        p_phone: phone.trim(),
-        p_org_type: orgType,
-        p_org_name: companyName.trim(),
-        p_business_number: businessNumber.trim() || null
+      console.log('✅ Registration complete:', {
+        userId: data.userId,
+        organizationId: data.organizationId
       });
-
-      if (rpcError) {
-        console.error('❌ Registration RPC failed:', rpcError);
-        await supabase.auth.signOut();
-        throw new Error(rpcError.message || 'Kon registratie niet voltooien.');
-      }
-
-      const resultData = result as { success: boolean; organization_id: string; error?: string } | null;
-
-      if (!resultData || !resultData.success) {
-        console.error('❌ Registration failed:', resultData);
-        await supabase.auth.signOut();
-        throw new Error(resultData?.error || 'Kon registratie niet voltooien.');
-      }
-
-      console.log('✅ Registration complete:', resultData);
-
-      // Logout direct (user moet wachten op goedkeuring)
-      await supabase.auth.signOut();
       
       toast({
         title: "✅ Registratie Voltooid",
@@ -190,9 +163,6 @@ const Register = () => {
 
     } catch (error: any) {
       const errMsg = error?.message || String(error);
-      
-      // Cleanup: sign out user on failure
-      await supabase.auth.signOut();
       
       toast({
         variant: "destructive",

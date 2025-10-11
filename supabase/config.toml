@@ -1,5 +1,8 @@
 project_id = "yupqrawkrpyfrdzxssdk"
 
+[functions.register-professional]
+verify_jwt = false
+
 [functions.reset-demo-passwords]
 verify_jwt = false
 

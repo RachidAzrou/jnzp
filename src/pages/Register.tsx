@@ -446,8 +446,7 @@ const Register = () => {
                             placeholder={selectedRole === "mosque" ? "Optioneel" : "BE 0123.456.789 of 0123456789"}
                             required={selectedRole !== "mosque"}
                             className={`h-10 pr-10 ${
-                              businessNumberError ? 'border-destructive focus-visible:ring-destructive' : 
-                              isBusinessNumberValid ? 'border-green-500 focus-visible:ring-green-500' : ''
+                              businessNumberError ? 'border-destructive focus-visible:ring-destructive' : ''
                             }`}
                           />
                           {isCheckingBusinessNumber && (
@@ -455,14 +454,11 @@ const Register = () => {
                               <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
                             </div>
                           )}
-                          {!isCheckingBusinessNumber && isBusinessNumberValid && businessNumber.trim() && (
-                            <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
-                          )}
                           {!isCheckingBusinessNumber && businessNumberError && (
                             <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-destructive" />
                           )}
                         </div>
-                        {selectedRole !== "mosque" && !businessNumberError && !isBusinessNumberValid && (
+                        {selectedRole !== "mosque" && !businessNumberError && (
                           <p className="text-xs text-muted-foreground">
                             KBO/BTW-nummer verplicht
                           </p>
@@ -471,12 +467,6 @@ const Register = () => {
                           <p className="text-xs text-destructive flex items-center gap-1">
                             <AlertCircle className="h-3 w-3" />
                             {businessNumberError}
-                          </p>
-                        )}
-                        {isBusinessNumberValid && businessNumber.trim() && (
-                          <p className="text-xs text-green-600 flex items-center gap-1">
-                            <Check className="h-3 w-3" />
-                            Ondernemingsnummer beschikbaar
                           </p>
                         )}
                       </div>

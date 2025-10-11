@@ -1824,6 +1824,7 @@ export type Database = {
           board_id: string
           column_id: string
           created_at: string
+          created_by: string | null
           description: string | null
           dossier_id: string | null
           due_date: string | null
@@ -1844,6 +1845,7 @@ export type Database = {
           board_id: string
           column_id: string
           created_at?: string
+          created_by?: string | null
           description?: string | null
           dossier_id?: string | null
           due_date?: string | null
@@ -1864,6 +1866,7 @@ export type Database = {
           board_id?: string
           column_id?: string
           created_at?: string
+          created_by?: string | null
           description?: string | null
           dossier_id?: string | null
           due_date?: string | null

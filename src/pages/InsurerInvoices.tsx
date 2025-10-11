@@ -316,7 +316,7 @@ export default function InsurerInvoices() {
       </div>
 
       {/* KPIs */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-4">
           <KPICard
             title="Totaal Facturen"
             value={totalInvoices.toString()}

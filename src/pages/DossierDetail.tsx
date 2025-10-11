@@ -970,124 +970,22 @@ const DossierDetail = () => {
           </Card>
         </TabsContent>
 
-        {/* Notes Tab - Split naar Interne Notities + Discussie */}
+        {/* Notes Tab - Alleen Interne Notities */}
         <TabsContent value="notes" className="space-y-6">
-          <Tabs defaultValue="internal_notes">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="internal_notes">Interne Notities</TabsTrigger>
-              <TabsTrigger value="discussion">Discussie</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="internal_notes" className="mt-6">
-              <InternalNotesCard 
-                dossierId={id!} 
-                initialNotes={dossier?.internal_notes || ''}
-                onNotesSaved={fetchDossierData}
-              />
-            </TabsContent>
-
-            <TabsContent value="discussion" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Discussie</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <DossierComments 
-                    dossierId={id!} 
-                    organizationId={dossier?.assigned_fd_org_id || ''}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </TabsContent>
-
-        {/* OLD Timeline Tab logic removed - replaced above */}
-        <TabsContent value="old_timeline_hidden" className="hidden space-y-6">
-          <Card>
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Clock className="h-5 w-5 text-primary" />
-                  </div>
-                  <CardTitle className="text-xl">Tijdlijn (Oud)</CardTitle>
-                </div>
-                <AddManualEventDialog 
-                  dossierId={id!}
-                  onEventAdded={fetchDossierData}
-                />
-              </div>
-            </CardHeader>
-            <CardContent>
-              {(events.length > 0 || manualEvents.length > 0) ? (
-                <div className="space-y-4">
-                  {/* Combine and sort all events */}
-                  {[
-                    ...events.map(e => ({ ...e, type: 'system', time: e.created_at })),
-                    ...manualEvents.map(e => ({ ...e, type: 'manual', time: e.created_at }))
-                  ]
-                    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-                    .map((event, index, arr) => (
-                      <div key={`${event.type}-${event.id}`} className="flex gap-4">
-                        <div className="flex flex-col items-center">
-                          <div className={`h-3 w-3 rounded-full ${
-                            event.type === 'manual' ? 'bg-blue-500' : 'bg-primary'
-                          }`} />
-                          {index < arr.length - 1 && (
-                            <div className="w-0.5 flex-1 bg-border mt-1" />
-                          )}
-                        </div>
-                        <div className="flex-1 pb-4">
-                          {event.type === 'manual' ? (
-                            <>
-                              <p className="font-medium">{event.event_title}</p>
-                              {event.event_description && (
-                                <p className="text-sm mt-1">{event.event_description}</p>
-                              )}
-                              <Badge variant="outline" className="mt-1 text-xs">Handmatig toegevoegd</Badge>
-                            </>
-                          ) : (
-                            <p className="font-medium">{event.event_description}</p>
-                          )}
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {formatDateTime(event.time)}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div className="py-8 text-center">
-                  <Clock className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                  <p className="text-sm text-muted-foreground">Geen gebeurtenissen</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Notes Tab */}
-        <TabsContent value="notes" className="space-y-6">
-          <InternalNotesCard 
-            dossierId={id!} 
-            initialNotes={dossier.internal_notes}
-            onNotesSaved={fetchDossierData}
-          />
-
           <Card>
             <CardHeader className="pb-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <MessageSquare className="h-5 w-5 text-primary" />
+                  <FileText className="h-5 w-5 text-primary" />
                 </div>
-                <CardTitle className="text-xl">Opmerkingen & Discussie</CardTitle>
+                <CardTitle className="text-xl">Interne Notities</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <DossierComments
-                dossierId={id!}
-                organizationId={dossier.assigned_fd_org_id}
+              <InternalNotesCard 
+                dossierId={id!} 
+                initialNotes={dossier.internal_notes}
+                onNotesSaved={fetchDossierData}
               />
             </CardContent>
           </Card>

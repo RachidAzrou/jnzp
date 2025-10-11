@@ -39,7 +39,7 @@ export function DocumentUploadDialog({
   const setOpen = onOpenChange || setInternalOpen;
   const [uploading, setUploading] = useState(false);
   const [selectedDossier, setSelectedDossier] = useState("");
-  const [selectedType, setSelectedType] = useState("");
+  const [docType, setDocType] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
 
@@ -64,10 +64,10 @@ export function DocumentUploadDialog({
   const availableDossiers = dossiers || fetchedDossiers;
 
   const handleUpload = async () => {
-    if (!file || !selectedDossier || !selectedType) {
+    if (!file || !selectedDossier || !docType.trim()) {
       toast({
         title: "Velden vereist",
-        description: "Selecteer een dossier, type en bestand.",
+        description: "Selecteer een dossier, vul een document type in en selecteer een bestand.",
         variant: "destructive",
       });
       return;
@@ -109,14 +109,14 @@ export function DocumentUploadDialog({
       // Store file path only - signed URLs will be generated on-demand for security
       // Create document record
       const { data: session } = await supabase.auth.getSession();
-      const { error: dbError } = await supabase.from("documents").insert([{
+      const { error: dbError } = await supabase.from("documents").insert({
         dossier_id: selectedDossier,
-        doc_type: selectedType as any,
-        file_url: filePath, // Store path, not public URL
+        doc_type: docType.trim(),
+        file_url: filePath,
         file_name: file.name,
-        status: "IN_REVIEW" as any,
+        status: "IN_REVIEW",
         uploaded_by: session.session?.user.id
-      }]);
+      });
 
       if (dbError) throw dbError;
 
@@ -128,7 +128,7 @@ export function DocumentUploadDialog({
       setOpen(false);
       setFile(null);
       setSelectedDossier("");
-      setSelectedType("");
+      setDocType("");
       onUploadComplete();
     } catch (error: any) {
       toast({
@@ -183,21 +183,16 @@ export function DocumentUploadDialog({
 
           <div className="space-y-2">
             <Label htmlFor="type">Document type</Label>
-            <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger id="type">
-                <SelectValue placeholder="Selecteer type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="MEDICAL_ID">Medisch attest (IIIC/IIID)</SelectItem>
-                <SelectItem value="MEDICAL_DEATH_CERTIFICATE">Medisch overlijdensbewijs</SelectItem>
-                <SelectItem value="DEATH_CERTIFICATE">Overlijdensakte</SelectItem>
-                <SelectItem value="TRANSPORT_PERMIT">Transportvergunning</SelectItem>
-                <SelectItem value="LAISSEZ_PASSER">Laissez-passer</SelectItem>
-                <SelectItem value="CONSULAR_LASSEZ_PASSER">Consulair laissez-passer</SelectItem>
-                <SelectItem value="SEALING_CERTIFICATE">Verzegelbewijs</SelectItem>
-                <SelectItem value="OTHER">Anders</SelectItem>
-              </SelectContent>
-            </Select>
+            <Input
+              id="type"
+              placeholder="Bijv. Medisch attest, Overlijdensakte, Transportvergunning..."
+              value={docType}
+              onChange={(e) => setDocType(e.target.value)}
+              maxLength={100}
+            />
+            <p className="text-xs text-muted-foreground">
+              Vul het type document in (max. 100 karakters)
+            </p>
           </div>
 
           <div className="space-y-2">

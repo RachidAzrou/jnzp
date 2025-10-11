@@ -4263,11 +4263,7 @@ export type Database = {
           p_max_scans?: number
           p_scopes?: Json
         }
-        Returns: {
-          expires_at: string
-          qr_url: string
-          token: string
-        }[]
+        Returns: Json
       }
       get_2fa_settings_with_nonce: {
         Args: { p_nonce: string }

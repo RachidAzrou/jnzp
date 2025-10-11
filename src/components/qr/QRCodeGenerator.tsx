@@ -41,11 +41,19 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
       });
 
       if (error) throw error;
-      if (!data || data.length === 0) throw new Error('Geen QR data ontvangen');
+      if (!data) throw new Error('Geen QR data ontvangen');
 
-      const result = data[0];
+      // Type the RPC response properly
+      const result = data as { 
+        success: boolean; 
+        token: string; 
+        token_id: string; 
+        expires_at: string;
+      };
+
+      // RPC returns a single JSONB object
       const baseUrl = window.location.origin;
-      const qrUrl = `${baseUrl}${result.qr_url}`;
+      const qrUrl = `${baseUrl}/qr/${result.token}`;
 
       setQrData({
         token: result.token,

@@ -423,9 +423,10 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
       case 'CREATED':
         return `${userName} heeft deze taak aangemaakt`;
       case 'MOVED':
-        const fromCol = activity.from_value || 'Onbekend';
-        const toCol = activity.to_value || 'Onbekend';
-        return `${userName} verplaatst van ${fromCol} naar ${toCol}`;
+        // Use metadata for column names if available, fallback to values
+        const fromCol = activity.metadata?.from_column || activity.from_value || 'Onbekend';
+        const toCol = activity.metadata?.to_column || activity.to_value || 'Onbekend';
+        return `${userName} verplaatst van "${fromCol}" naar "${toCol}"`;
       case 'ASSIGNED':
         return `${userName} heeft deze taak toegewezen`;
       case 'UNASSIGNED':
@@ -439,7 +440,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
       case 'REOPENED':
         return `${userName} heeft deze taak heropend`;
       case 'UPDATED':
-        return `${userName} heeft deze taak bijgewerkt`;
+        const changes = activity.metadata?.changes || 'details bijgewerkt';
+        return `${userName} heeft ${changes}`;
       case 'COMMENTED':
         return `${userName} heeft gereageerd`;
       default:

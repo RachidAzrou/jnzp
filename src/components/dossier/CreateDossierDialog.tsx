@@ -65,7 +65,7 @@ export function CreateDossierDialog() {
     contact_name: "",
     contact_phone: "",
     contact_email: "",
-    relationship: "",
+    relationship: "Zoon", // Default to first option to pass validation
     has_insurance: "unknown" as const,
     policy_number: "",
     destination: "",

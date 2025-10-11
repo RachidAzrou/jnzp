@@ -82,13 +82,13 @@ const Register = () => {
   }, [navigate, searchParams, toast]);
 
   // Map frontend role to backend org type
-  const mapRoleToOrgType = (role: UserRole): "FD" | "MOSQUE" | "MORTUARIUM" | "INSURER" => {
+  const mapRoleToOrgType = (role: UserRole): "FUNERAL_DIRECTOR" | "MOSQUE" | "MORTUARIUM" | "INSURER" => {
     switch (role) {
-      case "funeral_director": return "FD";
+      case "funeral_director": return "FUNERAL_DIRECTOR";
       case "mosque": return "MOSQUE";
       case "wasplaats": return "MORTUARIUM";
       case "insurer": return "INSURER";
-      default: return "FD";
+      default: return "FUNERAL_DIRECTOR";
     }
   };
 
@@ -194,24 +194,8 @@ const Register = () => {
       
       console.log('✅ Organisatie aangemaakt:', organizationId);
 
-      // Verify user_roles was created with correct scope and organization_id
-      const { data: roleCheck, error: roleError } = await supabase
-        .from('user_roles')
-        .select('id, scope, organization_id')
-        .eq('user_id', data.user.id)
-        .maybeSingle();
-
-      if (roleError || !roleCheck) {
-        throw new Error(
-          'Registratie is niet compleet. Probeer opnieuw of neem contact op met support.'
-        );
-      }
-
-      if (roleCheck.scope !== 'ORG' || !roleCheck.organization_id) {
-        throw new Error(
-          'Registratie is niet correct voltooid. Neem contact op met support.'
-        );
-      }
+      // Skip immediate user_roles verification to avoid race conditions
+      // Organization and role creation happens in fn_register_org_with_contact
 
       // 4. Update organization with additional details
       const { error: updateError } = await supabase

@@ -925,7 +925,7 @@ const DossierDetail = () => {
                 Chat met familie en collega's over dit dossier.
               </p>
               <Button 
-                onClick={() => navigate(`/fd/chat/${id}`)}
+                onClick={() => navigate(`/chat/${id}`)}
                 className="w-full"
               >
                 <MessageSquare className="mr-2 h-4 w-4" />

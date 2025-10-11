@@ -5,11 +5,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip, Download, X } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Download, X, ExternalLink, Trash2, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Message {
   id: string;
@@ -43,6 +54,8 @@ export default function FDChat() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [canDelete, setCanDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -91,6 +104,9 @@ export default function FDChat() {
       if (transformedDossier) {
         setDossier(transformedDossier);
         await fetchMessages(transformedDossier.id);
+        
+        // Check if chat can be deleted (only if dossier is archived)
+        setCanDelete(transformedDossier.status === 'ARCHIVED');
       }
 
       setLoading(false);
@@ -257,6 +273,38 @@ export default function FDChat() {
     }
   };
 
+  const handleDeleteChat = async () => {
+    if (!dossier || !canDelete) return;
+
+    try {
+      setIsDeleting(true);
+
+      // Delete all messages for this dossier
+      const { error } = await supabase
+        .from('chat_messages')
+        .delete()
+        .eq('dossier_id', dossier.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Chat verwijderd",
+        description: "Alle chatberichten zijn verwijderd",
+      });
+
+      navigate('/fd/chat');
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+      toast({
+        title: "Fout",
+        description: "Chat kon niet worden verwijderd",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     return format(date, "HH:mm", { locale: nl });
@@ -286,48 +334,98 @@ export default function FDChat() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="default"
-          onClick={() => navigate('/fd/chat')}
-          className="gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Terug naar overzicht</span>
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold">
-            Chat — Dossier {dossier?.display_id || dossier?.ref_number}
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {dossier?.family_contact_name || dossier?.deceased_name || 'Nog in te vullen'}
-          </p>
-        </div>
-        {dossier && (
+    <div className="container max-w-6xl mx-auto p-6 space-y-6">
+      {/* Enhanced Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
           <Button
             variant="outline"
-            onClick={() => navigate(`/dossiers/${dossier.id}`)}
+            size="default"
+            onClick={() => navigate('/fd/chat')}
+            className="gap-2"
           >
-            Open Dossier
+            <ArrowLeft className="h-4 w-4" />
+            Terug
           </Button>
-        )}
+          <div>
+            <h1 className="text-2xl font-bold">Chat</h1>
+            <p className="text-sm text-muted-foreground">
+              Dossier {dossier?.display_id || dossier?.ref_number} — {dossier?.deceased_name}
+            </p>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          {dossier && (
+            <Button
+              variant="outline"
+              onClick={() => navigate(`/dossiers/${dossier.id}`)}
+              className="gap-2"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Open Dossier
+            </Button>
+          )}
+          
+          {canDelete && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="gap-2">
+                  <Trash2 className="h-4 w-4" />
+                  Verwijder Chat
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                    Chat verwijderen?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Weet je zeker dat je alle chatberichten voor dit dossier wilt verwijderen?
+                    Deze actie kan niet ongedaan worden gemaakt.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteChat}
+                    disabled={isDeleting}
+                    className="bg-destructive hover:bg-destructive/90"
+                  >
+                    {isDeleting ? "Bezig met verwijderen..." : "Ja, verwijder chat"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
       </div>
 
-      <div className="grid lg:grid-cols-[1fr,300px] gap-6">
+      {/* Main Chat Interface */}
+      <div className="grid lg:grid-cols-[1fr,320px] gap-6">
         {/* Chat Thread */}
-        <Card className="flex flex-col h-[600px]">
-          <CardHeader>
-            <CardTitle>Conversatie</CardTitle>
+        <Card className="flex flex-col shadow-lg">
+          <CardHeader className="border-b bg-muted/30">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Send className="h-4 w-4 text-primary" />
+                </div>
+                Conversatie
+              </CardTitle>
+              <Badge variant="outline" className="text-xs">
+                {messages.length} {messages.length === 1 ? 'bericht' : 'berichten'}
+              </Badge>
+            </div>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col">
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+          <CardContent className="flex-1 flex flex-col p-0">
+            {/* Messages Container */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-muted/20 to-background" style={{ maxHeight: 'calc(100vh - 400px)' }}>
               {messages.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
-                  <p>Nog geen berichten</p>
+                  <Send className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                  <p className="font-medium">Nog geen berichten</p>
                   <p className="text-sm mt-2">Start een conversatie met de familie</p>
                 </div>
               ) : (
@@ -346,13 +444,13 @@ export default function FDChat() {
                       )}
                       <div
                         className={cn(
-                          "flex flex-col gap-1 p-3 rounded-lg max-w-[80%]",
+                          "flex flex-col gap-1 p-4 rounded-lg max-w-[80%] shadow-sm",
                           msg.sender_role === 'funeral_director'
                             ? "ml-auto bg-primary text-primary-foreground"
                             : "bg-muted"
                         )}
                       >
-                        <div className="flex items-center justify-between gap-2 text-xs opacity-80">
+                        <div className="flex items-center justify-between gap-2 text-xs opacity-80 mb-1">
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{getRoleName(msg.sender_role)}</span>
                             <Badge className="bg-blue-500 text-white text-[10px] h-4 px-1.5">
@@ -387,7 +485,7 @@ export default function FDChat() {
             </div>
 
             {/* Compose Box */}
-            <div className="border-t pt-4 space-y-3">
+            <div className="border-t bg-background p-6 space-y-3">
               {selectedFile && (
                 <div className="flex items-center gap-2 p-2 bg-muted rounded">
                   <Paperclip className="h-4 w-4" />
@@ -403,7 +501,7 @@ export default function FDChat() {
               )}
               <div className="flex gap-2">
                 <Textarea
-                  placeholder="Typ uw antwoord..."
+                  placeholder="Typ uw bericht..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => {
@@ -412,7 +510,7 @@ export default function FDChat() {
                       handleSendMessage();
                     }
                   }}
-                  className="min-h-[80px]"
+                  className="min-h-[80px] resize-none"
                 />
               </div>
               <div className="flex gap-2">
@@ -453,33 +551,60 @@ export default function FDChat() {
           </CardContent>
         </Card>
 
-        {/* Dossier Context */}
+        {/* Dossier Info Sidebar */}
         {dossier && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Dossier Context</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Overledene</p>
-                <p className="font-medium">{dossier.deceased_name || 'Nog in te vullen'}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Dossier-ID</p>
-                <p className="font-medium font-mono">{dossier.display_id || dossier.ref_number}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Status</p>
-                <Badge>{dossier.status.replace(/_/g, ' ')}</Badge>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Type</p>
-                <Badge variant="outline">
-                  {dossier.flow === 'REP' ? 'Repatriëring' : dossier.flow === 'LOC' ? 'Lokaal' : 'Onbekend'}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            <Card className="shadow-lg">
+              <CardHeader className="border-b bg-muted/30">
+                <CardTitle className="text-base">Dossier Informatie</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
+                <div>
+                  <p className="text-sm text-muted-foreground">Overledene</p>
+                  <p className="font-medium">{dossier.deceased_name || 'Nog in te vullen'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Dossier-ID</p>
+                  <p className="font-medium font-mono text-sm">{dossier.display_id || dossier.ref_number}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <Badge>{dossier.status.replace(/_/g, ' ')}</Badge>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Type</p>
+                  <Badge variant="outline">
+                    {dossier.flow === 'REP' ? 'Repatriëring' : dossier.flow === 'LOC' ? 'Lokaal' : 'Onbekend'}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions Card */}
+            <Card className="shadow-lg">
+              <CardHeader className="border-b bg-muted/30">
+                <CardTitle className="text-base">Snelle Acties</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-3">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => navigate(`/dossiers/${dossier.id}`)}
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Bekijk volledig dossier
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => navigate(`/dossiers/${dossier.id}?tab=documents`)}
+                >
+                  <Paperclip className="mr-2 h-4 w-4" />
+                  Documenten beheren
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         )}
       </div>
     </div>

@@ -67,30 +67,33 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
 
       console.log('✅ Provisional user created:', authData.user.id);
 
-      // 2. Nu organization aanmaken met echte user_id
-      const { data: orgId, error } = await supabase.rpc('fn_register_org_with_contact', {
+      // 2. Wait for session setup
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // 3. Nu organization aanmaken via v2 function (gebruikt auth.uid())
+      const { data: result, error } = await supabase.rpc('fn_register_org_with_contact_v2', {
         p_org_type: 'FUNERAL_DIRECTOR',
         p_org_name: fdName.trim(),
-        p_business_number: null,
-        p_email: contactEmail.trim(),
+        p_business_number: '',
         p_contact_first_name: firstName,
         p_contact_last_name: lastName,
-        p_user_id: authData.user.id, // ECHTE user_id
-        p_phone: contactPhone.trim() || null,
-        p_set_active: false
+        p_email: contactEmail.trim(),
+        p_phone: contactPhone.trim() || ''
       });
 
       if (error) {
-        console.error('❌ fn_register_org_with_contact error:', error);
+        console.error('❌ fn_register_org_with_contact_v2 error:', error);
         throw error;
       }
       
-      if (!orgId) {
-        throw new Error('Organization creation returned no ID');
+      const resultData = result as { success: boolean; organization_id: string; user_id: string } | null;
+      
+      if (!resultData?.success || !resultData?.organization_id) {
+        throw new Error('Organization creation returned invalid response');
       }
       
-      console.log('✅ Provisional FD organization created:', orgId);
-      return orgId as string;
+      console.log('✅ Provisional FD organization created:', resultData.organization_id);
+      return resultData.organization_id;
     },
     onSuccess: (orgId) => {
       toast.success("Voorlopige FD succesvol aangemaakt");

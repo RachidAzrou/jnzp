@@ -4142,7 +4142,7 @@ export type Database = {
         }
         Returns: undefined
       }
-      fn_register_org_with_contact: {
+      fn_register_org_with_contact_v2: {
         Args: {
           p_business_number: string
           p_contact_first_name: string
@@ -4151,10 +4151,8 @@ export type Database = {
           p_org_name: string
           p_org_type: string
           p_phone: string
-          p_set_active?: boolean
-          p_user_id?: string
         }
-        Returns: string
+        Returns: Json
       }
       fn_release_legal_hold: {
         Args: { p_actor: string; p_dossier_id: string; p_reason: string }

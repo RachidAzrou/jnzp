@@ -67,10 +67,26 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
 
       console.log('✅ Provisional user created:', authData.user.id);
 
-      // 2. Wait for session setup
+      // 2. Explicitly create user profile
+      const { error: profileError } = await supabase.rpc('create_user_profile', {
+        p_user_id: authData.user.id,
+        p_email: contactEmail.trim(),
+        p_first_name: firstName,
+        p_last_name: lastName,
+        p_phone: contactPhone.trim() || null
+      });
+
+      if (profileError) {
+        console.error('❌ Profile creation failed:', profileError);
+        throw new Error('Kon gebruikersprofiel niet aanmaken.');
+      }
+
+      console.log("✅ Profile created for FD user:", authData.user.id);
+
+      // 3. Wait for session setup
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // 3. Nu organization aanmaken via v2 function (gebruikt auth.uid())
+      // 4. Nu organization aanmaken via v2 function (gebruikt auth.uid())
       const { data: result, error } = await supabase.rpc('fn_register_org_with_contact_v2', {
         p_org_type: 'FUNERAL_DIRECTOR',
         p_org_name: fdName.trim(),

@@ -149,10 +149,26 @@ const Register = () => {
 
       console.log('✅ Auth user created:', authData.user.id);
 
-      // 3. Wait for session setup (important!)
+      // 3. Explicitly create user profile
+      const { error: profileError } = await supabase.rpc('create_user_profile', {
+        p_user_id: authData.user.id,
+        p_email: email.trim(),
+        p_first_name: firstName.trim(),
+        p_last_name: lastName.trim(),
+        p_phone: phone.trim() || null
+      });
+
+      if (profileError) {
+        console.error('❌ Profile creation failed:', profileError);
+        throw new Error('Kon gebruikersprofiel niet aanmaken.');
+      }
+
+      console.log("✅ Profile created for user:", authData.user.id);
+
+      // 4. Wait for session setup (important!)
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // 4. Call NEW v2 function (NO user_id parameter - uses auth.uid())
+      // 5. Call NEW v2 function (NO user_id parameter - uses auth.uid())
       const { data: result, error: rpcError } = await supabase.rpc(
         'fn_register_org_with_contact_v2',
         {
@@ -171,7 +187,7 @@ const Register = () => {
         throw new Error(rpcError.message || 'Registratie mislukt');
       }
 
-      // 5. Verify response
+      // 6. Verify response
       console.log('✅ Registration response:', result);
       
       const resultData = result as { success: boolean; organization_id: string; user_id: string } | null;
@@ -180,7 +196,7 @@ const Register = () => {
         throw new Error('Ongeldig response van registratiefunctie');
       }
 
-      // 6. Update org with additional details (optional)
+      // 7. Update org with additional details (optional)
       if (addressStreet || addressCity) {
         const { error: updateError } = await supabase
           .from('organizations')
@@ -198,7 +214,7 @@ const Register = () => {
         }
       }
 
-      // 7. Success!
+      // 8. Success!
       toast({
         title: "✅ Registratie Voltooid",
         description: "Uw aanvraag is ingediend. U ontvangt bericht wanneer uw account is goedgekeurd.",

@@ -4108,6 +4108,16 @@ export type Database = {
         Args: { p_ip?: string; p_user_agent?: string; p_user_id: string }
         Returns: string
       }
+      create_user_profile: {
+        Args: {
+          p_email: string
+          p_first_name: string
+          p_last_name: string
+          p_phone?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
       decrypt_field: {
         Args: { p_encrypted: string; p_key?: string }
         Returns: string

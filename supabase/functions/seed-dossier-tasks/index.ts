@@ -257,7 +257,7 @@ Deno.serve(async (req) => {
       title: task.title,
       description: task.description || '',
       priority: 'MEDIUM' as const,
-      status: 'TODO', // Must match check constraint: TODO, IN_PROGRESS, or DONE
+      status: 'TE_DOEN', // Must match check constraint: TE_DOEN, BEZIG, or AFGEROND
       position: index,
       labels: [task.task_type],
       reporter_id: null

@@ -4234,7 +4234,7 @@ export type Database = {
         Returns: undefined
       }
       fn_seed_dossier_tasks_sql: {
-        Args: { p_dossier_id: string; p_flow: string; p_status: string }
+        Args: { _dossier_id: string; _flow: string; _status: string }
         Returns: undefined
       }
       generate_feedback_token: {

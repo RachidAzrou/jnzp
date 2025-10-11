@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, Check, AlertCircle } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { LuHandshake } from "react-icons/lu";
 import { RiHandHeartLine } from "react-icons/ri";
@@ -16,6 +16,7 @@ import logoJanazApp from "@/assets/logo-janazapp.png";
 import authBackground from "@/assets/auth-background.jpg";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useBusinessNumberValidation } from "@/hooks/useBusinessNumberValidation";
 
 type UserRole = "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
@@ -27,6 +28,13 @@ const Register = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const { 
+    isValid: isBusinessNumberValid, 
+    isChecking: isCheckingBusinessNumber, 
+    error: businessNumberError,
+    validateBusinessNumber,
+    resetValidation 
+  } = useBusinessNumberValidation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -162,12 +170,23 @@ const Register = () => {
       navigate('/auth');
 
     } catch (error: any) {
-      const errMsg = error?.message || String(error);
+      console.error("Professional signup error:", error);
+      
+      // Check for specific error codes
+      let errorMessage = "Er is een fout opgetreden bij het registreren. Probeer het opnieuw.";
+      
+      if (error?.code === 'BUSINESS_NUMBER_EXISTS') {
+        errorMessage = error.message || "Dit ondernemingsnummer is al geregistreerd.";
+      } else if (error?.code === 'EMAIL_EXISTS') {
+        errorMessage = error.message || "Dit e-mailadres is al geregistreerd.";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
       
       toast({
         variant: "destructive",
         title: "❌ Registratie Mislukt",
-        description: errMsg || "Er is iets misgegaan. Probeer het opnieuw.",
+        description: errorMessage,
       });
       
       console.error('Registration error:', error);
@@ -398,24 +417,66 @@ const Register = () => {
                           className="h-10"
                         />
                       </div>
-                      <div className="space-y-1.5">
+                       <div className="space-y-1.5">
                         <Label htmlFor="business-number" className="text-sm">
                           {t('register.businessNumber')}
                           {selectedRole === "mosque" && (
                             <span className="text-muted-foreground text-xs ml-1">(optioneel)</span>
                           )}
                         </Label>
-                        <Input
-                          id="business-number"
-                          value={businessNumber}
-                          onChange={(e) => setBusinessNumber(e.target.value)}
-                          placeholder={selectedRole === "mosque" ? "Optioneel" : "BE 0123.456.789 of 0123456789"}
-                          required={selectedRole !== "mosque"}
-                          className="h-10"
-                        />
-                        {selectedRole !== "mosque" && (
+                        <div className="relative">
+                          <Input
+                            id="business-number"
+                            value={businessNumber}
+                            onChange={(e) => {
+                              setBusinessNumber(e.target.value);
+                              if (selectedRole !== "mosque") {
+                                if (e.target.value.trim()) {
+                                  validateBusinessNumber(e.target.value.trim());
+                                } else {
+                                  resetValidation();
+                                }
+                              }
+                            }}
+                            onBlur={() => {
+                              if (businessNumber.trim() && selectedRole !== "mosque") {
+                                validateBusinessNumber(businessNumber.trim());
+                              }
+                            }}
+                            placeholder={selectedRole === "mosque" ? "Optioneel" : "BE 0123.456.789 of 0123456789"}
+                            required={selectedRole !== "mosque"}
+                            className={`h-10 pr-10 ${
+                              businessNumberError ? 'border-destructive focus-visible:ring-destructive' : 
+                              isBusinessNumberValid ? 'border-green-500 focus-visible:ring-green-500' : ''
+                            }`}
+                          />
+                          {isCheckingBusinessNumber && (
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                            </div>
+                          )}
+                          {!isCheckingBusinessNumber && isBusinessNumberValid && businessNumber.trim() && (
+                            <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                          )}
+                          {!isCheckingBusinessNumber && businessNumberError && (
+                            <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-destructive" />
+                          )}
+                        </div>
+                        {selectedRole !== "mosque" && !businessNumberError && !isBusinessNumberValid && (
                           <p className="text-xs text-muted-foreground">
                             KBO/BTW-nummer verplicht
+                          </p>
+                        )}
+                        {businessNumberError && (
+                          <p className="text-xs text-destructive flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            {businessNumberError}
+                          </p>
+                        )}
+                        {isBusinessNumberValid && businessNumber.trim() && (
+                          <p className="text-xs text-green-600 flex items-center gap-1">
+                            <Check className="h-3 w-3" />
+                            Ondernemingsnummer beschikbaar
                           </p>
                         )}
                       </div>

@@ -90,7 +90,69 @@ serve(async (req) => {
       );
     }
 
+    // CRITICAL: Check if business_number already exists BEFORE creating auth user
+    if (body.businessNumber && body.businessNumber.trim()) {
+      console.log('Checking business_number availability:', body.businessNumber.trim());
+      const { data: existingOrg, error: checkError } = await supabaseAdmin
+        .from('organizations')
+        .select('id, name')
+        .eq('business_number', body.businessNumber.trim())
+        .maybeSingle();
+      
+      if (checkError) {
+        console.error('Error checking business_number:', checkError);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Kon ondernemingsnummer niet controleren' 
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
+
+      if (existingOrg) {
+        console.log('Business_number already exists:', existingOrg);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: `Ondernemingsnummer ${body.businessNumber.trim()} is al geregistreerd voor organisatie "${existingOrg.name}". Gebruik een ander ondernemingsnummer of neem contact op met support.`,
+            code: 'BUSINESS_NUMBER_EXISTS'
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 409 }
+        );
+      }
+    }
+
+    // Check if email already exists
+    console.log('Checking email availability:', body.email.trim());
+    const { data: existingUser, error: emailCheckError } = await supabaseAdmin.auth.admin.listUsers();
+    
+    if (emailCheckError) {
+      console.error('Error checking email:', emailCheckError);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Kon e-mailadres niet controleren' 
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      );
+    }
+
+    const emailExists = existingUser.users?.some(u => u.email === body.email.trim());
+    if (emailExists) {
+      console.log('Email already exists:', body.email.trim());
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Dit e-mailadres is al geregistreerd. Probeer in te loggen of gebruik een ander e-mailadres.',
+          code: 'EMAIL_EXISTS'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 409 }
+      );
+    }
+
     let userId: string | undefined;
+    let organizationId: string | undefined;
 
     try {
       // STEP 1: Create auth user
@@ -163,7 +225,7 @@ serve(async (req) => {
         throw new Error(`Organisatie aanmaken mislukt: ${orgError.message}`);
       }
 
-      const organizationId = orgData.id;
+      organizationId = orgData.id;
       console.log('Organization created:', organizationId);
 
       // STEP 5: Map org_type to app_role
@@ -229,7 +291,38 @@ serve(async (req) => {
       );
 
     } catch (innerError) {
-      // Rollback: delete auth user if created
+      // COMPREHENSIVE ROLLBACK: Clean up everything created so far
+      console.error('Registration failed, starting comprehensive rollback:', innerError);
+      
+      // Delete organization if created
+      if (organizationId) {
+        console.log('Rolling back organization:', organizationId);
+        try {
+          await supabaseAdmin
+            .from('organizations')
+            .delete()
+            .eq('id', organizationId);
+          console.log('Organization deleted successfully');
+        } catch (deleteError) {
+          console.error('Failed to delete organization during rollback:', deleteError);
+        }
+      }
+
+      // Delete profile if created
+      if (userId) {
+        console.log('Rolling back profile:', userId);
+        try {
+          await supabaseAdmin
+            .from('profiles')
+            .delete()
+            .eq('id', userId);
+          console.log('Profile deleted successfully');
+        } catch (deleteError) {
+          console.error('Failed to delete profile during rollback:', deleteError);
+        }
+      }
+
+      // Delete auth user if created (this should cascade delete profile too)
       if (userId) {
         console.log('Rolling back auth user:', userId);
         try {
@@ -239,6 +332,7 @@ serve(async (req) => {
           console.error('Failed to delete auth user during rollback:', deleteError);
         }
       }
+      
       throw innerError;
     }
 

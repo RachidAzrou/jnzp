@@ -122,15 +122,11 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // 1. Validate business number requirement
       const orgType = mapRoleToOrgType(selectedRole!);
-      const requiresBusinessNumber = ["INSURER", "FUNERAL_DIRECTOR", "MORTUARIUM"].includes(orgType);
-      
-      if (requiresBusinessNumber && !businessNumber.trim()) {
-        throw new Error("Ondernemingsnummer is verplicht voor deze rol.");
-      }
 
-      // 2. Create auth user first (establishes session)
+      console.log('🚀 Start registration for:', orgType);
+
+      // STAP 1: Maak auth user aan
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
@@ -138,94 +134,62 @@ const Register = () => {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
             first_name: firstName.trim(),
-            last_name: lastName.trim(),
-            phone: phone.trim(),
+            last_name: lastName.trim()
           }
         }
       });
 
-      if (authError) throw authError;
-      if (!authData.user) throw new Error("Kon gebruiker niet aanmaken.");
+      if (authError) {
+        console.error('❌ Auth signup failed:', authError);
+        throw authError;
+      }
+
+      if (!authData.user) {
+        throw new Error("Kon gebruiker niet aanmaken.");
+      }
 
       console.log('✅ Auth user created:', authData.user.id);
 
-      // 3. Explicitly create user profile
-      const { error: profileError } = await supabase.rpc('create_user_profile', {
+      // STAP 2: Registreer via atomische RPC functie
+      const { data: result, error: rpcError } = await supabase.rpc('register_professional_user', {
         p_user_id: authData.user.id,
         p_email: email.trim(),
         p_first_name: firstName.trim(),
         p_last_name: lastName.trim(),
-        p_phone: phone.trim() || null
+        p_phone: phone.trim(),
+        p_org_type: orgType,
+        p_org_name: companyName.trim(),
+        p_business_number: businessNumber.trim() || null
       });
 
-      if (profileError) {
-        console.error('❌ Profile creation failed:', profileError);
-        throw new Error('Kon gebruikersprofiel niet aanmaken.');
-      }
-
-      console.log("✅ Profile created for user:", authData.user.id);
-
-      // 4. Wait for session setup (important!)
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // 5. Call NEW v2 function (NO user_id parameter - uses auth.uid())
-      const { data: result, error: rpcError } = await supabase.rpc(
-        'fn_register_org_with_contact_v2',
-        {
-          p_org_type: orgType,
-          p_org_name: companyName.trim(),
-          p_business_number: businessNumber.trim() || '',
-          p_contact_first_name: firstName.trim(),
-          p_contact_last_name: lastName.trim(),
-          p_email: email.trim(),
-          p_phone: phone.trim() || ''
-        }
-      );
-
       if (rpcError) {
-        console.error('❌ RPC Error:', rpcError);
-        throw new Error(rpcError.message || 'Registratie mislukt');
+        console.error('❌ Registration RPC failed:', rpcError);
+        await supabase.auth.signOut();
+        throw new Error(rpcError.message || 'Kon registratie niet voltooien.');
       }
 
-      // 6. Verify response
-      console.log('✅ Registration response:', result);
+      const resultData = result as { success: boolean; organization_id: string; error?: string } | null;
+
+      if (!resultData || !resultData.success) {
+        console.error('❌ Registration failed:', resultData);
+        await supabase.auth.signOut();
+        throw new Error(resultData?.error || 'Kon registratie niet voltooien.');
+      }
+
+      console.log('✅ Registration complete:', resultData);
+
+      // Logout direct (user moet wachten op goedkeuring)
+      await supabase.auth.signOut();
       
-      const resultData = result as { success: boolean; organization_id: string; user_id: string } | null;
-      
-      if (!resultData?.success || !resultData?.organization_id) {
-        throw new Error('Ongeldig response van registratiefunctie');
-      }
-
-      // 7. Update org with additional details (optional)
-      if (addressStreet || addressCity) {
-        const { error: updateError } = await supabase
-          .from('organizations')
-          .update({
-            address_street: addressStreet,
-            address_city: addressCity,
-            address_postcode: addressPostcode,
-            address_country: addressCountry,
-            language
-          })
-          .eq('id', resultData.organization_id);
-
-        if (updateError) {
-          console.warn('⚠️ Address update failed:', updateError);
-        }
-      }
-
-      // 8. Success!
       toast({
         title: "✅ Registratie Voltooid",
         description: "Uw aanvraag is ingediend. U ontvangt bericht wanneer uw account is goedgekeurd.",
       });
-
-      // Sign out and redirect to login (security best practice)
-      await supabase.auth.signOut();
+      
       navigate('/auth');
 
     } catch (error: any) {
-      console.error('❌ Registration error:', error);
+      const errMsg = error?.message || String(error);
       
       // Cleanup: sign out user on failure
       await supabase.auth.signOut();
@@ -233,8 +197,10 @@ const Register = () => {
       toast({
         variant: "destructive",
         title: "❌ Registratie Mislukt",
-        description: error.message || "Er is iets misgegaan. Probeer het opnieuw.",
+        description: errMsg || "Er is iets misgegaan. Probeer het opnieuw.",
       });
+      
+      console.error('Registration error:', error);
     } finally {
       setLoading(false);
     }

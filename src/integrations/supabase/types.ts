@@ -4108,16 +4108,6 @@ export type Database = {
         Args: { p_ip?: string; p_user_agent?: string; p_user_id: string }
         Returns: string
       }
-      create_user_profile: {
-        Args: {
-          p_email: string
-          p_first_name: string
-          p_last_name: string
-          p_phone?: string
-          p_user_id: string
-        }
-        Returns: Json
-      }
       decrypt_field: {
         Args: { p_encrypted: string; p_key?: string }
         Returns: string
@@ -4151,18 +4141,6 @@ export type Database = {
           p_reason: string
         }
         Returns: undefined
-      }
-      fn_register_org_with_contact_v2: {
-        Args: {
-          p_business_number: string
-          p_contact_first_name: string
-          p_contact_last_name: string
-          p_email: string
-          p_org_name: string
-          p_org_type: string
-          p_phone: string
-        }
-        Returns: Json
       }
       fn_release_legal_hold: {
         Args: { p_actor: string; p_dossier_id: string; p_reason: string }
@@ -4294,6 +4272,19 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      register_professional_user: {
+        Args: {
+          p_business_number?: string
+          p_email: string
+          p_first_name: string
+          p_last_name: string
+          p_org_name: string
+          p_org_type: string
+          p_phone: string
+          p_user_id: string
+        }
+        Returns: Json
       }
       release_dossier: {
         Args: { p_action: string; p_dossier_id: string; p_reason?: string }

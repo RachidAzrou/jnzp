@@ -32,17 +32,19 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
 
   const createFDMutation = useMutation({
     mutationFn: async () => {
-      // BELANGRIJK: Voor provisional FDs moeten we eerst een auth user aanmaken
-      // Split contact name into first and last name
-      const nameParts = contactName.trim().split(' ');
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
+      console.log('🚀 Creating new FD with data:', {
+        fdName,
+        contactName,
+        contactEmail,
+        contactPhone
+      });
 
-      // 1. Maak eerst een echte auth user aan met tijdelijk wachtwoord
-      const tempPassword = crypto.randomUUID(); // Random password
-      
-      console.log('🔧 Creating provisional FD user for:', contactEmail.trim());
-      
+      // Genereer tijdelijk wachtwoord
+      const tempPassword = `Temp${Math.random().toString(36).slice(-8)}!`;
+      const [firstName, ...lastNameParts] = contactName.trim().split(' ');
+      const lastName = lastNameParts.join(' ') || firstName;
+
+      // STAP 1: Maak auth user aan
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: contactEmail.trim(),
         password: tempPassword,
@@ -50,76 +52,61 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
           emailRedirectTo: `${window.location.origin}/`,
           data: {
             first_name: firstName,
-            last_name: lastName,
-            phone: contactPhone.trim(),
-          },
-        },
+            last_name: lastName
+          }
+        }
       });
 
       if (authError) {
-        console.error('❌ Auth signup error:', authError);
+        console.error('❌ Auth signup failed:', authError);
         throw authError;
       }
-      
+
       if (!authData.user) {
-        throw new Error('User creation failed');
+        throw new Error("Kon gebruiker niet aanmaken");
       }
 
-      console.log('✅ Provisional user created:', authData.user.id);
+      console.log('✅ Auth user created:', authData.user.id);
 
-      // 2. Explicitly create user profile
-      const { error: profileError } = await supabase.rpc('create_user_profile', {
+      // STAP 2: Registreer via atomische RPC functie
+      const { data: result, error: rpcError } = await supabase.rpc('register_professional_user', {
         p_user_id: authData.user.id,
         p_email: contactEmail.trim(),
         p_first_name: firstName,
         p_last_name: lastName,
-        p_phone: contactPhone.trim() || null
-      });
-
-      if (profileError) {
-        console.error('❌ Profile creation failed:', profileError);
-        throw new Error('Kon gebruikersprofiel niet aanmaken.');
-      }
-
-      console.log("✅ Profile created for FD user:", authData.user.id);
-
-      // 3. Wait for session setup
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // 4. Nu organization aanmaken via v2 function (gebruikt auth.uid())
-      const { data: result, error } = await supabase.rpc('fn_register_org_with_contact_v2', {
+        p_phone: contactPhone.trim(),
         p_org_type: 'FUNERAL_DIRECTOR',
         p_org_name: fdName.trim(),
-        p_business_number: '',
-        p_contact_first_name: firstName,
-        p_contact_last_name: lastName,
-        p_email: contactEmail.trim(),
-        p_phone: contactPhone.trim() || ''
+        p_business_number: null // Ad-hoc FD heeft geen business number nodig
       });
 
-      if (error) {
-        console.error('❌ fn_register_org_with_contact_v2 error:', error);
-        throw error;
+      if (rpcError) {
+        console.error('❌ Registration RPC failed:', rpcError);
+        throw new Error(rpcError.message || 'Kon FD niet aanmaken');
       }
-      
-      const resultData = result as { success: boolean; organization_id: string; user_id: string } | null;
-      
-      if (!resultData?.success || !resultData?.organization_id) {
-        throw new Error('Organization creation returned invalid response');
+
+      const resultData = result as { success: boolean; organization_id: string; error?: string } | null;
+
+      if (!resultData || !resultData.success) {
+        console.error('❌ Registration failed:', resultData);
+        throw new Error(resultData?.error || 'Kon FD niet aanmaken');
       }
-      
-      console.log('✅ Provisional FD organization created:', resultData.organization_id);
-      return resultData.organization_id;
+
+      const orgId = resultData.organization_id;
+      console.log('✅ FD created successfully:', orgId);
+      return orgId;
     },
     onSuccess: (orgId) => {
-      toast.success("Voorlopige FD succesvol aangemaakt");
-      queryClient.invalidateQueries({ queryKey: ["fd-organizations"] });
-      onFDCreated(orgId);
+      queryClient.invalidateQueries({ queryKey: ['organizations'] });
+      toast.success("Nieuwe FD succesvol aangemaakt");
       handleClose();
+      onFDCreated(orgId);
     },
     onError: (error: any) => {
-      toast.error("Fout bij aanmaken FD: " + error.message);
-    },
+      console.error('❌ Error creating FD:', error);
+      const errorMsg = error?.message || String(error);
+      toast.error(`Fout bij aanmaken FD: ${errorMsg}`);
+    }
   });
 
   const handleClose = () => {

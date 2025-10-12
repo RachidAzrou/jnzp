@@ -11,9 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { 
   ArrowLeft, Star, AlertCircle, User, Users, FileText, 
   Building2, DollarSign, Clock, MessageSquare,
-  CheckCircle2, XCircle, Send, Droplet
+  CheckCircle2, XCircle, Send
 } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
+import { MdOutlineShower } from "react-icons/md";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
@@ -897,7 +898,7 @@ const DossierDetail = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <Droplet className="h-5 w-5 text-accent" />
+                    <MdOutlineShower className="h-5 w-5 text-accent" />
                   </div>
                   <CardTitle className="text-xl">Mortuarium</CardTitle>
                 </div>
@@ -919,7 +920,7 @@ const DossierDetail = () => {
                   </>
                 ) : (
                   <div className="py-8 text-center">
-                    <Droplet className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                    <MdOutlineShower className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
                     <p className="text-sm text-muted-foreground">Geen mortuarium dienst gepland</p>
                   </div>
                 )}

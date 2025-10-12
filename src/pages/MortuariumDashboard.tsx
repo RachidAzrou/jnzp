@@ -31,12 +31,22 @@ type Reservation = {
   dossiers: { display_id: string; deceased_name: string } | null;
 };
 
+type PendingRequest = {
+  id: string;
+  start_at: string;
+  end_at: string;
+  note: string | null;
+  cool_cells: { label: string } | null;
+  dossiers: { display_id: string; deceased_name: string } | null;
+};
+
 export default function MortuariumDashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [coolCells, setCoolCells] = useState<CoolCell[]>([]);
   const [todayReservations, setTodayReservations] = useState<Reservation[]>([]);
+  const [pendingRequests, setPendingRequests] = useState<PendingRequest[]>([]);
   const [cancelReason, setCancelReason] = useState("");
   const [selectedReservationId, setSelectedReservationId] = useState<string>("");
 
@@ -86,6 +96,20 @@ export default function MortuariumDashboard() {
         .order("start_at");
 
       if (reservationsData) setTodayReservations(reservationsData as any);
+
+      // Fetch all pending requests
+      const { data: pendingData } = await supabase
+        .from("cool_cell_reservations")
+        .select(`
+          *,
+          cool_cells(label),
+          dossiers(display_id, deceased_name)
+        `)
+        .eq("facility_org_id", userRole.organization_id)
+        .eq("status", "PENDING")
+        .order("start_at");
+
+      if (pendingData) setPendingRequests(pendingData as any);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast({
@@ -280,6 +304,118 @@ export default function MortuariumDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Pending Requests */}
+      {pendingRequests.length > 0 && (
+        <Card className="animate-fade-in">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-yellow-600" />
+              Inkomende Aanvragen ({pendingRequests.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Datum & Tijd</TableHead>
+                    <TableHead>Dossier</TableHead>
+                    <TableHead>Koelcel</TableHead>
+                    <TableHead>Notitie</TableHead>
+                    <TableHead className="text-right">Acties</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pendingRequests.map((request) => (
+                    <TableRow key={request.id}>
+                      <TableCell className="font-medium">
+                        <div>
+                          <div>{format(parseISO(request.start_at), "EEE d MMM yyyy", { locale: nl })}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {format(parseISO(request.start_at), "HH:mm", { locale: nl })} -{" "}
+                            {format(parseISO(request.end_at), "HH:mm", { locale: nl })}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">
+                            {request.dossiers?.deceased_name || "Onbekend"}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {request.dossiers?.display_id || "-"}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {request.cool_cells?.label || "-"}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
+                        {request.note || "-"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => confirmReservation(request.id)}
+                            className="gap-1 h-8"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            Bevestigen
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => setSelectedReservationId(request.id)}
+                                className="gap-1 h-8"
+                              >
+                                <XCircle className="h-3.5 w-3.5" />
+                                Weigeren
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Aanvraag weigeren</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Geef een reden op voor de weigering
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <div className="space-y-2 py-4">
+                                <Label htmlFor="reason">Reden *</Label>
+                                <Textarea
+                                  id="reason"
+                                  value={cancelReason}
+                                  onChange={(e) => setCancelReason(e.target.value)}
+                                  placeholder="Bijv. Geen beschikbaarheid, verkeerde datum..."
+                                  rows={3}
+                                />
+                              </div>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel onClick={() => {
+                                  setCancelReason("");
+                                  setSelectedReservationId("");
+                                }}>
+                                  Terug
+                                </AlertDialogCancel>
+                                <AlertDialogAction onClick={cancelReservation}>
+                                  Weigeren
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Today's Reservations */}
       <Card className="animate-fade-in">

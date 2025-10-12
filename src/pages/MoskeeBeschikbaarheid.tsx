@@ -26,7 +26,6 @@ type WeeklyAvailability = {
   asr: boolean;
   maghrib: boolean;
   isha: boolean;
-  jumuah: boolean | null;
 };
 
 type DayBlock = {
@@ -91,7 +90,6 @@ export default function MoskeeBeschikbaarheid() {
       const availMap: Record<number, WeeklyAvailability> = {};
       for (let dayOfWeek = 0; dayOfWeek <= 6; dayOfWeek++) {
         const existing = availData?.find((a) => a.day_of_week === dayOfWeek);
-        const isFriday = dayOfWeek === 5;
 
         availMap[dayOfWeek] = existing || {
           day_of_week: dayOfWeek,
@@ -100,7 +98,6 @@ export default function MoskeeBeschikbaarheid() {
           asr: true,
           maghrib: true,
           isha: true,
-          jumuah: isFriday ? true : null,
         };
       }
 
@@ -120,7 +117,7 @@ export default function MoskeeBeschikbaarheid() {
 
   const togglePrayer = (
     dayOfWeek: number,
-    prayer: "fajr" | "dhuhr" | "asr" | "maghrib" | "isha" | "jumuah"
+    prayer: "fajr" | "dhuhr" | "asr" | "maghrib" | "isha"
   ) => {
     setAvailability((prev) => ({
       ...prev,
@@ -158,7 +155,7 @@ export default function MoskeeBeschikbaarheid() {
         asr: day.asr,
         maghrib: day.maghrib,
         isha: day.isha,
-        jumuah: day.jumuah,
+        jumuah: day.day_of_week === 5 ? day.dhuhr : null, // Friday Dhuhr = Jumu'ah
       }));
 
       const { error } = await supabase
@@ -337,13 +334,11 @@ export default function MoskeeBeschikbaarheid() {
                   <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Asr</th>
                   <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Maghrib</th>
                   <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Isha</th>
-                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Jumu'ah</th>
                 </tr>
               </thead>
               <tbody>
                 {getDayNames().map(({ dayOfWeek, name }) => {
                   const dayAvail = availability[dayOfWeek];
-                  const isFriday = dayOfWeek === 5;
 
                   return (
                     <tr 
@@ -398,19 +393,6 @@ export default function MoskeeBeschikbaarheid() {
                           />
                         </div>
                       </td>
-                      <td className="px-6 py-5">
-                        <div className="flex items-center justify-center">
-                          {isFriday && dayAvail?.jumuah !== null ? (
-                            <Checkbox
-                              checked={dayAvail?.jumuah || false}
-                              onCheckedChange={() => togglePrayer(dayOfWeek, "jumuah")}
-                              className="h-5 w-5"
-                            />
-                          ) : (
-                            <span className="text-muted-foreground text-sm">—</span>
-                          )}
-                        </div>
-                      </td>
                     </tr>
                   );
                 })}
@@ -421,7 +403,7 @@ export default function MoskeeBeschikbaarheid() {
           <div className="mt-6 p-4 bg-muted rounded-md">
             <p className="text-sm text-muted-foreground">
               <strong>Uitleg:</strong> Vink aan bij welke gebeden janāza kan plaatsvinden. 
-              Voor overmacht situaties (bijv. verbouwing, feestdag) kunt u specifieke dagen blokkeren.
+              Op vrijdag vervangt Jumu'ah automatisch Dhuhr. Voor overmacht situaties (bijv. verbouwing, feestdag) kunt u specifieke dagen blokkeren.
             </p>
           </div>
         </CardContent>

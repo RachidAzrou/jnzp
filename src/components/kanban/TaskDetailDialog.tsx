@@ -730,7 +730,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsContent>
 
           {/* Comments Tab */}
-          <TabsContent value="comments" className="flex-1 overflow-hidden flex flex-col mt-4 h-[500px]">
+          <TabsContent value="comments" className="flex flex-col justify-between mt-4 h-[500px]">
             <ScrollArea className="flex-1 pr-4 pb-3">
               <div className="space-y-3">
                 {comments.map((comment) => (

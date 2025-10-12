@@ -83,7 +83,7 @@ export default function MoskeeDashboard() {
           dossier_id: event.dossier_id,
           requested_at: event.created_at,
           requested_date: event.scheduled_at,
-          prayer: null, // Not stored in case_events
+          prayer: (event.metadata as any)?.prayer_time || null,
           status: event.status,
           dossiers: event.dossiers
         }));

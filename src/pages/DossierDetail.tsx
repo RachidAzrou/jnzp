@@ -11,8 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { 
   ArrowLeft, Star, AlertCircle, User, Users, FileText, 
   Building2, DollarSign, Clock, MessageSquare,
-  CheckCircle2, XCircle, Send
+  CheckCircle2, XCircle, Send, Droplet
 } from "lucide-react";
+import { PiMosque } from "react-icons/pi";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
@@ -853,7 +854,7 @@ const DossierDetail = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <Building2 className="h-5 w-5 text-accent" />
+                    <PiMosque className="h-5 w-5 text-accent" />
                   </div>
                   <CardTitle className="text-xl">Moskee</CardTitle>
                 </div>
@@ -884,7 +885,7 @@ const DossierDetail = () => {
                   </>
                 ) : (
                   <div className="py-8 text-center">
-                    <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                    <PiMosque className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
                     <p className="text-sm text-muted-foreground">Geen moskee dienst gepland</p>
                   </div>
                 )}
@@ -896,7 +897,7 @@ const DossierDetail = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <Building2 className="h-5 w-5 text-accent" />
+                    <Droplet className="h-5 w-5 text-accent" />
                   </div>
                   <CardTitle className="text-xl">Mortuarium</CardTitle>
                 </div>
@@ -918,7 +919,7 @@ const DossierDetail = () => {
                   </>
                 ) : (
                   <div className="py-8 text-center">
-                    <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                    <Droplet className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
                     <p className="text-sm text-muted-foreground">Geen mortuarium dienst gepland</p>
                   </div>
                 )}

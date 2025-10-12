@@ -98,6 +98,7 @@ const Dossiers = () => {
         .from("view_my_dossiers")
         .select("*")
         .eq("assigned_fd_org_id", organizationId)
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (myError) throw myError;
@@ -126,6 +127,7 @@ const Dossiers = () => {
           insurer_org:organizations!insurer_org_id(name)
         `)
         .eq("assignment_status", "UNASSIGNED")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (allError) throw allError;

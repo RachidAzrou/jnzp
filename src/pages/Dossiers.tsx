@@ -95,9 +95,14 @@ const Dossiers = () => {
     try {
       // Fetch "Mijn dossiers" - assigned to my org
       const { data: myData, error: myError } = await supabase
-        .from("view_my_dossiers")
-        .select("*")
+        .from("dossiers")
+        .select(`
+          *,
+          assigned_fd_org:organizations!assigned_fd_org_id(name),
+          insurer_org:organizations!insurer_org_id(name)
+        `)
         .eq("assigned_fd_org_id", organizationId)
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (myError) throw myError;
@@ -106,10 +111,15 @@ const Dossiers = () => {
       const { data: pendingClaims, error: claimsError } = await supabase
         .from("dossier_claims")
         .select(`
-          dossier:dossiers(*)
+          dossier:dossiers!inner(
+            *,
+            assigned_fd_org:organizations!assigned_fd_org_id(name),
+            insurer_org:organizations!insurer_org_id(name)
+          )
         `)
         .eq("requesting_org_id", organizationId)
-        .eq("status", "PENDING");
+        .eq("status", "PENDING")
+        .is("dossier.deleted_at", null);
 
       if (claimsError) throw claimsError;
 

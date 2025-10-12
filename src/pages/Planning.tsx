@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Calendar, Plane, Plus, Search, SlidersHorizontal } from "lucide-react";
 import { MdOutlineShower } from "react-icons/md";
-// PiMosque verwijderd - moskee services via case_events
+import { PiMosque } from "react-icons/pi";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -28,6 +28,7 @@ import { EditFlightDialog } from "@/components/planning/EditFlightDialog";
 const Planning = () => {
   const { t } = useTranslation();
   const [wasplaatsServices, setWasplaatsServices] = useState<any[]>([]);
+  const [mosqueServices, setMosqueServices] = useState<any[]>([]);
   const [repatriations, setRepatriations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchDossier, setSearchDossier] = useState("");
@@ -110,6 +111,16 @@ const Planning = () => {
         notes: service.note
       }));
 
+      const transformedMosque = (mosqueData || []).map(service => ({
+        id: service.id,
+        dossier_ref: service.dossier?.display_id,
+        deceased_name: service.dossier?.deceased_name,
+        location: service.location_text,
+        scheduled_at: service.scheduled_at,
+        status: service.status,
+        notes: service.notes
+      }));
+
       const transformedRepatriations = (repatriationsData || []).map(rep => ({
         id: rep.id,
         dossier_ref: rep.dossier?.display_id,
@@ -121,6 +132,7 @@ const Planning = () => {
       }));
 
       setWasplaatsServices(transformedWasplaats);
+      setMosqueServices(transformedMosque);
       setRepatriations(transformedRepatriations);
     } catch (error: any) {
       console.error("Error fetching planning data:", error);
@@ -170,6 +182,7 @@ const Planning = () => {
   };
 
   const filteredWasplaatsServices = filterBySearch(wasplaatsServices);
+  const filteredMosqueServices = filterBySearch(mosqueServices);
   const filteredRepatriations = filterBySearch(repatriations);
 
   if (loading) {
@@ -294,7 +307,55 @@ const Planning = () => {
           </CardContent>
         </Card>
 
-        {/* Moskee janazah services verplaatst naar case_events - beheer via dossier detail */}
+        {/* Mosque Services Section - SECOND */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <PiMosque className="h-5 w-5 text-muted-foreground" />
+                  Moskee Planning
+                </CardTitle>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {filteredMosqueServices.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-sm text-muted-foreground">Geen moskee afspraken gepland</p>
+              </div>
+            ) : (
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Dossier</TableHead>
+                      <TableHead>Naam</TableHead>
+                      <TableHead>Locatie</TableHead>
+                      <TableHead>Gepland op</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredMosqueServices.map((service) => (
+                      <TableRow key={service.id} className="hover:bg-muted/30">
+                        <TableCell className="font-medium font-mono text-sm">
+                          {service.dossier_ref}
+                        </TableCell>
+                        <TableCell className="text-sm">{service.deceased_name}</TableCell>
+                        <TableCell className="text-sm">{service.location || "Niet opgegeven"}</TableCell>
+                        <TableCell className="text-sm">
+                          {service.scheduled_at ? format(new Date(service.scheduled_at), "dd/MM/yyyy HH:mm", { locale: nl }) : "Niet gepland"}
+                        </TableCell>
+                        <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Flights Section - THIRD */}
         <Card className="border-0 shadow-sm">

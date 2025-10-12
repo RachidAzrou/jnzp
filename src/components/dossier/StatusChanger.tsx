@@ -637,84 +637,91 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
           Status wijzigen
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle className="text-xl">Status wijzigen</DialogTitle>
           <DialogDescription>
-            {isAdmin 
-              ? "Als admin kun je elke status instellen. Deze actie wordt gelogd."
-              : "Wijzig de dossier status volgens de workflow."}
+            Selecteer de gewenste status voor dit dossier
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
-          {/* Current Status Badge */}
-          <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/50 border">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Huidige status:</span>
-              <Badge variant={STATUS_BADGES[currentStatus as keyof typeof STATUS_BADGES] as any}>
-                {STATUS_LABELS[currentStatus]}
-              </Badge>
-            </div>
+          {/* Current Status Display */}
+          <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border-2">
+            <span className="text-sm font-medium text-muted-foreground">Huidige status</span>
+            <Badge variant={STATUS_BADGES[currentStatus as keyof typeof STATUS_BADGES] as any} className="text-base px-4 py-1.5">
+              {STATUS_LABELS[currentStatus]}
+            </Badge>
           </div>
 
-          {/* Status Selection */}
+          {/* Visual Status Grid */}
           <div className="space-y-3">
-            <Label className="text-base font-semibold">Nieuwe status</Label>
-            <Select value={newStatus} onValueChange={setNewStatus}>
-              <SelectTrigger className="h-auto">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="max-h-[400px]">
-                {STATUSES.map((status) => {
-                  const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
-                  const statusInfo = labels[status as keyof typeof labels];
-                  const isCurrentStatus = status === currentStatus;
-                  
-                  return (
-                    <SelectItem 
-                      key={status} 
-                      value={status}
-                      disabled={isCurrentStatus}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-start gap-3 py-2">
+            <Label className="text-base font-semibold">Selecteer nieuwe status</Label>
+            <div className="grid grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-2">
+              {STATUSES.map((status) => {
+                const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
+                const statusInfo = labels[status as keyof typeof labels];
+                const isCurrentStatus = status === currentStatus;
+                const isSelected = status === newStatus;
+                
+                return (
+                  <button
+                    key={status}
+                    type="button"
+                    disabled={isCurrentStatus}
+                    onClick={() => setNewStatus(status)}
+                    className={`
+                      relative p-4 rounded-lg border-2 text-left transition-all
+                      ${isCurrentStatus 
+                        ? 'opacity-50 cursor-not-allowed bg-muted/30' 
+                        : 'hover:border-primary/50 hover:bg-accent/5 cursor-pointer'
+                      }
+                      ${isSelected && !isCurrentStatus
+                        ? 'border-primary bg-accent/10 shadow-sm' 
+                        : 'border-border'
+                      }
+                    `}
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between gap-2">
                         <Badge 
                           variant={STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any}
-                          className="mt-0.5"
+                          className="text-sm"
                         >
                           {statusInfo.label}
                         </Badge>
-                        <div className="flex-1">
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            {statusInfo.description}
-                          </p>
-                          {isCurrentStatus && (
-                            <p className="text-xs text-primary mt-1 font-medium">Huidige status</p>
-                          )}
-                        </div>
+                        {isSelected && !isCurrentStatus && (
+                          <CheckCircle2 className="h-5 w-5 text-primary" />
+                        )}
                       </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
+                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                        {statusInfo.description}
+                      </p>
+                      {isCurrentStatus && (
+                        <p className="text-xs text-primary font-medium">● Actieve status</p>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Reason Input */}
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">
-              Reden voor wijziging 
-              <span className="text-sm font-normal text-muted-foreground ml-2">(optioneel)</span>
-            </Label>
-            <Textarea
-              placeholder="Bijv. 'Documenten ontvangen van familie' of 'Planning afgerond'"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              rows={3}
-              className="resize-none"
-            />
-          </div>
+          {newStatus !== currentStatus && (
+            <div className="space-y-2 animate-in fade-in-50 duration-200">
+              <Label className="text-sm font-medium">
+                Reden voor wijziging <span className="text-muted-foreground font-normal">(optioneel)</span>
+              </Label>
+              <Textarea
+                placeholder="Bijv. 'Documenten compleet ontvangen' of 'Planning afgerond met alle partijen'"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                rows={2}
+                className="resize-none"
+              />
+            </div>
+          )}
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">

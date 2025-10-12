@@ -327,17 +327,17 @@ export default function MoskeeBeschikbaarheid() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto -mx-2">
             <table className="w-full">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left p-3 font-medium text-sm">Dag</th>
-                  <th className="text-center p-3 font-medium text-sm">Fajr</th>
-                  <th className="text-center p-3 font-medium text-sm">Dhuhr</th>
-                  <th className="text-center p-3 font-medium text-sm">Asr</th>
-                  <th className="text-center p-3 font-medium text-sm">Maghrib</th>
-                  <th className="text-center p-3 font-medium text-sm">Isha</th>
-                  <th className="text-center p-3 font-medium text-sm">Jumu'ah</th>
+                <tr className="border-b-2 border-border">
+                  <th className="text-left px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Dag</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Fajr</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Dhuhr</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Asr</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Maghrib</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Isha</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Jumu'ah</th>
                 </tr>
               </thead>
               <tbody>
@@ -346,11 +346,14 @@ export default function MoskeeBeschikbaarheid() {
                   const isFriday = dayOfWeek === 5;
 
                   return (
-                    <tr key={dayOfWeek} className="border-b hover:bg-muted/30">
-                      <td className="p-3 font-medium text-sm">
+                    <tr 
+                      key={dayOfWeek} 
+                      className="border-b border-border hover:bg-muted/50 transition-colors"
+                    >
+                      <td className="px-6 py-5 font-medium text-sm text-foreground">
                         {name}
                       </td>
-                      <td className="p-3">
+                      <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.fajr}
@@ -358,7 +361,7 @@ export default function MoskeeBeschikbaarheid() {
                           />
                         </div>
                       </td>
-                      <td className="p-3">
+                      <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.dhuhr}
@@ -366,7 +369,7 @@ export default function MoskeeBeschikbaarheid() {
                           />
                         </div>
                       </td>
-                      <td className="p-3">
+                      <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.asr}
@@ -374,7 +377,7 @@ export default function MoskeeBeschikbaarheid() {
                           />
                         </div>
                       </td>
-                      <td className="p-3">
+                      <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.maghrib}
@@ -382,7 +385,7 @@ export default function MoskeeBeschikbaarheid() {
                           />
                         </div>
                       </td>
-                      <td className="p-3">
+                      <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={dayAvail?.isha}
@@ -390,7 +393,7 @@ export default function MoskeeBeschikbaarheid() {
                           />
                         </div>
                       </td>
-                      <td className="p-3">
+                      <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
                           {isFriday && dayAvail?.jumuah !== null ? (
                             <Switch
@@ -398,7 +401,7 @@ export default function MoskeeBeschikbaarheid() {
                               onCheckedChange={() => togglePrayer(dayOfWeek, "jumuah")}
                             />
                           ) : (
-                            <span className="text-muted-foreground text-xs">—</span>
+                            <span className="text-muted-foreground text-sm">—</span>
                           )}
                         </div>
                       </td>

@@ -112,7 +112,11 @@ export function EditFlightDialog({
         description: "De vlucht is succesvol verwijderd"
       });
 
-      onSuccess?.();
+      // First call onSuccess to refresh the parent data
+      if (onSuccess) {
+        await onSuccess();
+      }
+      
       setDeleteDialogOpen(false);
       onOpenChange(false);
     } catch (error: any) {

@@ -107,7 +107,11 @@ export function EditMortuariumReservationDialog({
         description: "De reservering is succesvol verwijderd"
       });
 
-      onSuccess?.();
+      // First call onSuccess to refresh the parent data
+      if (onSuccess) {
+        await onSuccess();
+      }
+      
       setDeleteDialogOpen(false);
       onOpenChange(false);
     } catch (error: any) {

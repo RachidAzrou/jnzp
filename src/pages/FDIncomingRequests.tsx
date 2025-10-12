@@ -242,27 +242,32 @@ export default function FDIncomingRequests() {
   }
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
-      {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-          {t("fdRequests.title")}
-        </h1>
-        <p className="text-xs sm:text-sm text-muted-foreground">
-          {pendingRequests.length} {t("fdRequests.newRequests")}{pendingRequests.length === 1 ? t("fdRequests.newRequest") : t("fdRequests.newRequestsPlural")}
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6 max-w-[1600px] mx-auto">
+        {/* Header */}
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardContent className="p-8">
+            <div className="space-y-1">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                {t("fdRequests.title")}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                {pendingRequests.length} {t("fdRequests.newRequests")}{pendingRequests.length === 1 ? t("fdRequests.newRequest") : t("fdRequests.newRequestsPlural")}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Pending Requests */}
-      {pendingRequests.length > 0 ? (
-        <div className="space-y-3">
-          <h2 className="text-lg sm:text-xl font-semibold">{t("fdRequests.newRequestsSection")}</h2>
-          {pendingRequests.map((request) => (
-            <Card
-              key={request.id}
-              className="border-primary/20 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <CardHeader className="pb-3">
+        {/* Pending Requests */}
+        {pendingRequests.length > 0 ? (
+          <div className="space-y-4">
+            <h2 className="text-lg sm:text-xl font-semibold">{t("fdRequests.newRequestsSection")}</h2>
+            {pendingRequests.map((request) => (
+              <Card
+                key={request.id}
+                className="border-0 shadow-md bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg animate-fade-in"
+              >
+              <CardHeader className="pb-3 p-6">
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                   <div className="space-y-1">
                     <CardTitle className="text-base sm:text-lg">
@@ -275,7 +280,7 @@ export default function FDIncomingRequests() {
                   {getStatusBadge(request.status)}
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3 sm:space-y-4">
+              <CardContent className="space-y-4 p-6 pt-0">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="h-4 w-4 flex-shrink-0" />
@@ -341,69 +346,70 @@ export default function FDIncomingRequests() {
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
-      ) : (
-        <Card>
-          <CardContent className="pt-6 text-center text-muted-foreground">
-            <p className="text-sm sm:text-base">{t("fdRequests.noRequests")}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* No longer show processed requests section */}
-      {requests.length === 0 && (
-        <Card>
-          <CardContent className="pt-6 text-center text-muted-foreground">
-            <p className="text-sm sm:text-base">{t("fdRequests.noRequests")}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Decline Dialog */}
-      <Dialog open={showDeclineDialog} onOpenChange={setShowDeclineDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{t("fdRequests.declineDialog.title")}</DialogTitle>
-            <DialogDescription>
-              {t("fdRequests.declineDialog.description")}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="reason">{t("fdRequests.declineDialog.reasonLabel")}</Label>
-              <Textarea
-                id="reason"
-                placeholder={t("fdRequests.declineDialog.reasonPlaceholder")}
-                value={declineReason}
-                onChange={(e) => setDeclineReason(e.target.value)}
-                rows={4}
-              />
-            </div>
+            ))}
           </div>
-          <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowDeclineDialog(false);
-                setDeclineReason("");
-                setSelectedRequest(null);
-              }}
-              className="min-h-[44px]"
-            >
-              {t("fdRequests.declineDialog.cancelButton")}
-            </Button>
-            <Button
-              onClick={handleDecline}
-              disabled={processing || !declineReason.trim()}
-              variant="destructive"
-              className="min-h-[44px]"
-            >
-              {t("fdRequests.declineDialog.confirmButton")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        ) : (
+          <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+            <CardContent className="py-16 text-center">
+              <p className="text-sm sm:text-base text-muted-foreground">{t("fdRequests.noRequests")}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* No longer show processed requests section */}
+        {requests.length === 0 && (
+          <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+            <CardContent className="py-16 text-center">
+              <p className="text-sm sm:text-base text-muted-foreground">{t("fdRequests.noRequests")}</p>
+            </CardContent>
+        </Card>
+        )}
+
+        {/* Decline Dialog */}
+        <Dialog open={showDeclineDialog} onOpenChange={setShowDeclineDialog}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>{t("fdRequests.declineDialog.title")}</DialogTitle>
+              <DialogDescription>
+                {t("fdRequests.declineDialog.description")}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="reason">{t("fdRequests.declineDialog.reasonLabel")}</Label>
+                <Textarea
+                  id="reason"
+                  placeholder={t("fdRequests.declineDialog.reasonPlaceholder")}
+                  value={declineReason}
+                  onChange={(e) => setDeclineReason(e.target.value)}
+                  rows={4}
+                />
+              </div>
+            </div>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeclineDialog(false);
+                  setDeclineReason("");
+                  setSelectedRequest(null);
+                }}
+                className="min-h-[44px]"
+              >
+                {t("fdRequests.declineDialog.cancelButton")}
+              </Button>
+              <Button
+                onClick={handleDecline}
+                disabled={processing || !declineReason.trim()}
+                variant="destructive"
+                className="min-h-[44px]"
+              >
+                {t("fdRequests.declineDialog.confirmButton")}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

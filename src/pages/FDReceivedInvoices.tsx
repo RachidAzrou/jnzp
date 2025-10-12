@@ -124,22 +124,30 @@ export default function FDReceivedInvoices() {
   }
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Ontvangen facturen</h1>
-        <p className="text-muted-foreground mt-2">
-          Mortuarium facturen gericht aan uw organisatie
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6 max-w-[1600px] mx-auto">
+        {/* Header */}
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardContent className="p-8">
+            <div className="space-y-1">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                Ontvangen facturen
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Mortuarium facturen gericht aan uw organisatie
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Facturen van mortuarium</CardTitle>
-          <CardDescription>
-            Bekijk en download ontvangen facturen van mortuaria
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardHeader>
+            <CardTitle>Facturen van mortuarium</CardTitle>
+            <CardDescription>
+              Bekijk en download ontvangen facturen van mortuaria
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
           {!invoices || invoices.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
               Geen facturen ontvangen
@@ -202,57 +210,58 @@ export default function FDReceivedInvoices() {
                 ))}
               </TableBody>
             </Table>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Detail Dialog */}
-      <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Factuur {selectedInvoice?.invoice_number}</DialogTitle>
-            <DialogDescription>
-              Van {selectedInvoice?.facility_organization?.name}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Status</p>
-                <div className="mt-1">{selectedInvoice && getStatusBadge(selectedInvoice.status)}</div>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Totaalbedrag</p>
-                  <p className="mt-1 text-lg font-semibold">
-                  € {selectedInvoice?.total.toFixed(2)}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Dossier</p>
-                <p className="mt-1">
-                  {selectedInvoice?.dossiers
-                    ? `${selectedInvoice.dossiers.display_id} - ${selectedInvoice.dossiers.deceased_name}`
-                    : "-"}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Datum</p>
-                <p className="mt-1">
-                  {selectedInvoice &&
-                    format(new Date(selectedInvoice.created_at), "dd MMMM yyyy", {
-                      locale: nl,
-                    })}
-                </p>
+        {/* Detail Dialog */}
+        <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Factuur {selectedInvoice?.invoice_number}</DialogTitle>
+              <DialogDescription>
+                Van {selectedInvoice?.facility_organization?.name}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Status</p>
+                  <div className="mt-1">{selectedInvoice && getStatusBadge(selectedInvoice.status)}</div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Totaalbedrag</p>
+                    <p className="mt-1 text-lg font-semibold">
+                    € {selectedInvoice?.total.toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Dossier</p>
+                  <p className="mt-1">
+                    {selectedInvoice?.dossiers
+                      ? `${selectedInvoice.dossiers.display_id} - ${selectedInvoice.dossiers.deceased_name}`
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Datum</p>
+                  <p className="mt-1">
+                    {selectedInvoice &&
+                      format(new Date(selectedInvoice.created_at), "dd MMMM yyyy", {
+                        locale: nl,
+                      })}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDetailDialogOpen(false)}>
-              Sluiten
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDetailDialogOpen(false)}>
+                Sluiten
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

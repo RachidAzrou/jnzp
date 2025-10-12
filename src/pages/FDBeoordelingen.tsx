@@ -107,111 +107,119 @@ export default function FDBeoordelingen() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Beoordelingen</h1>
-        <p className="text-muted-foreground mt-1">
-          Feedback van families na afsluiting van een uitvaart
-        </p>
-      </div>
-
-      {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Gemiddelde Beoordeling
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold">{avgRating}</span>
-              <Star className="h-6 w-6 fill-warning text-warning" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6 max-w-[1600px] mx-auto">
+        {/* Header */}
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardContent className="p-8">
+            <div className="space-y-1">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                Beoordelingen
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Feedback van families na afsluiting van een uitvaart
+              </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Totaal Beoordelingen
+        {/* Summary Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Gemiddelde Beoordeling
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <span className="text-3xl font-bold">{avgRating}</span>
+                <Star className="h-6 w-6 fill-warning text-warning" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Totaal Beoordelingen
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{reviews.length}</div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Met Opmerking
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">
+                {reviews.filter(r => r.comment && r.comment.trim() !== "").length}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="h-5 w-5" />
+              Filters
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{reviews.length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Met Opmerking
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">
-              {reviews.filter(r => r.comment && r.comment.trim() !== "").length}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filters
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Input
-              placeholder="Zoeken op familie of dossier..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Select value={flowFilter} onValueChange={setFlowFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle types</SelectItem>
-                <SelectItem value="LOC">Lokaal</SelectItem>
-                <SelectItem value="REP">Repatriëring</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={minRating} onValueChange={setMinRating}>
-              <SelectTrigger>
-                <SelectValue placeholder="Min. sterren" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle sterren</SelectItem>
-                <SelectItem value="5">5 sterren</SelectItem>
-                <SelectItem value="4">4+ sterren</SelectItem>
-                <SelectItem value="3">3+ sterren</SelectItem>
-                <SelectItem value="2">2+ sterren</SelectItem>
-              </SelectContent>
-            </Select>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={onlyWithComments}
-                onChange={(e) => setOnlyWithComments(e.target.checked)}
-                className="rounded border-gray-300"
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Input
+                placeholder="Zoeken op familie of dossier..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <span className="text-sm">Alleen met opmerking</span>
-            </label>
-          </div>
-        </CardContent>
-      </Card>
+              <Select value={flowFilter} onValueChange={setFlowFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Alle types</SelectItem>
+                  <SelectItem value="LOC">Lokaal</SelectItem>
+                  <SelectItem value="REP">Repatriëring</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={minRating} onValueChange={setMinRating}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Min. sterren" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Alle sterren</SelectItem>
+                  <SelectItem value="5">5 sterren</SelectItem>
+                  <SelectItem value="4">4+ sterren</SelectItem>
+                  <SelectItem value="3">3+ sterren</SelectItem>
+                  <SelectItem value="2">2+ sterren</SelectItem>
+                </SelectContent>
+              </Select>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={onlyWithComments}
+                  onChange={(e) => setOnlyWithComments(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <span className="text-sm">Alleen met opmerking</span>
+              </label>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Reviews Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Alle Beoordelingen ({filteredReviews.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
+        {/* Reviews Table */}
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardHeader>
+            <CardTitle>Alle Beoordelingen ({filteredReviews.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
           {filteredReviews.length === 0 ? (
             <div className="text-center py-12">
               <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
@@ -279,19 +287,20 @@ export default function FDBeoordelingen() {
             </div>
           )}
         </CardContent>
-      </Card>
+        </Card>
 
-      {/* Comment Dialog */}
-      <Dialog open={!!selectedComment} onOpenChange={() => setSelectedComment(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Volledige Opmerking</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-sm text-muted-foreground italic">"{selectedComment}"</p>
-          </div>
-        </DialogContent>
-      </Dialog>
+        {/* Comment Dialog */}
+        <Dialog open={!!selectedComment} onOpenChange={() => setSelectedComment(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Volledige Opmerking</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground italic">"{selectedComment}"</p>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

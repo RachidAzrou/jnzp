@@ -24,6 +24,7 @@ import { MortuariumReservationDialog } from "@/components/planning/MortuariumRes
 import { FlightPlanningDialog } from "@/components/planning/FlightPlanningDialog";
 import { EditMortuariumReservationDialog } from "@/components/planning/EditMortuariumReservationDialog";
 import { EditFlightDialog } from "@/components/planning/EditFlightDialog";
+import { MoskeeServiceDialog } from "@/components/planning/MoskeeServiceDialog";
 
 const Planning = () => {
   const { t } = useTranslation();
@@ -35,6 +36,7 @@ const Planning = () => {
   const [searchName, setSearchName] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [mortuariumDialogOpen, setMortuariumDialogOpen] = useState(false);
+  const [moskeeDialogOpen, setMoskeeDialogOpen] = useState(false);
   const [flightDialogOpen, setFlightDialogOpen] = useState(false);
   const [editMortuariumDialogOpen, setEditMortuariumDialogOpen] = useState(false);
   const [editFlightDialogOpen, setEditFlightDialogOpen] = useState(false);
@@ -317,6 +319,10 @@ const Planning = () => {
                   Moskee Planning
                 </CardTitle>
               </div>
+              <Button size="sm" variant="outline" onClick={() => setMoskeeDialogOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Nieuwe Afspraak
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -418,6 +424,11 @@ const Planning = () => {
       <MortuariumReservationDialog
         open={mortuariumDialogOpen}
         onOpenChange={setMortuariumDialogOpen}
+        onSuccess={fetchData}
+      />
+      <MoskeeServiceDialog
+        open={moskeeDialogOpen}
+        onOpenChange={setMoskeeDialogOpen}
         onSuccess={fetchData}
       />
       <FlightPlanningDialog

@@ -14,12 +14,12 @@ import { X, Calendar } from "lucide-react";
 type MosqueService = {
   id: string;
   dossier_id: string;
-  mosque_org_id: string;
   scheduled_at: string;
-  location: string | null;
-  status: 'CONFIRMED' | 'CANCELLED';
-  cancel_reason: string | null;
-  dossier?: {
+  location_text: string | null;
+  status: string;
+  notes: string | null;
+  metadata: any;
+  dossiers: {
     display_id: string;
     deceased_name: string;
     assigned_fd_org_id: string;
@@ -56,23 +56,25 @@ export default function MoskeePlanning() {
     },
   });
 
-  // Fetch mosque services (temporary placeholder until types are regenerated)
+  // Fetch mosque services from case_events
   const { data: services, isLoading } = useQuery({
     queryKey: ["mosque-services", userOrgs?.organization_id],
     enabled: !!userOrgs?.organization_id,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("mosque_services" as any)
+        .from("case_events")
         .select(`
           *,
-          dossier:dossiers (
+          dossiers (
             display_id,
             deceased_name,
             assigned_fd_org_id,
             organizations:assigned_fd_org_id (name)
           )
         `)
-        .eq("mosque_org_id", userOrgs!.organization_id)
+        .eq("event_type", "MOSQUE_SERVICE")
+        .eq("metadata->>mosque_org_id", userOrgs!.organization_id)
+        .in("status", ["PLANNED", "STARTED", "DONE"])
         .order("scheduled_at", { ascending: true });
 
       if (error) throw error;
@@ -83,10 +85,13 @@ export default function MoskeePlanning() {
   // Cancel mutation
   const cancelMutation = useMutation({
     mutationFn: async ({ serviceId, reason }: { serviceId: string; reason: string }) => {
-      const { error } = await supabase.rpc("fn_cancel_mosque_service" as any, {
-        p_service_id: serviceId,
-        p_reason: reason,
-      });
+      const { error } = await supabase
+        .from("case_events")
+        .update({ 
+          status: "CANCELLED",
+          notes: reason
+        })
+        .eq("id", serviceId);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -116,8 +121,8 @@ export default function MoskeePlanning() {
   };
 
   const filteredServices = services?.filter((s) =>
-    s.dossier?.deceased_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.dossier?.display_id.toLowerCase().includes(searchTerm.toLowerCase())
+    s.dossiers?.deceased_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s.dossiers?.display_id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -163,18 +168,20 @@ export default function MoskeePlanning() {
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold">{service.dossier?.deceased_name}</h3>
+                      <h3 className="font-semibold">{service.dossiers?.deceased_name}</h3>
                       <span className="text-xs text-muted-foreground">
-                        {service.dossier?.display_id}
+                        {service.dossiers?.display_id}
                       </span>
                       <span
                         className={`text-xs px-2 py-0.5 rounded ${
-                          service.status === "CONFIRMED"
+                          service.status === "PLANNED" || service.status === "STARTED"
                             ? "bg-green-100 text-green-800"
+                            : service.status === "DONE"
+                            ? "bg-blue-100 text-blue-800"
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {service.status === "CONFIRMED" ? "Bevestigd" : "Geannuleerd"}
+                        {service.status === "PLANNED" ? "Gepland" : service.status === "STARTED" ? "Bezig" : service.status === "DONE" ? "Voltooid" : "Geannuleerd"}
                       </span>
                     </div>
                     <div className="text-sm text-muted-foreground space-y-1">
@@ -184,23 +191,23 @@ export default function MoskeePlanning() {
                           locale: nl,
                         })}
                       </p>
-                      {service.location && (
+                      {service.location_text && (
                         <p>
-                          <strong>Locatie:</strong> {service.location}
+                          <strong>Locatie:</strong> {service.location_text}
                         </p>
                       )}
                       <p>
-                        <strong>Uitvaartondernemer:</strong> {service.dossier?.organizations?.name}
+                        <strong>Uitvaartondernemer:</strong> {service.dossiers?.organizations?.name}
                       </p>
-                      {service.cancel_reason && (
+                      {service.notes && service.status === "CANCELLED" && (
                         <p className="text-red-600">
-                          <strong>Reden annulering:</strong> {service.cancel_reason}
+                          <strong>Reden annulering:</strong> {service.notes}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {service.status === "CONFIRMED" && (
+                  {(service.status === "PLANNED" || service.status === "STARTED") && (
                     <Button
                       variant="destructive"
                       size="sm"
@@ -225,7 +232,7 @@ export default function MoskeePlanning() {
           <div className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground mb-2">
-                Janazah voor <strong>{selectedService?.dossier?.deceased_name}</strong> op{" "}
+                Janazah voor <strong>{selectedService?.dossiers?.deceased_name}</strong> op{" "}
                 {selectedService &&
                   format(new Date(selectedService.scheduled_at), "EEEE d MMMM yyyy 'om' HH:mm", {
                     locale: nl,

@@ -242,7 +242,9 @@ const DossierDetail = () => {
     setDocuments(docsData || []);
     setEvents(eventsData || []);
     setMosqueService(mosqueData);
+    setMosqueeService(mosqueData); // Set both for compatibility
     setWashService(washData);
+    setMortuariumService(washData); // Set both for compatibility
     setClaim(claimData);
     setFamilyContacts(familyData || []);
     setInvoices(invoicesData || []);

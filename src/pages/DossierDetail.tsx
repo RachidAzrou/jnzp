@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -938,39 +938,30 @@ const DossierDetail = () => {
             />
 
             {/* Verzekeraar - Read Only */}
-            <Card>
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <Building2 className="h-5 w-5 text-accent" />
-                  </div>
-                  <CardTitle className="text-xl">Verzekeraar</CardTitle>
-                </div>
+            <Card className="animate-fade-in">
+              <CardHeader>
+                <CardTitle className="text-lg">Verzekeraar</CardTitle>
+                <CardDescription>Verzekeringsinformatie</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {claim ? (
-                  <>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Verzekeraar</Label>
-                      <p className="text-base font-semibold">{claim.organizations?.name || "N/A"}</p>
+                  <div className="space-y-2 text-sm animate-fade-in">
+                    <div className="flex gap-2">
+                      <span className="text-muted-foreground min-w-[80px]">Verzekeraar:</span>
+                      <span className="font-medium">{claim.organizations?.name || "N/A"}</span>
                     </div>
-                    <Separator />
-                    <div className="space-y-1.5">
-                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Polisnummer</Label>
-                      <p className="text-base font-mono font-medium">{claim.policy_number}</p>
+                    <div className="flex gap-2">
+                      <span className="text-muted-foreground min-w-[80px]">Polisnummer:</span>
+                      <span className="font-medium font-mono">{claim.policy_number}</span>
                     </div>
-                    <Separator />
-                    <div className="space-y-1.5">
-                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Status</Label>
-                      <div className="mt-1">
-                        <Badge>{claim.status}</Badge>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium">Status:</span>
+                      <Badge variant="secondary" className="text-xs">{claim.status}</Badge>
                     </div>
-                  </>
+                  </div>
                 ) : (
-                  <div className="py-8 text-center">
-                    <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                    <p className="text-sm text-muted-foreground">Geen verzekeraar gekoppeld</p>
+                  <div className="text-center text-muted-foreground py-8 text-sm animate-fade-in">
+                    Geen verzekeraar gekoppeld
                   </div>
                 )}
               </CardContent>

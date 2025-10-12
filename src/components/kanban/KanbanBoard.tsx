@@ -21,6 +21,7 @@ interface Column {
   label: string;
   order_idx: number;
   wip_limit: number | null;
+  is_done?: boolean;
 }
 
 interface Task {
@@ -141,10 +142,12 @@ export function KanbanBoard({
 
       if (!userRole) return;
 
+      // Fetch non-archived tasks only
       const { data: tasksData, error: tasksError } = await supabase
         .from('kanban_tasks')
         .select('*')
         .eq('board_id', boardId)
+        .is('archived_at', null)
         .order('position');
 
       if (tasksError) throw tasksError;

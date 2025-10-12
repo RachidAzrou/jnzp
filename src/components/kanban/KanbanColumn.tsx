@@ -2,6 +2,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TaskCard } from "./TaskCard";
+import { Info } from "lucide-react";
 
 interface Column {
   id: string;
@@ -9,6 +10,7 @@ interface Column {
   label: string;
   order_idx: number;
   wip_limit: number | null;
+  is_done?: boolean;
 }
 
 interface Task {
@@ -53,17 +55,25 @@ export function KanbanColumn({ column, tasks, onTaskClick, onMarkTaskAsDone, dra
     >
       <Card className={`flex flex-col h-full ${isOver ? 'bg-accent/50' : ''}`}>
         <CardHeader className="pb-3 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold">{column.label}</h3>
-              <Badge variant="secondary" className="text-xs">
-                {tasks.length}
-                {column.wip_limit && ` / ${column.wip_limit}`}
-              </Badge>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold">{column.label}</h3>
+                <Badge variant="secondary" className="text-xs">
+                  {tasks.length}
+                  {column.wip_limit && ` / ${column.wip_limit}`}
+                </Badge>
+              </div>
+              {isWipLimitExceeded && (
+                <Badge variant="destructive" className="text-xs">
+                  WIP!
+                </Badge>
+              )}
             </div>
-            {isWipLimitExceeded && (
-              <Badge variant="destructive" className="text-xs">
-                WIP!
+            {column.is_done && (
+              <Badge variant="outline" className="text-xs flex items-center gap-1 w-fit">
+                <Info className="h-3 w-3" />
+                Verplaatst naar Archief na 24u
               </Badge>
             )}
           </div>

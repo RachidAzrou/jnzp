@@ -1823,6 +1823,7 @@ export type Database = {
       }
       kanban_tasks: {
         Row: {
+          archived_at: string | null
           assignee_id: string | null
           board_id: string
           column_id: string
@@ -1844,6 +1845,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archived_at?: string | null
           assignee_id?: string | null
           board_id: string
           column_id: string
@@ -1865,6 +1867,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archived_at?: string | null
           assignee_id?: string | null
           board_id?: string
           column_id?: string
@@ -4100,6 +4103,10 @@ export type Database = {
       armor: {
         Args: { "": string }
         Returns: string
+      }
+      auto_archive_old_completed_tasks: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       calculate_device_risk: {
         Args: {

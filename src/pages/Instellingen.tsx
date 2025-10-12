@@ -218,18 +218,23 @@ const Instellingen = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       <div className="space-y-6 max-w-[1200px] mx-auto">
         {/* Header */}
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-            {t("settings.title")}
-          </h1>
-        </div>
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardHeader>
+            <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+              {t("settings.title")}
+            </CardTitle>
+            <CardDescription>
+              Beheer uw profiel en organisatie instellingen
+            </CardDescription>
+          </CardHeader>
+        </Card>
 
         <div className="grid gap-6">
           {/* Profile Settings */}
-          <Card className="border-0 shadow-sm">
+          <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.1s' }}>
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <User className="h-5 w-5 text-muted-foreground" />
@@ -287,203 +292,205 @@ const Instellingen = () => {
           </CardContent>
         </Card>
 
-        {/* Organization Settings */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Building2 className="h-5 w-5 text-muted-foreground" />
-              {t("settings.organizationData")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="orgName">{t("settings.organizationName")}</Label>
-                <Input
-                  id="orgName"
-                  value={organization.name}
-                  onChange={(e) => setOrganization({ ...organization, name: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="orgType">{t("settings.type")}</Label>
-                <Input
-                  id="orgType"
-                  value={organization.type}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="orgAddress">{t("settings.address")}</Label>
-              <Input
-                id="orgAddress"
-                value={organization.address}
-                onChange={(e) => setOrganization({ ...organization, address: e.target.value })}
-                placeholder={t("settings.addressPlaceholder")}
-              />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="orgPostalCode">{t("settings.postalCode")}</Label>
-                <Input
-                  id="orgPostalCode"
-                  value={organization.postalCode}
-                  onChange={(e) => setOrganization({ ...organization, postalCode: e.target.value })}
-                  placeholder="1000"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="orgCity">{t("settings.city")}</Label>
-                <Input
-                  id="orgCity"
-                  value={organization.city}
-                  onChange={(e) => setOrganization({ ...organization, city: e.target.value })}
-                  placeholder="Brussel"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="orgCountry">{t("settings.country")}</Label>
-              <Input
-                id="orgCountry"
-                value={organization.country}
-                onChange={(e) => setOrganization({ ...organization, country: e.target.value })}
-                placeholder="België"
-              />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="orgEmail">{t("settings.email")}</Label>
-                <Input
-                  id="orgEmail"
-                  type="email"
-                  value={organization.contactEmail}
-                  onChange={(e) => setOrganization({ ...organization, contactEmail: e.target.value })}
-                  placeholder="info@organisatie.be"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="orgPhone">{t("settings.phone")}</Label>
-                <Input
-                  id="orgPhone"
-                  type="tel"
-                  value={organization.contactPhone}
-                  onChange={(e) => setOrganization({ ...organization, contactPhone: e.target.value })}
-                  placeholder="+32 xxx xx xx xx"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="orgVat">{t("settings.vatNumber")}</Label>
-              <Input
-                id="orgVat"
-                value={organization.vatNumber}
-                onChange={(e) => setOrganization({ ...organization, vatNumber: e.target.value })}
-                placeholder="BE0123456789"
-              />
-            </div>
-
-            <Separator />
-
-            <div className="flex justify-end">
-              <Button onClick={handleSaveOrganization} disabled={saving}>
-                {saving ? t("settings.saving") : t("common.save")}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 2FA Settings - Only for professional users */}
-        {role && ['funeral_director', 'org_admin', 'platform_admin', 'wasplaats', 'mosque', 'insurer'].includes(role) && (
-          <Card className="border-0 shadow-sm">
+          {/* Organization Settings */}
+          <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Shield className="h-5 w-5 text-muted-foreground" />
-                {t("settings.twoFactorAuth")}
+                <Building2 className="h-5 w-5 text-muted-foreground" />
+                {t("settings.organizationData")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {must2FASetup && (
-                <Alert variant="destructive">
-                  <Shield className="h-4 w-4" />
-                  <AlertDescription>
-                    {t("settings.must2FASetup")}
-                  </AlertDescription>
-                </Alert>
-              )}
-              <TwoFactorSetup />
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="orgName">{t("settings.organizationName")}</Label>
+                  <Input
+                    id="orgName"
+                    value={organization.name}
+                    onChange={(e) => setOrganization({ ...organization, name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="orgType">{t("settings.type")}</Label>
+                  <Input
+                    id="orgType"
+                    value={organization.type}
+                    disabled
+                    className="bg-muted"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="orgAddress">{t("settings.address")}</Label>
+                <Input
+                  id="orgAddress"
+                  value={organization.address}
+                  onChange={(e) => setOrganization({ ...organization, address: e.target.value })}
+                  placeholder={t("settings.addressPlaceholder")}
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="orgPostalCode">{t("settings.postalCode")}</Label>
+                  <Input
+                    id="orgPostalCode"
+                    value={organization.postalCode}
+                    onChange={(e) => setOrganization({ ...organization, postalCode: e.target.value })}
+                    placeholder="1000"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="orgCity">{t("settings.city")}</Label>
+                  <Input
+                    id="orgCity"
+                    value={organization.city}
+                    onChange={(e) => setOrganization({ ...organization, city: e.target.value })}
+                    placeholder="Brussel"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="orgCountry">{t("settings.country")}</Label>
+                <Input
+                  id="orgCountry"
+                  value={organization.country}
+                  onChange={(e) => setOrganization({ ...organization, country: e.target.value })}
+                  placeholder="België"
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="orgEmail">{t("settings.email")}</Label>
+                  <Input
+                    id="orgEmail"
+                    type="email"
+                    value={organization.contactEmail}
+                    onChange={(e) => setOrganization({ ...organization, contactEmail: e.target.value })}
+                    placeholder="info@organisatie.be"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="orgPhone">{t("settings.phone")}</Label>
+                  <Input
+                    id="orgPhone"
+                    type="tel"
+                    value={organization.contactPhone}
+                    onChange={(e) => setOrganization({ ...organization, contactPhone: e.target.value })}
+                    placeholder="+32 xxx xx xx xx"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="orgVat">{t("settings.vatNumber")}</Label>
+                <Input
+                  id="orgVat"
+                  value={organization.vatNumber}
+                  onChange={(e) => setOrganization({ ...organization, vatNumber: e.target.value })}
+                  placeholder="BE0123456789"
+                />
+              </div>
+
+              <Separator />
+
+              <div className="flex justify-end">
+                <Button onClick={handleSaveOrganization} disabled={saving}>
+                  {saving ? t("settings.saving") : t("common.save")}
+                </Button>
+              </div>
             </CardContent>
           </Card>
-        )}
 
-        {/* Notification Settings */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Bell className="h-5 w-5 text-muted-foreground" />
-              {t("settings.notifications")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">{t("settings.emailNotifications")}</p>
-                <p className="text-sm text-muted-foreground">
-                  {t("settings.emailNotificationsDesc")}
-                </p>
-              </div>
-              <Button variant="outline" size="sm">{t("settings.enabled")}</Button>
-            </div>
+          {/* 2FA Settings - Only for professional users */}
+          {role && ['funeral_director', 'org_admin', 'platform_admin', 'mortuarium', 'mosque', 'insurer'].includes(role) && (
+            <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Shield className="h-5 w-5 text-muted-foreground" />
+                  {t("settings.twoFactorAuth")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {must2FASetup && (
+                  <Alert variant="destructive">
+                    <Shield className="h-4 w-4" />
+                    <AlertDescription>
+                      {t("settings.must2FASetup")}
+                    </AlertDescription>
+                  </Alert>
+                )}
+                <TwoFactorSetup />
+              </CardContent>
+            </Card>
+          )}
 
-            {role !== 'mortuarium' && (
-              <>
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{t("settings.documentApprovals")}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {t("settings.documentApprovalsDesc")}
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm">{t("settings.enabled")}</Button>
+          {/* Notification Settings */}
+          <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Bell className="h-5 w-5 text-muted-foreground" />
+                {t("settings.notifications")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">{t("settings.emailNotifications")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("settings.emailNotificationsDesc")}
+                  </p>
                 </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
+                <Button variant="outline" size="sm">{t("settings.enabled")}</Button>
+              </div>
 
-        {/* GDPR & Privacy */}
-        <GDPRRequestPanel />
+              {role !== 'mortuarium' && (
+                <>
+                  <Separator />
 
-        {/* Legal Documents */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg">{t("settings.legalDocuments")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Link to="/privacy" target="_blank">
-              <Button variant="outline" className="w-full justify-start">
-                {t("settings.privacyPolicy")}
-              </Button>
-            </Link>
-            <Link to="/terms" target="_blank">
-              <Button variant="outline" className="w-full justify-start">
-                {t("settings.termsOfService")}
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{t("settings.documentApprovals")}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {t("settings.documentApprovalsDesc")}
+                      </p>
+                    </div>
+                    <Button variant="outline" size="sm">{t("settings.enabled")}</Button>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* GDPR & Privacy */}
+          <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
+            <GDPRRequestPanel />
+          </div>
+
+          {/* Legal Documents */}
+          <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">{t("settings.legalDocuments")}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Link to="/privacy" target="_blank">
+                <Button variant="outline" className="w-full justify-start">
+                  {t("settings.privacyPolicy")}
+                </Button>
+              </Link>
+              <Link to="/terms" target="_blank">
+                <Button variant="outline" className="w-full justify-start">
+                  {t("settings.termsOfService")}
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 

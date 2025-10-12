@@ -312,150 +312,164 @@ const TeamManagement = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-lg font-medium">Teamleden</CardTitle>
-              <CardDescription className="text-sm">
-                Beheer teamleden binnen uw organisatie
-              </CardDescription>
-            </div>
-            <Button onClick={() => setShowInviteDialog(true)} size="sm">
-              <UserPlus className="mr-2 h-4 w-4" />
-              Teamlid uitnodigen
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {teamMembers.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <p className="text-sm">Nog geen teamleden.</p>
-              <p className="text-xs mt-1">Nodig collega's uit via hun e-mail.</p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="font-medium text-sm">Naam</TableHead>
-                  <TableHead className="font-medium text-sm">E-mail</TableHead>
-                  <TableHead className="font-medium text-sm">Rol</TableHead>
-                  <TableHead className="font-medium text-sm">Status</TableHead>
-                  <TableHead className="font-medium text-sm">Acties</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {teamMembers.map((member) => (
-                  <TableRow key={member.id} className="hover:bg-muted/30">
-                    <TableCell className="text-sm">
-                      {member.first_name} {member.last_name}
-                    </TableCell>
-                    <TableCell className="text-sm">{member.email}</TableCell>
-                    <TableCell>{getRoleBadge(member.role, member.is_admin)}</TableCell>
-                    <TableCell>
-                      <Badge variant={member.is_active ? "default" : "secondary"}>
-                        {member.is_active ? "Actief" : "Gedeactiveerd"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => toggleMemberStatus(member.id, member.is_active)}
-                        >
-                          {member.is_active ? (
-                            <UserX className="h-4 w-4" />
-                          ) : (
-                            <UserCheck className="h-4 w-4" />
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() =>
-                            setDeleteConfirm({
-                              id: member.id,
-                              name: `${member.first_name} ${member.last_name}`,
-                            })
-                          }
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6 max-w-[1400px] mx-auto">
+        {/* Header */}
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardHeader>
+            <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+              Teambeheer
+            </CardTitle>
+            <CardDescription>
+              Beheer teamleden en uitnodigingen voor uw organisatie
+            </CardDescription>
+          </CardHeader>
+        </Card>
 
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Actieve uitnodigingen</CardTitle>
-          <CardDescription className="text-sm">
-            Uitnodigingen die nog niet zijn geaccepteerd
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {invitations.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              Geen actieve uitnodigingen
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="font-medium text-sm">E-mail</TableHead>
-                  <TableHead className="font-medium text-sm">Rol</TableHead>
-                  <TableHead className="font-medium text-sm">Uitgenodigd op</TableHead>
-                  <TableHead className="font-medium text-sm">Verloopt op</TableHead>
-                  <TableHead className="font-medium text-sm">Acties</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {invitations.map((invite) => (
-                  <TableRow key={invite.id} className="hover:bg-muted/30">
-                    <TableCell className="text-sm">{invite.email}</TableCell>
-                    <TableCell><Badge variant="outline">Teamlid</Badge></TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(invite.created_at).toLocaleDateString("nl-NL")}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(invite.expires_at).toLocaleDateString("nl-NL")}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => copyInviteLink(invite.token)}
-                        >
-                          {copiedCode === invite.token ? (
-                            <Check className="h-4 w-4" />
-                          ) : (
-                            <Copy className="h-4 w-4" />
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => cancelInvitation(invite.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-medium">Teamleden</CardTitle>
+                <CardDescription className="text-sm">
+                  Beheer teamleden binnen uw organisatie
+                </CardDescription>
+              </div>
+              <Button onClick={() => setShowInviteDialog(true)} size="sm">
+                <UserPlus className="mr-2 h-4 w-4" />
+                Teamlid uitnodigen
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {teamMembers.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p className="text-sm">Nog geen teamleden.</p>
+                <p className="text-xs mt-1">Nodig collega's uit via hun e-mail.</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="font-medium text-sm">Naam</TableHead>
+                    <TableHead className="font-medium text-sm">E-mail</TableHead>
+                    <TableHead className="font-medium text-sm">Rol</TableHead>
+                    <TableHead className="font-medium text-sm">Status</TableHead>
+                    <TableHead className="font-medium text-sm">Acties</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {teamMembers.map((member) => (
+                    <TableRow key={member.id} className="hover:bg-muted/30">
+                      <TableCell className="text-sm">
+                        {member.first_name} {member.last_name}
+                      </TableCell>
+                      <TableCell className="text-sm">{member.email}</TableCell>
+                      <TableCell>{getRoleBadge(member.role, member.is_admin)}</TableCell>
+                      <TableCell>
+                        <Badge variant={member.is_active ? "default" : "secondary"}>
+                          {member.is_active ? "Actief" : "Gedeactiveerd"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => toggleMemberStatus(member.id, member.is_active)}
+                          >
+                            {member.is_active ? (
+                              <UserX className="h-4 w-4" />
+                            ) : (
+                              <UserCheck className="h-4 w-4" />
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() =>
+                              setDeleteConfirm({
+                                id: member.id,
+                                name: `${member.first_name} ${member.last_name}`,
+                              })
+                            }
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">Actieve uitnodigingen</CardTitle>
+            <CardDescription className="text-sm">
+              Uitnodigingen die nog niet zijn geaccepteerd
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {invitations.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Geen actieve uitnodigingen
+              </p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="font-medium text-sm">E-mail</TableHead>
+                    <TableHead className="font-medium text-sm">Rol</TableHead>
+                    <TableHead className="font-medium text-sm">Uitgenodigd op</TableHead>
+                    <TableHead className="font-medium text-sm">Verloopt op</TableHead>
+                    <TableHead className="font-medium text-sm">Acties</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {invitations.map((invite) => (
+                    <TableRow key={invite.id} className="hover:bg-muted/30">
+                      <TableCell className="text-sm">{invite.email}</TableCell>
+                      <TableCell><Badge variant="outline">Teamlid</Badge></TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(invite.created_at).toLocaleDateString("nl-NL")}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(invite.expires_at).toLocaleDateString("nl-NL")}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyInviteLink(invite.token)}
+                          >
+                            {copiedCode === invite.token ? (
+                              <Check className="h-4 w-4" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => cancelInvitation(invite.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent>

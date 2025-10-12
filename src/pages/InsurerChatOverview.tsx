@@ -108,13 +108,28 @@ export default function InsurerChatOverview() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Berichten</h1>
-        <p className="text-muted-foreground">
-          Communiceer met uitvaartondernemers per dossier
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6">
+        <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="space-y-2 flex-1 min-w-[280px]">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <MessageSquare className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">Communicatie</p>
+                    <h1 className="text-2xl font-bold tracking-tight">Berichten</h1>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground pl-15">
+                  Communiceer met uitvaartondernemers per dossier
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -126,44 +141,45 @@ export default function InsurerChatOverview() {
         />
       </div>
 
-      <div className="grid gap-4">
-        {filteredDossiers.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Geen dossiers gevonden</p>
-            </CardContent>
-          </Card>
-        ) : (
-          filteredDossiers.map((dossier) => (
-            <Card
-              key={dossier.id}
-              className="cursor-pointer hover:bg-accent transition-colors"
-              onClick={() => navigate(`/insurer/chat/${dossier.id}`)}
-            >
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">
-                      {dossier.deceased_name}
-                    </CardTitle>
-                    <CardDescription>
-                      Dossier: {dossier.display_id}
-                    </CardDescription>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {dossier.unread_count > 0 && (
-                      <Badge variant="default">
-                        {dossier.unread_count} nieuw
-                      </Badge>
-                    )}
-                    <MessageSquare className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                </div>
-              </CardHeader>
+        <div className="grid gap-4">
+          {filteredDossiers.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">Geen dossiers gevonden</p>
+              </CardContent>
             </Card>
-          ))
-        )}
+          ) : (
+            filteredDossiers.map((dossier) => (
+              <Card
+                key={dossier.id}
+                className="cursor-pointer hover:bg-accent transition-colors"
+                onClick={() => navigate(`/insurer/chat/${dossier.id}`)}
+              >
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="text-lg">
+                        {dossier.deceased_name}
+                      </CardTitle>
+                      <CardDescription>
+                        Dossier: {dossier.display_id}
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {dossier.unread_count > 0 && (
+                        <Badge variant="default">
+                          {dossier.unread_count} nieuw
+                        </Badge>
+                      )}
+                      <MessageSquare className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

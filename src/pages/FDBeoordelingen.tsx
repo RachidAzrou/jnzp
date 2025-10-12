@@ -109,19 +109,27 @@ export default function FDBeoordelingen() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       <div className="space-y-6 max-w-[1600px] mx-auto">
-        {/* Header */}
-        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
-          <CardContent className="p-8">
-            <div className="space-y-1">
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-                Beoordelingen
-              </h1>
-              <p className="text-sm text-muted-foreground">
+      {/* Header */}
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="space-y-2 flex-1 min-w-[280px]">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Star className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground font-medium">Feedback</p>
+                  <h1 className="text-2xl font-bold tracking-tight">Beoordelingen</h1>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground pl-15">
                 Feedback van families na afsluiting van een uitvaart
               </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
         {/* Summary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

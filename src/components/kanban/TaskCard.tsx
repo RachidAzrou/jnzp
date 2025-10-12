@@ -76,31 +76,31 @@ export function TaskCard({
         return { 
           variant: 'default' as const, 
           label: 'Kritisch',
-          className: 'bg-blue-500 text-white hover:bg-blue-600'
+          className: 'bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20'
         };
       case 'HIGH':
         return { 
-          variant: 'destructive' as const, 
+          variant: 'default' as const, 
           label: 'Hoog',
-          className: 'bg-red-500 text-white hover:bg-red-600'
+          className: 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/20 hover:bg-orange-500/20'
         };
       case 'MEDIUM':
         return { 
           variant: 'default' as const, 
           label: 'Medium',
-          className: 'bg-orange-500 text-white hover:bg-orange-600'
+          className: 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'
         };
       case 'LOW':
         return { 
           variant: 'secondary' as const, 
           label: 'Laag',
-          className: 'bg-green-500 text-white hover:bg-green-600'
+          className: 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
         };
       default:
         return { 
           variant: 'secondary' as const, 
           label: priority,
-          className: ''
+          className: 'bg-muted text-muted-foreground'
         };
     }
   };
@@ -135,31 +135,34 @@ export function TaskCard({
         onClick={!task.is_blocked ? onClick : undefined}
         className={`
           cursor-grab active:cursor-grabbing 
-          hover:shadow-lg transition-all duration-200
+          hover:border-primary/50 transition-colors duration-150
+          bg-card
           ${isDragging ? 'opacity-50' : ''}
-          ${task.is_blocked ? 'opacity-60 cursor-not-allowed border-destructive ring-2 ring-destructive/20' : ''}
-          ${isOverdue && !task.is_blocked ? 'border-destructive/50' : ''}
+          ${task.is_blocked ? 'opacity-60 cursor-not-allowed border-destructive bg-destructive/5' : ''}
+          ${isOverdue && !task.is_blocked ? 'border-destructive/50 bg-destructive/5' : ''}
         `}
       >
-        <CardContent className="p-3 space-y-2.5">
+        <CardContent className="p-4 space-y-3">
           {/* Header: Title + Blocked/Auto/Deferred indicator */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
-              <h4 className={`font-semibold text-sm leading-tight ${isOverdue ? 'text-destructive' : ''}`}>
+              <h4 className={`font-medium text-sm leading-snug ${isOverdue ? 'text-destructive' : 'text-foreground'}`}>
                 {task.title}
               </h4>
               {task.is_deferred && (
-                <div className="flex items-center gap-1 mt-1 text-xs text-amber-600 dark:text-amber-500">
-                  <Clock className="h-3 w-3" />
-                  <span className="font-medium">Uitgesteld</span>
+                <div className="flex items-center gap-1.5 mt-2 text-xs text-amber-700 dark:text-amber-400">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>Uitgesteld</span>
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               {task.is_blocked && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Lock className="h-4 w-4 text-destructive flex-shrink-0" />
+                    <div className="p-1 rounded bg-destructive/10">
+                      <Lock className="h-3.5 w-3.5 text-destructive flex-shrink-0" />
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-xs max-w-xs">
@@ -171,7 +174,9 @@ export function TaskCard({
               {isAutomatic && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Settings className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <div className="p-1 rounded bg-muted">
+                      <Settings className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-xs">Automatisch aangemaakt</p>
@@ -185,46 +190,46 @@ export function TaskCard({
           <div className="flex items-center justify-between gap-2 text-xs">
             <Badge 
               variant={priorityConfig.variant} 
-              className={`text-xs ${priorityConfig.className}`}
+              className={`text-xs font-normal border ${priorityConfig.className}`}
             >
               {priorityConfig.label}
             </Badge>
             
             {task.due_date && (
-              <div className={`flex items-center gap-1 ${isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
-                <Clock className="h-3 w-3" />
-                <span>
+              <div className={`flex items-center gap-1.5 ${isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
+                <Clock className="h-3.5 w-3.5" />
+                <span className="text-xs">
                   {new Date(task.due_date).toLocaleDateString("nl-BE", {
                     day: 'numeric',
                     month: 'short',
                     year: 'numeric'
                   })}
                 </span>
-                {isOverdue && <AlertCircle className="h-3 w-3" />}
+                {isOverdue && <AlertCircle className="h-3.5 w-3.5" />}
               </div>
             )}
           </div>
 
           {/* Footer: Assignee + Badges */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/50">
             <div className="flex items-center gap-1.5">
               {task.assignee_id && (
-                <Avatar className="h-5 w-5">
-                  <AvatarFallback className="text-[10px]">FD</AvatarFallback>
+                <Avatar className="h-6 w-6">
+                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary">FD</AvatarFallback>
                 </Avatar>
               )}
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
               {(task.comments_count ?? 0) > 0 && (
-                <div className="flex items-center gap-1">
-                  <MessageSquare className="h-3 w-3" />
+                <div className="flex items-center gap-1.5">
+                  <MessageSquare className="h-3.5 w-3.5" />
                   <span>{task.comments_count}</span>
                 </div>
               )}
               {(task.attachments_count ?? 0) > 0 && (
-                <div className="flex items-center gap-1">
-                  <Paperclip className="h-3 w-3" />
+                <div className="flex items-center gap-1.5">
+                  <Paperclip className="h-3.5 w-3.5" />
                   <span>{task.attachments_count}</span>
                 </div>
               )}

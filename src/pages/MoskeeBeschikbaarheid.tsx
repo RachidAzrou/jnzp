@@ -8,7 +8,7 @@ import { format, startOfWeek, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { X } from "lucide-react";
+import { X, Calendar } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -299,12 +299,24 @@ export default function MoskeeBeschikbaarheid() {
 
   return (
     <div className="min-h-screen bg-background p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Wekelijkse beschikbaarheid per gebed</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Stel de standaard beschikbaarheid per dag van de week in. Dit geldt voor alle weken.
-        </p>
-      </div>
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Moskee</p>
+                <h1 className="text-2xl font-bold tracking-tight">Wekelijkse beschikbaarheid per gebed</h1>
+              </div>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">
+            Stel de standaard beschikbaarheid per dag van de week in. Dit geldt voor alle weken.
+          </p>
+        </CardContent>
+      </Card>
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">

@@ -123,10 +123,20 @@ export default function MoskeePublicScreen() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Publiek Scherm</h1>
-        <p className="text-muted-foreground">Beheer publieke mededelingen en TV-scherm instellingen</p>
-      </div>
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Monitor className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground font-medium">Moskee</p>
+              <h1 className="text-2xl font-bold tracking-tight">Publiek Scherm</h1>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">Beheer publieke mededelingen en TV-scherm instellingen</p>
+        </CardContent>
+      </Card>
 
       {/* Token & URL */}
       <Card>

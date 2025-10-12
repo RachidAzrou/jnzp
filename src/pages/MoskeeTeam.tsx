@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { UserPlus, Trash2 } from "lucide-react";
+import { UserPlus, Trash2, Users } from "lucide-react";
 
 type TeamMember = {
   id: string;
@@ -83,18 +83,25 @@ export default function MoskeeTeam() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Teambeheer</h1>
-          <p className="text-muted-foreground">Beheer teamleden en toegangsrechten</p>
-        </div>
-        <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <UserPlus className="mr-2 h-4 w-4" />
-              Lid Uitnodigen
-            </Button>
-          </DialogTrigger>
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Users className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Moskee</p>
+                <h1 className="text-2xl font-bold tracking-tight">Teambeheer</h1>
+              </div>
+            </div>
+            <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="h-9">
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Lid Uitnodigen
+                </Button>
+              </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Teamlid uitnodigen</DialogTitle>
@@ -118,7 +125,10 @@ export default function MoskeeTeam() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
+          </div>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">Beheer teamleden en toegangsrechten</p>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

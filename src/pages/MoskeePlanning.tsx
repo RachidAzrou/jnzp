@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
-import { X } from "lucide-react";
+import { X, Calendar } from "lucide-react";
 
 type MosqueService = {
   id: string;
@@ -122,10 +122,20 @@ export default function MoskeePlanning() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Planning</h1>
-        <p className="text-muted-foreground">Overzicht geplande janazah-diensten</p>
-      </div>
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Calendar className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground font-medium">Moskee</p>
+              <h1 className="text-2xl font-bold tracking-tight">Planning</h1>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">Overzicht geplande janazah-diensten</p>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

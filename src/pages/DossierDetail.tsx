@@ -1013,7 +1013,7 @@ const DossierDetail = () => {
               {/* Moskee Dienst */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <Building2 className="h-4 w-4" />
+                  <PiMosque className="h-4 w-4" />
                   <span>Moskee Dienst</span>
                 </div>
                 <div className="pl-6">
@@ -1031,7 +1031,7 @@ const DossierDetail = () => {
               {/* Mortuarium Dienst */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <Building2 className="h-4 w-4" />
+                  <MdOutlineShower className="h-4 w-4" />
                   <span>Mortuarium Dienst</span>
                 </div>
                 <div className="pl-6">

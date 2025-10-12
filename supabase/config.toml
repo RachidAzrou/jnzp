@@ -38,3 +38,7 @@ verify_jwt = true
 
 [functions.public-mosque-feed]
 verify_jwt = false
+
+[functions.seed-dossier-tasks]
+verify_jwt = false
+

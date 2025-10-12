@@ -37,6 +37,8 @@ import FDManagementCard from "@/components/dossier/FDManagementCard";
 import { InvoiceManagementCard } from "@/components/dossier/InvoiceManagementCard";
 import { ObituaryViewer } from "@/components/dossier/ObituaryViewer";
 import { LegalHoldBadge } from "@/components/dossier/LegalHoldBadge";
+import { HoldBadge } from "@/components/dossier/HoldBadge";
+import { SetHoldDialog } from "@/components/dossier/SetHoldDialog";
 import { DossierTimeline } from "@/components/dossier/DossierTimeline";
 import { MoreVertical } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -45,6 +47,8 @@ import { DeleteDossierDialog } from "@/components/dossier/DeleteDossierDialog";
 import { EditableFamilyContacts } from "@/components/dossier/EditableFamilyContacts";
 import { EditableObituaryCard } from "@/components/dossier/EditableObituaryCard";
 import { EditableServiceCard } from "@/components/dossier/EditableServiceCard";
+import { AutoProgressionAlert } from "@/components/dossier/AutoProgressionAlert";
+import { TaskProgressWidget } from "@/components/dossier/TaskProgressWidget";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -434,6 +438,41 @@ const DossierDetail = () => {
                 >
                   {getStatusLabel(dossier.status)}
                 </Badge>
+                
+                {/* Hold badges */}
+                {dossier.legal_hold && (
+                  <HoldBadge
+                    type="LEGAL"
+                    reason={dossier.legal_hold_reason}
+                    authority={dossier.legal_hold_authority}
+                    reference={dossier.legal_hold_case_number}
+                    dossierId={id!}
+                    canLift={isAdmin}
+                    onLift={fetchDossierData}
+                  />
+                )}
+                {dossier.insurer_hold && (
+                  <HoldBadge
+                    type="INSURER"
+                    reason={dossier.insurer_hold_reason}
+                    contactPerson={dossier.insurer_hold_contact_person}
+                    reference={dossier.insurer_hold_reference}
+                    dossierId={id!}
+                    canLift={userRole === "insurer" || isAdmin}
+                    onLift={fetchDossierData}
+                  />
+                )}
+                
+                {/* SetHold button voor admins en verzekeraars */}
+                {(isAdmin || userRole === "insurer") && dossier.status !== "CLOSED" && (
+                  <SetHoldDialog
+                    dossierId={id!}
+                    isAdmin={isAdmin}
+                    isInsurer={userRole === "insurer"}
+                    onHoldSet={fetchDossierData}
+                  />
+                )}
+                
                 <LegalHoldBadge
                   legal_hold_active={dossier.legal_hold_active}
                   legal_hold_authority={dossier.legal_hold_authority}
@@ -580,6 +619,14 @@ const DossierDetail = () => {
         </AlertDialog>
       )}
 
+      {/* Auto-progression alert */}
+      {id && dossier && (
+        <AutoProgressionAlert
+          dossierId={id}
+          currentStatus={dossier.status}
+        />
+      )}
+
       {/* Progress Card */}
       {progress && (
         <DossierProgressCard
@@ -636,6 +683,11 @@ const DossierDetail = () => {
 
         {/* Overview Tab - Combined Card */}
         <TabsContent value="overview" className="space-y-6">
+          {/* Task Progress Widget */}
+          {id && (
+            <TaskProgressWidget dossierId={id} />
+          )}
+          
           <Card className="animate-fade-in">
             <CardHeader>
               <div className="flex items-center justify-between">

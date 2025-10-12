@@ -34,22 +34,26 @@ import { nl } from "date-fns/locale";
 
 interface Task {
   id: string;
-  org_id: string;
-  board_id: string;
-  column_id: string;
-  dossier_id: string | null;
+  org_id?: string;
+  board_id?: string;
+  column_id?: string | null;
+  dossier_id?: string | null;
   title: string;
-  description: string | null;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  assignee_id: string | null;
-  due_date: string | null;
-  is_blocked: boolean;
-  blocked_reason: string | null;
+  description?: string | null;
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  assignee_id?: string | null;
+  due_date?: string | null;
+  is_blocked?: boolean;
+  blocked_reason?: string | null;
   is_deferred?: boolean;
   deferred_reason?: string | null;
-  metadata: { auto?: boolean; source?: string };
-  created_at: string;
-  updated_at: string;
+  metadata?: { auto?: boolean; source?: string };
+  created_at?: string;
+  updated_at?: string;
+  task_type?: string | null;
+  labels?: string[];
+  auto_complete_trigger?: string | null;
+  position?: number;
 }
 
 interface Comment {

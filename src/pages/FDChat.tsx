@@ -334,79 +334,86 @@ export default function FDChat() {
   }
 
   return (
-    <div className="container max-w-6xl mx-auto p-6 space-y-6">
-      {/* Enhanced Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="default"
-            onClick={() => navigate('/fd/chat')}
-            className="gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Terug
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">Chat</h1>
-            <p className="text-sm text-muted-foreground">
-              Dossier {dossier?.display_id || dossier?.ref_number} — {dossier?.deceased_name}
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          {dossier && (
-            <Button
-              variant="outline"
-              onClick={() => navigate(`/dossiers/${dossier.id}`)}
-              className="gap-2"
-            >
-              <ExternalLink className="h-4 w-4" />
-              Open Dossier
-            </Button>
-          )}
-          
-          {canDelete && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" className="gap-2">
-                  <Trash2 className="h-4 w-4" />
-                  Verwijder Chat
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6 max-w-[1600px] mx-auto">
+        {/* Enhanced Header */}
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardContent className="p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="default"
+                  onClick={() => navigate('/fd/chat')}
+                  className="gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Terug
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-destructive" />
-                    Chat verwijderen?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Weet je zeker dat je alle chatberichten voor dit dossier wilt verwijderen?
-                    Deze actie kan niet ongedaan worden gemaakt.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Annuleren</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteChat}
-                    disabled={isDeleting}
-                    className="bg-destructive hover:bg-destructive/90"
+                <div>
+                  <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    Chat
+                  </h1>
+                  <p className="text-sm text-muted-foreground">
+                    Dossier {dossier?.display_id || dossier?.ref_number} — {dossier?.deceased_name}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {dossier && (
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate(`/dossiers/${dossier.id}`)}
+                    className="gap-2"
                   >
-                    {isDeleting ? "Bezig met verwijderen..." : "Ja, verwijder chat"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-        </div>
-      </div>
+                    <ExternalLink className="h-4 w-4" />
+                    Open Dossier
+                  </Button>
+                )}
+                
+                {canDelete && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="gap-2">
+                        <Trash2 className="h-4 w-4" />
+                        Verwijder Chat
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2">
+                          <AlertTriangle className="h-5 w-5 text-destructive" />
+                          Chat verwijderen?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Weet je zeker dat je alle chatberichten voor dit dossier wilt verwijderen?
+                          Deze actie kan niet ongedaan worden gemaakt.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleDeleteChat}
+                          disabled={isDeleting}
+                          className="bg-destructive hover:bg-destructive/90"
+                        >
+                          {isDeleting ? "Bezig met verwijderen..." : "Ja, verwijder chat"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Main Chat Interface */}
-      <div className="grid lg:grid-cols-[1fr,320px] gap-6">
-        {/* Chat Thread */}
-        <Card className="flex flex-col shadow-lg">
-          <CardHeader className="border-b bg-muted/30">
+        {/* Main Chat Interface */}
+        <div className="grid lg:grid-cols-[1fr,320px] gap-6">
+          {/* Chat Thread */}
+          <Card className="flex flex-col border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+            <CardHeader className="border-b bg-muted/30 p-6">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -551,14 +558,14 @@ export default function FDChat() {
           </CardContent>
         </Card>
 
-        {/* Dossier Info Sidebar */}
-        {dossier && (
-          <div className="space-y-6">
-            <Card className="shadow-lg">
-              <CardHeader className="border-b bg-muted/30">
+          {/* Dossier Info Sidebar */}
+          {dossier && (
+            <div className="space-y-6">
+              <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+                <CardHeader className="border-b bg-muted/30 p-6">
                 <CardTitle className="text-base">Dossier Informatie</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+              <CardContent className="space-y-4 p-6">
                 <div>
                   <p className="text-sm text-muted-foreground">Overledene</p>
                   <p className="font-medium">{dossier.deceased_name || 'Nog in te vullen'}</p>
@@ -578,14 +585,14 @@ export default function FDChat() {
                   </Badge>
                 </div>
               </CardContent>
-            </Card>
+              </Card>
 
-            {/* Quick Actions Card */}
-            <Card className="shadow-lg">
-              <CardHeader className="border-b bg-muted/30">
-                <CardTitle className="text-base">Snelle Acties</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-3">
+              {/* Quick Actions Card */}
+              <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+                <CardHeader className="border-b bg-muted/30 p-6">
+                  <CardTitle className="text-base">Snelle Acties</CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-3">
                 <Button
                   variant="outline"
                   className="w-full justify-start"
@@ -602,10 +609,11 @@ export default function FDChat() {
                   <Paperclip className="mr-2 h-4 w-4" />
                   Documenten beheren
                 </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

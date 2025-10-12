@@ -623,7 +623,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                     className="mt-1"
                   />
                 ) : (
-                  <p className="text-sm">
+                  <p className="text-base font-medium whitespace-pre-wrap">
                     {task.description || "Geen beschrijving"}
                   </p>
                 )}

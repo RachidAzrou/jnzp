@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { format, startOfWeek, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
-import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { X, Calendar } from "lucide-react";
 import {
@@ -355,50 +355,56 @@ export default function MoskeeBeschikbaarheid() {
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
-                          <Switch
+                          <Checkbox
                             checked={dayAvail?.fajr}
                             onCheckedChange={() => togglePrayer(dayOfWeek, "fajr")}
+                            className="h-5 w-5"
                           />
                         </div>
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
-                          <Switch
+                          <Checkbox
                             checked={dayAvail?.dhuhr}
                             onCheckedChange={() => togglePrayer(dayOfWeek, "dhuhr")}
+                            className="h-5 w-5"
                           />
                         </div>
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
-                          <Switch
+                          <Checkbox
                             checked={dayAvail?.asr}
                             onCheckedChange={() => togglePrayer(dayOfWeek, "asr")}
+                            className="h-5 w-5"
                           />
                         </div>
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
-                          <Switch
+                          <Checkbox
                             checked={dayAvail?.maghrib}
                             onCheckedChange={() => togglePrayer(dayOfWeek, "maghrib")}
+                            className="h-5 w-5"
                           />
                         </div>
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
-                          <Switch
+                          <Checkbox
                             checked={dayAvail?.isha}
                             onCheckedChange={() => togglePrayer(dayOfWeek, "isha")}
+                            className="h-5 w-5"
                           />
                         </div>
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
                           {isFriday && dayAvail?.jumuah !== null ? (
-                            <Switch
+                            <Checkbox
                               checked={dayAvail?.jumuah || false}
                               onCheckedChange={() => togglePrayer(dayOfWeek, "jumuah")}
+                              className="h-5 w-5"
                             />
                           ) : (
                             <span className="text-muted-foreground text-sm">—</span>

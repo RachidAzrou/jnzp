@@ -863,48 +863,12 @@ const DossierDetail = () => {
 
         {/* Documents Tab */}
         <TabsContent value="documents" className="space-y-6">
-          {/* Document Status Summary */}
-          <Card>
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-primary" />
-                </div>
-                <CardTitle className="text-xl">Overzicht documentgoedkeuringen</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-6 rounded-lg border bg-muted/30">
-                  <p className="text-3xl font-bold text-green-600">
-                    {documents.filter(d => d.status === "APPROVED").length}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">Goedgekeurd</p>
-                </div>
-                <div className="text-center p-6 rounded-lg border bg-muted/30">
-                  <p className="text-3xl font-bold text-orange-600">
-                    {documents.filter(d => d.status === "IN_REVIEW").length}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">In Review</p>
-                </div>
-                <div className="text-center p-6 rounded-lg border bg-muted/30">
-                  <p className="text-3xl font-bold text-red-600">
-                    {documents.filter(d => d.status === "REJECTED").length}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">Afgekeurd</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-4">
+          <Card className="animate-fade-in">
+            <CardHeader>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <FileText className="h-5 w-5 text-primary" />
-                  </div>
-                  <CardTitle className="text-xl">Documenten</CardTitle>
+                <div>
+                  <CardTitle className="text-lg">Documenten</CardTitle>
+                  <CardDescription>Beheer alle documenten</CardDescription>
                 </div>
                 <DocumentUploadDialog 
                   dossierId={id!} 
@@ -912,88 +876,118 @@ const DossierDetail = () => {
                 />
               </div>
             </CardHeader>
-            <CardContent>
-              {documents.length > 0 ? (
-                <div className="space-y-3">
-                  {documents.map((doc) => (
-                    <div key={doc.id} className="flex items-center justify-between p-4 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors">
-                      <div className="flex items-center gap-3 flex-1">
-                        <FileText className="h-5 w-5 text-muted-foreground" />
-                        <div className="flex-1">
-                          <p className="font-medium">{doc.file_name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {doc.doc_type.replace(/_/g, " ")} • {formatDateTime(doc.uploaded_at)}
-                          </p>
+            
+            <CardContent className="space-y-6">
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center p-4 rounded-lg border bg-accent/5">
+                  <p className="text-2xl font-bold text-green-600">
+                    {documents.filter(d => d.status === "APPROVED").length}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Goedgekeurd</p>
+                </div>
+                <div className="text-center p-4 rounded-lg border bg-accent/5">
+                  <p className="text-2xl font-bold text-orange-600">
+                    {documents.filter(d => d.status === "IN_REVIEW").length}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">In Review</p>
+                </div>
+                <div className="text-center p-4 rounded-lg border bg-accent/5">
+                  <p className="text-2xl font-bold text-red-600">
+                    {documents.filter(d => d.status === "REJECTED").length}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Afgekeurd</p>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Document List */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <FileText className="h-4 w-4" />
+                  <span>Geüploade Documenten</span>
+                </div>
+
+                {documents.length > 0 ? (
+                  <div className="space-y-2 pl-6">
+                    {documents.map((doc) => (
+                      <div key={doc.id} className="group flex items-center justify-between p-3 rounded-lg border bg-card hover:shadow-sm transition-all duration-200">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm truncate">{doc.file_name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {doc.doc_type.replace(/_/g, " ")} • {formatDateTime(doc.uploaded_at)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge 
+                            variant="secondary"
+                            className="text-xs"
+                          >
+                            {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
+                            {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
+                            {getDocStatusLabel(doc.status)}
+                          </Badge>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <MoreVertical className="h-3.5 w-3.5" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="bg-popover">
+                              <DropdownMenuItem asChild>
+                                <a href={doc.file_url} target="_blank" rel="noopener noreferrer">
+                                  Bekijken
+                                </a>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <a href={doc.file_url} download={doc.file_name}>
+                                  Downloaden
+                                </a>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                className="text-destructive focus:text-destructive"
+                                onClick={async () => {
+                                  if (confirm('Weet je zeker dat je dit document wilt verwijderen?')) {
+                                    const { error } = await supabase
+                                      .from('documents')
+                                      .delete()
+                                      .eq('id', doc.id);
+                                    
+                                    if (error) {
+                                      toast({
+                                        title: "Fout",
+                                        description: "Document kon niet worden verwijderd",
+                                        variant: "destructive"
+                                      });
+                                    } else {
+                                      toast({
+                                        title: "Document verwijderd",
+                                        description: "Het document is succesvol verwijderd"
+                                      });
+                                      fetchDossierData();
+                                    }
+                                  }
+                                }}
+                              >
+                                <Trash2 className="h-3.5 w-3.5 mr-2" />
+                                Verwijderen
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge 
-                          variant={getDocStatusColor(doc.status)}
-                          className={`min-w-[120px] justify-center ${
-                            getDocStatusColor(doc.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
-                          }`}
-                        >
-                          {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
-                          {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
-                          {getDocStatusLabel(doc.status)}
-                        </Badge>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-popover">
-                            <DropdownMenuItem asChild>
-                              <a href={doc.file_url} target="_blank" rel="noopener noreferrer">
-                                Bekijken
-                              </a>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <a href={doc.file_url} download={doc.file_name}>
-                                Downloaden
-                              </a>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              className="text-destructive focus:text-destructive"
-                              onClick={async () => {
-                                if (confirm('Weet je zeker dat je dit document wilt verwijderen?')) {
-                                  const { error } = await supabase
-                                    .from('documents')
-                                    .delete()
-                                    .eq('id', doc.id);
-                                  
-                                  if (error) {
-                                    toast({
-                                      title: "Fout",
-                                      description: "Document kon niet worden verwijderd",
-                                      variant: "destructive"
-                                    });
-                                  } else {
-                                    toast({
-                                      title: "Document verwijderd",
-                                      description: "Het document is succesvol verwijderd"
-                                    });
-                                    fetchDossierData();
-                                  }
-                                }
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Verwijderen
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-8 text-center">
-                  <FileText className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                  <p className="text-sm text-muted-foreground">Geen documenten</p>
-                </div>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center text-muted-foreground py-8 text-sm">
+                    Geen documenten
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -1009,36 +1003,64 @@ const DossierDetail = () => {
 
         {/* Stakeholders Tab */}
         <TabsContent value="stakeholders" className="space-y-6">
-          <div className="grid gap-6">
-            <EditableServiceCard
-              event={mosqueeService}
-              title="Moskee Dienst"
-              description="Janazah details en planning"
-              onUpdate={fetchDossierData}
-            />
+          <Card className="animate-fade-in">
+            <CardHeader>
+              <CardTitle className="text-lg">Betrokkenen</CardTitle>
+              <CardDescription>Moskee, Mortuarium en Verzekeraar</CardDescription>
+            </CardHeader>
             
-            <EditableServiceCard
-              event={mortuariumService}
-              title="Mortuarium Dienst"
-              description="Wassing details en planning"
-              onUpdate={fetchDossierData}
-            />
+            <CardContent className="space-y-6">
+              {/* Moskee Dienst */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <Building2 className="h-4 w-4" />
+                  <span>Moskee Dienst</span>
+                </div>
+                <div className="pl-6">
+                  <EditableServiceCard
+                    event={mosqueeService}
+                    title="Janazah Details"
+                    description="Planning en locatie informatie"
+                    onUpdate={fetchDossierData}
+                  />
+                </div>
+              </div>
 
-            {/* Verzekeraar - Read Only */}
-            <Card className="animate-fade-in">
-              <CardHeader>
-                <CardTitle className="text-lg">Verzekeraar</CardTitle>
-                <CardDescription>Verzekeringsinformatie</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
+              <Separator />
+
+              {/* Mortuarium Dienst */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <Building2 className="h-4 w-4" />
+                  <span>Mortuarium Dienst</span>
+                </div>
+                <div className="pl-6">
+                  <EditableServiceCard
+                    event={mortuariumService}
+                    title="Wassing Details"
+                    description="Planning en faciliteit informatie"
+                    onUpdate={fetchDossierData}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Verzekeraar */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <Building2 className="h-4 w-4" />
+                  <span>Verzekeraar</span>
+                </div>
+                
                 {claim ? (
-                  <div className="space-y-2 text-sm animate-fade-in">
+                  <div className="space-y-2 text-sm pl-6">
                     <div className="flex gap-2">
-                      <span className="text-muted-foreground min-w-[80px]">Verzekeraar:</span>
+                      <span className="text-muted-foreground min-w-[100px]">Verzekeraar:</span>
                       <span className="font-medium">{claim.organizations?.name || "N/A"}</span>
                     </div>
                     <div className="flex gap-2">
-                      <span className="text-muted-foreground min-w-[80px]">Polisnummer:</span>
+                      <span className="text-muted-foreground min-w-[100px]">Polisnummer:</span>
                       <span className="font-medium font-mono">{claim.policy_number}</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -1047,36 +1069,33 @@ const DossierDetail = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center text-muted-foreground py-8 text-sm animate-fade-in">
+                  <div className="text-center text-muted-foreground py-6 text-sm pl-6">
                     Geen verzekeraar gekoppeld
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        {/* Chat Tab - Integratie */}
+        {/* Chat Tab */}
         <TabsContent value="chat" className="space-y-6">
-          <Card>
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <MessageSquare className="h-5 w-5 text-primary" />
-                </div>
-                <CardTitle className="text-xl">Communicatie met Familie</CardTitle>
-              </div>
+          <Card className="animate-fade-in">
+            <CardHeader>
+              <CardTitle className="text-lg">Communicatie</CardTitle>
+              <CardDescription>Chat met familie en collega's</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Chat met familie en collega's over dit dossier.
+                Start een gesprek over dit dossier met familie en teamleden.
               </p>
               <Button 
                 onClick={() => navigate(`/chat/${id}`)}
-                className="w-full"
+                className="w-full sm:w-auto"
+                size="sm"
               >
                 <MessageSquare className="mr-2 h-4 w-4" />
-                Open Chat voor {dossier.display_id || dossier.ref_number}
+                Open Chat
               </Button>
             </CardContent>
           </Card>
@@ -1084,14 +1103,10 @@ const DossierDetail = () => {
 
         {/* Financial Tab */}
         <TabsContent value="financial" className="space-y-6">
-          <Card>
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-primary" />
-                </div>
-                <CardTitle className="text-xl">Facturatie</CardTitle>
-              </div>
+          <Card className="animate-fade-in">
+            <CardHeader>
+              <CardTitle className="text-lg">Facturatie</CardTitle>
+              <CardDescription>Beheer facturen en betalingen</CardDescription>
             </CardHeader>
             <CardContent>
               <InvoiceManagementCard dossierId={id!} userRole={userRole || ''} />
@@ -1099,14 +1114,22 @@ const DossierDetail = () => {
           </Card>
         </TabsContent>
 
-        {/* Timeline Tab - Nieuwe component */}
+        {/* Timeline Tab */}
         <TabsContent value="timeline" className="space-y-6">
-          <DossierTimeline dossierId={id!} />
-          
-          {/* Manual events toevoegen optie */}
-          <Card>
+          <Card className="animate-fade-in">
             <CardHeader>
-              <CardTitle>Handmatige gebeurtenis toevoegen</CardTitle>
+              <CardTitle className="text-lg">Tijdlijn</CardTitle>
+              <CardDescription>Chronologisch overzicht van alle gebeurtenissen</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DossierTimeline dossierId={id!} />
+            </CardContent>
+          </Card>
+          
+          <Card className="animate-fade-in">
+            <CardHeader>
+              <CardTitle className="text-lg">Handmatige gebeurtenis toevoegen</CardTitle>
+              <CardDescription>Voeg een gebeurtenis toe aan de tijdlijn</CardDescription>
             </CardHeader>
             <CardContent>
               <AddManualEventDialog 
@@ -1117,25 +1140,13 @@ const DossierDetail = () => {
           </Card>
         </TabsContent>
 
-        {/* Notes Tab - Alleen Interne Notities */}
+        {/* Notes Tab */}
         <TabsContent value="notes" className="space-y-6">
-          <Card>
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-primary" />
-                </div>
-                <CardTitle className="text-xl">Interne Notities</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <InternalNotesCard 
-                dossierId={id!} 
-                initialNotes={dossier.internal_notes}
-                onNotesSaved={fetchDossierData}
-              />
-            </CardContent>
-          </Card>
+          <InternalNotesCard
+            dossierId={id!}
+            initialNotes={dossier?.internal_notes || null}
+            onNotesSaved={fetchDossierData}
+          />
         </TabsContent>
       </Tabs>
 

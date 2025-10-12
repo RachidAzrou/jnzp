@@ -730,56 +730,59 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
           </div>
 
           {/* Available Next Steps */}
-          <div className="space-y-3">
-            <Label className="text-base font-semibold flex items-center gap-2">
-              <ArrowRight className="h-4 w-4" />
-              Beschikbare volgende stappen
-            </Label>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b">
+              <ArrowRight className="h-5 w-5 text-primary" />
+              <Label className="text-lg font-semibold">
+                Beschikbare volgende stappen
+              </Label>
+            </div>
+            
+            <div className="space-y-3">
               {(isAdmin ? STATUSES : STATUSES.filter(status => 
                 ALLOWED_TRANSITIONS[currentStatus]?.includes(status)
               )).map((status) => {
                 const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
                 const statusInfo = labels[status as keyof typeof labels];
-                const isCurrentStatus = status === currentStatus;
                 const isSelected = status === newStatus;
                 
                 return (
                   <button
                     key={status}
                     type="button"
-                    disabled={isCurrentStatus}
                     onClick={() => setNewStatus(status)}
                     className={`
-                      relative p-4 rounded-lg border-2 text-left transition-all
-                      ${isCurrentStatus 
-                        ? 'opacity-50 cursor-not-allowed bg-muted/30' 
-                        : 'hover:border-primary/50 hover:bg-accent/5 cursor-pointer'
-                      }
-                      ${isSelected && !isCurrentStatus
-                        ? 'border-primary bg-accent/10 shadow-sm' 
-                        : 'border-border'
+                      w-full p-5 rounded-xl border-2 text-left transition-all
+                      hover:border-primary/60 hover:shadow-md hover:scale-[1.02]
+                      ${isSelected
+                        ? 'border-primary bg-primary/5 shadow-lg scale-[1.02]' 
+                        : 'border-border bg-background'
                       }
                     `}
                   >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <Badge 
-                          variant={STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any}
-                          className="text-sm"
-                        >
-                          {statusInfo.label}
-                        </Badge>
-                        {isSelected && !isCurrentStatus && (
-                          <CheckCircle2 className="h-5 w-5 text-primary" />
-                        )}
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center gap-3">
+                          <Badge 
+                            variant={STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any}
+                            className="text-base px-3 py-1"
+                          >
+                            {statusInfo.label}
+                          </Badge>
+                          {isSelected && (
+                            <span className="text-sm font-medium text-primary flex items-center gap-1">
+                              <CheckCircle2 className="h-4 w-4" />
+                              Geselecteerd
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {statusInfo.description}
+                        </p>
                       </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                        {statusInfo.description}
-                      </p>
-                      {isCurrentStatus && (
-                        <p className="text-xs text-primary font-medium">● Actieve status</p>
-                      )}
+                      <ArrowRight className={`h-6 w-6 mt-1 transition-colors ${
+                        isSelected ? 'text-primary' : 'text-muted-foreground/30'
+                      }`} />
                     </div>
                   </button>
                 );
@@ -787,9 +790,13 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             </div>
             
             {!isAdmin && ALLOWED_TRANSITIONS[currentStatus]?.length === 0 && (
-              <div className="p-4 rounded-lg bg-muted/20 border text-center">
-                <p className="text-sm text-muted-foreground">
-                  Geen volgende stappen beschikbaar. Dossier is in eindstatus.
+              <div className="p-6 rounded-xl bg-muted/20 border-2 border-dashed text-center">
+                <Circle className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
+                <p className="text-sm font-medium text-muted-foreground">
+                  Geen volgende stappen beschikbaar
+                </p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  Dit dossier bevindt zich in een eindstatus
                 </p>
               </div>
             )}

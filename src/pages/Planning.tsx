@@ -196,14 +196,18 @@ const Planning = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">{t("planning.title")}</h1>
-      </div>
+      <Card className="mb-6 animate-fade-in shadow-md bg-card/50 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+            {t("planning.title")}
+          </CardTitle>
+        </CardHeader>
+      </Card>
 
       {/* Filter Section */}
-      <Card className="border-0 shadow-sm mb-6">
+      <Card className="shadow-md bg-card/50 backdrop-blur-sm mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
         <CardContent className="pt-6">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
@@ -233,9 +237,9 @@ const Planning = () => {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6">
+      <div className="grid gap-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
         {/* Mortuarium Services Section - FIRST */}
-        <Card className="border-0 shadow-sm">
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>
@@ -310,7 +314,7 @@ const Planning = () => {
         </Card>
 
         {/* Mosque Services Section - SECOND */}
-        <Card className="border-0 shadow-sm">
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>
@@ -364,7 +368,7 @@ const Planning = () => {
         </Card>
 
         {/* Flights Section - THIRD */}
-        <Card className="border-0 shadow-sm">
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>

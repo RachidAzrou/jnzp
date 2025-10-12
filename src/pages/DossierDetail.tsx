@@ -749,25 +749,74 @@ const DossierDetail = () => {
                 <div className="space-y-3">
                   {documents.map((doc) => (
                     <div key={doc.id} className="flex items-center justify-between p-4 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 flex-1">
                         <FileText className="h-5 w-5 text-muted-foreground" />
-                        <div>
+                        <div className="flex-1">
                           <p className="font-medium">{doc.file_name}</p>
                           <p className="text-sm text-muted-foreground">
                             {doc.doc_type.replace(/_/g, " ")} • {formatDateTime(doc.uploaded_at)}
                           </p>
                         </div>
                       </div>
-                      <Badge 
-                        variant={getDocStatusColor(doc.status)}
-                        className={`min-w-[120px] justify-center ${
-                          getDocStatusColor(doc.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
-                        }`}
-                      >
-                        {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
-                        {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
-                        {getDocStatusLabel(doc.status)}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge 
+                          variant={getDocStatusColor(doc.status)}
+                          className={`min-w-[120px] justify-center ${
+                            getDocStatusColor(doc.status) !== "destructive" ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15" : ""
+                          }`}
+                        >
+                          {doc.status === "APPROVED" && <CheckCircle2 className="mr-1 h-3 w-3" />}
+                          {doc.status === "REJECTED" && <XCircle className="mr-1 h-3 w-3" />}
+                          {getDocStatusLabel(doc.status)}
+                        </Badge>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-popover">
+                            <DropdownMenuItem asChild>
+                              <a href={doc.file_url} target="_blank" rel="noopener noreferrer">
+                                Bekijken
+                              </a>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <a href={doc.file_url} download={doc.file_name}>
+                                Downloaden
+                              </a>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              className="text-destructive focus:text-destructive"
+                              onClick={async () => {
+                                if (confirm('Weet je zeker dat je dit document wilt verwijderen?')) {
+                                  const { error } = await supabase
+                                    .from('documents')
+                                    .delete()
+                                    .eq('id', doc.id);
+                                  
+                                  if (error) {
+                                    toast({
+                                      title: "Fout",
+                                      description: "Document kon niet worden verwijderd",
+                                      variant: "destructive"
+                                    });
+                                  } else {
+                                    toast({
+                                      title: "Document verwijderd",
+                                      description: "Het document is succesvol verwijderd"
+                                    });
+                                    fetchDossierData();
+                                  }
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Verwijderen
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
                   ))}
                 </div>

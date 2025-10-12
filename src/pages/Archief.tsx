@@ -60,12 +60,13 @@ const Archief = () => {
     
     setLoading(true);
     try {
-      // Fetch archived dossiers
+      // Fetch only ARCHIVED dossiers
       const { data: dossiersData, error: dossiersError } = await supabase
         .from("dossiers")
         .select("*")
         .eq("assigned_fd_org_id", organizationId)
         .eq("status", "ARCHIVED")
+        .is("deleted_at", null)
         .order("updated_at", { ascending: false });
 
       if (dossiersError) throw dossiersError;

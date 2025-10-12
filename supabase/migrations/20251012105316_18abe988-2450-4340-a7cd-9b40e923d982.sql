@@ -1,0 +1,2 @@
+-- Add FINANCIAL_SETTLEMENT status to dossier_status enum
+ALTER TYPE dossier_status ADD VALUE IF NOT EXISTS 'FINANCIAL_SETTLEMENT';

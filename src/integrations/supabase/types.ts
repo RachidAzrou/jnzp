@@ -4556,6 +4556,7 @@ export type Database = {
         | "READY_FOR_TRANSPORT"
         | "IN_TRANSIT"
         | "ARCHIVED"
+        | "FINANCIAL_SETTLEMENT"
       invoice_status:
         | "DRAFT"
         | "ISSUED"
@@ -4787,6 +4788,7 @@ export const Constants = {
         "READY_FOR_TRANSPORT",
         "IN_TRANSIT",
         "ARCHIVED",
+        "FINANCIAL_SETTLEMENT",
       ],
       invoice_status: [
         "DRAFT",

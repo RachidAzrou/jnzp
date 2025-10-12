@@ -531,7 +531,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                   task.priority === 'HIGH' ? 'default' : 
                   'secondary'
                 }>
-                  {task.priority}
+                  {getPriorityLabel(task.priority)}
                 </Badge>
               )}
               <Badge variant={task.is_blocked ? "destructive" : "outline"}>

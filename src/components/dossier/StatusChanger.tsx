@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Edit, AlertCircle, CheckCircle2, Lock, ArrowRight, Circle, Shield } from "lucide-react";
+import { Edit, AlertCircle, CheckCircle2, Lock, ArrowRight, Circle, Shield, AlertTriangle, Clock } from "lucide-react";
 import { AdvisoryDialog } from "./AdvisoryDialog";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
@@ -135,9 +135,42 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   const [open, setOpen] = useState(false);
   const [newStatus, setNewStatus] = useState(currentStatus);
   const [reason, setReason] = useState("");
+  const [blockInfo, setBlockInfo] = useState<any>(null);
+  const [openTasks, setOpenTasks] = useState(0);
+  const [canProgress, setCanProgress] = useState(false);
 
   const statusLabels = getStatusLabels(isAdmin);
   const allowedNextStatuses = ALLOWED_TRANSITIONS[currentStatus] || [];
+
+  // Check blokkades en open taken bij openen
+  useEffect(() => {
+    if (open) {
+      checkDossierStatus();
+    }
+  }, [open, dossierId]);
+
+  const checkDossierStatus = async () => {
+    try {
+      // Check blokkades
+      const { data: blocked } = await supabase.rpc("is_dossier_blocked", {
+        p_dossier_id: dossierId,
+      });
+      const blockData = blocked as { blocked?: boolean } | null;
+      setBlockInfo(blockData);
+
+      // Tel open taken
+      const { count } = await supabase
+        .from("kanban_tasks")
+        .select("*", { count: "exact", head: true })
+        .eq("dossier_id", dossierId)
+        .neq("status", "DONE");
+
+      setOpenTasks(count || 0);
+      setCanProgress(count === 0 && !blockData?.blocked);
+    } catch (error) {
+      console.error("Error checking dossier status:", error);
+    }
+  };
 
   const handleStatusChange = async () => {
     if (!newStatus || newStatus === currentStatus) {
@@ -145,6 +178,26 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
         title: "Geen wijziging",
         description: "Selecteer een andere status",
         variant: "destructive",
+      });
+      return;
+    }
+
+    // Check blokkades
+    if (blockInfo?.blocked) {
+      toast({
+        variant: "destructive",
+        title: "Dossier geblokkeerd",
+        description: blockInfo.message || "Dit dossier is geblokkeerd en kan niet worden gewijzigd",
+      });
+      return;
+    }
+
+    // Check open taken (tenzij admin override)
+    if (openTasks > 0 && !isAdmin) {
+      toast({
+        variant: "destructive",
+        title: "Taken niet afgerond",
+        description: `Er zijn nog ${openTasks} open taken. Deze moeten eerst afgerond worden.`,
       });
       return;
     }
@@ -240,6 +293,45 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
           </DialogHeader>
 
           <div className="space-y-4">
+            {/* Blokkade waarschuwing */}
+            {blockInfo?.blocked && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>{blockInfo.message}</strong>
+                  <br />
+                  {blockInfo.reason && <span className="text-sm">Reden: {blockInfo.reason}</span>}
+                  {blockInfo.authority && (
+                    <span className="text-sm block">Autoriteit: {blockInfo.authority}</span>
+                  )}
+                  {blockInfo.contact && (
+                    <span className="text-sm block">Contact: {blockInfo.contact}</span>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Open taken waarschuwing */}
+            {openTasks > 0 && !isAdmin && (
+              <Alert>
+                <Clock className="h-4 w-4" />
+                <AlertDescription>
+                  Er zijn nog <strong>{openTasks} open taken</strong> voor deze status.
+                  Rond deze eerst af voordat u de status wijzigt.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Auto-progressie hint */}
+            {canProgress && openTasks === 0 && (
+              <Alert>
+                <CheckCircle2 className="h-4 w-4" />
+                <AlertDescription>
+                  Alle taken zijn afgerond. Het dossier kan automatisch naar de volgende fase.
+                </AlertDescription>
+              </Alert>
+            )}
+
             {/* Current Status */}
             <div className="flex items-center gap-2 text-sm">
               <span className="text-muted-foreground">Huidig:</span>

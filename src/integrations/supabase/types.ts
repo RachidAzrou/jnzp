@@ -835,6 +835,53 @@ export type Database = {
           },
         ]
       }
+      dossier_hold_events: {
+        Row: {
+          action: string
+          contact_person: string | null
+          created_at: string
+          dossier_id: string
+          hold_type: string
+          id: string
+          metadata: Json | null
+          reason: string | null
+          reference: string | null
+          set_by: string | null
+        }
+        Insert: {
+          action: string
+          contact_person?: string | null
+          created_at?: string
+          dossier_id: string
+          hold_type: string
+          id?: string
+          metadata?: Json | null
+          reason?: string | null
+          reference?: string | null
+          set_by?: string | null
+        }
+        Update: {
+          action?: string
+          contact_person?: string | null
+          created_at?: string
+          dossier_id?: string
+          hold_type?: string
+          id?: string
+          metadata?: Json | null
+          reason?: string | null
+          reference?: string | null
+          set_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dossier_hold_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dossier_release_events: {
         Row: {
           action: string
@@ -890,6 +937,12 @@ export type Database = {
           display_id: string | null
           flow: Database["public"]["Enums"]["dossier_flow"]
           id: string
+          insurer_hold: boolean
+          insurer_hold_contact_person: string | null
+          insurer_hold_reason: string | null
+          insurer_hold_reference: string | null
+          insurer_hold_set_at: string | null
+          insurer_hold_set_by: string | null
           insurer_org_id: string | null
           internal_notes: string | null
           is_adhoc: boolean | null
@@ -929,6 +982,12 @@ export type Database = {
           display_id?: string | null
           flow?: Database["public"]["Enums"]["dossier_flow"]
           id?: string
+          insurer_hold?: boolean
+          insurer_hold_contact_person?: string | null
+          insurer_hold_reason?: string | null
+          insurer_hold_reference?: string | null
+          insurer_hold_set_at?: string | null
+          insurer_hold_set_by?: string | null
           insurer_org_id?: string | null
           internal_notes?: string | null
           is_adhoc?: boolean | null
@@ -968,6 +1027,12 @@ export type Database = {
           display_id?: string | null
           flow?: Database["public"]["Enums"]["dossier_flow"]
           id?: string
+          insurer_hold?: boolean
+          insurer_hold_contact_person?: string | null
+          insurer_hold_reason?: string | null
+          insurer_hold_reference?: string | null
+          insurer_hold_set_at?: string | null
+          insurer_hold_set_by?: string | null
           insurer_org_id?: string | null
           internal_notes?: string | null
           is_adhoc?: boolean | null
@@ -3733,6 +3798,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: boolean
       }
+      check_and_progress_dossier: {
+        Args: { p_dossier_id: string }
+        Returns: Json
+      }
       check_password_reset_rate_limit: {
         Args: { p_email: string }
         Returns: Json
@@ -3849,7 +3918,7 @@ export type Database = {
         Returns: undefined
       }
       fn_seed_dossier_tasks_sql: {
-        Args: { _dossier_id: string; _flow: string; _status: string }
+        Args: { p_dossier_id: string; p_flow: string; p_status: string }
         Returns: undefined
       }
       gen_random_bytes: {
@@ -3945,6 +4014,10 @@ export type Database = {
         Args: { p_role: Database["public"]["Enums"]["app_role"] }
         Returns: boolean
       }
+      is_dossier_blocked: {
+        Args: { p_dossier_id: string }
+        Returns: Json
+      }
       is_org_admin: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
@@ -3960,6 +4033,10 @@ export type Database = {
       is_within_2fa_grace_period: {
         Args: { p_user_id: string }
         Returns: boolean
+      }
+      lift_dossier_hold: {
+        Args: { p_dossier_id: string; p_hold_type: string; p_reason: string }
+        Returns: Json
       }
       log_admin_action: {
         Args: {
@@ -4027,6 +4104,16 @@ export type Database = {
       set_2fa_grace_period: {
         Args: { p_hours?: number; p_user_id: string }
         Returns: undefined
+      }
+      set_dossier_hold: {
+        Args: {
+          p_contact_person?: string
+          p_dossier_id: string
+          p_hold_type: string
+          p_reason: string
+          p_reference?: string
+        }
+        Returns: Json
       }
       set_encrypted_nis: {
         Args: { p_nis: string; p_profile_id: string }

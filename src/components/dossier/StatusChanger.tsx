@@ -48,6 +48,21 @@ const STATUSES = [
   "ARCHIVED",
 ];
 
+// Workflow mapping: welke statussen zijn bereikbaar vanuit elke status
+const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+  CREATED: ["INTAKE_IN_PROGRESS", "LEGAL_HOLD"],
+  INTAKE_IN_PROGRESS: ["DOCS_PENDING", "LEGAL_HOLD"],
+  DOCS_PENDING: ["DOCS_VERIFIED", "INTAKE_IN_PROGRESS", "LEGAL_HOLD"],
+  DOCS_VERIFIED: ["APPROVED", "DOCS_PENDING", "LEGAL_HOLD"],
+  APPROVED: ["PLANNING", "LEGAL_HOLD"],
+  LEGAL_HOLD: ["CREATED", "INTAKE_IN_PROGRESS", "DOCS_PENDING", "DOCS_VERIFIED", "APPROVED", "PLANNING", "READY_FOR_TRANSPORT", "IN_TRANSIT"], // Kan terug naar vorige status
+  PLANNING: ["READY_FOR_TRANSPORT", "APPROVED", "LEGAL_HOLD"],
+  READY_FOR_TRANSPORT: ["IN_TRANSIT", "PLANNING", "LEGAL_HOLD"],
+  IN_TRANSIT: ["SETTLEMENT", "LEGAL_HOLD"],
+  SETTLEMENT: ["ARCHIVED", "IN_TRANSIT"],
+  ARCHIVED: [], // Alleen admins kunnen hier weer uit
+};
+
 export const STATUS_LABELS_FD = {
   CREATED: {
     label: "Nieuw",
@@ -658,7 +673,9 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
           <div className="space-y-3">
             <Label className="text-base font-semibold">Selecteer nieuwe status</Label>
             <div className="grid grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-2">
-              {STATUSES.map((status) => {
+              {(isAdmin ? STATUSES : STATUSES.filter(status => 
+                ALLOWED_TRANSITIONS[currentStatus]?.includes(status) || status === currentStatus
+              )).map((status) => {
                 const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
                 const statusInfo = labels[status as keyof typeof labels];
                 const isCurrentStatus = status === currentStatus;

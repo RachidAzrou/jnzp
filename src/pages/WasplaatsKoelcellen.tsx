@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, XCircle, CheckCircle2, Unlock } from "lucide-react";
+import { Plus, Trash2, XCircle, CheckCircle2, Unlock, Refrigerator } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -218,87 +218,52 @@ export default function WasplaatsKoelcellen() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Koelcellen Beheer</h1>
-          <p className="text-sm text-muted-foreground mt-1">Beheer koelcellen en hun status</p>
-        </div>
-        
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Koelcel Toevoegen
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Nieuwe Koelcel(len)</DialogTitle>
-              <DialogDescription>
-                Voeg één of meerdere koelcellen toe aan uw mortuarium.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="count">Aantal koelcellen</Label>
-                <Input
-                  id="count"
-                  type="number"
-                  min="1"
-                  max="50"
-                  placeholder="1"
-                  value={bulkCount}
-                  onChange={(e) => setBulkCount(e.target.value)}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Voer aantal in (1-50)
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6 max-w-[1600px] mx-auto">
+        <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="space-y-2 flex-1 min-w-[280px]">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Refrigerator className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">Faciliteiten</p>
+                    <h1 className="text-2xl font-bold tracking-tight">Koelcellen Beheer</h1>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground pl-15">
+                  Beheer koelcellen en hun status
                 </p>
               </div>
-              
-              {parseInt(bulkCount) > 1 ? (
-                <div className="space-y-2">
-                  <Label htmlFor="prefix">Prefix</Label>
-                  <Input
-                    id="prefix"
-                    placeholder="bijv. Cel, A, B"
-                    value={bulkPrefix}
-                    onChange={(e) => setBulkPrefix(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Labels worden: {bulkPrefix || "Prefix"} 1, {bulkPrefix || "Prefix"} 2, etc.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Label htmlFor="label">Label / Nummer</Label>
-                  <Input
-                    id="label"
-                    placeholder="Bijv. Cel 1, A1, etc."
-                    value={newCellLabel}
-                    onChange={(e) => setNewCellLabel(e.target.value)}
-                  />
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Koelcel Toevoegen
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Nieuwe Koelcel(len)</DialogTitle>
+                      <DialogDescription>
+                        Voeg één of meerdere koelcellen toe aan uw mortuarium.
+                      </DialogDescription>
+                    </DialogHeader>
+...
+                    <DialogFooter>
+                      <Button onClick={addCoolCell}>Toevoegen</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => {
-                setIsAddDialogOpen(false);
-                setNewCellLabel("");
-                setBulkPrefix("");
-                setBulkCount("1");
-              }}>
-                Annuleren
-              </Button>
-              <Button onClick={addCoolCell}>
-                {parseInt(bulkCount) > 1 ? `${bulkCount} Koelcellen Toevoegen` : "Toevoegen"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+          </CardContent>
+        </Card>
 
-      <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg font-medium">Overzicht</CardTitle>
         </CardHeader>
@@ -374,7 +339,8 @@ export default function WasplaatsKoelcellen() {
             </table>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -117,15 +117,30 @@ export default function MortuariumTeam() {
   });
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Teambeheer</h1>
-        <p className="text-muted-foreground mt-2">
-          Beheer teamleden van {userOrg?.organizations?.name}
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6 max-w-[1400px] mx-auto">
+        <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="space-y-2 flex-1 min-w-[280px]">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <UserPlus className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">Organisatie</p>
+                    <h1 className="text-2xl font-bold tracking-tight">Teambeheer</h1>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground pl-15">
+                  Beheer teamleden van {userOrg?.organizations?.name}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-      <Card>
+        <Card>
         <CardHeader>
           <CardTitle>Teamlid uitnodigen</CardTitle>
           <CardDescription>
@@ -250,6 +265,7 @@ export default function MortuariumTeam() {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

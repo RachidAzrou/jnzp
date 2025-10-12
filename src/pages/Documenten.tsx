@@ -26,7 +26,6 @@ const Documenten = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [documents, setDocuments] = useState<any[]>([]);
-  const [dossiers, setDossiers] = useState<any[]>([]);
   const [filteredDocs, setFilteredDocs] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("filter") === "missing" ? "missing" : "all");
@@ -47,16 +46,12 @@ const Documenten = () => {
   }, [documents, searchQuery, statusFilter, typeFilter]);
 
   const fetchData = async () => {
-    const [{ data: docsData }, { data: dossiersData }] = await Promise.all([
-      supabase
-        .from("documents")
-        .select("*, dossiers(ref_number, deceased_name)")
-        .order("uploaded_at", { ascending: false }),
-      supabase.from("dossiers").select("*").order("ref_number")
-    ]);
+    const { data: docsData } = await supabase
+      .from("documents")
+      .select("*, dossiers(ref_number, deceased_name)")
+      .order("uploaded_at", { ascending: false });
 
     setDocuments(docsData || []);
-    setDossiers(dossiersData || []);
     setLoading(false);
   };
 
@@ -238,7 +233,7 @@ const Documenten = () => {
               >
                 <SlidersHorizontal className="h-4 w-4" />
               </Button>
-              <DocumentUploadDialog dossiers={dossiers} onUploadComplete={fetchData} />
+              <DocumentUploadDialog onUploadComplete={fetchData} />
             </div>
 
             {/* Filter Panel */}

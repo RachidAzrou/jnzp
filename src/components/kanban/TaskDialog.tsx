@@ -74,9 +74,23 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
   ];
 
   const fetchDossiers = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: userRole } = await supabase
+      .from('user_roles')
+      .select('organization_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (!userRole) return;
+
     const { data } = await supabase
       .from('dossiers')
-      .select('id, ref_number, deceased_name, display_id')
+      .select('id, ref_number, deceased_name, display_id, status, deleted_at, assigned_fd_org_id')
+      .eq('assigned_fd_org_id', userRole.organization_id)
+      .is('deleted_at', null)
+      .in('status', ['CREATED', 'UNDER_REVIEW', 'IN_PROGRESS', 'COMPLETED'])
       .order('created_at', { ascending: false })
       .limit(100);
 

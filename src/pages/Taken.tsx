@@ -86,93 +86,101 @@ const Taken = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">Taken</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Sleep taken tussen kolommen om de status te wijzigen
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={fetchBoard}>
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-          <Button onClick={() => setIsTaskDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nieuwe taak
-          </Button>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardContent className="py-4">
-          <div className="flex items-center gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Zoek taken..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6 max-w-[1600px] mx-auto">
+        {/* Header */}
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardContent className="p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Taken
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Sleep taken tussen kolommen om de status te wijzigen
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={fetchBoard}>
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+                <Button onClick={() => setIsTaskDialogOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nieuwe taak
+                </Button>
+              </div>
             </div>
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Prioriteit" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle prioriteiten</SelectItem>
-                <SelectItem value="URGENT">Urgent</SelectItem>
-                <SelectItem value="HIGH">Hoog</SelectItem>
-                <SelectItem value="MEDIUM">Normaal</SelectItem>
-                <SelectItem value="LOW">Laag</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Toegewezen aan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Iedereen</SelectItem>
-                <SelectItem value="me">Aan mij</SelectItem>
-                <SelectItem value="unassigned">Niet toegewezen</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Kanban Board */}
-      <KanbanBoard
-        boardId={board.id}
-        searchQuery={searchQuery}
-        priorityFilter={priorityFilter}
-        assigneeFilter={assigneeFilter}
-        onTaskClick={(task) => setSelectedTask(task)}
-      />
+        {/* Filters */}
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Zoek taken..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                <SelectTrigger className="w-full sm:w-40">
+                  <SelectValue placeholder="Prioriteit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Alle prioriteiten</SelectItem>
+                  <SelectItem value="URGENT">Urgent</SelectItem>
+                  <SelectItem value="HIGH">Hoog</SelectItem>
+                  <SelectItem value="MEDIUM">Normaal</SelectItem>
+                  <SelectItem value="LOW">Laag</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+                <SelectTrigger className="w-full sm:w-40">
+                  <SelectValue placeholder="Toegewezen aan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Iedereen</SelectItem>
+                  <SelectItem value="me">Aan mij</SelectItem>
+                  <SelectItem value="unassigned">Niet toegewezen</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Task Dialog */}
-      <TaskDialog
-        boardId={board.id}
-        open={isTaskDialogOpen}
-        onOpenChange={setIsTaskDialogOpen}
-      />
-
-      {/* Task Detail Dialog */}
-      {selectedTask && (
-        <TaskDetailDialog
-          task={selectedTask}
-          open={!!selectedTask}
-          onOpenChange={(open) => !open && setSelectedTask(null)}
-          onUpdate={() => {
-            setSelectedTask(null);
-            fetchBoard();
-          }}
+        {/* Kanban Board */}
+        <KanbanBoard
+          boardId={board.id}
+          searchQuery={searchQuery}
+          priorityFilter={priorityFilter}
+          assigneeFilter={assigneeFilter}
+          onTaskClick={(task) => setSelectedTask(task)}
         />
-      )}
+
+        {/* Task Dialog */}
+        <TaskDialog
+          boardId={board.id}
+          open={isTaskDialogOpen}
+          onOpenChange={setIsTaskDialogOpen}
+        />
+
+        {/* Task Detail Dialog */}
+        {selectedTask && (
+          <TaskDetailDialog
+            task={selectedTask}
+            open={!!selectedTask}
+            onOpenChange={(open) => !open && setSelectedTask(null)}
+            onUpdate={() => {
+              setSelectedTask(null);
+              fetchBoard();
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 };

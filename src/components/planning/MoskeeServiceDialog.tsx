@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -167,6 +167,9 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Nieuwe Moskee Afspraak</DialogTitle>
+          <DialogDescription>
+            Plan een Janāza-gebed in bij een moskee
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>

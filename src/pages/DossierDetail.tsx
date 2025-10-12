@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { MdOutlineShower } from "react-icons/md";
+import { AiOutlineExport } from "react-icons/ai";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
@@ -437,6 +438,7 @@ const DossierDetail = () => {
                     </DropdownMenuTrigger>
                      <DropdownMenuContent align="end" className="bg-popover">
                       <DropdownMenuItem onClick={() => setReleaseDialogOpen(true)}>
+                        <AiOutlineExport className="h-4 w-4 mr-2" />
                         Dossier vrijgeven
                       </DropdownMenuItem>
                       <DropdownMenuItem 

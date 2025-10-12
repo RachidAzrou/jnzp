@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,11 +10,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, FileText, Search, Trash2, Save, Send, Download } from "lucide-react";
+import { Plus, FileText, Search, Trash2, Save, Send, Download, Eye, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { pdf } from '@react-pdf/renderer';
 import { InvoicePDF, InvoiceData } from "@/components/InvoicePDF";
 import { calculateInvoiceAmounts, validateInvoiceData } from "@/lib/invoiceCalculations";
+import { format } from "date-fns";
+import { nl } from "date-fns/locale";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast as sonnerToast } from "sonner";
 
 type Invoice = {
   id: string;
@@ -86,13 +90,19 @@ const statusLabels: Record<string, string> = {
 export default function FDFacturatie() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"sent" | "received">("sent");
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [dossiers, setDossiers] = useState<Dossier[]>([]);
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [insurerFilter, setInsurerFilter] = useState("all");
+  
+  // Received invoices state
+  const [selectedInvoice, setSelectedInvoice] = useState<any | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
 
   // Generator state
   const [showGenerator, setShowGenerator] = useState(false);
@@ -171,6 +181,61 @@ export default function FDFacturatie() {
       setLoading(false);
     }
   };
+
+  // Fetch received invoices
+  const { data: receivedInvoices } = useQuery({
+    queryKey: ["fd-received-invoices"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("invoices")
+        .select(`
+          *,
+          dossiers(display_id, deceased_name)
+        `)
+        .eq("invoice_type", "MORTUARIUM")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      
+      const invoicesWithOrgs = await Promise.all(
+        (data || []).map(async (invoice) => {
+          if (invoice.facility_org_id) {
+            const { data: org } = await supabase
+              .from("organizations")
+              .select("name")
+              .eq("id", invoice.facility_org_id)
+              .single();
+            return { ...invoice, facility_organization: org };
+          }
+          return invoice;
+        })
+      );
+      
+      return invoicesWithOrgs;
+    },
+  });
+
+  // Acknowledge receipt mutation
+  const acknowledgeMutation = useMutation({
+    mutationFn: async (invoiceId: string) => {
+      const { error } = await supabase
+        .from("invoice_actions")
+        .insert({
+          invoice_id: invoiceId,
+          action: "ACK",
+          user_id: (await supabase.auth.getUser()).data.user?.id,
+          metadata: { acknowledged_at: new Date().toISOString() },
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      sonnerToast.success("Ontvangst bevestigd");
+      queryClient.invalidateQueries({ queryKey: ["fd-received-invoices"] });
+    },
+    onError: (error: any) => {
+      sonnerToast.error("Fout bij bevestigen: " + error.message);
+    },
+  });
 
   const addCatalogItemToInvoice = (item: CatalogItem) => {
     const newLine: InvoiceItem = {
@@ -444,110 +509,228 @@ export default function FDFacturatie() {
   );
 
   const { subtotal, vat, total } = calculateTotals();
+  
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      DRAFT: "outline",
+      SENT: "default",
+      PAID: "secondary",
+      OVERDUE: "destructive",
+    };
+    return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
+  };
+
+  const handleViewDetails = (invoice: any) => {
+    setSelectedInvoice(invoice);
+    setDetailDialogOpen(true);
+  };
+
+  const handleAcknowledge = (invoiceId: string) => {
+    acknowledgeMutation.mutate(invoiceId);
+  };
 
   if (loading) {
     return (
-      <div className="p-6">Laden...</div>
+      <div className="flex items-center justify-center p-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Facturatie</h1>
-          <p className="text-muted-foreground mt-1">Beheer facturen voor verzekeraars</p>
-        </div>
-        <Button onClick={() => setShowGenerator(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Nieuwe Factuur
-        </Button>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-            <CardTitle>Filters</CardTitle>
-          </CardHeader>
-          <CardContent className="flex gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Zoeken op nummer, dossier, overledene..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+      <div className="space-y-6 max-w-[1600px] mx-auto">
+        {/* Header */}
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardContent className="p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Facturatie
+                </h1>
+                <p className="text-sm text-muted-foreground">Beheer verzonden en ontvangen facturen</p>
+              </div>
+              <Button onClick={() => setShowGenerator(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Nieuwe Factuur
+              </Button>
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle statussen</SelectItem>
-                <SelectItem value="DRAFT">Concept</SelectItem>
-                <SelectItem value="ISSUED">Te accorderen</SelectItem>
-                <SelectItem value="NEEDS_INFO">Info nodig</SelectItem>
-                <SelectItem value="APPROVED">Goedgekeurd</SelectItem>
-                <SelectItem value="PAID">Betaald</SelectItem>
-              </SelectContent>
-            </Select>
           </CardContent>
-      </Card>
+        </Card>
 
-      {/* Invoices Table */}
-      <Card>
-          <CardHeader>
-            <CardTitle>Facturen Overzicht</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nr</TableHead>
-                  <TableHead>Dossier</TableHead>
-                  <TableHead>Overledene</TableHead>
-                  <TableHead>Datum</TableHead>
-                  <TableHead className="text-right">Bedrag</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Actie</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredInvoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell className="font-mono">{invoice.invoice_number || "-"}</TableCell>
-                    <TableCell>{invoice.dossiers?.display_id}</TableCell>
-                    <TableCell>{invoice.dossiers?.deceased_name}</TableCell>
-                    <TableCell>
-                      {new Date(invoice.created_at).toLocaleDateString("nl-NL")}
-                    </TableCell>
-                    <TableCell className="text-right">€{Number(invoice.total).toFixed(2)}</TableCell>
-                    <TableCell>
-                      <Badge className={statusColors[invoice.status]}>
-                        {statusLabels[invoice.status]}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button size="sm" variant="ghost">
-                        <FileText className="h-4 w-4 mr-1" />
-                        Bekijken
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {filteredInvoices.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                      Geen facturen gevonden
-                    </TableCell>
-                  </TableRow>
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "sent" | "received")} className="space-y-6">
+          <TabsList className="bg-card border shadow-sm">
+            <TabsTrigger value="sent" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Verzonden facturen
+            </TabsTrigger>
+            <TabsTrigger value="received" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Ontvangen facturen
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="sent" className="mt-0 space-y-6">
+            {/* Filters */}
+            <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+              <CardHeader>
+                <CardTitle>Filters</CardTitle>
+              </CardHeader>
+              <CardContent className="flex gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Zoeken op nummer, dossier, overledene..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Alle statussen</SelectItem>
+                    <SelectItem value="DRAFT">Concept</SelectItem>
+                    <SelectItem value="ISSUED">Te accorderen</SelectItem>
+                    <SelectItem value="NEEDS_INFO">Info nodig</SelectItem>
+                    <SelectItem value="APPROVED">Goedgekeurd</SelectItem>
+                    <SelectItem value="PAID">Betaald</SelectItem>
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
+
+            {/* Invoices Table */}
+            <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+              <CardHeader>
+                <CardTitle>Facturen Overzicht</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nr</TableHead>
+                      <TableHead>Dossier</TableHead>
+                      <TableHead>Overledene</TableHead>
+                      <TableHead>Datum</TableHead>
+                      <TableHead className="text-right">Bedrag</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actie</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredInvoices.map((invoice) => (
+                      <TableRow key={invoice.id}>
+                        <TableCell className="font-mono">{invoice.invoice_number || "-"}</TableCell>
+                        <TableCell>{invoice.dossiers?.display_id}</TableCell>
+                        <TableCell>{invoice.dossiers?.deceased_name}</TableCell>
+                        <TableCell>
+                          {new Date(invoice.created_at).toLocaleDateString("nl-NL")}
+                        </TableCell>
+                        <TableCell className="text-right">€{Number(invoice.total).toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge className={statusColors[invoice.status]}>
+                            {statusLabels[invoice.status]}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="ghost">
+                            <FileText className="h-4 w-4 mr-1" />
+                            Bekijken
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {filteredInvoices.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                          Geen facturen gevonden
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="received" className="mt-0 space-y-6">
+            <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+              <CardHeader>
+                <CardTitle>Ontvangen facturen</CardTitle>
+                <CardDescription>
+                  Mortuarium facturen gericht aan uw organisatie
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {!receivedInvoices || receivedInvoices.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    Geen facturen ontvangen
+                  </p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nummer</TableHead>
+                        <TableHead>Mortuarium</TableHead>
+                        <TableHead>Dossier</TableHead>
+                        <TableHead>Bedrag</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Datum</TableHead>
+                        <TableHead className="text-right">Acties</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {receivedInvoices.map((invoice: any) => (
+                        <TableRow key={invoice.id}>
+                          <TableCell className="font-medium">
+                            {invoice.invoice_number}
+                          </TableCell>
+                          <TableCell>
+                            {invoice.facility_organization?.name || "-"}
+                          </TableCell>
+                          <TableCell>
+                            {invoice.dossiers
+                              ? `${invoice.dossiers.display_id} - ${invoice.dossiers.deceased_name}`
+                              : "-"}
+                          </TableCell>
+                          <TableCell>€ {invoice.total.toFixed(2)}</TableCell>
+                          <TableCell>{getStatusBadge(invoice.status)}</TableCell>
+                          <TableCell>
+                            {format(new Date(invoice.created_at), "dd MMM yyyy", {
+                              locale: nl,
+                            })}
+                          </TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleViewDetails(invoice)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            {invoice.status === "SENT" && (
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => handleAcknowledge(invoice.id)}
+                                disabled={acknowledgeMutation.isPending}
+                              >
+                                <CheckCircle className="h-4 w-4 mr-1" />
+                                Bevestig
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 )}
-              </TableBody>
-            </Table>
-          </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
       {/* Generator Dialog */}
       <Dialog open={showGenerator} onOpenChange={setShowGenerator}>
@@ -771,6 +954,55 @@ export default function FDFacturatie() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Detail Dialog for Received Invoices */}
+        <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Factuur {selectedInvoice?.invoice_number}</DialogTitle>
+              <CardDescription>
+                Van {selectedInvoice?.facility_organization?.name}
+              </CardDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Status</p>
+                  <div className="mt-1">{selectedInvoice && getStatusBadge(selectedInvoice.status)}</div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Totaalbedrag</p>
+                  <p className="mt-1 text-lg font-semibold">
+                    € {selectedInvoice?.total.toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Dossier</p>
+                  <p className="mt-1">
+                    {selectedInvoice?.dossiers
+                      ? `${selectedInvoice.dossiers.display_id} - ${selectedInvoice.dossiers.deceased_name}`
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Datum</p>
+                  <p className="mt-1">
+                    {selectedInvoice &&
+                      format(new Date(selectedInvoice.created_at), "dd MMMM yyyy", {
+                        locale: nl,
+                      })}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDetailDialogOpen(false)}>
+                Sluiten
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

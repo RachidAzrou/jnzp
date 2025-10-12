@@ -106,7 +106,7 @@ export default function FDChat() {
         await fetchMessages(transformedDossier.id);
         
         // Check if chat can be deleted (only if dossier is archived)
-        setCanDelete(transformedDossier.status === 'ARCHIVED');
+        setCanDelete(transformedDossier.status === 'CLOSED');
       }
 
       setLoading(false);

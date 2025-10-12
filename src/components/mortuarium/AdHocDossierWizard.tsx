@@ -111,20 +111,22 @@ export function AdHocDossierWizard() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
-      // Create dossier manually
-      const { data: dossier, error: dossierError } = await supabase
+      // Create dossier manually  
+      const { data: dossierData, error: dossierError } = await supabase
         .from("dossiers")
-        .insert({
+        .insert([{
           deceased_name: deceasedName.trim(),
           flow: "LOC",
-          status: "INTAKE_IN_PROGRESS",
+          status: "IN_PROGRESS" as any,
           assignment_status: "UNASSIGNED",
           is_adhoc: true,
           internal_notes: note.trim() || null,
           ref_number: `ADHOC-${Date.now()}`,
-        })
+        }])
         .select()
         .single();
+      
+      const dossier = dossierData;
 
       if (dossierError) throw dossierError;
 

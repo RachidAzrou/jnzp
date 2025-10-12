@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 
-type DossierStatus = Database["public"]["Enums"]["dossier_status"];
+type DossierStatus = Database["public"]["Enums"]["simple_dossier_status"];
 import {
   Table,
   TableBody,

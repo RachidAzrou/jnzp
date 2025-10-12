@@ -96,20 +96,20 @@ const DossierDetail = () => {
       .eq("id", id)
       .single();
 
-    // Auto-transition: created → intake_in_progress on first open
-    if (dossierData?.status === "created" as any) {
+    // Auto-transition: CREATED → IN_PROGRESS on first open
+    if (dossierData?.status === "CREATED") {
       const { data: userData } = await supabase.auth.getUser();
       const userId = userData.user?.id;
 
       await supabase
         .from("dossiers")
-        .update({ status: "intake_in_progress" as any })
+        .update({ status: "IN_PROGRESS" })
         .eq("id", id);
 
       await supabase.from("dossier_events").insert({
         dossier_id: id,
         event_type: "STATUS_AUTO_CHANGED",
-        event_description: "Status automatisch gewijzigd: Aangemaakt → Intake lopend (dossier geopend)",
+        event_description: "Status automatisch gewijzigd: Nieuw dossier → In behandeling (dossier geopend)",
         created_by: userId,
         metadata: { auto_transition: true },
       });
@@ -312,12 +312,10 @@ const DossierDetail = () => {
   const getStatusColor = (status: string) => {
     const colors: Record<string, any> = {
       CREATED: "secondary",
-      DOCS_PENDING: "destructive",
-      LEGAL_HOLD: "destructive",
-      PLANNING: "default",
-      READY_FOR_TRANSPORT: "default",
-      IN_TRANSIT: "default",
-      ARCHIVED: "secondary",
+      IN_PROGRESS: "default",
+      UNDER_REVIEW: "default",
+      COMPLETED: "default",
+      CLOSED: "secondary",
     };
     return colors[status] || "secondary";
   };
@@ -335,28 +333,16 @@ const DossierDetail = () => {
     // Use admin labels if user is admin, otherwise use FD labels
     const labels = isAdmin ? {
       CREATED: "Nieuw dossier aangemaakt",
-      INTAKE_IN_PROGRESS: "Intake lopend",
-      DOCS_PENDING: "Documenten in behandeling",
-      DOCS_VERIFIED: "Documenten gecontroleerd",
-      APPROVED: "Goedgekeurd door verzekeraar",
-      LEGAL_HOLD: "Juridische blokkade (parket)",
-      PLANNING: "Planningfase gestart",
-      READY_FOR_TRANSPORT: "Klaar voor uitvoering",
-      IN_TRANSIT: "In uitvoering",
-      SETTLEMENT: "Financiële afhandeling",
-      ARCHIVED: "Afgerond & gearchiveerd",
+      IN_PROGRESS: "In behandeling",
+      UNDER_REVIEW: "In controle (API check)",
+      COMPLETED: "Operationeel afgerond",
+      CLOSED: "Gearchiveerd",
     } : {
-      CREATED: "Nieuw",
-      INTAKE_IN_PROGRESS: "Intake",
-      DOCS_PENDING: "Documenten in behandeling",
-      DOCS_VERIFIED: "Documenten volledig",
-      APPROVED: "Goedgekeurd",
-      LEGAL_HOLD: "Juridisch geblokkeerd",
-      PLANNING: "Planning",
-      READY_FOR_TRANSPORT: "Klaar voor uitvoering",
-      IN_TRANSIT: "Uitvoering",
-      SETTLEMENT: "Facturatie",
-      ARCHIVED: "Afgerond",
+      CREATED: "Nieuw dossier",
+      IN_PROGRESS: "In behandeling",
+      UNDER_REVIEW: "In controle",
+      COMPLETED: "Operationeel afgerond",
+      CLOSED: "Gearchiveerd",
     };
     return labels[status] || status.replace(/_/g, " ");
   };
@@ -424,7 +410,7 @@ const DossierDetail = () => {
                   <User className="h-4 w-4 text-muted-foreground" />
                   <p className="text-lg font-medium">{dossier.deceased_name}</p>
                 </div>
-                {dossier.status === "archived" && (
+                {dossier.status === "CLOSED" && (
                   <Badge variant="secondary" className="text-xs ml-15">
                     <AlertCircle className="h-3 w-3 mr-1" />
                     Alleen-lezen (gearchiveerd)
@@ -454,7 +440,7 @@ const DossierDetail = () => {
                   legal_hold_case_number={dossier.legal_hold_case_number}
                   onViewDetails={handleViewLegalHoldDetails}
                 />
-                {dossier.status === "intake_in_progress" && (
+                {dossier.status === "IN_PROGRESS" && (
                   <ActivateDossierButton
                     dossierId={id!}
                     currentStatus={dossier.status}
@@ -462,7 +448,7 @@ const DossierDetail = () => {
                     onActivated={fetchDossierData}
                   />
                 )}
-                {dossier.status !== "archived" && (
+                {dossier.status !== "CLOSED" && (
                   <StatusChanger 
                     dossierId={id!} 
                     currentStatus={dossier.status}
@@ -470,7 +456,7 @@ const DossierDetail = () => {
                     isAdmin={isAdmin}
                   />
                 )}
-                {dossier.status === "archived" && (
+                {dossier.status === "CLOSED" && (
                   <SendFeedbackButton dossierId={id!} />
                 )}
                 {userRole === "funeral_director" && (

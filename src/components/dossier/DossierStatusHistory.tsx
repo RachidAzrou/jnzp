@@ -60,6 +60,23 @@ export function DossierStatusHistory({ dossierId, currentStatus }: StatusHistory
     }
   };
 
+  const formatStatusDescription = (description: string) => {
+    // Map oude statusnamen naar nieuwe indien nodig
+    return description
+      .replace(/INTAKE_IN_PROGRESS/g, "IN_PROGRESS")
+      .replace(/DOCS_PENDING/g, "IN_PROGRESS")
+      .replace(/DOCS_VERIFIED/g, "IN_PROGRESS")
+      .replace(/APPROVED/g, "UNDER_REVIEW")
+      .replace(/PLANNING/g, "IN_PROGRESS")
+      .replace(/READY_FOR_TRANSPORT/g, "IN_PROGRESS")
+      .replace(/IN_TRANSIT/g, "IN_PROGRESS")
+      .replace(/SETTLEMENT/g, "COMPLETED")
+      .replace(/ARCHIVED/g, "CLOSED")
+      .replace(/Intake lopend/g, "In behandeling")
+      .replace(/Documenten in behandeling/g, "In behandeling")
+      .replace(/Planning/g, "In behandeling");
+  };
+
   if (loading) return null;
   if (history.length === 0) return null;
 
@@ -90,7 +107,7 @@ export function DossierStatusHistory({ dossierId, currentStatus }: StatusHistory
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 rounded-full bg-muted-foreground/50 -ml-[1.3rem]" />
                 <span className="font-medium text-foreground">
-                  {event.event_description}
+                  {formatStatusDescription(event.event_description)}
                 </span>
               </div>
               <div className="text-xs text-muted-foreground">

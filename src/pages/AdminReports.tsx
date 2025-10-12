@@ -37,11 +37,11 @@ export default function AdminReports() {
 
       if (dossiers) {
         const total = dossiers.length;
-        const active = dossiers.filter(d => !['ARCHIVED', 'CANCELLED'].includes(d.status)).length;
-        const completed = dossiers.filter(d => d.status === 'ARCHIVED').length;
+        const active = dossiers.filter(d => !['CLOSED', 'CANCELLED'].includes(d.status)).length;
+        const completed = dossiers.filter(d => d.status === 'CLOSED').length;
 
         const processingTimes = dossiers
-          .filter(d => d.status === 'ARCHIVED')
+          .filter(d => d.status === 'CLOSED')
           .map(d => {
             const created = new Date(d.created_at).getTime();
             const updated = new Date(d.updated_at).getTime();
@@ -94,7 +94,7 @@ export default function AdminReports() {
         const slaMetrics = dossiers.map(d => {
           const processingHours = (new Date(d.updated_at).getTime() - new Date(d.created_at).getTime()) / (1000 * 60 * 60);
           const docsSlaBreath = ['CREATED', 'AWAITING_DOCS'].includes(d.status) && processingHours > 24;
-          const completionSlaBreach = !['ARCHIVED', 'CANCELLED'].includes(d.status) && processingHours > 48;
+          const completionSlaBreach = !['CLOSED', 'CANCELLED'].includes(d.status) && processingHours > 48;
           
           return {
             dossier_id: d.id,

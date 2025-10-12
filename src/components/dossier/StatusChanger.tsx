@@ -35,163 +35,88 @@ interface StatusChangerProps {
   isAdmin?: boolean;
 }
 
+// Vereenvoudigde statussen
 const STATUSES = [
   "CREATED",
-  "INTAKE_IN_PROGRESS",
-  "DOCS_PENDING",
-  "DOCS_VERIFIED",
-  "APPROVED",
-  "LEGAL_HOLD",
-  "PLANNING",
-  "READY_FOR_TRANSPORT",
-  "IN_TRANSIT",
-  "SETTLEMENT",
-  "ARCHIVED",
-];
+  "IN_PROGRESS",
+  "UNDER_REVIEW",
+  "COMPLETED",
+  "CLOSED"
+] as const;
 
-// Workflow mapping: welke statussen zijn bereikbaar vanuit elke status
+// Vereenvoudigde transities
 const ALLOWED_TRANSITIONS: Record<string, string[]> = {
-  CREATED: ["INTAKE_IN_PROGRESS", "LEGAL_HOLD"],
-  INTAKE_IN_PROGRESS: ["DOCS_PENDING", "LEGAL_HOLD"],
-  DOCS_PENDING: ["DOCS_VERIFIED", "INTAKE_IN_PROGRESS", "LEGAL_HOLD"],
-  DOCS_VERIFIED: ["APPROVED", "DOCS_PENDING", "LEGAL_HOLD"],
-  APPROVED: ["PLANNING", "LEGAL_HOLD"],
-  LEGAL_HOLD: ["CREATED", "INTAKE_IN_PROGRESS", "DOCS_PENDING", "DOCS_VERIFIED", "APPROVED", "PLANNING", "READY_FOR_TRANSPORT", "IN_TRANSIT"], // Kan terug naar vorige status
-  PLANNING: ["READY_FOR_TRANSPORT", "APPROVED", "LEGAL_HOLD"],
-  READY_FOR_TRANSPORT: ["IN_TRANSIT", "PLANNING", "LEGAL_HOLD"],
-  IN_TRANSIT: ["SETTLEMENT", "LEGAL_HOLD"],
-  SETTLEMENT: ["ARCHIVED", "IN_TRANSIT"],
-  ARCHIVED: [], // Alleen admins kunnen hier weer uit
+  CREATED: ["IN_PROGRESS"],
+  IN_PROGRESS: ["UNDER_REVIEW", "COMPLETED"],
+  UNDER_REVIEW: ["IN_PROGRESS", "COMPLETED"],
+  COMPLETED: ["CLOSED"],
+  CLOSED: []
 };
 
+// Labels voor FD
 export const STATUS_LABELS_FD = {
   CREATED: {
-    label: "Nieuw",
+    label: "Nieuw dossier",
     color: "yellow",
-    description: "Dossier is aangemaakt maar nog niet gestart."
+    description: "Dossier aangemaakt, nog niet gestart",
   },
-  INTAKE_IN_PROGRESS: {
-    label: "Intake",
+  IN_PROGRESS: {
+    label: "In behandeling",
     color: "green",
-    description: "De intake loopt: gegevens van de overledene en familie worden verzameld."
+    description: "Intake, documenten of planning bezig",
   },
-  DOCS_PENDING: {
-    label: "Documenten in behandeling",
-    color: "orange",
-    description: "Nog niet alle vereiste documenten zijn toegevoegd of goedgekeurd."
-  },
-  DOCS_VERIFIED: {
-    label: "Documenten volledig",
-    color: "green",
-    description: "Alle documenten zijn ontvangen en gecontroleerd."
-  },
-  APPROVED: {
-    label: "Goedgekeurd",
+  UNDER_REVIEW: {
+    label: "In controle",
     color: "emerald",
-    description: "Het dossier is administratief goedgekeurd en klaar voor planning."
+    description: "Verzekeraar controleert de polis",
   },
-  LEGAL_HOLD: {
-    label: "Juridisch geblokkeerd",
-    color: "red",
-    description: "Dossier tijdelijk vastgehouden door parket of gerechtelijk onderzoek."
-  },
-  PLANNING: {
-    label: "Planning",
-    color: "blue",
-    description: "Mortuarium, moskee en begraafplaats worden ingepland."
-  },
-  READY_FOR_TRANSPORT: {
-    label: "Klaar voor uitvoering",
+  COMPLETED: {
+    label: "Operationeel afgerond",
     color: "cyan",
-    description: "Alle afspraken liggen vast, klaar voor uitvaart of transport."
+    description: "Uitvoering afgerond, klaar voor afsluiting",
   },
-  IN_TRANSIT: {
-    label: "Uitvoering",
-    color: "purple",
-    description: "De overledene is onderweg of de ceremonie is bezig."
-  },
-  SETTLEMENT: {
-    label: "Facturatie",
-    color: "brown",
-    description: "De uitvaart is afgerond; facturen en betalingen worden verwerkt."
-  },
-  ARCHIVED: {
-    label: "Afgerond",
+  CLOSED: {
+    label: "Gearchiveerd",
     color: "gray",
-    description: "Dossier is volledig afgesloten en gearchiveerd."
-  },
+    description: "Financieel afgerond en afgesloten",
+  }
 };
 
+// Labels voor admins (uitgebreider)
 export const STATUS_LABELS_ADMIN = {
   CREATED: {
     label: "Nieuw dossier aangemaakt",
     color: "yellow",
-    description: "Dossier is geregistreerd maar nog niet in behandeling."
+    description: "Dossier is aangemaakt maar nog niet gestart",
   },
-  INTAKE_IN_PROGRESS: {
-    label: "Intake lopend",
+  IN_PROGRESS: {
+    label: "In behandeling",
     color: "green",
-    description: "De uitvaartondernemer voert de intake uit: gegevens en eerste documenten worden verzameld."
+    description: "Intake, documenten, planning of uitvoering bezig",
   },
-  DOCS_PENDING: {
-    label: "Documenten in behandeling",
-    color: "orange",
-    description: "Er ontbreken nog vereiste documenten of ze wachten op goedkeuring."
-  },
-  DOCS_VERIFIED: {
-    label: "Documenten gecontroleerd",
-    color: "green",
-    description: "Alle documenten zijn gecontroleerd door de uitvaartondernemer of admin."
-  },
-  APPROVED: {
-    label: "Goedgekeurd door verzekeraar",
+  UNDER_REVIEW: {
+    label: "In controle (API check)",
     color: "emerald",
-    description: "De verzekeraar heeft het dossier goedgekeurd; verdere planning mag starten."
+    description: "Automatische poliscontrole bij verzekeraar loopt",
   },
-  LEGAL_HOLD: {
-    label: "Juridische blokkade (parket)",
-    color: "red",
-    description: "Het dossier is tijdelijk geblokkeerd door een parket- of politieonderzoek."
-  },
-  PLANNING: {
-    label: "Planningfase gestart",
-    color: "blue",
-    description: "Mortuarium, moskee en begraafplaats worden ingepland."
-  },
-  READY_FOR_TRANSPORT: {
-    label: "Klaar voor uitvoering",
+  COMPLETED: {
+    label: "Operationeel afgerond",
     color: "cyan",
-    description: "Alle voorbereidingen zijn afgerond; het dossier is gereed voor uitvoering of transport."
+    description: "Uitvoering afgerond, klaar voor financiële afsluiting",
   },
-  IN_TRANSIT: {
-    label: "In uitvoering",
-    color: "purple",
-    description: "De uitvaart of repatriëring is momenteel in uitvoering."
-  },
-  SETTLEMENT: {
-    label: "Financiële afhandeling",
-    color: "brown",
-    description: "Facturen zijn in behandeling of wachten op betaling / goedkeuring."
-  },
-  ARCHIVED: {
-    label: "Afgerond & gearchiveerd",
+  CLOSED: {
+    label: "Gearchiveerd",
     color: "gray",
-    description: "Dossier volledig afgesloten; enkel-lezen archiefstatus."
-  },
+    description: "Volledig afgesloten en gearchiveerd",
+  }
 };
 
-export const STATUS_BADGES = {
-  CREATED: "yellow",
-  INTAKE_IN_PROGRESS: "green",
-  DOCS_PENDING: "orange",
-  DOCS_VERIFIED: "green",
-  APPROVED: "emerald",
-  LEGAL_HOLD: "red",
-  PLANNING: "blue",
-  READY_FOR_TRANSPORT: "cyan",
-  IN_TRANSIT: "purple",
-  SETTLEMENT: "brown",
-  ARCHIVED: "gray",
+export const STATUS_BADGES: Record<string, any> = {
+  CREATED: "secondary",
+  IN_PROGRESS: "default",
+  UNDER_REVIEW: "default",
+  COMPLETED: "default",
+  CLOSED: "secondary",
 };
 
 // Helper function to get the right labels based on user role
@@ -210,549 +135,225 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   const [open, setOpen] = useState(false);
   const [newStatus, setNewStatus] = useState(currentStatus);
   const [reason, setReason] = useState("");
-  const [showAdvisory, setShowAdvisory] = useState(false);
-  const [showMissingTasks, setShowMissingTasks] = useState(false);
-  const [missingTasksData, setMissingTasksData] = useState<any>(null);
-  const [showForceDialog, setShowForceDialog] = useState(false);
-  const [forceReason, setForceReason] = useState("");
-  const [advisoryConfig, setAdvisoryConfig] = useState<{
-    title: string;
-    message: string;
-    checklistItems: string[];
-  } | null>(null);
 
-  const getAdvisoryForStatus = (status: string) => {
-    const advisories: Record<string, { title: string; message: string; checklistItems: string[] }> = {
-      operational: {
-        title: "Dossier Operationeel maken",
-        message: "Bij het operationeel maken van een dossier worden automatisch taken gegenereerd.",
-        checklistItems: [
-          "Intakegegevens zijn compleet",
-          "Flow type (LOC/REP) is ingesteld",
-          "Familie contact is vastgelegd"
-        ]
-      },
-      planning_in_progress: {
-        title: "Planning starten",
-        message: "Zorg dat de benodigde partijen beschikbaar zijn voor planning.",
-        checklistItems: [
-          "Wassing (mortuarium) beschikbaarheid gecheckt",
-          "Moskee (Janāza) beschikbaarheid gecheckt",
-          "Bij REP: Vlucht/cargo beschikbaarheid gecheckt"
-        ]
-      },
-      execution_in_progress: {
-        title: "Uitvoering starten",
-        message: "De praktische uitvoering van de uitvaart begint.",
-        checklistItems: [
-          "Planning is bevestigd",
-          "Familie is geïnformeerd",
-          "Documenten zijn in orde"
-        ]
-      },
-      archived: {
-        title: "Dossier Archiveren",
-        message: "Na archivering wordt het dossier alleen-lezen.",
-        checklistItems: [
-          "Alle facturen zijn verzameld en ingediend",
-          "Uitvoering is afgerond",
-          "Familie is geïnformeerd over afronding"
-        ]
-      }
-    };
-    
-    return advisories[status] || null;
-  };
+  const statusLabels = getStatusLabels(isAdmin);
+  const allowedNextStatuses = ALLOWED_TRANSITIONS[currentStatus] || [];
 
   const handleStatusChange = async () => {
-    // First check status gates
-    const canAdvance = await checkStatusGate();
-    
-    if (!canAdvance) {
-      return; // Gates will handle showing UI
-    }
-
-    // Special confirmation for archiving
-    if (newStatus === "ARCHIVED" && !isAdmin) {
-      setAdvisoryConfig({
-        title: "⚠️ Dossier Archiveren - Bevestiging Vereist",
-        message: "Let op: Na archivering wordt het dossier alleen-lezen.",
-        checklistItems: [
-          "✅ Alle facturen zijn verzameld en ingediend",
-          "✅ Uitvoering is volledig afgerond",
-          "✅ Familie is geïnformeerd over afronding",
-          "⚠️ Dit dossier wordt permanent alleen-lezen"
-        ]
+    if (!newStatus || newStatus === currentStatus) {
+      toast({
+        title: "Geen wijziging",
+        description: "Selecteer een andere status",
+        variant: "destructive",
       });
-      setShowAdvisory(true);
       return;
     }
 
-    // Check if advisory is needed for other statuses
-    const advisory = getAdvisoryForStatus(newStatus);
-    if (advisory && !isAdmin && newStatus !== "ARCHIVED") {
-      setAdvisoryConfig(advisory);
-      setShowAdvisory(true);
+    // Check if admin override is needed for restricted transitions
+    if (!isAdmin && !allowedNextStatuses.includes(newStatus)) {
+      toast({
+        title: "Niet toegestaan",
+        description: "Deze statuswijziging vereist admin rechten",
+        variant: "destructive",
+      });
       return;
     }
 
     await performStatusChange();
-  };
-
-  const checkStatusGate = async () => {
-    // Simplified check - just return true for now
-    // Complex validation logic can be added later if needed
-    return true;
-  };
-
-  const handleForceStatus = async () => {
-    if (!forceReason.trim()) {
-      toast({
-        title: "Reden verplicht",
-        description: "Geef een reden voor het forceren van de status",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { data, error } = await (supabase as any).rpc('fn_force_status', {
-        p_dossier_id: dossierId,
-        p_to_status: newStatus,
-        p_reason: forceReason
-      });
-
-      if (error) {
-        toast({
-          title: "Fout",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      toast({
-        title: "Status geforceerd",
-        description: `Status is geforceerd naar ${STATUS_LABELS[newStatus]}`,
-      });
-
-      setShowForceDialog(false);
-      setShowMissingTasks(false);
-      setOpen(false);
-      setForceReason("");
-      onStatusChanged();
-    } catch (err: any) {
-      toast({
-        title: "Fout",
-        description: err.message || "Kon status niet forceren",
-        variant: "destructive",
-      });
-    }
   };
 
   const performStatusChange = async () => {
-    // Check legal hold before status change
-    const { data: dossier } = await supabase
-      .from("dossiers")
-      .select("legal_hold_active")
-      .eq("id", dossierId)
-      .single();
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
 
-    if (dossier?.legal_hold_active && 
-        ["PLANNING", "READY_FOR_TRANSPORT", "IN_TRANSIT"].includes(newStatus)) {
-      toast({
-        title: "Geblokkeerd door Legal Hold",
-        description: "Status kan niet worden gewijzigd terwijl legal hold actief is. Hef de legal hold eerst op.",
-        variant: "destructive",
+      // Update dossier status
+      const { error: updateError } = await supabase
+        .from("dossiers")
+        .update({ status: newStatus as any })
+        .eq("id", dossierId);
+
+      if (updateError) throw updateError;
+
+      // Log status change event
+      const { error: eventError } = await supabase
+        .from("dossier_events")
+        .insert({
+          dossier_id: dossierId,
+          event_type: "STATUS_CHANGED",
+          event_description: `Status gewijzigd: ${statusLabels[currentStatus]?.label} → ${statusLabels[newStatus]?.label}`,
+          created_by: userId,
+          metadata: {
+            from: currentStatus,
+            to: newStatus,
+            reason: reason || null,
+            changed_by_admin: isAdmin,
+          },
+        });
+
+      if (eventError) throw eventError;
+
+      // Log audit event
+      await supabase.from("audit_events").insert({
+        user_id: userId,
+        event_type: "DOSSIER_STATUS_CHANGED",
+        target_type: "Dossier",
+        target_id: dossierId,
+        description: `Status changed from ${currentStatus} to ${newStatus}`,
+        metadata: {
+          from: currentStatus,
+          to: newStatus,
+          reason: reason || null,
+        },
       });
+
+      toast({
+        title: "Status bijgewerkt",
+        description: `Status gewijzigd naar: ${statusLabels[newStatus]?.label}`,
+      });
+
       setOpen(false);
-      return;
-    }
-
-    // Auto-close tasks when moving to settlement
-    if (newStatus === "SETTLEMENT") {
-      await supabase
-        .from("kanban_tasks")
-        .update({ column_id: (await getClosedColumnId()) })
-        .eq("dossier_id", dossierId)
-        .neq("column_id", (await getClosedColumnId()));
-    }
-
-    const { error } = await supabase
-      .from("dossiers")
-      .update({ 
-        status: newStatus as any
-      })
-      .eq("id", dossierId);
-
-    if (error) {
+      setReason("");
+      onStatusChanged();
+    } catch (error: any) {
+      console.error("Error changing status:", error);
       toast({
         title: "Fout",
-        description: "Status kon niet worden gewijzigd",
+        description: error.message || "Kon status niet wijzigen",
         variant: "destructive",
       });
-      return;
     }
-
-    // Invoice reminder for settlement status
-    if (newStatus === "settlement") {
-      toast({
-        title: "⚠️ Herinnering: Facturen uploaden",
-        description: "Vergeet niet alle facturen (intern + extern) te uploaden voor archivering.",
-        duration: 8000,
-      });
-    }
-
-    // Send notification to family if status changed to specific states
-    const notifiableStatuses = ["operational", "planning_in_progress", "execution_in_progress", "archived"];
-    if (notifiableStatuses.includes(newStatus)) {
-      try {
-        const { error: notifError } = await supabase.functions.invoke("send-notification", {
-          body: {
-            dossierId,
-            triggerEvent: `STATUS_${newStatus}`,
-            recipientType: "FAMILY",
-          },
-        });
-        
-        if (notifError) {
-          console.error("Error sending notification:", notifError);
-        }
-      } catch (notifError) {
-        console.error("Error sending notification:", notifError);
-        // Don't block the status change if notification fails
-      }
-    }
-
-    // Log action with organization context
-    const { data: userData } = await supabase.auth.getUser();
-    const userId = userData.user?.id;
-
-    // Get user's organization and role
-    const { data: userRole } = await supabase
-      .from("user_roles")
-      .select("organization_id, role")
-      .eq("user_id", userId)
-      .single();
-
-    // Trigger webhook for status change
-    if (userRole?.organization_id) {
-      try {
-        await supabase.functions.invoke("trigger-webhook", {
-          body: {
-            event_type: "DOSSIER_STATUS_CHANGED",
-            dossier_id: dossierId,
-            organization_id: userRole.organization_id,
-            metadata: {
-              from_status: currentStatus,
-              to_status: newStatus,
-              reason,
-              changed_by: userId,
-            },
-          },
-        });
-      } catch (webhookError) {
-        console.error("Error triggering webhook:", webhookError);
-        // Don't block status change if webhook fails
-      }
-    }
-
-    await supabase.from("audit_events").insert({
-      user_id: userId,
-      organization_id: userRole?.organization_id,
-      actor_role: userRole?.role,
-      event_type: "DOSSIER_STATUS_OVERRIDE",
-      target_type: "Dossier",
-      target_id: dossierId,
-      dossier_id: dossierId,
-      description: `Status gewijzigd van ${currentStatus} naar ${newStatus}`,
-      reason,
-      metadata: { from_status: currentStatus, to_status: newStatus },
-    });
-
-    await supabase.from("dossier_events").insert({
-      dossier_id: dossierId,
-      event_type: "STATUS_CHANGED",
-      event_description: `Status gewijzigd: ${STATUS_LABELS[currentStatus]} → ${STATUS_LABELS[newStatus]}`,
-      created_by: userId,
-      metadata: { reason },
-    });
-
-    toast({
-      title: "Status gewijzigd",
-      description: `Status is nu: ${STATUS_LABELS[newStatus]}`,
-    });
-
-    setOpen(false);
-    setShowAdvisory(false);
-    setReason("");
-    onStatusChanged();
-  };
-
-  const handleAdvisoryConfirm = async () => {
-    await performStatusChange();
-  };
-
-  const getClosedColumnId = async () => {
-    const { data } = await supabase
-      .from("task_board_columns")
-      .select("id")
-      .eq("label", "Afgesloten")
-      .maybeSingle();
-    return data?.id;
   };
 
   return (
     <>
-      <AdvisoryDialog
-        open={showAdvisory}
-        onOpenChange={setShowAdvisory}
-        title={advisoryConfig?.title || ""}
-        message={advisoryConfig?.message || ""}
-        checklistItems={advisoryConfig?.checklistItems || []}
-        onConfirm={handleAdvisoryConfirm}
-        onCancel={() => setShowAdvisory(false)}
-      />
-
-      {/* Missing Tasks Sheet */}
-      <Sheet open={showMissingTasks} onOpenChange={setShowMissingTasks}>
-        <SheetContent className="overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-destructive" />
-              Verplichte taken niet afgerond
-            </SheetTitle>
-            <SheetDescription>
-              Voordat je kunt overgaan naar <Badge>{STATUS_LABELS[newStatus]}</Badge>, moeten de volgende taken afgerond zijn:
-            </SheetDescription>
-          </SheetHeader>
-
-          <div className="mt-6 space-y-4">
-            {missingTasksData?.missing && JSON.parse(missingTasksData.missing).map((task: any, index: number) => (
-              <Alert key={index} variant="destructive">
-                <Lock className="h-4 w-4" />
-                <AlertDescription className="ml-2">
-                  <strong>{task.label}</strong>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Type: {task.task_type}
-                  </p>
-                </AlertDescription>
-              </Alert>
-            ))}
-
-            <div className="pt-4 space-y-3">
-              <Button 
-                className="w-full" 
-                variant="outline"
-                onClick={() => {
-                  setShowMissingTasks(false);
-                  window.location.href = `/dossier/${dossierId}/taken`;
-                }}
-              >
-                <CheckCircle2 className="mr-2 h-4 w-4" />
-                Ga naar takenbord
-              </Button>
-
-              {isAdmin && (
-                <Button 
-                  className="w-full" 
-                  variant="destructive"
-                  onClick={() => {
-                    setShowMissingTasks(false);
-                    setShowForceDialog(true);
-                  }}
-                >
-                  <AlertCircle className="mr-2 h-4 w-4" />
-                  Forceer status (Admin)
-                </Button>
-              )}
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      {/* Force Status Dialog (Admin only) */}
-      <Dialog open={showForceDialog} onOpenChange={setShowForceDialog}>
-        <DialogContent>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm" className="gap-2">
+            <Edit className="h-4 w-4" />
+            Status wijzigen
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-destructive" />
-              Status Forceren (Admin Override)
-            </DialogTitle>
+            <DialogTitle>Status wijzigen</DialogTitle>
             <DialogDescription>
-              Je gaat de status forceren naar <Badge>{STATUS_LABELS[newStatus]}</Badge> ondanks ontbrekende taken.
-              Dit wordt gelogd in het auditlog.
+              Wijzig de status van dit dossier
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div>
-              <Label>Reden voor override (verplicht)</Label>
+          <div className="space-y-6 py-4">
+            {/* Current Status */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <Circle className="h-4 w-4" />
+                Huidige status
+              </Label>
+              <div className="p-4 rounded-lg border bg-muted/50">
+                <div className="flex items-center gap-3">
+                  <Badge 
+                    variant={STATUS_BADGES[currentStatus] as any}
+                    className="text-sm px-3 py-1"
+                  >
+                    {statusLabels[currentStatus]?.label}
+                  </Badge>
+                  <p className="text-sm text-muted-foreground">
+                    {statusLabels[currentStatus]?.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Status History */}
+            <DossierStatusHistory 
+              dossierId={dossierId}
+              currentStatus={currentStatus}
+            />
+
+            {/* New Status Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <ArrowRight className="h-4 w-4" />
+                Nieuwe status
+              </Label>
+              
+              {allowedNextStatuses.length === 0 && !isAdmin ? (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Geen statuswijzigingen mogelijk vanuit de huidige status.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <div className="grid gap-2">
+                  {(isAdmin ? STATUSES : allowedNextStatuses).map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setNewStatus(status)}
+                      disabled={status === currentStatus}
+                      className={`
+                        w-full p-4 rounded-lg border-2 transition-all text-left
+                        ${newStatus === status 
+                          ? 'border-primary bg-primary/5 shadow-sm' 
+                          : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                        }
+                        ${status === currentStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                      `}
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        {newStatus === status && (
+                          <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                        )}
+                        <Badge 
+                          variant={STATUS_BADGES[status] as any}
+                          className="text-sm"
+                        >
+                          {statusLabels[status]?.label}
+                        </Badge>
+                        {!allowedNextStatuses.includes(status) && isAdmin && (
+                          <Badge variant="outline" className="text-xs">
+                            <Shield className="h-3 w-3 mr-1" />
+                            Admin
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground pl-8">
+                        {statusLabels[status]?.description}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Reason (optional) */}
+            <div className="space-y-2">
+              <Label htmlFor="reason" className="text-sm">
+                Reden (optioneel)
+              </Label>
               <Textarea
-                placeholder="Bijv. 'Spoedgeval - familie geïnformeerd'"
-                value={forceReason}
-                onChange={(e) => setForceReason(e.target.value)}
+                id="reason"
+                placeholder="Waarom wordt de status gewijzigd?"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
                 rows={3}
               />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowForceDialog(false)}>
+            <Button variant="outline" onClick={() => setOpen(false)}>
               Annuleren
             </Button>
-            <Button variant="destructive" onClick={handleForceStatus}>
-              Forceer Status
+            <Button 
+              onClick={handleStatusChange}
+              disabled={!newStatus || newStatus === currentStatus}
+            >
+              Status wijzigen
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Edit className="mr-2 h-4 w-4" />
-          Status wijzigen
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Status wijzigen</DialogTitle>
-          <DialogDescription>
-            Selecteer de volgende status voor dit dossier
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-8 py-4">
-          {/* Current Status - Clean & Simple */}
-          <div className="space-y-3">
-            <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Huidige status</span>
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-primary" />
-              <Badge 
-                variant={STATUS_BADGES[currentStatus as keyof typeof STATUS_BADGES] as any} 
-                className="text-base px-3 py-1"
-              >
-                {(isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD)[currentStatus as keyof typeof STATUS_LABELS_FD].label}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Legal Hold Warning */}
-          {currentStatus === 'LEGAL_HOLD' && (
-            <Alert variant="destructive">
-              <Shield className="h-4 w-4" />
-              <AlertDescription>
-                Juridische blokkade actief - statuswijzigingen zijn beperkt
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {/* Next Steps - Clean List */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">
-                Volgende stappen
-              </span>
-              {!isAdmin && (
-                <span className="text-xs text-muted-foreground">
-                  {ALLOWED_TRANSITIONS[currentStatus]?.length || 0} beschikbaar
-                </span>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              {(isAdmin ? STATUSES : STATUSES.filter(status => 
-                ALLOWED_TRANSITIONS[currentStatus]?.includes(status)
-              )).map((status) => {
-                const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
-                const statusInfo = labels[status as keyof typeof labels];
-                const isSelected = status === newStatus;
-                const isCurrent = status === currentStatus;
-                
-                if (isCurrent && !isAdmin) return null;
-                
-                return (
-                  <button
-                    key={status}
-                    type="button"
-                    onClick={() => setNewStatus(status)}
-                    disabled={isCurrent}
-                    className={`
-                      w-full p-4 rounded-lg border text-left transition-all
-                      disabled:opacity-40 disabled:cursor-not-allowed
-                      ${isSelected && !isCurrent
-                        ? 'border-primary bg-primary/5 shadow-sm' 
-                        : 'border-border hover:border-primary/40 hover:bg-muted/30'
-                      }
-                    `}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`
-                        w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border-2
-                        ${isSelected ? 'border-primary bg-primary' : 'border-border'}
-                      `}>
-                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-sm mb-1">
-                          {statusInfo.label}
-                        </div>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          {statusInfo.description}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-            
-            {!isAdmin && ALLOWED_TRANSITIONS[currentStatus]?.length === 0 && (
-              <div className="p-6 rounded-lg bg-muted/30 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Geen volgende stappen beschikbaar
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Reason Input */}
-          {newStatus !== currentStatus && (
-            <div className="space-y-2 animate-in fade-in duration-200">
-              <Label className="text-sm">
-                Reden <span className="text-muted-foreground font-normal">(optioneel)</span>
-              </Label>
-              <Textarea
-                placeholder="Bijv. 'Documenten compleet ontvangen'"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                rows={2}
-                className="resize-none"
-              />
-            </div>
-          )}
-
-          {/* History - Collapsible */}
-          <div className="pt-4 border-t">
-            <DossierStatusHistory dossierId={dossierId} currentStatus={currentStatus} />
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="ghost" onClick={() => setOpen(false)}>
-            Annuleren
-          </Button>
-          <Button 
-            onClick={handleStatusChange} 
-            disabled={newStatus === currentStatus}
-          >
-            Bevestigen
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
     </>
   );
 }

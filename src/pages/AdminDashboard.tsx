@@ -34,7 +34,7 @@ export default function AdminDashboard() {
         const { count: dossierCount } = await supabase
           .from("dossiers")
           .select("*", { count: "exact", head: true })
-          .in("status", ["CREATED", "DOCS_PENDING", "PLANNING"]);
+          .in("status", ["CREATED", "IN_PROGRESS"]);
 
         // Pending documents
         const { count: docCount } = await supabase

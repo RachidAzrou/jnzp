@@ -90,7 +90,7 @@ const Dashboard = () => {
               deceased_name,
               flow,
               status
-            `).eq("assigned_fd_org_id", userOrgId).is("deleted_at", null).neq("status", "ARCHIVED" as any).order("updated_at", {
+            `).eq("assigned_fd_org_id", userOrgId).is("deleted_at", null).neq("status", "CLOSED").order("updated_at", {
             ascending: false
           }).limit(50);
           if (dossiersError) {

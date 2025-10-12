@@ -100,7 +100,7 @@ export default function InsurerDashboard() {
         ascending: false
       });
       if (statusFilter !== "all") {
-        query = query.eq("status", statusFilter as Database["public"]["Enums"]["dossier_status"]);
+        query = query.eq("status", statusFilter as Database["public"]["Enums"]["simple_dossier_status"]);
       }
       const {
         data,
@@ -147,19 +147,19 @@ export default function InsurerDashboard() {
   // Prepare pie chart data
   const pieData = [{
     name: "Intake",
-    value: dossiers?.filter(d => d.status === "INTAKE_IN_PROGRESS").length || 0,
+    value: dossiers?.filter(d => d.status === "IN_PROGRESS").length || 0,
     color: "#6366f1"
   }, {
     name: "Documenten",
-    value: dossiers?.filter(d => d.status === "DOCS_PENDING").length || 0,
+    value: dossiers?.filter(d => d.status === "IN_PROGRESS").length || 0,
     color: "#8b5cf6"
   }, {
-    name: "Planning",
-    value: dossiers?.filter(d => d.status === "PLANNING").length || 0,
+    name: "In behandeling",
+    value: dossiers?.filter(d => d.status === "IN_PROGRESS").length || 0,
     color: "#a855f7"
   }, {
-    name: "Gereed",
-    value: dossiers?.filter(d => d.status === "READY_FOR_TRANSPORT").length || 0,
+    name: "Afgerond",
+    value: dossiers?.filter(d => d.status === "COMPLETED").length || 0,
     color: "#10b981"
   }];
 

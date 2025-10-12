@@ -65,7 +65,7 @@ const Archief = () => {
         .from("dossiers")
         .select("*")
         .eq("assigned_fd_org_id", organizationId)
-        .eq("status", "ARCHIVED")
+        .eq("status", "CLOSED")
         .is("deleted_at", null)
         .order("updated_at", { ascending: false });
 

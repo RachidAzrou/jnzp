@@ -9,7 +9,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
-import { X, Calendar } from "lucide-react";
+import { X, Calendar, Clock } from "lucide-react";
+
+const prayerLabels: Record<string, string> = {
+  FAJR: "Fajr",
+  DHUHR: "Dhuhr", 
+  ASR: "Asr",
+  MAGHRIB: "Maghrib",
+  ISHA: "Isha",
+  JUMUAH: "Jumu'ah",
+};
 
 type MosqueService = {
   id: string;
@@ -186,11 +195,22 @@ export default function MoskeePlanning() {
                     </div>
                     <div className="text-sm text-muted-foreground space-y-1">
                       <p>
-                        <strong>Tijd:</strong>{" "}
-                        {format(new Date(service.scheduled_at), "EEEE d MMMM yyyy 'om' HH:mm", {
+                        <strong>Datum:</strong>{" "}
+                        {format(new Date(service.scheduled_at), "EEEE d MMMM yyyy", {
                           locale: nl,
                         })}
                       </p>
+                      {(service.metadata as any)?.prayer_time && (
+                        <p>
+                          <strong>Gebed:</strong> {prayerLabels[(service.metadata as any).prayer_time] || (service.metadata as any).prayer_time}
+                        </p>
+                      )}
+                      {!(service.metadata as any)?.prayer_time && (
+                        <p>
+                          <strong>Tijd:</strong>{" "}
+                          {format(new Date(service.scheduled_at), "HH:mm", { locale: nl })}
+                        </p>
+                      )}
                       {service.location_text && (
                         <p>
                           <strong>Locatie:</strong> {service.location_text}

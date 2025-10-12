@@ -60,7 +60,7 @@ const Archief = () => {
     
     setLoading(true);
     try {
-      // Fetch only ARCHIVED dossiers
+      // Fetch only CLOSED dossiers
       const { data: dossiersData, error: dossiersError } = await supabase
         .from("dossiers")
         .select("*")

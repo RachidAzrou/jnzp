@@ -256,10 +256,11 @@ export default function InsurerDashboard() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Alle</SelectItem>
-                <SelectItem value="INTAKE_IN_PROGRESS">Intake</SelectItem>
-                <SelectItem value="DOCS_PENDING">Documenten</SelectItem>
-                <SelectItem value="PLANNING">Planning</SelectItem>
-                <SelectItem value="READY_FOR_TRANSPORT">Gereed</SelectItem>
+                <SelectItem value="CREATED">Nieuw</SelectItem>
+                <SelectItem value="IN_PROGRESS">In behandeling</SelectItem>
+                <SelectItem value="UNDER_REVIEW">In controle</SelectItem>
+                <SelectItem value="COMPLETED">Afgerond</SelectItem>
+                <SelectItem value="CLOSED">Gearchiveerd</SelectItem>
               </SelectContent>
             </Select>
             <Select value={periodFilter} onValueChange={setPeriodFilter}>

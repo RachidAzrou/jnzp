@@ -81,13 +81,11 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
 
   const getStatusLabel = (status: string) => {
     const statusMap: Record<string, string> = {
-      CREATED: "Aangemaakt",
-      INTAKE_PENDING: "Intake Lopend",
-      INTAKE_COMPLETE: "Intake Compleet",
-      PLANNED: "Gepland",
-      IN_PROGRESS: "In Behandeling",
-      COMPLETED: "Voltooid",
-      ARCHIVED: "Gearchiveerd",
+      CREATED: "Nieuw dossier",
+      IN_PROGRESS: "In behandeling",
+      UNDER_REVIEW: "In controle",
+      COMPLETED: "Operationeel afgerond",
+      CLOSED: "Gearchiveerd",
     };
     return statusMap[status] || status;
   };

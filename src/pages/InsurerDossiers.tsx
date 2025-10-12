@@ -154,12 +154,11 @@ export default function InsurerDossiers() {
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" }> = {
-      CREATED: { label: "Aangemaakt", variant: "secondary" },
-      INTAKE_COMPLETE: { label: "Intake compleet", variant: "default" },
-      DOCS_PENDING: { label: "Docs pending", variant: "secondary" },
-      DOCS_COMPLETE: { label: "Docs compleet", variant: "default" },
-      PLANNING_CONFIRMED: { label: "Planning OK", variant: "default" },
-      COMPLETED: { label: "Afgerond", variant: "default" },
+      CREATED: { label: "Nieuw dossier", variant: "secondary" },
+      IN_PROGRESS: { label: "In behandeling", variant: "default" },
+      UNDER_REVIEW: { label: "In controle", variant: "default" },
+      COMPLETED: { label: "Operationeel afgerond", variant: "default" },
+      CLOSED: { label: "Gearchiveerd", variant: "secondary" },
     };
     const config = statusMap[status] || { label: status, variant: "secondary" };
     return <Badge variant={config.variant}>{config.label}</Badge>;

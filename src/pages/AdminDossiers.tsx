@@ -172,13 +172,11 @@ export default function AdminDossiers() {
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { label: string; className: string }> = {
-      created: { label: "Aangemaakt", className: "bg-gray-600 hover:bg-gray-700 text-white border-0" },
-      intake_in_progress: { label: "Intake lopend", className: "bg-blue-600 hover:bg-blue-700 text-white border-0" },
-      operational: { label: "Operationeel", className: "bg-purple-600 hover:bg-purple-700 text-white border-0" },
-      planning_in_progress: { label: "Planning bezig", className: "bg-yellow-600 hover:bg-yellow-700 text-white border-0" },
-      execution_in_progress: { label: "Uitvoering bezig", className: "bg-teal-600 hover:bg-teal-700 text-white border-0" },
-      settlement: { label: "Afronding / Facturatie", className: "bg-indigo-600 hover:bg-indigo-700 text-white border-0" },
-      archived: { label: "Afgerond & Gearchiveerd", className: "bg-green-600 hover:bg-green-700 text-white border-0" },
+      CREATED: { label: "Nieuw dossier", className: "bg-yellow-600 hover:bg-yellow-700 text-white border-0" },
+      IN_PROGRESS: { label: "In behandeling", className: "bg-green-600 hover:bg-green-700 text-white border-0" },
+      UNDER_REVIEW: { label: "In controle", className: "bg-emerald-600 hover:bg-emerald-700 text-white border-0" },
+      COMPLETED: { label: "Operationeel afgerond", className: "bg-cyan-600 hover:bg-cyan-700 text-white border-0" },
+      CLOSED: { label: "Gearchiveerd", className: "bg-gray-600 hover:bg-gray-700 text-white border-0" },
     };
     const variant = variants[status] || { label: status, className: "" };
     return <Badge className={`text-xs ${variant.className}`}>{variant.label}</Badge>;
@@ -226,11 +224,11 @@ export default function AdminDossiers() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Alle statussen</SelectItem>
-                <SelectItem value="CREATED">Aangemaakt</SelectItem>
-                <SelectItem value="DOCS_PENDING">Docs nodig</SelectItem>
-                <SelectItem value="PLANNING">Planning</SelectItem>
-                <SelectItem value="APPROVED">Goedgekeurd</SelectItem>
-                <SelectItem value="ARCHIVED">Gearchiveerd</SelectItem>
+                <SelectItem value="CREATED">Nieuw dossier</SelectItem>
+                <SelectItem value="IN_PROGRESS">In behandeling</SelectItem>
+                <SelectItem value="UNDER_REVIEW">In controle</SelectItem>
+                <SelectItem value="COMPLETED">Operationeel afgerond</SelectItem>
+                <SelectItem value="CLOSED">Gearchiveerd</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -332,13 +330,11 @@ export default function AdminDossiers() {
                 <SelectValue placeholder={t("placeholders.newStatus")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="created">Aangemaakt</SelectItem>
-                <SelectItem value="intake_in_progress">Intake lopend</SelectItem>
-                <SelectItem value="operational">Operationeel</SelectItem>
-                <SelectItem value="planning_in_progress">Planning bezig</SelectItem>
-                <SelectItem value="execution_in_progress">Uitvoering bezig</SelectItem>
-                <SelectItem value="settlement">Afronding / Facturatie</SelectItem>
-                <SelectItem value="archived">Afgerond & Gearchiveerd</SelectItem>
+                <SelectItem value="CREATED">Nieuw dossier</SelectItem>
+                <SelectItem value="IN_PROGRESS">In behandeling</SelectItem>
+                <SelectItem value="UNDER_REVIEW">In controle</SelectItem>
+                <SelectItem value="COMPLETED">Operationeel afgerond</SelectItem>
+                <SelectItem value="CLOSED">Gearchiveerd</SelectItem>
               </SelectContent>
             </Select>
           )}

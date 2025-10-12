@@ -366,40 +366,23 @@ const Dossiers = () => {
   };
 
   const getStatusColor = (status: string) => {
-    if (status === 'archived') {
-      return 'bg-green-50 text-green-700 border-green-200';
-    }
-    return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+    const colorMap: Record<string, string> = {
+      'CREATED': 'bg-yellow-50 text-yellow-700 border-yellow-200',
+      'IN_PROGRESS': 'bg-green-50 text-green-700 border-green-200',
+      'UNDER_REVIEW': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      'COMPLETED': 'bg-cyan-50 text-cyan-700 border-cyan-200',
+      'CLOSED': 'bg-gray-50 text-gray-700 border-gray-200',
+    };
+    return colorMap[status.toUpperCase()] || 'bg-gray-50 text-gray-700 border-gray-200';
   };
 
   const getStatusLabel = (status: string) => {
-    // Use admin labels if user is admin
-    const isAdminUser = userRole === 'platform_admin';
-    
-    const statusMap: Record<string, string> = isAdminUser ? {
-      'CREATED': 'Nieuw dossier aangemaakt',
-      'INTAKE_IN_PROGRESS': 'Intake lopend',
-      'DOCS_PENDING': 'Documenten in behandeling',
-      'DOCS_VERIFIED': 'Documenten gecontroleerd',
-      'APPROVED': 'Goedgekeurd door verzekeraar',
-      'LEGAL_HOLD': 'Juridische blokkade (parket)',
-      'PLANNING': 'Planningfase gestart',
-      'READY_FOR_TRANSPORT': 'Klaar voor uitvoering',
-      'IN_TRANSIT': 'In uitvoering',
-      'SETTLEMENT': 'Financiële afhandeling',
-      'ARCHIVED': 'Afgerond & gearchiveerd',
-    } : {
-      'CREATED': 'Nieuw',
-      'INTAKE_IN_PROGRESS': 'Intake',
-      'DOCS_PENDING': 'Documenten in behandeling',
-      'DOCS_VERIFIED': 'Documenten volledig',
-      'APPROVED': 'Goedgekeurd',
-      'LEGAL_HOLD': 'Juridisch geblokkeerd',
-      'PLANNING': 'Planning',
-      'READY_FOR_TRANSPORT': 'Klaar voor uitvoering',
-      'IN_TRANSIT': 'Uitvoering',
-      'SETTLEMENT': 'Facturatie',
-      'ARCHIVED': 'Afgerond',
+    const statusMap: Record<string, string> = {
+      'CREATED': 'Nieuw dossier',
+      'IN_PROGRESS': 'In behandeling',
+      'UNDER_REVIEW': 'In controle',
+      'COMPLETED': 'Operationeel afgerond',
+      'CLOSED': 'Gearchiveerd',
     };
     return statusMap[status.toUpperCase()] || status;
   };
@@ -511,10 +494,11 @@ const Dossiers = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">Alle statussen</SelectItem>
-                          <SelectItem value="created">Aangemaakt</SelectItem>
-                          <SelectItem value="intake_in_progress">Intake lopend</SelectItem>
-                          <SelectItem value="operational">Operationeel</SelectItem>
-                          <SelectItem value="archived">Gearchiveerd</SelectItem>
+                          <SelectItem value="CREATED">Nieuw dossier</SelectItem>
+                          <SelectItem value="IN_PROGRESS">In behandeling</SelectItem>
+                          <SelectItem value="UNDER_REVIEW">In controle</SelectItem>
+                          <SelectItem value="COMPLETED">Operationeel afgerond</SelectItem>
+                          <SelectItem value="CLOSED">Gearchiveerd</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -591,7 +575,7 @@ const Dossiers = () => {
                                   In afwachting
                                 </Badge>
                               ) : (
-                                <Badge variant={dossier.status === 'archived' ? 'default' : 'secondary'}>
+                                <Badge variant={dossier.status === 'CLOSED' ? 'default' : 'secondary'}>
                                   {getStatusLabel(dossier.status)}
                                 </Badge>
                               )}
@@ -729,7 +713,7 @@ const Dossiers = () => {
                               {shouldBlurInfo(dossier) ? (
                                 <Badge className="blur-sm">████████</Badge>
                               ) : (
-                                <Badge variant={dossier.status === 'archived' ? 'default' : 'secondary'}>
+                                <Badge variant={dossier.status === 'CLOSED' ? 'default' : 'secondary'}>
                                   {getStatusLabel(dossier.status)}
                                 </Badge>
                               )}

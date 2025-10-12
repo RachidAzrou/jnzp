@@ -511,7 +511,7 @@ const DossierDetail = () => {
       />
 
       {/* Soft Delete Dialog */}
-      {(dossier.status === 'CREATED' || dossier.status === 'INTAKE_IN_PROGRESS') && (
+      {(dossier.status === 'CREATED' || dossier.status === 'IN_PROGRESS') && (
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button id="soft-delete-trigger" className="hidden" />

@@ -22,28 +22,24 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      created: "Aangemaakt",
-      intake_in_progress: "Intake lopend",
-      operational: "Operationeel",
-      planning_in_progress: "Planning bezig",
-      execution_in_progress: "Uitvoering bezig",
-      settlement: "Afronding / Facturatie",
-      archived: "Afgerond & Gearchiveerd",
+      CREATED: "Nieuw dossier",
+      IN_PROGRESS: "In behandeling",
+      UNDER_REVIEW: "In controle",
+      COMPLETED: "Operationeel afgerond",
+      CLOSED: "Gearchiveerd",
     };
-    return labels[status] || status.replace(/_/g, " ");
+    return labels[status.toUpperCase()] || status.replace(/_/g, " ");
   };
 
   const getStatusColor = (status: string): "default" | "destructive" | "outline" | "secondary" => {
     const colors: Record<string, "default" | "destructive" | "outline" | "secondary"> = {
-      created: "secondary",
-      intake_in_progress: "default",
-      operational: "default",
-      planning_in_progress: "default",
-      execution_in_progress: "default",
-      settlement: "default",
-      archived: "secondary",
+      CREATED: "secondary",
+      IN_PROGRESS: "default",
+      UNDER_REVIEW: "default",
+      COMPLETED: "default",
+      CLOSED: "secondary",
     };
-    return colors[status] || "secondary";
+    return colors[status.toUpperCase()] || "secondary";
   };
 
   const formatDate = (dateString: string | null) => {

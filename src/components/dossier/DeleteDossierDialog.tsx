@@ -27,7 +27,7 @@ interface DeleteDossierDialogProps {
   isFD?: boolean;
 }
 
-const DELETABLE_STATUSES = ["CREATED", "INTAKE_IN_PROGRESS"];
+const DELETABLE_STATUSES = ["CREATED", "IN_PROGRESS"];
 
 export function DeleteDossierDialog({ 
   dossierId, 

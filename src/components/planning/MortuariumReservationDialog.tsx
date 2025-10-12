@@ -49,6 +49,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
     const { data } = await supabase
       .from("dossiers")
       .select("id, display_id, deceased_name")
+      .is("deleted_at", null)
       .order("created_at", { ascending: false })
       .limit(50);
     setDossiers(data || []);

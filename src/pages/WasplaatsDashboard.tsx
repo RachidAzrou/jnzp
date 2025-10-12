@@ -80,24 +80,37 @@ export default function WasplaatsDashboard() {
     return <div className="p-6">{t("common.loading")}</div>;
   }
 
+  const getCurrentDate = () => {
+    return new Date().toLocaleDateString('nl-NL', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-semibold">{t("wasplaats.dashboard.title")}</h1>
-          <p className="text-sm text-muted-foreground mt-1">{t("wasplaats.dashboard.subtitle")}</p>
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={() => navigate("/wasplaats/koelcellen")} variant="outline" size="sm">
-            <Calendar className="h-4 w-4 mr-2" />
-            {t("wasplaats.dashboard.coolCells")}
-          </Button>
-          <Button onClick={() => navigate("/wasplaats/reservaties/nieuw")} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            {t("wasplaats.dashboard.newReservation")}
-          </Button>
-        </div>
-      </div>
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex-1">
+              <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{t("wasplaats.dashboard.title")}</h1>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={() => navigate("/wasplaats/koelcellen")} variant="outline" size="sm">
+                <Calendar className="h-4 w-4 mr-2" />
+                {t("wasplaats.dashboard.coolCells")}
+              </Button>
+              <Button onClick={() => navigate("/wasplaats/reservaties/nieuw")} size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                {t("wasplaats.dashboard.newReservation")}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card className="border-0 shadow-sm">

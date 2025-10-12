@@ -198,20 +198,24 @@ export default function MortuariumDashboard() {
     return <div className="p-6">Laden...</div>;
   }
 
+  const getCurrentDate = () => {
+    return new Date().toLocaleDateString('nl-NL', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   return (
     <div className="space-y-6 pb-8">
       {/* Professional Header */}
       <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
         <CardContent className="p-6">
           <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Refrigerator className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground font-medium">Mortuarium</p>
-                <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-              </div>
+            <div className="flex-1">
+              <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Mortuarium Dashboard</h1>
             </div>
             <div className="flex gap-2">
               <Button onClick={() => navigate("/mortuarium/koelcellen")} variant="outline" size="sm" className="h-9">
@@ -224,7 +228,6 @@ export default function MortuariumDashboard() {
               </Button>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground mt-3 pl-15">Overzicht van vandaag en koelcellen</p>
         </CardContent>
       </Card>
 

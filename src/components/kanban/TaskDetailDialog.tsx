@@ -490,21 +490,32 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col" aria-describedby="task-detail-description">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span className="flex-1">{editMode ? "Taak bewerken" : task.title}</span>
-            <Badge variant={task.is_blocked ? "destructive" : "outline"}>
-              {task.is_blocked ? "Geblokkeerd" : "Actief"}
-            </Badge>
+      <DialogContent className="max-w-4xl max-h-[95vh] overflow-hidden flex flex-col gap-0 p-0" aria-describedby="task-detail-description">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b bg-gradient-to-r from-background to-muted/20">
+          <DialogTitle className="flex items-center justify-between gap-4">
+            <span className="flex-1 text-xl">{editMode ? "Taak bewerken" : task.title}</span>
+            <div className="flex items-center gap-2">
+              {task.priority && (
+                <Badge variant={
+                  task.priority === 'CRITICAL' ? 'destructive' : 
+                  task.priority === 'HIGH' ? 'default' : 
+                  'secondary'
+                }>
+                  {task.priority}
+                </Badge>
+              )}
+              <Badge variant={task.is_blocked ? "destructive" : "outline"}>
+                {task.is_blocked ? "Geblokkeerd" : "Actief"}
+              </Badge>
+            </div>
           </DialogTitle>
           <p id="task-detail-description" className="sr-only">
             Taakdetails voor {task.title}. {task.description || "Geen beschrijving beschikbaar."}
           </p>
         </DialogHeader>
 
-        <Tabs defaultValue="details" className="flex-1 overflow-hidden flex flex-col">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="details" className="flex-1 overflow-hidden flex flex-col px-6">
+          <TabsList className="grid w-full grid-cols-4 mt-4">
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="activity">
               Activiteit ({activities.length})

@@ -529,7 +529,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsList>
 
           {/* Details Tab */}
-          <TabsContent value="details" className="flex-1 overflow-y-auto space-y-4 mt-4">
+          <TabsContent value="details" className="flex-1 overflow-y-auto space-y-4 mt-4 h-[500px]">
             {task.dossier_id && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <FileText className="h-4 w-4" />
@@ -704,8 +704,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsContent>
 
           {/* Activity Tab */}
-          <TabsContent value="activity" className="flex-1 overflow-hidden mt-4">
-            <ScrollArea className="h-[400px] pr-4">
+          <TabsContent value="activity" className="flex-1 overflow-hidden mt-4 h-[500px]">
+            <ScrollArea className="h-full pr-4">
               <div className="space-y-3">
                 {activities.map((activity) => (
                   <div key={activity.id} className="flex gap-3 text-sm">
@@ -730,8 +730,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsContent>
 
           {/* Comments Tab */}
-          <TabsContent value="comments" className="flex-1 overflow-hidden flex flex-col gap-3 mt-4">
-            <ScrollArea className="flex-1 h-[350px] pr-4">
+          <TabsContent value="comments" className="flex-1 overflow-hidden flex flex-col gap-3 mt-4 h-[500px]">
+            <ScrollArea className="flex-1 pr-4">
               <div className="space-y-3">
                 {comments.map((comment) => (
                   <div key={comment.id} className="flex gap-3 text-sm">
@@ -771,8 +771,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsContent>
 
           {/* Attachments Tab */}
-          <TabsContent value="attachments" className="flex-1 overflow-hidden flex flex-col gap-3 mt-4">
-            <ScrollArea className="flex-1 h-[350px] pr-4">
+          <TabsContent value="attachments" className="flex-1 overflow-hidden flex flex-col gap-3 mt-4 h-[500px]">
+            <ScrollArea className="flex-1 pr-4">
               <div className="space-y-2">
                 {attachments.map((attachment) => (
                   <div key={attachment.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">

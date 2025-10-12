@@ -418,17 +418,21 @@ const Dossiers = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       <div className="space-y-6 max-w-[1600px] mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Dossiers
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Beheer jouw dossiers en claim nieuwe aanvragen
-            </p>
-          </div>
-          <CreateDossierDialog />
-        </div>
+        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+          <CardContent className="p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Dossiers
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Beheer jouw dossiers en claim nieuwe aanvragen
+                </p>
+              </div>
+              <CreateDossierDialog />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Tabs and Content */}
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "my" | "all" | "incoming")} className="space-y-6">
@@ -455,8 +459,8 @@ const Dossiers = () => {
           </TabsList>
 
           {/* Search and Filters */}
-          <Card className="border shadow-sm bg-card/50 backdrop-blur-sm">
-            <CardContent className="pt-6">
+          <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
+            <CardContent className="p-6">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2">
                   <div className="relative flex-1">
@@ -516,7 +520,7 @@ const Dossiers = () => {
           </Card>
 
           <TabsContent value="my" className="mt-0 space-y-4">
-            <Card className="border-0 shadow-sm">
+            <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
               <CardContent className="p-0">
                 <div className="hidden md:block">
                   <Table>
@@ -659,7 +663,7 @@ const Dossiers = () => {
           </TabsContent>
 
           <TabsContent value="all" className="mt-0">
-            <Card className="border-0 shadow-sm">
+            <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
               <CardContent className="p-0">
                 <div className="hidden md:block">
                   <Table>
@@ -836,7 +840,7 @@ const Dossiers = () => {
           <TabsContent value="incoming" className="mt-0 space-y-4">
             <div className="space-y-4">
               {currentDossiers.length === 0 ? (
-                <Card className="border shadow-sm bg-card/50 backdrop-blur-sm">
+                <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
                   <CardContent className="py-16 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <div className="rounded-full bg-muted p-4">
@@ -857,9 +861,9 @@ const Dossiers = () => {
                   return (
                     <Card
                       key={request.id}
-                      className={`border shadow-sm bg-card/50 backdrop-blur-sm transition-all hover:shadow-md ${!isPending ? 'opacity-60' : ''}`}
+                      className={`border-0 shadow-md bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg animate-fade-in ${!isPending ? 'opacity-60' : ''}`}
                     >
-                      <CardContent className="pt-6 space-y-4">
+                      <CardContent className="p-6 space-y-4">
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                           <div className="space-y-2">
                             <h3 className="text-base sm:text-lg font-semibold">

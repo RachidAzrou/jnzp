@@ -490,7 +490,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[95vh] overflow-hidden flex flex-col gap-0 p-0" aria-describedby="task-detail-description">
+      <DialogContent className="max-w-4xl h-[85vh] overflow-hidden flex flex-col gap-0 p-0" aria-describedby="task-detail-description">
         <DialogHeader className="px-6 pt-6 pb-4 border-b bg-gradient-to-r from-background to-muted/20">
           <DialogTitle className="flex items-center justify-between gap-4">
             <span className="flex-1 text-xl">{editMode ? "Taak bewerken" : task.title}</span>

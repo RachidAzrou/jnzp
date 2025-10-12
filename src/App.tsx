@@ -29,7 +29,7 @@ import MortuariumAdHoc from "./pages/MortuariumAdHoc";
 import MortuariumTeam from "./pages/MortuariumTeam";
 import MortuariumInstellingen from "./pages/MortuariumInstellingen";
 import MortuariumFacturatie from "./pages/MortuariumFacturatie";
-import FDReceivedInvoices from "./pages/FDReceivedInvoices";
+
 import Facturatie from "./pages/Facturatie";
 import FDFacturatie from "./pages/FDFacturatie";
 // FDBeoordelingen removed - only for insurers/admins
@@ -253,11 +253,6 @@ const App = () => (
                           <Route path="/facturatie" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <FDFacturatie />
-                            </RoleProtectedRoute>
-                          } />
-                          <Route path="/fd/ontvangen-facturen" element={
-                            <RoleProtectedRoute allowedRoles={['funeral_director']}>
-                              <FDReceivedInvoices />
                             </RoleProtectedRoute>
                           } />
                           {/* Beoordelingen removed - only for insurers/admins */}

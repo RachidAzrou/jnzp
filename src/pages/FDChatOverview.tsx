@@ -106,67 +106,90 @@ export default function FDChatOverview() {
   }
 
   return (
-    <div className="container max-w-5xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Chat Overzicht</h1>
-          <p className="text-muted-foreground">
-            Communiceer met families per dossier
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-sm">
-            {filteredDossiers.length} {filteredDossiers.length === 1 ? 'dossier' : 'dossiers'}
-          </Badge>
-        </div>
-      </div>
+    <div className="space-y-6 pb-8">
+      {/* Professional Header */}
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="space-y-2 flex-1 min-w-[280px]">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <MessageSquare className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground font-medium">Communicatie</p>
+                  <h1 className="text-2xl font-bold tracking-tight">Chat Overzicht</h1>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground pl-15">
+                Communiceer met families per dossier
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Badge 
+                variant="secondary" 
+                className="text-sm px-4 py-1.5 bg-primary/10 text-primary border-primary/20"
+              >
+                {filteredDossiers.length} {filteredDossiers.length === 1 ? 'dossier' : 'dossiers'}
+              </Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Zoek op naam of dossier nummer..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 h-12"
-        />
-      </div>
+      {/* Search Card */}
+      <Card className="animate-fade-in">
+        <CardContent className="p-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Zoek op naam of dossier nummer..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-11"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Chat List */}
-      <div className="space-y-3">
-        {filteredDossiers.length === 0 ? (
-          <Card className="border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+      {/* Chat List Card */}
+      <Card className="animate-fade-in">
+        <CardHeader>
+          <CardTitle className="text-lg">Dossier Chats</CardTitle>
+          <CardDescription>Selecteer een dossier om de chat te openen</CardDescription>
+        </CardHeader>
+        
+        <CardContent className="space-y-3">
+          {filteredDossiers.length === 0 ? (
+            <div className="text-center text-muted-foreground py-12">
+              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4 mx-auto">
                 <MessageSquare className="h-8 w-8 text-muted-foreground" />
               </div>
-              <p className="text-lg font-medium mb-1">Geen chats gevonden</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base font-medium mb-1">Geen chats gevonden</p>
+              <p className="text-sm">
                 {searchTerm ? 'Probeer een andere zoekterm' : 'Start een chat door een dossier te openen'}
               </p>
-            </CardContent>
-          </Card>
-        ) : (
-          filteredDossiers.map((dossier) => (
-            <Card
-              key={dossier.id}
-              className="cursor-pointer hover:shadow-md hover:border-primary/50 transition-all group"
-              onClick={() => navigate(`/chat/${dossier.id}`)}
-            >
-              <CardContent className="p-6">
+            </div>
+          ) : (
+            filteredDossiers.map((dossier) => (
+              <div
+                key={dossier.id}
+                className="group rounded-lg border bg-card p-4 cursor-pointer hover:shadow-sm hover:border-primary/50 transition-all duration-200"
+                onClick={() => navigate(`/chat/${dossier.id}`)}
+              >
                 <div className="flex items-start justify-between gap-4">
                   {/* Left: Main Info */}
-                  <div className="flex-1 space-y-3">
+                  <div className="flex-1 space-y-2">
                     <div className="flex items-start gap-3">
-                      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <MessageSquare className="h-6 w-6 text-primary" />
+                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <MessageSquare className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-lg group-hover:text-primary transition-colors truncate">
+                        <h3 className="font-medium text-base group-hover:text-primary transition-colors truncate">
                           {dossier.family_contact_name || dossier.deceased_name}
                         </h3>
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
                           <Badge variant="outline" className="text-xs font-mono">
                             {dossier.display_id}
                           </Badge>
@@ -178,16 +201,16 @@ export default function FDChatOverview() {
                     </div>
 
                     {/* Additional Info Row */}
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground pl-15">
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground pl-13">
                       {dossier.family_contact_name && dossier.family_contact_name !== dossier.deceased_name && (
                         <div className="flex items-center gap-1.5">
-                          <User className="h-3.5 w-3.5" />
+                          <User className="h-3 w-3" />
                           <span className="truncate">{dossier.deceased_name}</span>
                         </div>
                       )}
                       {dossier.last_message_at && (
                         <div className="flex items-center gap-1.5">
-                          <Calendar className="h-3.5 w-3.5" />
+                          <Calendar className="h-3 w-3" />
                           <span>
                             {format(new Date(dossier.last_message_at), "d MMM, HH:mm", { locale: nl })}
                           </span>
@@ -197,31 +220,31 @@ export default function FDChatOverview() {
                   </div>
 
                   {/* Right: Actions & Badge */}
-                  <div className="flex flex-col items-end gap-3">
+                  <div className="flex flex-col items-end gap-2">
                     {dossier.unread_count > 0 && (
-                      <Badge className="bg-primary text-primary-foreground">
+                      <Badge className="bg-primary text-primary-foreground text-xs">
                         {dossier.unread_count} nieuw
                       </Badge>
                     )}
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="h-7 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(`/chat/${dossier.id}`);
                       }}
                     >
-                      <ExternalLink className="h-4 w-4 mr-2" />
+                      <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
                       Open
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Edit2, Trash2 } from "lucide-react";
+import { Send, Edit2, Trash2, MessageSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
 
@@ -284,9 +284,9 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* New comment form */}
-      <div className="space-y-2 relative">
+      <div className="space-y-3 relative">
         <Textarea
           ref={textareaRef}
           value={newComment}
@@ -294,27 +294,28 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
           placeholder="Voeg een opmerking toe... Gebruik @ om collega's te taggen"
           rows={3}
           disabled={isSubmitting}
+          className="resize-none"
         />
         
         {/* Mention dropdown */}
         {showMentions && filteredUsers.length > 0 && (
-          <div className="absolute z-10 w-full bg-background border rounded-md shadow-lg max-h-48 overflow-y-auto">
+          <div className="absolute z-10 w-full bg-popover border rounded-lg shadow-lg max-h-48 overflow-y-auto">
             {filteredUsers.slice(0, 5).map((user) => (
               <button
                 key={user.user_id}
-                className="w-full px-4 py-2 text-left hover:bg-accent flex items-center gap-2"
+                className="w-full px-4 py-2.5 text-left hover:bg-accent transition-colors flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg"
                 onClick={() => insertMention(user)}
               >
-                <Avatar className="h-6 w-6">
-                  <AvatarFallback className="text-xs">
+                <Avatar className="h-7 w-7">
+                  <AvatarFallback className="text-xs bg-primary/10 text-primary">
                     {user.first_name?.[0]}{user.last_name?.[0]}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <p className="text-sm font-medium">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">
                     {user.first_name} {user.last_name}
                   </p>
-                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                 </div>
               </button>
             ))}
@@ -329,28 +330,41 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
             onClick={handleSubmit} 
             disabled={isSubmitting || !newComment.trim()}
             size="sm"
+            className="h-8"
           >
-            <Send className="h-4 w-4 mr-2" />
+            <Send className="h-3.5 w-3.5 mr-2" />
             Plaatsen
           </Button>
         </div>
       </div>
 
-      {/* Comments list - audit log style */}
-      <div className="space-y-2">
+      {/* Comments list */}
+      <div className="space-y-0 border rounded-lg overflow-hidden bg-card">
         {comments.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8 border rounded-lg bg-muted/30">
-            Nog geen opmerkingen. Start de discussie!
-          </p>
+          <div className="text-center text-muted-foreground py-12 px-4">
+            <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-3 mx-auto">
+              <MessageSquare className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <p className="text-sm font-medium mb-1">Nog geen opmerkingen</p>
+            <p className="text-xs text-muted-foreground">Start de discussie!</p>
+          </div>
         ) : (
-          comments.map((comment) => (
-            <div key={comment.id} className="flex gap-3 p-4 border-b last:border-b-0 hover:bg-muted/30 transition-colors">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="text-xs">{getInitials(comment)}</AvatarFallback>
+          comments.map((comment, index) => (
+            <div 
+              key={comment.id} 
+              className={cn(
+                "flex gap-3 p-4 hover:bg-muted/50 transition-colors",
+                index !== comments.length - 1 && "border-b"
+              )}
+            >
+              <Avatar className="h-9 w-9 flex-shrink-0">
+                <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                  {getInitials(comment)}
+                </AvatarFallback>
               </Avatar>
               
               <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium text-sm">{getAuthorName(comment)}</span>
                     <span className="text-xs text-muted-foreground">
@@ -360,7 +374,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                       })}
                     </span>
                     {comment.updated_at && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs h-5">
                         Bewerkt
                       </Badge>
                     )}
@@ -370,19 +384,21 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                       <Button
                         variant="ghost"
                         size="sm"
+                        className="h-7 w-7 p-0"
                         onClick={() => {
                           setEditingId(comment.id);
                           setEditText(comment.body);
                         }}
                       >
-                        <Edit2 className="h-3 w-3" />
+                        <Edit2 className="h-3.5 w-3.5" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
                         onClick={() => handleDelete(comment.id)}
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   )}
@@ -394,10 +410,12 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
                       rows={3}
+                      className="resize-none"
                     />
                     <div className="flex gap-2">
                       <Button
                         size="sm"
+                        className="h-8"
                         onClick={() => handleEdit(comment.id)}
                       >
                         Opslaan
@@ -405,6 +423,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                       <Button
                         variant="outline"
                         size="sm"
+                        className="h-8"
                         onClick={() => {
                           setEditingId(null);
                           setEditText("");
@@ -415,7 +434,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm whitespace-pre-wrap text-foreground">
+                  <p className="text-sm whitespace-pre-wrap text-foreground leading-relaxed">
                     {comment.body}
                   </p>
                 )}

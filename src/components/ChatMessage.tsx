@@ -36,15 +36,15 @@ export function ChatMessage({ message, channel, senderRole, timestamp, isCurrent
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 max-w-[80%]",
+        "flex flex-col gap-2 max-w-[75%] animate-fade-in",
         isCurrentUser ? "ml-auto items-end" : "mr-auto items-start"
       )}
       role="article"
       aria-label={`Message from ${senderRole} via ${config.label}`}
     >
-      {/* Channel Badge */}
+      {/* Channel Badge & Timestamp */}
       <div className="flex items-center gap-2">
-        <Badge variant="outline" className="text-xs">
+        <Badge variant="outline" className="text-xs h-5">
           <config.icon className="h-3 w-3 mr-1" aria-hidden="true" />
           {config.label}
         </Badge>
@@ -58,9 +58,9 @@ export function ChatMessage({ message, channel, senderRole, timestamp, isCurrent
 
       {/* PII Warning */}
       {hasPII && (
-        <Alert variant="destructive" className="text-xs">
+        <Alert variant="destructive" className="text-xs py-2">
           <AlertTriangle className="h-3 w-3" aria-hidden="true" />
-          <AlertDescription>
+          <AlertDescription className="text-xs">
             ⚠️ Dit bericht bevat mogelijk gevoelige informatie (BSN/NIS/Polis). Deel dit niet via onbeveiligde kanalen.
           </AlertDescription>
         </Alert>
@@ -69,13 +69,13 @@ export function ChatMessage({ message, channel, senderRole, timestamp, isCurrent
       {/* Message Bubble */}
       <div
         className={cn(
-          "rounded-lg px-4 py-3 shadow-sm",
+          "rounded-lg px-4 py-3 shadow-sm transition-all duration-200",
           isCurrentUser
             ? "bg-primary text-primary-foreground"
-            : "bg-muted"
+            : "bg-muted border"
         )}
       >
-        <p className="text-sm whitespace-pre-wrap">{message}</p>
+        <p className="text-sm whitespace-pre-wrap leading-relaxed">{message}</p>
       </div>
     </div>
   );

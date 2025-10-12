@@ -216,11 +216,32 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           description: "De taak is succesvol bijgewerkt"
         });
       } else {
+        // Get or create board for the organization
+        const { data: board, error: boardError } = await supabase
+          .from('task_boards')
+          .select('id')
+          .eq('org_id', userRole.organization_id)
+          .maybeSingle();
+
+        let boardId = board?.id;
+
+        if (!boardId) {
+          const { data: newBoard, error: createError } = await supabase
+            .from('task_boards')
+            .insert({ org_id: userRole.organization_id, name: 'Taken' })
+            .select('id')
+            .single();
+
+          if (createError) throw createError;
+          boardId = newBoard.id;
+        }
+
         // Create new manual task with assignee default to current user
         const { data: newTask, error } = await supabase
           .from('kanban_tasks')
           .insert({
             org_id: userRole.organization_id,
+            board_id: boardId,
             dossier_id: formData.dossier_id || null,
             title: formData.title,
             description: formData.description,

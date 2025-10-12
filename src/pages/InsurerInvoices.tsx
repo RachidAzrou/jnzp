@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, CheckCircle, AlertCircle, Search, Clock, Euro } from "lucide-react";
+import { FileText, CheckCircle, AlertCircle, Search, Clock, Euro, Receipt } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { KPICard } from "@/components/KPICard";
+
+const getCurrentDate = () => {
+  return new Date().toLocaleDateString("nl-NL", { 
+    weekday: "long", 
+    day: "numeric", 
+    month: "long", 
+    year: "numeric" 
+  });
+};
 
 type Invoice = {
   id: string;
@@ -310,10 +319,24 @@ export default function InsurerInvoices() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Facturen</h1>
-        <p className="text-sm text-muted-foreground mt-1">Beheer ontvangen facturen van uitvaartondernemers</p>
-      </div>
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Receipt className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Verzekeraar</p>
+                <h1 className="text-2xl font-bold tracking-tight">Facturen</h1>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground capitalize">{getCurrentDate()}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* KPIs */}
       <div className="grid gap-6 md:grid-cols-4">

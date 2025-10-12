@@ -4,9 +4,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BarChart3, Download, TrendingUp, Clock, Euro } from "lucide-react";
+import { BarChart3, Download, TrendingUp, Clock, Euro, FileBarChart } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+
+const getCurrentDate = () => {
+  return new Date().toLocaleDateString("nl-NL", { 
+    weekday: "long", 
+    day: "numeric", 
+    month: "long", 
+    year: "numeric" 
+  });
+};
 
 export default function InsurerRapportage() {
   const [periodFilter, setPeriodFilter] = useState("30");
@@ -165,29 +174,41 @@ Achterstallig (>30d),${stats?.invoices.overdue}`;
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">Rapportage</h1>
-            <p className="text-sm text-muted-foreground mt-1">Overzicht van claims, facturen en doorlooptijden</p>
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <FileBarChart className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Verzekeraar</p>
+                <h1 className="text-2xl font-bold tracking-tight">Rapportage</h1>
+              </div>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground capitalize">{getCurrentDate()}</p>
+              </div>
+              <Select value={periodFilter} onValueChange={setPeriodFilter}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Periode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">Laatste 7 dagen</SelectItem>
+                  <SelectItem value="30">Laatste 30 dagen</SelectItem>
+                  <SelectItem value="90">Laatste 90 dagen</SelectItem>
+                  <SelectItem value="365">Laatste jaar</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={exportToCSV}>
+                <Download className="h-4 w-4 mr-2" />
+                Exporteer CSV
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Select value={periodFilter} onValueChange={setPeriodFilter}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Periode" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Laatste 7 dagen</SelectItem>
-                <SelectItem value="30">Laatste 30 dagen</SelectItem>
-                <SelectItem value="90">Laatste 90 dagen</SelectItem>
-                <SelectItem value="365">Laatste jaar</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={exportToCSV}>
-              <Download className="h-4 w-4 mr-2" />
-              Exporteer CSV
-            </Button>
-          </div>
-        </div>
+        </CardContent>
+      </Card>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>

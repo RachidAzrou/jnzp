@@ -5,8 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Eye, AlertCircle, CheckCircle, XCircle, Lock } from "lucide-react";
+import { Eye, AlertCircle, CheckCircle, XCircle, Lock, Receipt } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const getCurrentDate = () => {
+  return new Date().toLocaleDateString("nl-NL", { 
+    weekday: "long", 
+    day: "numeric", 
+    month: "long", 
+    year: "numeric" 
+  });
+};
 
 export default function InsurerClaims() {
   const navigate = useNavigate();
@@ -100,10 +109,24 @@ export default function InsurerClaims() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Claims Beheer</h1>
-          <p className="text-sm text-muted-foreground mt-1">Overzicht van alle claims</p>
-        </div>
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Receipt className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Verzekeraar</p>
+                <h1 className="text-2xl font-bold tracking-tight">Claims Beheer</h1>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground capitalize">{getCurrentDate()}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>

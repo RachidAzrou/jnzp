@@ -6,12 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Receipt, Shield, RefreshCw, AlertCircle } from "lucide-react";
+import { FileText, Receipt, Shield, RefreshCw, AlertCircle, FolderOpen } from "lucide-react";
 import { BlockDossierDialog } from "@/components/BlockDossierDialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+
+const getCurrentDate = () => {
+  return new Date().toLocaleDateString("nl-NL", { 
+    weekday: "long", 
+    day: "numeric", 
+    month: "long", 
+    year: "numeric" 
+  });
+};
 
 export default function InsurerDossierOverview() {
   const { id } = useParams();
@@ -337,36 +346,48 @@ export default function InsurerDossierOverview() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">Dossier {dossier.ref_number}</h1>
-            <p className="text-sm text-muted-foreground mt-1">{dossier.deceased_name}</p>
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <FolderOpen className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Dossier {dossier.ref_number}</p>
+                <h1 className="text-2xl font-bold tracking-tight">{dossier.deceased_name}</h1>
+              </div>
+            </div>
+            <div className="flex gap-2 items-center">
+              <div className="text-right mr-4">
+                <p className="text-sm text-muted-foreground capitalize">{getCurrentDate()}</p>
+              </div>
+              <BlockDossierDialog 
+                dossierId={dossier.id} 
+                dossierRef={dossier.ref_number}
+                onSuccess={() => refetch()}
+              />
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/insurer/dossier/${id}/documenten`)}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Documenten
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate("/insurer/facturen")}
+              >
+                <Receipt className="mr-2 h-4 w-4" />
+                Facturen
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/insurer/dossiers')}>
+                Terug naar Overzicht
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <BlockDossierDialog 
-              dossierId={dossier.id} 
-              dossierRef={dossier.ref_number}
-              onSuccess={() => refetch()}
-            />
-            <Button
-              variant="outline"
-              onClick={() => navigate(`/insurer/dossier/${id}/documenten`)}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Documenten
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => navigate("/insurer/facturen")}
-            >
-              <Receipt className="mr-2 h-4 w-4" />
-              Facturen
-            </Button>
-            <Button variant="outline" onClick={() => navigate('/insurer/dossiers')}>
-              Terug naar Overzicht
-            </Button>
-          </div>
-        </div>
+        </CardContent>
+      </Card>
 
         <Tabs defaultValue="overzicht">
           <TabsList>

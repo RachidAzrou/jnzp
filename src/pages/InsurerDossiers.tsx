@@ -11,7 +11,16 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Shield, ShieldOff, Eye, Search, AlertCircle } from "lucide-react";
+import { Shield, ShieldOff, Eye, Search, AlertCircle, FileText } from "lucide-react";
+
+const getCurrentDate = () => {
+  return new Date().toLocaleDateString("nl-NL", { 
+    weekday: "long", 
+    day: "numeric", 
+    month: "long", 
+    year: "numeric" 
+  });
+};
 
 export default function InsurerDossiers() {
   const navigate = useNavigate();
@@ -167,12 +176,24 @@ export default function InsurerDossiers() {
   return (
     <>
       <div className="container mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Dossiers</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Overzicht van alle dossiers gekoppeld aan uw organisatie
-          </p>
-        </div>
+        <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground font-medium">Verzekeraar</p>
+                  <h1 className="text-2xl font-bold tracking-tight">Dossiers</h1>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground capitalize">{getCurrentDate()}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="flex items-center gap-4">
           <div className="relative flex-1">

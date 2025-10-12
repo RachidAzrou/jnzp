@@ -113,10 +113,7 @@ export function DeleteDossierDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="sm">
-          <Trash2 className="mr-2 h-4 w-4" />
-          Verwijder dossier
-        </Button>
+        <button id="soft-delete-trigger" className="hidden" />
       </AlertDialogTrigger>
       <AlertDialogContent className="max-w-xl">
         <AlertDialogHeader>

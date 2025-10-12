@@ -4444,6 +4444,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: Json
       }
+      user_has_family_case_event_access: {
+        Args: { _dossier_id: string; _user_id: string }
+        Returns: boolean
+      }
       user_in_org: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean

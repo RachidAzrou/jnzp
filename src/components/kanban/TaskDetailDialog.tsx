@@ -120,9 +120,9 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
   useEffect(() => {
     if (task && open) {
       setFormData({
-        title: task.title,
+        title: task.title || "",
         description: task.description || "",
-        priority: task.priority,
+        priority: task.priority || "MEDIUM",
         assignee_id: task.assignee_id || "",
         due_date: task.due_date || "",
         is_deferred: task.is_deferred || false,
@@ -134,6 +134,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
       fetchTeamMembers();
       if (task.assignee_id) {
         fetchAssignedUser(task.assignee_id);
+      } else {
+        setAssignedUser(null);
       }
     }
   }, [task, open]);
@@ -616,7 +618,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                   </Select>
                 ) : (
                   <div className="mt-1">
-                    <Badge>{task.priority}</Badge>
+                    <Badge>{task.priority || 'MEDIUM'}</Badge>
                   </div>
                 )}
               </div>

@@ -71,10 +71,10 @@ export function KanbanColumn({ column, tasks, onTaskClick, onMarkTaskAsDone, dra
               )}
             </div>
             {column.is_done && (
-              <Badge variant="outline" className="text-xs flex items-center gap-1 w-fit">
-                <Info className="h-3 w-3" />
+              <div className="text-[10px] text-muted-foreground/50 flex items-center gap-1 w-fit opacity-60">
+                <Info className="h-2.5 w-2.5" />
                 Verplaatst naar Archief na 24u
-              </Badge>
+              </div>
             )}
           </div>
         </CardHeader>

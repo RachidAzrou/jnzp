@@ -58,11 +58,19 @@ export function DocumentUploadDialog({
         
         const orgIds = userRoles?.map(r => r.organization_id).filter(Boolean) || [];
         
-        // Fetch only dossiers from user's organization(s)
+        if (orgIds.length === 0) {
+          setFetchedDossiers([]);
+          setLoadingDossiers(false);
+          return;
+        }
+        
+        // Fetch only active dossiers from user's organization(s)
         const { data } = await supabase
           .from('dossiers')
-          .select('id, ref_number, deceased_name, display_id')
+          .select('id, ref_number, deceased_name, display_id, assignment_status')
           .in('assigned_fd_org_id', orgIds)
+          .is('deleted_at', null)
+          .neq('assignment_status', 'RELEASED')
           .order('created_at', { ascending: false });
         setFetchedDossiers(data || []);
         setLoadingDossiers(false);
@@ -183,7 +191,7 @@ export function DocumentUploadDialog({
                 ) : (
                   availableDossiers.map((d) => (
                     <SelectItem key={d.id} value={d.id}>
-                      {d.ref_number} - {d.deceased_name}
+                      {d.display_id || d.ref_number} - {d.deceased_name}
                     </SelectItem>
                   ))
                 )}

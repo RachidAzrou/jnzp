@@ -234,34 +234,18 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             Status wijzigen
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Status wijzigen</DialogTitle>
-            <DialogDescription>
-              Wijzig de status van dit dossier
-            </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 py-4">
+          <div className="space-y-4">
             {/* Current Status */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Circle className="h-4 w-4" />
-                Huidige status
-              </Label>
-              <div className="p-4 rounded-lg border bg-muted/50">
-                <div className="flex items-center gap-3">
-                  <Badge 
-                    variant={STATUS_BADGES[currentStatus] as any}
-                    className="text-sm px-3 py-1"
-                  >
-                    {statusLabels[currentStatus]?.label}
-                  </Badge>
-                  <p className="text-sm text-muted-foreground">
-                    {statusLabels[currentStatus]?.description}
-                  </p>
-                </div>
-              </div>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Huidig:</span>
+              <Badge variant={STATUS_BADGES[currentStatus] as any}>
+                {statusLabels[currentStatus]?.label}
+              </Badge>
             </div>
 
             {/* Status History */}
@@ -271,55 +255,44 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             />
 
             {/* New Status Selection */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <ArrowRight className="h-4 w-4" />
-                Nieuwe status
-              </Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Nieuwe status</Label>
               
               {allowedNextStatuses.length === 0 && !isAdmin ? (
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Geen statuswijzigingen mogelijk vanuit de huidige status.
+                    Geen statuswijzigingen mogelijk.
                   </AlertDescription>
                 </Alert>
               ) : (
-                <div className="grid gap-2">
+                <div className="space-y-1.5">
                   {(isAdmin ? STATUSES : allowedNextStatuses).map((status) => (
                     <button
                       key={status}
                       onClick={() => setNewStatus(status)}
                       disabled={status === currentStatus}
                       className={`
-                        w-full p-4 rounded-lg border-2 transition-all text-left
+                        w-full px-3 py-2 rounded-md border transition-all text-left text-sm
                         ${newStatus === status 
-                          ? 'border-primary bg-primary/5 shadow-sm' 
-                          : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-border hover:border-primary/50 hover:bg-muted/30'
                         }
                         ${status === currentStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                       `}
                     >
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-2">
                         {newStatus === status && (
-                          <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                          <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
                         )}
-                        <Badge 
-                          variant={STATUS_BADGES[status] as any}
-                          className="text-sm"
-                        >
-                          {statusLabels[status]?.label}
-                        </Badge>
+                        <span className="font-medium">{statusLabels[status]?.label}</span>
                         {!allowedNextStatuses.includes(status) && isAdmin && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs ml-auto">
                             <Shield className="h-3 w-3 mr-1" />
                             Admin
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground pl-8">
-                        {statusLabels[status]?.description}
-                      </p>
                     </button>
                   ))}
                 </div>
@@ -327,16 +300,15 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             </div>
 
             {/* Reason (optional) */}
-            <div className="space-y-2">
-              <Label htmlFor="reason" className="text-sm">
-                Reden (optioneel)
-              </Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="reason" className="text-sm">Reden (optioneel)</Label>
               <Textarea
                 id="reason"
                 placeholder="Waarom wordt de status gewijzigd?"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                rows={3}
+                rows={2}
+                className="text-sm"
               />
             </div>
           </div>

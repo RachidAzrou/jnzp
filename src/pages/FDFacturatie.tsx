@@ -541,19 +541,29 @@ export default function FDFacturatie() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       <div className="space-y-6 max-w-[1600px] mx-auto">
         {/* Header */}
-        <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
-          <CardContent className="p-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  Facturatie
-                </h1>
-                <p className="text-sm text-muted-foreground">Beheer verzonden en ontvangen facturen</p>
+        <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="space-y-2 flex-1 min-w-[280px]">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">Financieel</p>
+                    <h1 className="text-2xl font-bold tracking-tight">Facturatie</h1>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground pl-15">
+                  Beheer verzonden en ontvangen facturen
+                </p>
               </div>
-              <Button onClick={() => setShowGenerator(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nieuwe Factuur
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button onClick={() => setShowGenerator(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nieuwe Factuur
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

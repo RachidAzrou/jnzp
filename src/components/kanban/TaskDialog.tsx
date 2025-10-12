@@ -236,12 +236,25 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           boardId = newBoard.id;
         }
 
+        // Get the column_id for the selected status (or default to first todo column)
+        const { data: column, error: columnError } = await supabase
+          .from('task_board_columns')
+          .select('id')
+          .eq('board_id', boardId)
+          .eq('key', formData.status === 'TE_DOEN' ? 'todo' : 
+                     formData.status === 'BEZIG' ? 'doing' : 'done')
+          .maybeSingle();
+
+        if (columnError) throw columnError;
+        if (!column) throw new Error('Column not found for status');
+
         // Create new manual task with assignee default to current user
         const { data: newTask, error } = await supabase
           .from('kanban_tasks')
           .insert({
             org_id: userRole.organization_id,
             board_id: boardId,
+            column_id: column.id,
             dossier_id: formData.dossier_id || null,
             title: formData.title,
             description: formData.description,

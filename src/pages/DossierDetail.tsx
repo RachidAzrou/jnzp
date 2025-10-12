@@ -650,51 +650,39 @@ const DossierDetail = () => {
 
         {/* Overview Tab - Combined Card */}
         <TabsContent value="overview" className="space-y-6">
-          <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="space-y-2 flex-1 min-w-[280px]">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <User className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground font-medium">Dossier</p>
-                      <h2 className="text-2xl font-bold tracking-tight">Overzicht</h2>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground pl-15">
-                    Overledene en contactpersonen
-                  </p>
+          <Card className="animate-fade-in">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg">Dossier Overzicht</CardTitle>
+                  <CardDescription>Overledene en contactpersonen</CardDescription>
                 </div>
                 {!isEditingDeceased ? (
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     onClick={handleEditDeceased}
-                    className="h-9"
+                    className="h-8 gap-1 text-xs"
                   >
-                    <Edit2 className="h-4 w-4 mr-2" />
-                    Bewerken
+                    <Edit2 className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Bewerken</span>
                   </Button>
                 ) : (
-                  <div className="flex gap-2">
-                    <Button variant="default" size="sm" onClick={handleSaveDeceased}>
-                      <Save className="h-4 w-4 mr-2" />
-                      Opslaan
+                  <div className="flex gap-1">
+                    <Button variant="default" size="sm" onClick={handleSaveDeceased} className="h-8 text-xs">
+                      <Save className="h-3.5 w-3.5 mr-1.5" />
+                      <span className="hidden sm:inline">Opslaan</span>
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
-                      <X className="h-4 w-4 mr-2" />
-                      Annuleren
+                    <Button variant="ghost" size="sm" onClick={handleCancelEdit} className="h-8 text-xs">
+                      <X className="h-3.5 w-3.5 mr-1.5" />
+                      <span className="hidden sm:inline">Annuleren</span>
                     </Button>
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="animate-fade-in">
-            <CardContent className="p-6 space-y-6">
+            </CardHeader>
+            
+            <CardContent className="space-y-6">
               {/* Overledene Sectie */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
@@ -875,33 +863,21 @@ const DossierDetail = () => {
 
         {/* Documents Tab */}
         <TabsContent value="documents" className="space-y-6">
-          <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="space-y-2 flex-1 min-w-[280px]">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <FileText className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground font-medium">Beheer</p>
-                      <h2 className="text-2xl font-bold tracking-tight">Documenten</h2>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground pl-15">
-                    Beheer alle documenten
-                  </p>
+          <Card className="animate-fade-in">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg">Documenten</CardTitle>
+                  <CardDescription>Beheer alle documenten</CardDescription>
                 </div>
                 <DocumentUploadDialog 
                   dossierId={id!} 
                   onDocumentUploaded={fetchDossierData}
                 />
               </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="animate-fade-in">
-            <CardContent className="p-6 space-y-6">
+            </CardHeader>
+            
+            <CardContent className="space-y-6">
               {/* Stats */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="text-center p-4 rounded-lg border bg-accent/5">
@@ -1027,29 +1003,13 @@ const DossierDetail = () => {
 
         {/* Stakeholders Tab */}
         <TabsContent value="stakeholders" className="space-y-6">
-          <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="space-y-2 flex-1 min-w-[280px]">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Users className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground font-medium">Overzicht</p>
-                      <h2 className="text-2xl font-bold tracking-tight">Betrokkenen</h2>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground pl-15">
-                    Moskee, Mortuarium en Verzekeraar
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
           <Card className="animate-fade-in">
-            <CardContent className="p-6 space-y-6">
+            <CardHeader>
+              <CardTitle className="text-lg">Betrokkenen</CardTitle>
+              <CardDescription>Moskee, Mortuarium en Verzekeraar</CardDescription>
+            </CardHeader>
+            
+            <CardContent className="space-y-6">
               {/* Moskee Dienst */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
@@ -1120,29 +1080,12 @@ const DossierDetail = () => {
 
         {/* Chat Tab */}
         <TabsContent value="chat" className="space-y-6">
-          <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="space-y-2 flex-1 min-w-[280px]">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <MessageSquare className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground font-medium">Communicatie</p>
-                      <h2 className="text-2xl font-bold tracking-tight">Chat</h2>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground pl-15">
-                    Chat met familie en collega's
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
           <Card className="animate-fade-in">
-            <CardContent className="p-6 space-y-4">
+            <CardHeader>
+              <CardTitle className="text-lg">Communicatie</CardTitle>
+              <CardDescription>Chat met familie en collega's</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
                 Start een gesprek over dit dossier met familie en teamleden.
               </p>
@@ -1160,29 +1103,12 @@ const DossierDetail = () => {
 
         {/* Financial Tab */}
         <TabsContent value="financial" className="space-y-6">
-          <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="space-y-2 flex-1 min-w-[280px]">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <DollarSign className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground font-medium">Financieel</p>
-                      <h2 className="text-2xl font-bold tracking-tight">Facturatie</h2>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground pl-15">
-                    Beheer facturen en betalingen
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
           <Card className="animate-fade-in">
-            <CardContent className="p-6">
+            <CardHeader>
+              <CardTitle className="text-lg">Facturatie</CardTitle>
+              <CardDescription>Beheer facturen en betalingen</CardDescription>
+            </CardHeader>
+            <CardContent>
               <InvoiceManagementCard dossierId={id!} userRole={userRole || ''} />
             </CardContent>
           </Card>
@@ -1190,29 +1116,12 @@ const DossierDetail = () => {
 
         {/* Timeline Tab */}
         <TabsContent value="timeline" className="space-y-6">
-          <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="space-y-2 flex-1 min-w-[280px]">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Clock className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground font-medium">Overzicht</p>
-                      <h2 className="text-2xl font-bold tracking-tight">Tijdlijn</h2>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground pl-15">
-                    Chronologisch overzicht van alle gebeurtenissen
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
           <Card className="animate-fade-in">
-            <CardContent className="p-6">
+            <CardHeader>
+              <CardTitle className="text-lg">Tijdlijn</CardTitle>
+              <CardDescription>Chronologisch overzicht van alle gebeurtenissen</CardDescription>
+            </CardHeader>
+            <CardContent>
               <DossierTimeline dossierId={id!} />
             </CardContent>
           </Card>

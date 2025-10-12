@@ -50,9 +50,19 @@ export function DocumentUploadDialog({
   useEffect(() => {
     if (!dossiers) {
       const fetchDossiers = async () => {
+        // Get user's organization(s)
+        const { data: userRoles } = await supabase
+          .from('user_roles')
+          .select('organization_id')
+          .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+        
+        const orgIds = userRoles?.map(r => r.organization_id).filter(Boolean) || [];
+        
+        // Fetch only dossiers from user's organization(s)
         const { data } = await supabase
           .from('dossiers')
-          .select('id, ref_number, deceased_name')
+          .select('id, ref_number, deceased_name, display_id')
+          .in('assigned_fd_org_id', orgIds)
           .order('created_at', { ascending: false });
         setFetchedDossiers(data || []);
         setLoadingDossiers(false);

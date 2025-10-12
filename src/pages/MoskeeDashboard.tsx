@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -245,64 +246,54 @@ export default function MoskeeDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-2xl font-semibold">{t("mosque.dashboard.title")}</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {t("mosque.dashboard.subtitle")}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={() => navigate("/moskee/beschikbaarheid")} variant="outline" size="sm">
+    <div className="space-y-6 pb-8">
+      {/* Professional Header */}
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <MessageSquare className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Moskee</p>
+                <h1 className="text-2xl font-bold tracking-tight">{t("mosque.dashboard.title")}</h1>
+              </div>
+            </div>
+            <Button onClick={() => navigate("/moskee/beschikbaarheid")} variant="outline" size="sm" className="h-9">
               {t("mosque.dashboard.availability")}
             </Button>
           </div>
-        </div>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">{t("mosque.dashboard.subtitle")}</p>
+        </CardContent>
+      </Card>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard
-            title={t("mosque.dashboard.openRequests")}
-            value={openRequests}
-            icon={AlertCircle}
-          />
-          <KPICard
-            title={t("mosque.dashboard.todayPrayers")}
-            value={todayPrayers}
-            icon={Calendar}
-          />
-          <KPICard
-            title={t("mosque.dashboard.blockedDays")}
-            value={blockedDays}
-            icon={X}
-          />
-          <KPICard
-            title={t("mosque.dashboard.thisWeek")}
-            value={thisWeekCount}
-            icon={Clock}
-          />
-        </div>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+        <KPICard title={t("mosque.dashboard.openRequests")} value={openRequests} icon={AlertCircle} />
+        <KPICard title={t("mosque.dashboard.todayPrayers")} value={todayPrayers} icon={Calendar} />
+        <KPICard title={t("mosque.dashboard.blockedDays")} value={blockedDays} icon={X} />
+        <KPICard title={t("mosque.dashboard.thisWeek")} value={thisWeekCount} icon={Clock} />
+      </div>
 
-        {/* Active Requests */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium">{t("mosque.dashboard.activeRequests")}</CardTitle>
-              <div className="relative w-64">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder={t("common.search")}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8"
-                />
-              </div>
+      {/* Active Requests */}
+      <Card className="animate-fade-in">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg">{t("mosque.dashboard.activeRequests")}</CardTitle>
+            <div className="relative w-64">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("common.search")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8 h-9"
+              />
             </div>
-          </CardHeader>
-          <CardContent>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -371,15 +362,17 @@ export default function MoskeeDashboard() {
                 )}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Planning - Upcoming Prayers */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Planning komende dagen</CardTitle>
-          </CardHeader>
-          <CardContent>
+      {/* Planning - Upcoming Prayers */}
+      <Card className="animate-fade-in">
+        <CardHeader>
+          <CardTitle className="text-lg">Planning komende dagen</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -417,46 +410,52 @@ export default function MoskeeDashboard() {
                 )}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Notifications */}
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
-              Recente activiteit
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {services.slice(0, 5).map((service) => (
-                <div key={service.id} className="flex items-start gap-3 text-sm">
-                  <div className="text-xs text-muted-foreground whitespace-nowrap">
-                    {format(new Date(service.requested_at), "HH:mm", { locale: nl })}
-                  </div>
-                  <div className="flex-1">
-                    {service.status === "PLANNED" ? (
-                      <span>Gebed gepland voor dossier {service.dossiers.ref_number}</span>
-                    ) : service.status === "DONE" ? (
-                      <span>Gebed voltooid voor dossier {service.dossiers.ref_number}</span>
-                    ) : service.status === "CANCELLED" ? (
-                      <span>Gebed geannuleerd voor dossier {service.dossiers.ref_number}</span>
-                    ) : (
-                      <span>Nieuwe aanvraag ontvangen ({service.dossiers.ref_number})</span>
-                    )}
-                  </div>
+      {/* Notifications */}
+      <Card className="animate-fade-in">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" />
+            Recente activiteit
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-0 border rounded-lg overflow-hidden bg-card">
+            {services.slice(0, 5).map((service, idx) => (
+              <div 
+                key={service.id} 
+                className={cn(
+                  "flex items-start gap-3 p-3 hover:bg-muted/50 transition-colors",
+                  idx !== 4 && "border-b"
+                )}
+              >
+                <div className="text-xs text-muted-foreground whitespace-nowrap min-w-[50px]">
+                  {format(new Date(service.requested_at), "HH:mm", { locale: nl })}
                 </div>
-              ))}
-              {services.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  Geen recente activiteit
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                <div className="flex-1 text-sm">
+                  {service.status === "PLANNED" ? (
+                    <span>Gebed gepland voor dossier {service.dossiers.ref_number}</span>
+                  ) : service.status === "DONE" ? (
+                    <span>Gebed voltooid voor dossier {service.dossiers.ref_number}</span>
+                  ) : service.status === "CANCELLED" ? (
+                    <span>Gebed geannuleerd voor dossier {service.dossiers.ref_number}</span>
+                  ) : (
+                    <span>Nieuwe aanvraag ontvangen ({service.dossiers.ref_number})</span>
+                  )}
+                </div>
+              </div>
+            ))}
+            {services.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                Geen recente activiteit
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Reject Dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>

@@ -143,113 +143,134 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="space-y-4 sm:space-y-6 p-3 sm:p-4 lg:p-8 max-w-[1600px] mx-auto pb-safe">
-        {/* Welcome Header */}
-        <div className="space-y-1">
-          <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-            {t("dashboard.welcomeBack")}, {userName}
-          </h1>
-        </div>
-
-        {/* Onboarding Wizard */}
-        {showOnboarding && organizationId && (
-          <OnboardingWizard
-            organizationId={organizationId}
-            onComplete={() => setShowOnboarding(false)}
-          />
-        )}
-
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-          <Card className="border-border/40">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t("dashboard.totalActive")}
-              </CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalActive}</div>
-              <p className="text-xs text-muted-foreground mt-1">{t("dashboard.activeDossiers")}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border/40">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t("dashboard.repatriation")}
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.repatriation}</div>
-              <p className="text-xs text-muted-foreground mt-1">{t("dashboard.ongoingRepatriations")}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border/40">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t("dashboard.local")}
-              </CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.local}</div>
-              <p className="text-xs text-muted-foreground mt-1">{t("dashboard.localFunerals")}</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Reviews Card removed - only for insurers/admins */}
-
-        {/* Active Dossiers with Progress */}
-        <div className="space-y-3 sm:space-y-4">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">{t("dashboard.activeFiles")}</h2>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              {t("dashboard.filesProgress")}
-            </p>
+    <div className="space-y-6 pb-8">
+      {/* Professional Header */}
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <FileText className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+                  {t("dashboard.welcomeBack")}, {userName}
+                </h1>
+              </div>
+            </div>
           </div>
+        </CardContent>
+      </Card>
 
+      {/* Onboarding Wizard */}
+      {showOnboarding && organizationId && (
+        <OnboardingWizard
+          organizationId={organizationId}
+          onComplete={() => setShowOnboarding(false)}
+        />
+      )}
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 animate-fade-in">
+        <Card className="border-border/40 hover:shadow-sm transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {t("dashboard.totalActive")}
+            </CardTitle>
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <FileText className="h-4 w-4 text-primary" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalActive}</div>
+            <p className="text-xs text-muted-foreground mt-1">{t("dashboard.activeDossiers")}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/40 hover:shadow-sm transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {t("dashboard.repatriation")}
+            </CardTitle>
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <TrendingUp className="h-4 w-4 text-primary" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.repatriation}</div>
+            <p className="text-xs text-muted-foreground mt-1">{t("dashboard.ongoingRepatriations")}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/40 hover:shadow-sm transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {t("dashboard.local")}
+            </CardTitle>
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <CheckCircle2 className="h-4 w-4 text-primary" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.local}</div>
+            <p className="text-xs text-muted-foreground mt-1">{t("dashboard.localFunerals")}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Active Dossiers */}
+      <Card className="animate-fade-in">
+        <CardHeader>
+          <CardTitle className="text-lg">{t("dashboard.activeFiles")}</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            {t("dashboard.filesProgress")}
+          </p>
+        </CardHeader>
+
+        <CardContent>
           {dossiers.length === 0 ? (
-            <Card className="border-border/40">
-              <CardContent className="flex items-center justify-center py-8 sm:py-12">
-                <div className="text-center space-y-2">
-                  <Clock className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-muted-foreground" />
-                  <p className="text-sm sm:text-base text-muted-foreground">{t("dashboard.noActiveDossiers")}</p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="text-center py-12">
+              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4 mx-auto">
+                <Clock className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">{t("dashboard.noActiveDossiers")}</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-1 gap-2 sm:gap-3">
+            <div className="space-y-2">
               {dossiers.map((dossier) => (
-                <Card 
-                  key={dossier.id} 
-                  className="cursor-pointer hover:shadow-md active:scale-[0.98] transition-all touch-manipulation"
+                <div
+                  key={dossier.id}
+                  className="group rounded-lg border bg-card p-4 cursor-pointer hover:shadow-sm hover:border-primary/50 transition-all duration-200"
                   onClick={() => navigate(`/dossiers/${dossier.id}`)}
                 >
-                  <CardContent className="p-3 sm:p-4">
-                    <div className="flex items-start sm:items-center justify-between gap-2 flex-col sm:flex-row">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <FileText className="h-5 w-5 text-primary" />
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm sm:text-base truncate">{dossier.deceased_name}</h3>
+                        <h3 className="font-medium text-sm sm:text-base truncate group-hover:text-primary transition-colors">
+                          {dossier.deceased_name}
+                        </h3>
                         <p className="text-xs sm:text-sm text-muted-foreground truncate">
                           Ref: {dossier.display_id} • {dossier.flow === 'REP' ? 'Repatriëring' : 'Lokaal'}
                         </p>
                       </div>
-                      <Badge variant={dossier.flow === 'REP' ? 'default' : 'secondary'} className="text-xs flex-shrink-0">
-                        {dossier.status}
-                      </Badge>
                     </div>
-                  </CardContent>
-                </Card>
+                    <Badge 
+                      variant="secondary"
+                      className="flex-shrink-0 text-xs bg-primary/10 text-primary border-primary/20"
+                    >
+                      {dossier.status}
+                    </Badge>
+                  </div>
+                </div>
               ))}
             </div>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

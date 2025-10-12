@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { 
   Building2, FileCheck, AlertCircle, Refrigerator, 
   Activity, Receipt, Users, FileText, FolderOpen
@@ -110,107 +111,80 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-semibold">
-            Platform Admin Dashboard
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">Centraal overzicht van JanazApp</p>
-        </div>
+    <div className="space-y-6 pb-8">
+      {/* Professional Header */}
+      <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Activity className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground font-medium">Admin</p>
+              <h1 className="text-2xl font-bold tracking-tight">Platform Dashboard</h1>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">Centraal overzicht van JanazApp</p>
+        </CardContent>
+      </Card>
+
+      {/* KPI Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 animate-fade-in">
+        <KPICard title="Actieve Dossiers" value={stats.activeDossiers} icon={FileCheck} />
+        <KPICard title="Docs te reviewen" value={stats.pendingDocs} icon={FileCheck} />
+        <KPICard title="Moskee blokkades" value={stats.mosqueDayBlocks} icon=
+
+{AlertCircle} />
+        <KPICard title="Koelcellen bezet" value={stats.coolerCellOccupancy} icon={Refrigerator} />
       </div>
 
-        {/* KPI Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <KPICard
-          title="Actieve Dossiers"
-          value={stats.activeDossiers}
-          icon={FileCheck}
-        />
-        <KPICard
-          title="Docs te reviewen"
-          value={stats.pendingDocs}
-          icon={FileCheck}
-        />
-        <KPICard
-          title="Moskee blokkades"
-          value={stats.mosqueDayBlocks}
-          icon={AlertCircle}
-        />
-        <KPICard
-          title="Koelcellen bezet"
-          value={stats.coolerCellOccupancy}
-          icon={Refrigerator}
-        />
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <KPICard
-          title="Integratie fouten"
-          value={stats.integrationErrors}
-          icon={Activity}
-        />
-        <KPICard
-          title="Openstaande facturen"
-          value={stats.pendingInvoices}
-          icon={Receipt}
-        />
-        <KPICard
-          title="Organisaties ter controle"
-          value={stats.pendingOrgs}
-          icon={Building2}
-        />
-        <KPICard
-          title="Organisaties ter controle"
-          value={stats.pendingOrgs}
-          icon={Building2}
-        />
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 animate-fade-in">
+        <KPICard title="Integratie fouten" value={stats.integrationErrors} icon={Activity} />
+        <KPICard title="Openstaande facturen" value={stats.pendingInvoices} icon={Receipt} />
+        <KPICard title="Organisaties ter controle" value={stats.pendingOrgs} icon={Building2} />
+        <KPICard title="Organisaties ter controle" value={stats.pendingOrgs} icon={Building2} />
+      </div>
 
       {/* Alerts & Quick Actions */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">{t("admin.dashboard.latestEvents")}</CardTitle>
+      <div className="grid gap-6 md:grid-cols-2 animate-fade-in">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">{t("admin.dashboard.latestEvents")}</CardTitle>
           </CardHeader>
           <CardContent>
             {alerts.length > 0 ? (
-              <div className="overflow-hidden rounded-lg border">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="px-4 py-2 text-left font-medium">Tijd</th>
-                      <th className="px-4 py-2 text-left font-medium">Event</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {alerts.map((alert, idx) => (
-                      <tr key={idx} className="hover:bg-muted/30">
-                        <td className="px-4 py-2 text-muted-foreground whitespace-nowrap">
-                          {alert.time}
-                        </td>
-                        <td className="px-4 py-2">{alert.message}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="space-y-0 border rounded-lg overflow-hidden bg-card">
+                {alerts.map((alert, idx) => (
+                  <div 
+                    key={idx} 
+                    className={cn(
+                      "flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors",
+                      idx !== alerts.length - 1 && "border-b"
+                    )}
+                  >
+                    <span className="text-xs text-muted-foreground whitespace-nowrap min-w-[50px]">
+                      {alert.time}
+                    </span>
+                    <span className="text-sm flex-1">{alert.message}</span>
+                  </div>
+                ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">Geen recente events</p>
+              <p className="text-sm text-muted-foreground text-center py-8">Geen recente events</p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">{t("admin.dashboard.quickActions")}</CardTitle>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">{t("admin.dashboard.quickActions")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-2">
               <Button 
                 variant="outline" 
                 size="sm"
-                className="justify-start"
+                className="justify-start h-9"
                 onClick={() => navigate("/admin/directory")}
               >
                 <Building2 className="mr-2 h-4 w-4" />
@@ -219,7 +193,7 @@ export default function AdminDashboard() {
               <Button 
                 variant="outline" 
                 size="sm"
-                className="justify-start"
+                className="justify-start h-9"
                 onClick={() => navigate("/admin/dossiers")}
               >
                 <FolderOpen className="mr-2 h-4 w-4" />
@@ -228,7 +202,7 @@ export default function AdminDashboard() {
               <Button 
                 variant="outline" 
                 size="sm"
-                className="justify-start"
+                className="justify-start h-9"
                 onClick={() => navigate("/admin/documents")}
               >
                 <FileText className="mr-2 h-4 w-4" />
@@ -237,7 +211,7 @@ export default function AdminDashboard() {
               <Button 
                 variant="outline" 
                 size="sm"
-                className="justify-start"
+                className="justify-start h-9"
                 onClick={() => navigate("/admin/integrations")}
               >
                 <Activity className="mr-2 h-4 w-4" />
@@ -246,7 +220,7 @@ export default function AdminDashboard() {
               <Button 
                 variant="outline" 
                 size="sm"
-                className="justify-start"
+                className="justify-start h-9"
                 onClick={() => navigate("/admin/invoices")}
               >
                 <Receipt className="mr-2 h-4 w-4" />
@@ -255,7 +229,7 @@ export default function AdminDashboard() {
               <Button 
                 variant="outline" 
                 size="sm"
-                className="justify-start"
+                className="justify-start h-9"
                 onClick={() => navigate("/admin/audit")}
               >
                 <FileText className="mr-2 h-4 w-4" />
@@ -266,7 +240,9 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Notification Log */}
-        <NotificationLog />
+        <div className="md:col-span-2">
+          <NotificationLog />
+        </div>
       </div>
     </div>
   );

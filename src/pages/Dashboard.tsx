@@ -84,7 +84,7 @@ const Dashboard = () => {
           }
         }
 
-        // Fetch active dossiers with their progress
+        // Fetch active dossiers with their progress (exclude deleted and completed)
         const { data: dossiersData, error: dossiersError } = await supabase
           .from("dossiers")
           .select(`
@@ -94,8 +94,10 @@ const Dashboard = () => {
             flow,
             status
           `)
-          .in("status", ["CREATED", "FD_ASSIGNED", "INTAKE_IN_PROGRESS", "DOCS_PENDING", "DOCS_VERIFIED", "PLANNING", "APPROVED"])
-          .order("updated_at", { ascending: false });
+          .is("deleted_at", null)
+          .neq("status", "ARCHIVED" as any)
+          .order("updated_at", { ascending: false })
+          .limit(50);
 
         if (dossiersError) {
           console.error("Error fetching dossiers:", dossiersError);

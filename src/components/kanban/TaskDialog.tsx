@@ -287,6 +287,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
         });
       }
 
+      // Close dialog and reset form
       onOpenChange(false);
       resetForm();
     } catch (error: any) {

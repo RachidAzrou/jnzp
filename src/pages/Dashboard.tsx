@@ -40,6 +40,9 @@ const Dashboard = () => {
             user
           }
         } = await supabase.auth.getUser();
+        
+        let userOrgId: string | null = null;
+        
         if (user) {
           const {
             data: profile
@@ -53,6 +56,7 @@ const Dashboard = () => {
             data: roleData
           } = await supabase.from("user_roles").select("organization_id, role").eq("user_id", user.id).single();
           if (roleData?.organization_id) {
+            userOrgId = roleData.organization_id;
             setOrganizationId(roleData.organization_id);
 
             // Check onboarding status for professional roles
@@ -75,30 +79,32 @@ const Dashboard = () => {
           }
         }
 
-        // Fetch active dossiers with their progress (exclude deleted and completed)
-        const {
-          data: dossiersData,
-          error: dossiersError
-        } = await supabase.from("dossiers").select(`
-            id,
-            display_id,
-            deceased_name,
-            flow,
-            status
-          `).is("deleted_at", null).neq("status", "ARCHIVED" as any).order("updated_at", {
-          ascending: false
-        }).limit(50);
-        if (dossiersError) {
-          console.error("Error fetching dossiers:", dossiersError);
-        } else if (dossiersData) {
-          setDossiers(dossiersData);
+        // Fetch active dossiers for this organization only (exclude deleted and archived)
+        if (userOrgId) {
+          const {
+            data: dossiersData,
+            error: dossiersError
+          } = await supabase.from("dossiers").select(`
+              id,
+              display_id,
+              deceased_name,
+              flow,
+              status
+            `).eq("assigned_fd_org_id", userOrgId).is("deleted_at", null).neq("status", "ARCHIVED" as any).order("updated_at", {
+            ascending: false
+          }).limit(50);
+          if (dossiersError) {
+            console.error("Error fetching dossiers:", dossiersError);
+          } else if (dossiersData) {
+            setDossiers(dossiersData);
 
-          // Calculate stats
-          setStats({
-            totalActive: dossiersData.length,
-            repatriation: dossiersData.filter(d => d.flow === 'REP').length,
-            local: dossiersData.filter(d => d.flow === 'LOC').length
-          });
+            // Calculate stats
+            setStats({
+              totalActive: dossiersData.length,
+              repatriation: dossiersData.filter(d => d.flow === 'REP').length,
+              local: dossiersData.filter(d => d.flow === 'LOC').length
+            });
+          }
         }
         setLoading(false);
       } catch (error) {

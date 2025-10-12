@@ -98,7 +98,6 @@ const Dossiers = () => {
         .from("view_my_dossiers")
         .select("*")
         .eq("assigned_fd_org_id", organizationId)
-        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (myError) throw myError;

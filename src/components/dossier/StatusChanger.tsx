@@ -21,11 +21,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Edit, AlertCircle, CheckCircle2, Lock, ArrowRight, Circle } from "lucide-react";
+import { Edit, AlertCircle, CheckCircle2, Lock, ArrowRight, Circle, Shield } from "lucide-react";
 import { AdvisoryDialog } from "./AdvisoryDialog";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { DossierStatusHistory } from "./DossierStatusHistory";
 
 interface StatusChangerProps {
   dossierId: string;
@@ -652,137 +653,197 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
           Status wijzigen
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">Status wijzigen</DialogTitle>
+          <DialogTitle className="text-xl">Workflow Beheer</DialogTitle>
           <DialogDescription>
-            Volg de workflow om het dossier door het proces te leiden
+            Volg de workflow-stappen om het dossier door het proces te leiden
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
-          {/* Workflow Timeline */}
-          <div className="p-4 rounded-lg bg-muted/20 border">
-            <Label className="text-sm font-semibold mb-3 block">Workflow overzicht</Label>
-            <div className="relative">
-              {/* Timeline line */}
-              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
-              
-              <div className="space-y-3">
+          {/* Horizontal Stepper */}
+          <div className="space-y-4">
+            <Label className="text-sm font-semibold">Workflow overzicht</Label>
+            
+            {/* Main workflow statuses (horizontale stepper) */}
+            <div className="relative bg-muted/20 rounded-lg p-4">
+              <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2">
                 {STATUSES.filter(s => s !== 'LEGAL_HOLD').map((status, index) => {
                   const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
                   const statusInfo = labels[status as keyof typeof labels];
                   const isCurrentStatus = status === currentStatus;
-                  const isReachable = isAdmin || ALLOWED_TRANSITIONS[currentStatus]?.includes(status);
-                  const isPast = STATUSES.indexOf(status) < STATUSES.indexOf(currentStatus);
+                  const statusIndex = STATUSES.indexOf(status);
+                  const currentIndex = STATUSES.indexOf(currentStatus);
+                  const isPast = statusIndex < currentIndex;
+                  const isFuture = statusIndex > currentIndex;
+                  const isNextStep = ALLOWED_TRANSITIONS[currentStatus]?.includes(status);
                   
                   return (
-                    <div key={status} className="relative flex items-start gap-3 pl-10">
-                      {/* Timeline dot */}
-                      <div className={`absolute left-2.5 top-2 w-3 h-3 rounded-full border-2 z-10 ${
-                        isCurrentStatus 
-                          ? 'bg-primary border-primary ring-4 ring-primary/20' 
-                          : isPast
-                          ? 'bg-muted-foreground/30 border-muted-foreground/30'
-                          : 'bg-background border-border'
-                      }`} />
-                      
-                      <div className={`flex-1 p-2 rounded-lg transition-all ${
-                        isCurrentStatus 
-                          ? 'bg-primary/10 border-2 border-primary' 
-                          : isReachable && !isCurrentStatus
-                          ? 'bg-accent/5 border border-border'
-                          : 'opacity-40'
-                      }`}>
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <Badge 
-                              variant={STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any}
-                              className="text-xs"
-                            >
-                              {statusInfo.label}
-                            </Badge>
-                            {isCurrentStatus && (
-                              <span className="text-xs font-medium text-primary">← Huidige status</span>
-                            )}
-                            {isReachable && !isCurrentStatus && (
-                              <ArrowRight className="h-3 w-3 text-primary" />
-                            )}
-                          </div>
+                    <div key={status} className="flex items-center min-w-fit">
+                      <div className={`
+                        flex flex-col items-center gap-2 p-3 rounded-lg transition-all
+                        ${isCurrentStatus ? 'bg-primary/10 border-2 border-primary' : 'bg-background border border-border'}
+                        ${isNextStep && !isCurrentStatus ? 'ring-2 ring-primary/30' : ''}
+                      `}>
+                        {/* Status icoon/indicator */}
+                        <div className={`
+                          w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm
+                          ${isCurrentStatus ? 'bg-primary text-primary-foreground ring-4 ring-primary/20' : ''}
+                          ${isPast && !isCurrentStatus ? 'bg-muted-foreground/30 text-muted-foreground' : ''}
+                          ${isFuture && !isCurrentStatus ? 'bg-muted text-muted-foreground/50' : ''}
+                          ${status === 'LEGAL_HOLD' ? 'bg-destructive text-destructive-foreground' : ''}
+                        `}>
+                          {isPast && !isCurrentStatus ? '✓' : index + 1}
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                          {statusInfo.description}
-                        </p>
+                        
+                        {/* Status label */}
+                        <div className="text-center min-w-[100px] max-w-[140px]">
+                          <Badge 
+                            variant={
+                              isCurrentStatus ? 'default' :
+                              status === 'LEGAL_HOLD' ? 'destructive' :
+                              STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any
+                            }
+                            className="text-xs whitespace-nowrap mb-1"
+                          >
+                            {statusInfo.label}
+                          </Badge>
+                          <p className="text-[10px] text-muted-foreground line-clamp-2 leading-tight">
+                            {statusInfo.description}
+                          </p>
+                        </div>
+                        
+                        {/* Indicators */}
+                        {isCurrentStatus && (
+                          <span className="text-[10px] font-semibold text-primary">Huidig</span>
+                        )}
+                        {isNextStep && !isCurrentStatus && (
+                          <span className="text-[10px] font-medium text-primary">Volgende</span>
+                        )}
                       </div>
+                      
+                      {/* Connector arrow */}
+                      {index < STATUSES.filter(s => s !== 'LEGAL_HOLD').length - 1 && (
+                        <ArrowRight className={`
+                          mx-1 flex-shrink-0
+                          ${isPast ? 'text-muted-foreground/50' : 'text-muted-foreground/20'}
+                        `} size={20} />
+                      )}
                     </div>
                   );
                 })}
               </div>
             </div>
+
+            {/* Legal Hold Warning (if applicable) */}
+            {currentStatus === 'LEGAL_HOLD' && (
+              <Alert variant="destructive">
+                <Shield className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>Juridische blokkade actief</strong><br/>
+                  Dit dossier is geblokkeerd door het Parket. Statuswijzigingen zijn beperkt.
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
 
-          {/* Current Status Display */}
-          <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border-2">
-            <span className="text-sm font-medium text-muted-foreground">Huidige status</span>
-            <Badge variant={STATUS_BADGES[currentStatus as keyof typeof STATUS_BADGES] as any} className="text-base px-4 py-1.5">
-              {STATUS_LABELS[currentStatus]}
-            </Badge>
+          {/* Current Status Card */}
+          <div className="p-5 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-2 flex-1">
+                <div className="flex items-center gap-2">
+                  <Circle className="h-3 w-3 fill-primary text-primary animate-pulse" />
+                  <span className="text-sm font-medium text-muted-foreground">Huidige status</span>
+                </div>
+                <div>
+                  <Badge 
+                    variant={STATUS_BADGES[currentStatus as keyof typeof STATUS_BADGES] as any} 
+                    className="text-lg px-4 py-1.5 mb-2"
+                  >
+                    {(isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD)[currentStatus as keyof typeof STATUS_LABELS_FD].label}
+                  </Badge>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {(isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD)[currentStatus as keyof typeof STATUS_LABELS_FD].description}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Available Next Steps */}
+          {/* Next Steps Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 pb-2 border-b">
               <ArrowRight className="h-5 w-5 text-primary" />
               <Label className="text-lg font-semibold">
-                Beschikbare volgende stappen
+                Volgende acties
               </Label>
+              {!isAdmin && (
+                <Badge variant="outline" className="text-xs">
+                  Enkel logische volgende stappen
+                </Badge>
+              )}
             </div>
             
-            <div className="space-y-3">
+            <div className="grid gap-3">
               {(isAdmin ? STATUSES : STATUSES.filter(status => 
                 ALLOWED_TRANSITIONS[currentStatus]?.includes(status)
               )).map((status) => {
                 const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
                 const statusInfo = labels[status as keyof typeof labels];
                 const isSelected = status === newStatus;
+                const isCurrent = status === currentStatus;
+                
+                if (isCurrent && !isAdmin) return null;
                 
                 return (
                   <button
                     key={status}
                     type="button"
                     onClick={() => setNewStatus(status)}
+                    disabled={isCurrent}
                     className={`
-                      w-full p-5 rounded-xl border-2 text-left transition-all
-                      hover:border-primary/60 hover:shadow-md hover:scale-[1.02]
-                      ${isSelected
-                        ? 'border-primary bg-primary/5 shadow-lg scale-[1.02]' 
-                        : 'border-border bg-background'
+                      w-full p-4 rounded-xl border-2 text-left transition-all
+                      disabled:opacity-40 disabled:cursor-not-allowed
+                      ${isSelected && !isCurrent
+                        ? 'border-primary bg-primary/5 shadow-lg scale-[1.01]' 
+                        : 'border-border bg-card hover:border-primary/50 hover:shadow-md'
                       }
                     `}
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-3">
-                          <Badge 
-                            variant={STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any}
-                            className="text-base px-3 py-1"
-                          >
-                            {statusInfo.label}
-                          </Badge>
-                          {isSelected && (
-                            <span className="text-sm font-medium text-primary flex items-center gap-1">
-                              <CheckCircle2 className="h-4 w-4" />
-                              Geselecteerd
-                            </span>
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className={`
+                          w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
+                          ${isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}
+                          ${status === 'LEGAL_HOLD' ? 'bg-destructive/20' : ''}
+                        `}>
+                          {isSelected ? (
+                            <CheckCircle2 className="h-4 w-4" />
+                          ) : (
+                            <ArrowRight className="h-4 w-4" />
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {statusInfo.description}
-                        </p>
+                        
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Badge 
+                              variant={STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any}
+                              className="text-sm px-2.5 py-0.5"
+                            >
+                              {statusInfo.label}
+                            </Badge>
+                            {isSelected && (
+                              <span className="text-xs font-medium text-primary">
+                                Geselecteerd
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {statusInfo.description}
+                          </p>
+                        </div>
                       </div>
-                      <ArrowRight className={`h-6 w-6 mt-1 transition-colors ${
-                        isSelected ? 'text-primary' : 'text-muted-foreground/30'
-                      }`} />
                     </div>
                   </button>
                 );
@@ -790,7 +851,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             </div>
             
             {!isAdmin && ALLOWED_TRANSITIONS[currentStatus]?.length === 0 && (
-              <div className="p-6 rounded-xl bg-muted/20 border-2 border-dashed text-center">
+              <div className="p-8 rounded-xl bg-muted/20 border-2 border-dashed text-center">
                 <Circle className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
                 <p className="text-sm font-medium text-muted-foreground">
                   Geen volgende stappen beschikbaar
@@ -804,7 +865,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
 
           {/* Reason Input */}
           {newStatus !== currentStatus && (
-            <div className="space-y-2 animate-in fade-in-50 duration-200">
+            <div className="space-y-2 p-4 rounded-lg bg-muted/30 animate-in fade-in-50 duration-200">
               <Label className="text-sm font-medium">
                 Reden voor wijziging <span className="text-muted-foreground font-normal">(optioneel)</span>
               </Label>
@@ -817,13 +878,22 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
               />
             </div>
           )}
+
+          {/* Status History */}
+          <div className="pt-2 border-t">
+            <DossierStatusHistory dossierId={dossierId} currentStatus={currentStatus} />
+          </div>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={() => setOpen(false)}>
             Annuleren
           </Button>
-          <Button onClick={handleStatusChange} disabled={newStatus === currentStatus}>
+          <Button 
+            onClick={handleStatusChange} 
+            disabled={newStatus === currentStatus}
+            className="min-w-[140px]"
+          >
             <CheckCircle2 className="mr-2 h-4 w-4" />
             Status wijzigen
           </Button>

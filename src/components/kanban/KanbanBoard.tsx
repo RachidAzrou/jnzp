@@ -26,6 +26,7 @@ interface Column {
 
 interface Task {
   id: string;
+  org_id: string;
   dossier_id: string | null;
   task_type: string | null;
   title: string;

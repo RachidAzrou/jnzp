@@ -129,6 +129,15 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
   useEffect(() => {
     if (task && open) {
+      console.log('TaskDetailDialog loaded with:', {
+        title: task.title,
+        priority: task.priority,
+        assignee_id: task.assignee_id,
+        org_id: task.org_id,
+        description: task.description,
+        due_date: task.due_date,
+      });
+      
       setFormData({
         title: task.title || "",
         description: task.description || "",
@@ -246,10 +255,27 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
   const fetchTeamMembers = async () => {
     if (!task) return;
     
+    let orgId = task.org_id;
+    
+    // Fallback: get org_id from current user if not on task
+    if (!orgId) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      
+      const { data: userRole } = await supabase
+        .from('user_roles')
+        .select('organization_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (!userRole) return;
+      orgId = userRole.organization_id;
+    }
+    
     const { data } = await supabase
       .from('user_roles')
       .select('user_id, profiles(id, full_name, email)')
-      .eq('organization_id', task.org_id);
+      .eq('organization_id', orgId);
 
     if (data) {
       setTeamMembers(data.map((r: any) => ({

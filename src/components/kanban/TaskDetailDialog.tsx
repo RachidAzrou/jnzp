@@ -28,6 +28,7 @@ import {
   Download,
   X,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -409,6 +410,37 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
     }
   };
 
+  const handleDeleteTask = async () => {
+    if (!task) return;
+    
+    if (!confirm('Weet je zeker dat je deze taak wilt verwijderen?')) {
+      return;
+    }
+
+    setLoading(true);
+
+    const { error } = await supabase
+      .from('kanban_tasks')
+      .delete()
+      .eq('id', task.id);
+
+    setLoading(false);
+
+    if (error) {
+      toast({
+        title: "Fout",
+        description: "Kon taak niet verwijderen",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Taak verwijderd",
+      });
+      onUpdate?.();
+      onOpenChange(false);
+    }
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!task || !e.target.files || e.target.files.length === 0) return;
 
@@ -567,9 +599,9 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
               </div>
             )}
 
-            <div className="space-y-4">
-              <div>
-                <Label>Titel</Label>
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label className="text-base font-semibold">Titel</Label>
                 {editMode ? (
                   <Input
                     value={formData.title}
@@ -577,12 +609,12 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                     className="mt-1"
                   />
                 ) : (
-                  <p className="text-sm mt-1">{task.title}</p>
+                  <p className="text-base font-medium">{task.title}</p>
                 )}
               </div>
 
-              <div>
-                <Label>Beschrijving</Label>
+              <div className="space-y-2">
+                <Label className="text-base font-semibold">Beschrijving</Label>
                 {editMode ? (
                   <Textarea
                     value={formData.description}
@@ -591,14 +623,14 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                     className="mt-1"
                   />
                 ) : (
-                  <p className="text-sm mt-1 text-muted-foreground">
+                  <p className="text-sm">
                     {task.description || "Geen beschrijving"}
                   </p>
                 )}
               </div>
 
-              <div>
-                <Label>Toegewezen aan</Label>
+              <div className="space-y-2">
+                <Label className="text-base font-semibold">Toegewezen aan</Label>
                 {editMode ? (
                   <Select
                     value={formData.assignee_id || "none"}
@@ -617,14 +649,14 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                     </SelectContent>
                   </Select>
                 ) : (
-                  <p className="text-sm mt-1">
+                  <p className="text-sm font-medium">
                     {assignedUser ? (assignedUser.full_name || assignedUser.email) : "Niet toegewezen"}
                   </p>
                 )}
               </div>
 
-              <div>
-                <Label>Prioriteit</Label>
+              <div className="space-y-2">
+                <Label className="text-base font-semibold">Prioriteit</Label>
                 {editMode ? (
                   <Select
                     value={formData.priority}
@@ -635,29 +667,35 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="LOW">Laag</SelectItem>
-                      <SelectItem value="MEDIUM">Medium</SelectItem>
+                      <SelectItem value="MEDIUM">Normaal</SelectItem>
                       <SelectItem value="HIGH">Hoog</SelectItem>
                       <SelectItem value="CRITICAL">Kritisch</SelectItem>
                     </SelectContent>
                   </Select>
                 ) : (
                   <div className="mt-1">
-                    <Badge>{getPriorityLabel(task.priority || 'MEDIUM')}</Badge>
+                    <Badge variant={
+                      task.priority === 'CRITICAL' ? 'destructive' : 
+                      task.priority === 'HIGH' ? 'default' : 
+                      'secondary'
+                    }>
+                      {getPriorityLabel(task.priority || 'MEDIUM')}
+                    </Badge>
                   </div>
                 )}
               </div>
 
-              <div>
-                <Label>Vervaldatum</Label>
+              <div className="space-y-2">
+                <Label className="text-base font-semibold">Vervaldatum</Label>
                 {editMode ? (
                   <Input
-                    type="datetime-local"
-                    value={formData.due_date}
+                    type="date"
+                    value={formData.due_date ? formData.due_date.split('T')[0] : ''}
                     onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                     className="mt-1"
                   />
                 ) : (
-                  <p className="text-sm mt-1 text-muted-foreground">
+                  <p className="text-sm font-medium">
                     {task.due_date
                       ? format(new Date(task.due_date), "PPP", { locale: nl })
                       : "Geen deadline"}
@@ -697,14 +735,14 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
               )}
 
               {task.metadata?.auto && (
-                <div className="text-sm text-muted-foreground bg-muted p-2 rounded flex items-center gap-2">
+                <div className="text-sm bg-muted p-3 rounded-lg flex items-center gap-2">
                   <span>⚙️</span>
-                  <span>Automatisch aangemaakt</span>
+                  <span className="font-medium">Automatisch aangemaakt</span>
                 </div>
               )}
             </div>
 
-            <div className="flex gap-2 pt-4">
+            <div className="flex gap-2 pt-4 border-t">
               {editMode ? (
                 <>
                   <Button onClick={handleUpdateTask} disabled={loading}>
@@ -728,6 +766,17 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Markeer als afgerond
                   </Button>
+                  {!task.metadata?.auto && (
+                    <Button 
+                      onClick={handleDeleteTask} 
+                      variant="destructive"
+                      disabled={loading}
+                      className="ml-auto"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Verwijderen
+                    </Button>
+                  )}
                 </>
               )}
             </div>

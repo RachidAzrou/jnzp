@@ -42,6 +42,9 @@ import { MoreVertical, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { DeleteDossierDialog } from "@/components/dossier/DeleteDossierDialog";
+import { EditableFamilyContacts } from "@/components/dossier/EditableFamilyContacts";
+import { EditableObituaryCard } from "@/components/dossier/EditableObituaryCard";
+import { EditableServiceCard } from "@/components/dossier/EditableServiceCard";
 
 const DossierDetail = () => {
   const { id } = useParams();
@@ -55,6 +58,9 @@ const DossierDetail = () => {
   const [washService, setWashService] = useState<any>(null);
   const [claim, setClaim] = useState<any>(null);
   const [familyContacts, setFamilyContacts] = useState<any[]>([]);
+  const [mosqueeService, setMosqueeService] = useState<any>(null);
+  const [mortuariumService, setMortuariumService] = useState<any>(null);
+  const [obituary, setObituary] = useState<string | null>(null);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [manualEvents, setManualEvents] = useState<any[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -758,40 +764,12 @@ const DossierDetail = () => {
               </CardContent>
             </Card>
 
-            {/* Familie & Contact Card */}
-            <Card>
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <Users className="h-5 w-5 text-accent" />
-                  </div>
-                  <CardTitle className="text-xl">Familie & Contact</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {familyContacts.length > 0 ? (
-                  <div className="space-y-3">
-                    {familyContacts.map((contact) => (
-                      <div key={contact.id} className="p-4 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors">
-                        <p className="font-semibold text-sm">{contact.name}</p>
-                        <p className="text-xs text-muted-foreground capitalize">{contact.relationship}</p>
-                        {contact.phone && (
-                          <p className="text-sm mt-2">{contact.phone}</p>
-                        )}
-                        {contact.email && (
-                          <p className="text-sm text-muted-foreground">{contact.email}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="py-8 text-center">
-                    <Users className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                    <p className="text-sm text-muted-foreground">Geen contactpersonen geregistreerd</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            {/* Familie & Contact Card - Editable */}
+            <EditableFamilyContacts
+              dossierId={id!}
+              contacts={familyContacts}
+              onUpdate={fetchDossierData}
+            />
           </div>
 
         </TabsContent>
@@ -935,102 +913,31 @@ const DossierDetail = () => {
 
         {/* Obituary Tab */}
         <TabsContent value="obituary" className="space-y-6">
-          <Card>
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Star className="h-5 w-5 text-primary" />
-                </div>
-                <CardTitle className="text-xl">Overlijdensbericht</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ObituaryViewer dossierId={id!} />
-            </CardContent>
-          </Card>
+          <EditableObituaryCard
+            dossierId={id!}
+            initialObituary={obituary}
+            onUpdate={fetchDossierData}
+          />
         </TabsContent>
 
         {/* Stakeholders Tab */}
         <TabsContent value="stakeholders" className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Moskee */}
-            <Card>
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <PiMosque className="h-5 w-5 text-accent" />
-                  </div>
-                  <CardTitle className="text-xl">Moskee</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {mosqueService ? (
-                  <>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Moskee</Label>
-                      <p className="text-base font-semibold">{mosqueService.organizations?.name || "N/A"}</p>
-                    </div>
-                    <Separator />
-                    <div className="space-y-1.5">
-                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Status</Label>
-                      <div className="mt-1">
-                        <Badge>{mosqueService.status}</Badge>
-                      </div>
-                    </div>
-                    {mosqueService.prayer && (
-                      <>
-                        <Separator />
-                        <div className="space-y-1.5">
-                          <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Gebed</Label>
-                          <p className="text-base font-medium">{mosqueService.prayer}</p>
-                        </div>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <div className="py-8 text-center">
-                    <PiMosque className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                    <p className="text-sm text-muted-foreground">Geen moskee dienst gepland</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+          <div className="grid gap-6">
+            <EditableServiceCard
+              event={mosqueeService}
+              title="Moskee Dienst"
+              description="Janazah details en planning"
+              onUpdate={fetchDossierData}
+            />
+            
+            <EditableServiceCard
+              event={mortuariumService}
+              title="Mortuarium Dienst"
+              description="Wassing details en planning"
+              onUpdate={fetchDossierData}
+            />
 
-            {/* Mortuarium */}
-            <Card>
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <MdOutlineShower className="h-5 w-5 text-accent" />
-                  </div>
-                  <CardTitle className="text-xl">Mortuarium</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {washService ? (
-                  <>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Mortuarium</Label>
-                      <p className="text-base font-semibold">{washService.organizations?.name || "N/A"}</p>
-                    </div>
-                    <Separator />
-                    <div className="space-y-1.5">
-                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Status</Label>
-                      <div className="mt-1">
-                        <Badge>{washService.status}</Badge>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="py-8 text-center">
-                    <MdOutlineShower className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                    <p className="text-sm text-muted-foreground">Geen mortuarium dienst gepland</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Verzekeraar */}
+            {/* Verzekeraar - Read Only */}
             <Card>
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">

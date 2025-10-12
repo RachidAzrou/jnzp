@@ -229,20 +229,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
   };
 
   const fetchAttachments = async () => {
-    if (!task) return;
-    try {
-      const { data, error } = await (supabase as any)
-        .from('task_attachments')
-        .select('*')
-        .eq('task_id', task.id)
-        .order('created_at', { ascending: false });
-
-      if (!error && data) {
-        setAttachments(data);
-      }
-    } catch (err) {
-      console.error('Error fetching attachments:', err);
-    }
+    // Task attachments table doesn't exist yet
+    setAttachments([]);
   };
 
   const fetchTeamMembers = async () => {
@@ -250,13 +238,13 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
     
     const { data } = await supabase
       .from('user_roles')
-      .select('user_id, profiles(id, display_name, email)')
+      .select('user_id, profiles(id, full_name, email)')
       .eq('organization_id', task.org_id);
 
     if (data) {
       setTeamMembers(data.map((r: any) => ({
         id: r.user_id,
-        name: r.profiles?.display_name || r.profiles?.email || 'Onbekend',
+        name: r.profiles?.full_name || r.profiles?.email || 'Onbekend',
       })));
     }
   };
@@ -264,7 +252,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
   const fetchAssignedUser = async (userId: string) => {
     const { data } = await supabase
       .from('profiles')
-      .select('id, display_name, email')
+      .select('id, full_name, email')
       .eq('id', userId)
       .maybeSingle();
 

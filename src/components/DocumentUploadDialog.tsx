@@ -64,13 +64,13 @@ export function DocumentUploadDialog({
           return;
         }
         
-        // Fetch only active dossiers from user's organization(s)
+        // Fetch only assigned dossiers from user's organization(s) - not released or deleted
         const { data } = await supabase
           .from('dossiers')
-          .select('id, ref_number, deceased_name, display_id, assignment_status')
+          .select('id, ref_number, deceased_name, display_id, assignment_status, assigned_fd_org_id')
           .in('assigned_fd_org_id', orgIds)
+          .eq('assignment_status', 'ASSIGNED')
           .is('deleted_at', null)
-          .neq('assignment_status', 'RELEASED')
           .order('created_at', { ascending: false });
         setFetchedDossiers(data || []);
         setLoadingDossiers(false);

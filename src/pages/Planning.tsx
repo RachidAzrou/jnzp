@@ -52,14 +52,15 @@ const Planning = () => {
     try {
       setLoading(true);
 
-      // Fetch wasplaats/mortuarium reservations with dossier info
+      // Fetch wasplaats/mortuarium reservations with dossier info (only active dossiers)
       const { data: wasplaatsData, error: wasplaatsError } = await supabase
         .from("cool_cell_reservations")
         .select(`
           *,
           dossier:dossiers!inner(
             display_id,
-            deceased_name
+            deceased_name,
+            deleted_at
           ),
           cool_cell:cool_cells(
             label
@@ -68,34 +69,39 @@ const Planning = () => {
             name
           )
         `)
+        .is("dossier.deleted_at", null)
         .order("start_at", { ascending: true });
 
-      // Fetch mosque services
+      // Fetch mosque services (only active dossiers)
       const { data: mosqueData, error: mosqueError } = await supabase
         .from("case_events")
         .select(`
           *,
           dossier:dossiers!inner(
             display_id,
-            deceased_name
+            deceased_name,
+            deleted_at
           )
         `)
         .eq("event_type", "MOSQUE_SERVICE")
+        .is("dossier.deleted_at", null)
         .order("scheduled_at", { ascending: true });
 
       if (wasplaatsError) throw wasplaatsError;
       if (mosqueError) throw mosqueError;
 
-      // Fetch repatriations (flight planning preferences)
+      // Fetch repatriations (flight planning preferences) (only active dossiers)
       const { data: repatriationsData, error: repatriationsError } = await supabase
         .from("repatriations")
         .select(`
           *,
           dossier:dossiers!inner(
             display_id,
-            deceased_name
+            deceased_name,
+            deleted_at
           )
         `)
+        .is("dossier.deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (repatriationsError) throw repatriationsError;

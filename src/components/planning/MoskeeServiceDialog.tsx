@@ -33,8 +33,20 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
     { value: "Dhuhr", label: "Dhuhr (Middaggebed)" },
     { value: "Asr", label: "Asr (Namiddaggebed)" },
     { value: "Maghrib", label: "Maghrib (Avondgebed)" },
-    { value: "Isha", label: "Isha (Nachtgebed)" }
+    { value: "Isha", label: "Isha (Nachtgebed)" },
+    { value: "Jumuah", label: "Jumu'ah (Vrijdaggebed)" }
   ];
+
+  // Auto-select Jumu'ah on Friday
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    if (date && date.getDay() === 5) { // 5 = Friday
+      setSelectedPrayer("Jumuah");
+    } else if (selectedPrayer === "Jumuah") {
+      // Reset to Dhuhr if Jumu'ah was selected but date is no longer Friday
+      setSelectedPrayer("Dhuhr");
+    }
+  };
 
   // Fetch active dossiers from user's organization
   const { data: dossiers } = useQuery({
@@ -202,7 +214,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
                 <Calendar
                   mode="single"
                   selected={selectedDate}
-                  onSelect={setSelectedDate}
+                  onSelect={handleDateSelect}
                   disabled={(date) => date < new Date()}
                 />
               </PopoverContent>

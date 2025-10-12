@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { format, startOfWeek, addDays } from "date-fns";
@@ -337,7 +338,6 @@ export default function MoskeeBeschikbaarheid() {
                   <th className="text-center p-3 font-medium text-sm">Maghrib</th>
                   <th className="text-center p-3 font-medium text-sm">Isha</th>
                   <th className="text-center p-3 font-medium text-sm">Jumu'ah</th>
-                  <th className="text-center p-3 font-medium text-sm">Overmacht</th>
                 </tr>
               </thead>
               <tbody>
@@ -402,11 +402,6 @@ export default function MoskeeBeschikbaarheid() {
                           )}
                         </div>
                       </td>
-                      <td className="p-3 text-center">
-                        <span className="text-xs text-muted-foreground">
-                          Zie hieronder ↓
-                        </span>
-                      </td>
                     </tr>
                   );
                 })}
@@ -414,31 +409,96 @@ export default function MoskeeBeschikbaarheid() {
             </table>
           </div>
 
-          <div className="mt-6 space-y-3">
-            <div className="p-4 bg-muted rounded-md">
-              <p className="text-sm text-muted-foreground">
-                <strong>Uitleg:</strong> Vink aan bij welke gebeden janāza kan plaatsvinden. "Dag
-                blokkeren" = overmacht (reden wordt gevraagd). Geblokkeerde dagen tonen alle gebeden
-                als niet beschikbaar.
-              </p>
-            </div>
-
-            {dayBlocks.length > 0 && (
-              <div className="p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
-                <p className="text-sm font-medium text-red-700 dark:text-red-300 mb-2">
-                  🚫 Geblokkeerde dagen deze week:
-                </p>
-                <ul className="space-y-1">
-                  {dayBlocks.map((block) => (
-                    <li key={block.id} className="text-sm text-red-600 dark:text-red-400">
-                      • {format(new Date(block.date), "EEEE d MMMM", { locale: nl })}:{" "}
-                      {block.reason}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          <div className="mt-6 p-4 bg-muted rounded-md">
+            <p className="text-sm text-muted-foreground">
+              <strong>Uitleg:</strong> Vink aan bij welke gebeden janāza kan plaatsvinden. 
+              Voor overmacht situaties (bijv. verbouwing, feestdag) kunt u specifieke dagen blokkeren.
+            </p>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Day Blocking Card */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-lg font-medium">Dagen blokkeren (Overmacht)</CardTitle>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm">
+                  <X className="mr-2 h-4 w-4" />
+                  Dag Blokkeren
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Dag blokkeren</DialogTitle>
+                  <DialogDescription>
+                    Blokkeer een specifieke dag waarop geen janāza's mogelijk zijn (bijv. verbouwing, feestdag)
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Datum</label>
+                    <Input
+                      type="date"
+                      value={blockDate}
+                      onChange={(e) => setBlockDate(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Reden (min. 8 tekens)</label>
+                    <Textarea
+                      value={blockReason}
+                      onChange={(e) => setBlockReason(e.target.value)}
+                      placeholder="bijv. Verbouwing moskee, Eid al-Fitr, enz."
+                      rows={3}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                      Annuleren
+                    </Button>
+                    <Button onClick={handleBlockDay}>Blokkeren</Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {dayBlocks.length > 0 ? (
+            <div className="space-y-2">
+              {dayBlocks.map((block) => (
+                <div
+                  key={block.id}
+                  className="flex items-center justify-between p-3 border rounded-lg bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800"
+                >
+                  <div>
+                    <p className="font-medium text-sm text-red-700 dark:text-red-300">
+                      {format(new Date(block.date), "EEEE d MMMM yyyy", { locale: nl })}
+                    </p>
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      {block.reason}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleUnblockDay(block.id)}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Verwijder
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-6">
+              Geen geblokkeerde dagen. Klik op "Dag Blokkeren" om een datum toe te voegen.
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>

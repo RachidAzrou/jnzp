@@ -12,6 +12,7 @@ import { Session } from "@supabase/supabase-js";
 import { useSessionActivity } from "@/hooks/useSessionActivity";
 import Dashboard from "./pages/Dashboard";
 import Dossiers from "./pages/Dossiers";
+import Archief from "./pages/Archief";
 import Taken from "./pages/Taken";
 import Documenten from "./pages/Documenten";
 import Planning from "./pages/Planning";
@@ -233,6 +234,11 @@ const App = () => (
                           <Route path="/dossiers/:id" element={
                             <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
                               <DossierDetail />
+                            </RoleProtectedRoute>
+                          } />
+                          <Route path="/archief" element={
+                            <RoleProtectedRoute allowedRoles={['platform_admin', 'funeral_director']}>
+                              <Archief />
                             </RoleProtectedRoute>
                           } />
                           <Route path="/taken" element={

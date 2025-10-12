@@ -25,8 +25,16 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
   const [selectedDossier, setSelectedDossier] = useState<string>("");
   const [selectedMosque, setSelectedMosque] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const [selectedTime, setSelectedTime] = useState("14:00");
+  const [selectedPrayer, setSelectedPrayer] = useState("Dhuhr");
   const [location, setLocation] = useState("");
+
+  const prayerTimes = [
+    { value: "Fajr", label: "Fajr (Ochtendgebed)" },
+    { value: "Dhuhr", label: "Dhuhr (Middaggebed)" },
+    { value: "Asr", label: "Asr (Namiddaggebed)" },
+    { value: "Maghrib", label: "Maghrib (Avondgebed)" },
+    { value: "Isha", label: "Isha (Nachtgebed)" }
+  ];
 
   // Fetch active dossiers from user's organization
   const { data: dossiers } = useQuery({
@@ -79,8 +87,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
       }
 
       const scheduledAt = new Date(selectedDate);
-      const [hours, minutes] = selectedTime.split(":").map(Number);
-      scheduledAt.setHours(hours, minutes, 0, 0);
+      scheduledAt.setHours(14, 0, 0, 0); // Default time, prayer-specific time to be set by mosque
 
       // Get mosque name for location_text
       const mosqueName = mosques?.find(m => m.id === selectedMosque)?.name || "";
@@ -94,7 +101,8 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
           location_text: location || mosqueName,
           status: "PLANNED",
           metadata: {
-            mosque_org_id: selectedMosque
+            mosque_org_id: selectedMosque,
+            prayer_time: selectedPrayer
           }
         })
         .select()
@@ -126,7 +134,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
     setSelectedDossier("");
     setSelectedMosque("");
     setSelectedDate(undefined);
-    setSelectedTime("14:00");
+    setSelectedPrayer("Dhuhr");
     setLocation("");
   };
 
@@ -182,32 +190,39 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
           </div>
 
           <div>
-            <Label>Datum & Tijd</Label>
-            <div className="flex gap-2">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="flex-1 justify-start">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {selectedDate ? format(selectedDate, "PPP", { locale: nl }) : "Kies datum"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    disabled={(date) => date < new Date()}
-                  />
-                </PopoverContent>
-              </Popover>
+            <Label>Datum</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full justify-start">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, "PPP", { locale: nl }) : "Kies datum"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  disabled={(date) => date < new Date()}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
 
-              <Input
-                type="time"
-                value={selectedTime}
-                onChange={(e) => setSelectedTime(e.target.value)}
-                className="w-32"
-              />
-            </div>
+          <div>
+            <Label>Gebed</Label>
+            <Select value={selectedPrayer} onValueChange={setSelectedPrayer}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecteer gebed..." />
+              </SelectTrigger>
+              <SelectContent>
+                {prayerTimes.map((prayer) => (
+                  <SelectItem key={prayer.value} value={prayer.value}>
+                    {prayer.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>

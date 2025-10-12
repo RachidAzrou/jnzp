@@ -94,6 +94,16 @@ interface TaskDetailDialogProps {
   onUpdate?: () => void;
 }
 
+const getPriorityLabel = (priority: string): string => {
+  const labels: Record<string, string> = {
+    LOW: 'Laag',
+    MEDIUM: 'Normaal',
+    HIGH: 'Hoog',
+    CRITICAL: 'Kritisch',
+  };
+  return labels[priority] || priority;
+};
+
 export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDetailDialogProps) {
   const { toast } = useToast();
   const [editMode, setEditMode] = useState(false);
@@ -582,7 +592,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                   </Select>
                 ) : (
                   <p className="text-sm mt-1">
-                    {assignedUser ? (assignedUser.display_name || assignedUser.email) : "Niet toegewezen"}
+                    {assignedUser ? (assignedUser.full_name || assignedUser.email) : "Niet toegewezen"}
                   </p>
                 )}
               </div>
@@ -606,7 +616,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                   </Select>
                 ) : (
                   <div className="mt-1">
-                    <Badge>{task.priority || 'MEDIUM'}</Badge>
+                    <Badge>{getPriorityLabel(task.priority || 'MEDIUM')}</Badge>
                   </div>
                 )}
               </div>

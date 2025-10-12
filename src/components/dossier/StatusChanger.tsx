@@ -653,139 +653,53 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
           Status wijzigen
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">Workflow Beheer</DialogTitle>
+          <DialogTitle>Status wijzigen</DialogTitle>
           <DialogDescription>
-            Volg de workflow-stappen om het dossier door het proces te leiden
+            Selecteer de volgende status voor dit dossier
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-6">
-          {/* Horizontal Stepper */}
-          <div className="space-y-4">
-            <Label className="text-sm font-semibold">Workflow overzicht</Label>
-            
-            {/* Main workflow statuses (horizontale stepper) */}
-            <div className="relative bg-muted/20 rounded-lg p-4">
-              <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2">
-                {STATUSES.filter(s => s !== 'LEGAL_HOLD').map((status, index) => {
-                  const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
-                  const statusInfo = labels[status as keyof typeof labels];
-                  const isCurrentStatus = status === currentStatus;
-                  const statusIndex = STATUSES.indexOf(status);
-                  const currentIndex = STATUSES.indexOf(currentStatus);
-                  const isPast = statusIndex < currentIndex;
-                  const isFuture = statusIndex > currentIndex;
-                  const isNextStep = ALLOWED_TRANSITIONS[currentStatus]?.includes(status);
-                  
-                  return (
-                    <div key={status} className="flex items-center min-w-fit">
-                      <div className={`
-                        flex flex-col items-center gap-2 p-3 rounded-lg transition-all
-                        ${isCurrentStatus ? 'bg-primary/10 border-2 border-primary' : 'bg-background border border-border'}
-                        ${isNextStep && !isCurrentStatus ? 'ring-2 ring-primary/30' : ''}
-                      `}>
-                        {/* Status icoon/indicator */}
-                        <div className={`
-                          w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm
-                          ${isCurrentStatus ? 'bg-primary text-primary-foreground ring-4 ring-primary/20' : ''}
-                          ${isPast && !isCurrentStatus ? 'bg-muted-foreground/30 text-muted-foreground' : ''}
-                          ${isFuture && !isCurrentStatus ? 'bg-muted text-muted-foreground/50' : ''}
-                          ${status === 'LEGAL_HOLD' ? 'bg-destructive text-destructive-foreground' : ''}
-                        `}>
-                          {isPast && !isCurrentStatus ? '✓' : index + 1}
-                        </div>
-                        
-                        {/* Status label */}
-                        <div className="text-center min-w-[100px] max-w-[140px]">
-                          <Badge 
-                            variant={
-                              isCurrentStatus ? 'default' :
-                              status === 'LEGAL_HOLD' ? 'destructive' :
-                              STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any
-                            }
-                            className="text-xs whitespace-nowrap mb-1"
-                          >
-                            {statusInfo.label}
-                          </Badge>
-                          <p className="text-[10px] text-muted-foreground line-clamp-2 leading-tight">
-                            {statusInfo.description}
-                          </p>
-                        </div>
-                        
-                        {/* Indicators */}
-                        {isCurrentStatus && (
-                          <span className="text-[10px] font-semibold text-primary">Huidig</span>
-                        )}
-                        {isNextStep && !isCurrentStatus && (
-                          <span className="text-[10px] font-medium text-primary">Volgende</span>
-                        )}
-                      </div>
-                      
-                      {/* Connector arrow */}
-                      {index < STATUSES.filter(s => s !== 'LEGAL_HOLD').length - 1 && (
-                        <ArrowRight className={`
-                          mx-1 flex-shrink-0
-                          ${isPast ? 'text-muted-foreground/50' : 'text-muted-foreground/20'}
-                        `} size={20} />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Legal Hold Warning (if applicable) */}
-            {currentStatus === 'LEGAL_HOLD' && (
-              <Alert variant="destructive">
-                <Shield className="h-4 w-4" />
-                <AlertDescription>
-                  <strong>Juridische blokkade actief</strong><br/>
-                  Dit dossier is geblokkeerd door het Parket. Statuswijzigingen zijn beperkt.
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
-
-          {/* Current Status Card */}
-          <div className="p-5 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
-            <div className="flex items-start justify-between gap-4">
-              <div className="space-y-2 flex-1">
-                <div className="flex items-center gap-2">
-                  <Circle className="h-3 w-3 fill-primary text-primary animate-pulse" />
-                  <span className="text-sm font-medium text-muted-foreground">Huidige status</span>
-                </div>
-                <div>
-                  <Badge 
-                    variant={STATUS_BADGES[currentStatus as keyof typeof STATUS_BADGES] as any} 
-                    className="text-lg px-4 py-1.5 mb-2"
-                  >
-                    {(isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD)[currentStatus as keyof typeof STATUS_LABELS_FD].label}
-                  </Badge>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {(isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD)[currentStatus as keyof typeof STATUS_LABELS_FD].description}
-                  </p>
-                </div>
-              </div>
+        <div className="space-y-8 py-4">
+          {/* Current Status - Clean & Simple */}
+          <div className="space-y-3">
+            <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Huidige status</span>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-primary" />
+              <Badge 
+                variant={STATUS_BADGES[currentStatus as keyof typeof STATUS_BADGES] as any} 
+                className="text-base px-3 py-1"
+              >
+                {(isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD)[currentStatus as keyof typeof STATUS_LABELS_FD].label}
+              </Badge>
             </div>
           </div>
 
-          {/* Next Steps Section */}
+          {/* Legal Hold Warning */}
+          {currentStatus === 'LEGAL_HOLD' && (
+            <Alert variant="destructive">
+              <Shield className="h-4 w-4" />
+              <AlertDescription>
+                Juridische blokkade actief - statuswijzigingen zijn beperkt
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Next Steps - Clean List */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b">
-              <ArrowRight className="h-5 w-5 text-primary" />
-              <Label className="text-lg font-semibold">
-                Volgende acties
-              </Label>
+            <div className="flex items-center justify-between">
+              <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">
+                Volgende stappen
+              </span>
               {!isAdmin && (
-                <Badge variant="outline" className="text-xs">
-                  Enkel logische volgende stappen
-                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  {ALLOWED_TRANSITIONS[currentStatus]?.length || 0} beschikbaar
+                </span>
               )}
             </div>
             
-            <div className="grid gap-3">
+            <div className="space-y-2">
               {(isAdmin ? STATUSES : STATUSES.filter(status => 
                 ALLOWED_TRANSITIONS[currentStatus]?.includes(status)
               )).map((status) => {
@@ -803,46 +717,29 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
                     onClick={() => setNewStatus(status)}
                     disabled={isCurrent}
                     className={`
-                      w-full p-4 rounded-xl border-2 text-left transition-all
+                      w-full p-4 rounded-lg border text-left transition-all
                       disabled:opacity-40 disabled:cursor-not-allowed
                       ${isSelected && !isCurrent
-                        ? 'border-primary bg-primary/5 shadow-lg scale-[1.01]' 
-                        : 'border-border bg-card hover:border-primary/50 hover:shadow-md'
+                        ? 'border-primary bg-primary/5 shadow-sm' 
+                        : 'border-border hover:border-primary/40 hover:bg-muted/30'
                       }
                     `}
                   >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className={`
-                          w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-                          ${isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}
-                          ${status === 'LEGAL_HOLD' ? 'bg-destructive/20' : ''}
-                        `}>
-                          {isSelected ? (
-                            <CheckCircle2 className="h-4 w-4" />
-                          ) : (
-                            <ArrowRight className="h-4 w-4" />
-                          )}
+                    <div className="flex items-center gap-3">
+                      <div className={`
+                        w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border-2
+                        ${isSelected ? 'border-primary bg-primary' : 'border-border'}
+                      `}>
+                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm mb-1">
+                          {statusInfo.label}
                         </div>
-                        
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Badge 
-                              variant={STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any}
-                              className="text-sm px-2.5 py-0.5"
-                            >
-                              {statusInfo.label}
-                            </Badge>
-                            {isSelected && (
-                              <span className="text-xs font-medium text-primary">
-                                Geselecteerd
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed">
-                            {statusInfo.description}
-                          </p>
-                        </div>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {statusInfo.description}
+                        </p>
                       </div>
                     </div>
                   </button>
@@ -851,13 +748,9 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             </div>
             
             {!isAdmin && ALLOWED_TRANSITIONS[currentStatus]?.length === 0 && (
-              <div className="p-8 rounded-xl bg-muted/20 border-2 border-dashed text-center">
-                <Circle className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
-                <p className="text-sm font-medium text-muted-foreground">
+              <div className="p-6 rounded-lg bg-muted/30 text-center">
+                <p className="text-sm text-muted-foreground">
                   Geen volgende stappen beschikbaar
-                </p>
-                <p className="text-xs text-muted-foreground/70 mt-1">
-                  Dit dossier bevindt zich in een eindstatus
                 </p>
               </div>
             )}
@@ -865,12 +758,12 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
 
           {/* Reason Input */}
           {newStatus !== currentStatus && (
-            <div className="space-y-2 p-4 rounded-lg bg-muted/30 animate-in fade-in-50 duration-200">
-              <Label className="text-sm font-medium">
-                Reden voor wijziging <span className="text-muted-foreground font-normal">(optioneel)</span>
+            <div className="space-y-2 animate-in fade-in duration-200">
+              <Label className="text-sm">
+                Reden <span className="text-muted-foreground font-normal">(optioneel)</span>
               </Label>
               <Textarea
-                placeholder="Bijv. 'Documenten compleet ontvangen' of 'Planning afgerond met alle partijen'"
+                placeholder="Bijv. 'Documenten compleet ontvangen'"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 rows={2}
@@ -879,23 +772,21 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             </div>
           )}
 
-          {/* Status History */}
-          <div className="pt-2 border-t">
+          {/* History - Collapsible */}
+          <div className="pt-4 border-t">
             <DossierStatusHistory dossierId={dossierId} currentStatus={currentStatus} />
           </div>
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="outline" onClick={() => setOpen(false)}>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => setOpen(false)}>
             Annuleren
           </Button>
           <Button 
             onClick={handleStatusChange} 
             disabled={newStatus === currentStatus}
-            className="min-w-[140px]"
           >
-            <CheckCircle2 className="mr-2 h-4 w-4" />
-            Status wijzigen
+            Bevestigen
           </Button>
         </DialogFooter>
       </DialogContent>

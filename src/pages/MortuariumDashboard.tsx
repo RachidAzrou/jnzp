@@ -12,13 +12,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-
 type CoolCell = {
   id: string;
   label: string;
   status: string;
 };
-
 type Reservation = {
   id: string;
   start_at: string;
@@ -27,54 +25,58 @@ type Reservation = {
   cool_cell_id: string;
   note: string | null;
   dossier_id: string;
-  cool_cells: { label: string } | null;
-  dossiers: { display_id: string; deceased_name: string } | null;
+  cool_cells: {
+    label: string;
+  } | null;
+  dossiers: {
+    display_id: string;
+    deceased_name: string;
+  } | null;
 };
-
 type PendingRequest = {
   id: string;
   start_at: string;
   end_at: string;
   note: string | null;
-  cool_cells: { label: string } | null;
-  dossiers: { display_id: string; deceased_name: string } | null;
+  cool_cells: {
+    label: string;
+  } | null;
+  dossiers: {
+    display_id: string;
+    deceased_name: string;
+  } | null;
 };
-
 export default function MortuariumDashboard() {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [loading, setLoading] = useState(true);
   const [coolCells, setCoolCells] = useState<CoolCell[]>([]);
   const [todayReservations, setTodayReservations] = useState<Reservation[]>([]);
   const [pendingRequests, setPendingRequests] = useState<PendingRequest[]>([]);
   const [cancelReason, setCancelReason] = useState("");
   const [selectedReservationId, setSelectedReservationId] = useState<string>("");
-
   useEffect(() => {
     fetchData();
   }, []);
-
   const fetchData = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user) return;
-
-      const { data: userRole } = await supabase
-        .from("user_roles")
-        .select("organization_id")
-        .eq("user_id", user.id)
-        .eq("role", "mortuarium")
-        .single();
-
+      const {
+        data: userRole
+      } = await supabase.from("user_roles").select("organization_id").eq("user_id", user.id).eq("role", "mortuarium").single();
       if (!userRole?.organization_id) return;
 
       // Fetch cool cells
-      const { data: cellsData } = await supabase
-        .from("cool_cells")
-        .select("*")
-        .eq("facility_org_id", userRole.organization_id)
-        .order("label");
-
+      const {
+        data: cellsData
+      } = await supabase.from("cool_cells").select("*").eq("facility_org_id", userRole.organization_id).order("label");
       if (cellsData) setCoolCells(cellsData);
 
       // Fetch today's reservations
@@ -82,122 +84,101 @@ export default function MortuariumDashboard() {
       today.setHours(0, 0, 0, 0);
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
-
-      const { data: reservationsData } = await supabase
-        .from("cool_cell_reservations")
-        .select(`
+      const {
+        data: reservationsData
+      } = await supabase.from("cool_cell_reservations").select(`
           *,
           cool_cells(label),
           dossiers(display_id, deceased_name)
-        `)
-        .eq("facility_org_id", userRole.organization_id)
-        .gte("start_at", today.toISOString())
-        .lt("start_at", tomorrow.toISOString())
-        .order("start_at");
-
+        `).eq("facility_org_id", userRole.organization_id).gte("start_at", today.toISOString()).lt("start_at", tomorrow.toISOString()).order("start_at");
       if (reservationsData) setTodayReservations(reservationsData as any);
 
       // Fetch all pending requests
-      const { data: pendingData } = await supabase
-        .from("cool_cell_reservations")
-        .select(`
+      const {
+        data: pendingData
+      } = await supabase.from("cool_cell_reservations").select(`
           *,
           cool_cells(label),
           dossiers(display_id, deceased_name)
-        `)
-        .eq("facility_org_id", userRole.organization_id)
-        .eq("status", "PENDING")
-        .order("start_at");
-
+        `).eq("facility_org_id", userRole.organization_id).eq("status", "PENDING").order("start_at");
       if (pendingData) setPendingRequests(pendingData as any);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast({
         title: "Fout bij laden",
         description: "Kon dashboard gegevens niet laden",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
-
   const confirmReservation = async (reservationId: string) => {
     try {
-      const { error } = await supabase
-        .from("cool_cell_reservations")
-        .update({ status: "CONFIRMED" })
-        .eq("id", reservationId);
-
+      const {
+        error
+      } = await supabase.from("cool_cell_reservations").update({
+        status: "CONFIRMED"
+      }).eq("id", reservationId);
       if (error) throw error;
-
       toast({
         title: "Bevestigd",
-        description: "Reservering is bevestigd",
+        description: "Reservering is bevestigd"
       });
-
       fetchData();
     } catch (error) {
       console.error("Error confirming reservation:", error);
       toast({
         title: "Fout",
         description: "Kon reservering niet bevestigen",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const releaseReservation = async (reservationId: string) => {
     try {
-      const { error } = await supabase
-        .from("cool_cell_reservations")
-        .update({ status: "CANCELLED", note: "Vrijgegeven door mortuarium" })
-        .eq("id", reservationId);
-
+      const {
+        error
+      } = await supabase.from("cool_cell_reservations").update({
+        status: "CANCELLED",
+        note: "Vrijgegeven door mortuarium"
+      }).eq("id", reservationId);
       if (error) throw error;
-
       toast({
         title: "Vrijgegeven",
-        description: "Koelcel is vrijgegeven",
+        description: "Koelcel is vrijgegeven"
       });
-
       fetchData();
     } catch (error) {
       console.error("Error releasing reservation:", error);
       toast({
         title: "Fout",
         description: "Kon reservering niet vrijgeven",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const cancelReservation = async () => {
     if (!cancelReason.trim()) {
       toast({
         title: "Reden vereist",
         description: "Geef een reden op voor annulering",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     try {
-      const { error } = await supabase
-        .from("cool_cell_reservations")
-        .update({ 
-          status: "CANCELLED", 
-          note: `Geannuleerd: ${cancelReason}` 
-        })
-        .eq("id", selectedReservationId);
-
+      const {
+        error
+      } = await supabase.from("cool_cell_reservations").update({
+        status: "CANCELLED",
+        note: `Geannuleerd: ${cancelReason}`
+      }).eq("id", selectedReservationId);
       if (error) throw error;
-
       toast({
         title: "Geannuleerd",
-        description: "Reservering is geannuleerd",
+        description: "Reservering is geannuleerd"
       });
-
       setCancelReason("");
       setSelectedReservationId("");
       fetchData();
@@ -206,22 +187,19 @@ export default function MortuariumDashboard() {
       toast({
         title: "Fout",
         description: "Kon reservering niet annuleren",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const capacityStats = {
     total: coolCells.length,
-    free: coolCells.filter((c) => c.status === "FREE").length,
-    occupied: coolCells.filter((c) => c.status === "OCCUPIED").length,
-    outOfService: coolCells.filter((c) => c.status === "OUT_OF_SERVICE").length,
+    free: coolCells.filter(c => c.status === "FREE").length,
+    occupied: coolCells.filter(c => c.status === "OCCUPIED").length,
+    outOfService: coolCells.filter(c => c.status === "OUT_OF_SERVICE").length
   };
-
   if (loading) {
     return <div className="p-6">Laden...</div>;
   }
-
   const getCurrentDate = () => {
     return new Date().toLocaleDateString('nl-NL', {
       weekday: 'long',
@@ -230,9 +208,7 @@ export default function MortuariumDashboard() {
       day: 'numeric'
     });
   };
-
-  return (
-    <div className="space-y-6 pb-8">
+  return <div className="space-y-6 pb-8">
       {/* Professional Header */}
       <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
         <CardContent className="p-6">
@@ -306,8 +282,7 @@ export default function MortuariumDashboard() {
       </div>
 
       {/* Pending Requests */}
-      {pendingRequests.length > 0 && (
-        <Card className="animate-fade-in">
+      {pendingRequests.length > 0 && <Card className="animate-fade-in">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-yellow-600" />
@@ -327,14 +302,19 @@ export default function MortuariumDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pendingRequests.map((request) => (
-                    <TableRow key={request.id}>
+                  {pendingRequests.map(request => <TableRow key={request.id}>
                       <TableCell className="font-medium">
                         <div>
-                          <div>{format(parseISO(request.start_at), "EEE d MMM yyyy", { locale: nl })}</div>
+                          <div>{format(parseISO(request.start_at), "EEE d MMM yyyy", {
+                        locale: nl
+                      })}</div>
                           <div className="text-sm text-muted-foreground">
-                            {format(parseISO(request.start_at), "HH:mm", { locale: nl })} -{" "}
-                            {format(parseISO(request.end_at), "HH:mm", { locale: nl })}
+                            {format(parseISO(request.start_at), "HH:mm", {
+                        locale: nl
+                      })} -{" "}
+                            {format(parseISO(request.end_at), "HH:mm", {
+                        locale: nl
+                      })}
                           </div>
                         </div>
                       </TableCell>
@@ -356,22 +336,13 @@ export default function MortuariumDashboard() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => confirmReservation(request.id)}
-                            className="gap-1 h-8"
-                          >
+                          <Button size="sm" onClick={() => confirmReservation(request.id)} className="gap-1 h-8">
                             <CheckCircle2 className="h-3.5 w-3.5" />
                             Bevestigen
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => setSelectedReservationId(request.id)}
-                                className="gap-1 h-8"
-                              >
+                              <Button size="sm" variant="destructive" onClick={() => setSelectedReservationId(request.id)} className="gap-1 h-8">
                                 <XCircle className="h-3.5 w-3.5" />
                                 Weigeren
                               </Button>
@@ -385,19 +356,13 @@ export default function MortuariumDashboard() {
                               </AlertDialogHeader>
                               <div className="space-y-2 py-4">
                                 <Label htmlFor="reason">Reden *</Label>
-                                <Textarea
-                                  id="reason"
-                                  value={cancelReason}
-                                  onChange={(e) => setCancelReason(e.target.value)}
-                                  placeholder="Bijv. Geen beschikbaarheid, verkeerde datum..."
-                                  rows={3}
-                                />
+                                <Textarea id="reason" value={cancelReason} onChange={e => setCancelReason(e.target.value)} placeholder="Bijv. Geen beschikbaarheid, verkeerde datum..." rows={3} />
                               </div>
                               <AlertDialogFooter>
                                 <AlertDialogCancel onClick={() => {
-                                  setCancelReason("");
-                                  setSelectedReservationId("");
-                                }}>
+                            setCancelReason("");
+                            setSelectedReservationId("");
+                          }}>
                                   Terug
                                 </AlertDialogCancel>
                                 <AlertDialogAction onClick={cancelReservation}>
@@ -408,155 +373,14 @@ export default function MortuariumDashboard() {
                           </AlertDialog>
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Today's Reservations */}
-      <Card className="animate-fade-in">
-        <CardHeader>
-          <CardTitle className="text-lg">Vandaag ({format(new Date(), "EEEE d MMMM", { locale: nl })})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {todayReservations.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4 mx-auto">
-                <Calendar className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <p className="text-sm">Geen reserveringen voor vandaag</p>
-            </div>
-          ) : (
-            <div className="border rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Tijd</TableHead>
-                    <TableHead>Dossier</TableHead>
-                    <TableHead>Koelcel</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Notitie</TableHead>
-                    <TableHead className="text-right">Acties</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {todayReservations.map((reservation) => (
-                    <TableRow key={reservation.id}>
-                      <TableCell className="font-medium">
-                        {format(parseISO(reservation.start_at), "HH:mm", { locale: nl })} -{" "}
-                        {format(parseISO(reservation.end_at), "HH:mm", { locale: nl })}
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">
-                            {reservation.dossiers?.deceased_name || "Onbekend"}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {reservation.dossiers?.display_id || "-"}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {reservation.cool_cells?.label || "-"}
-                      </TableCell>
-                      <TableCell>
-                        {reservation.status === "PENDING" && (
-                          <Badge variant="secondary">
-                            <AlertTriangle className="h-3 w-3 mr-1" />
-                            In afwachting
-                          </Badge>
-                        )}
-                        {reservation.status === "CONFIRMED" && (
-                          <Badge variant="default">Bevestigd</Badge>
-                        )}
-                        {reservation.status === "CANCELLED" && (
-                          <Badge variant="destructive">Geannuleerd</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
-                        {reservation.note || "-"}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          {reservation.status === "PENDING" && (
-                            <Button
-                              size="sm"
-                              onClick={() => confirmReservation(reservation.id)}
-                              className="gap-1 h-8"
-                            >
-                              <CheckCircle2 className="h-3.5 w-3.5" />
-                              Bevestigen
-                            </Button>
-                          )}
-                          {reservation.status === "CONFIRMED" && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => releaseReservation(reservation.id)}
-                              className="gap-1 h-8"
-                            >
-                              <Unlock className="h-3.5 w-3.5" />
-                              Vrijgeven
-                            </Button>
-                          )}
-                          {(reservation.status === "PENDING" || reservation.status === "CONFIRMED") && (
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => setSelectedReservationId(reservation.id)}
-                                  className="gap-1 h-8"
-                                >
-                                  <XCircle className="h-3.5 w-3.5" />
-                                  Annuleren
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Reservering annuleren</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Geef een reden op voor de annulering
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <div className="space-y-2 py-4">
-                                  <Label htmlFor="reason">Reden *</Label>
-                                  <Textarea
-                                    id="reason"
-                                    value={cancelReason}
-                                    onChange={(e) => setCancelReason(e.target.value)}
-                                    placeholder="Bijv. Verkeerde datum, planning gewijzigd..."
-                                    rows={3}
-                                  />
-                                </div>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel onClick={() => {
-                                    setCancelReason("");
-                                    setSelectedReservationId("");
-                                  }}>
-                                    Terug
-                                  </AlertDialogCancel>
-                                  <AlertDialogAction onClick={cancelReservation}>
-                                    Annuleren
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  );
+      
+    </div>;
 }

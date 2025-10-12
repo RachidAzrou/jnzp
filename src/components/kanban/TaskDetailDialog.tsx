@@ -730,8 +730,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsContent>
 
           {/* Comments Tab */}
-          <TabsContent value="comments" className="flex-1 overflow-hidden flex flex-col gap-3 mt-4 h-[500px]">
-            <ScrollArea className="flex-1 pr-4">
+          <TabsContent value="comments" className="flex-1 overflow-hidden flex flex-col mt-4 h-[500px]">
+            <ScrollArea className="flex-1 pr-4 pb-3">
               <div className="space-y-3">
                 {comments.map((comment) => (
                   <div key={comment.id} className="flex gap-3 text-sm">
@@ -757,7 +757,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
               </div>
             </ScrollArea>
 
-            <div className="flex gap-2 pt-2 border-t">
+            <div className="flex gap-2 pt-3 border-t mt-auto">
               <Input
                 placeholder="Voeg een reactie toe..."
                 value={newComment}

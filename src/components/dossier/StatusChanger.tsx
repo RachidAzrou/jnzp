@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Edit, AlertCircle, CheckCircle2, Lock } from "lucide-react";
+import { Edit, AlertCircle, CheckCircle2, Lock, ArrowRight, Circle } from "lucide-react";
 import { AdvisoryDialog } from "./AdvisoryDialog";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
@@ -652,15 +652,75 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
           Status wijzigen
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">Status wijzigen</DialogTitle>
           <DialogDescription>
-            Selecteer de gewenste status voor dit dossier
+            Volg de workflow om het dossier door het proces te leiden
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
+          {/* Workflow Timeline */}
+          <div className="p-4 rounded-lg bg-muted/20 border">
+            <Label className="text-sm font-semibold mb-3 block">Workflow overzicht</Label>
+            <div className="relative">
+              {/* Timeline line */}
+              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
+              
+              <div className="space-y-3">
+                {STATUSES.filter(s => s !== 'LEGAL_HOLD').map((status, index) => {
+                  const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
+                  const statusInfo = labels[status as keyof typeof labels];
+                  const isCurrentStatus = status === currentStatus;
+                  const isReachable = isAdmin || ALLOWED_TRANSITIONS[currentStatus]?.includes(status);
+                  const isPast = STATUSES.indexOf(status) < STATUSES.indexOf(currentStatus);
+                  
+                  return (
+                    <div key={status} className="relative flex items-start gap-3 pl-10">
+                      {/* Timeline dot */}
+                      <div className={`absolute left-2.5 top-2 w-3 h-3 rounded-full border-2 z-10 ${
+                        isCurrentStatus 
+                          ? 'bg-primary border-primary ring-4 ring-primary/20' 
+                          : isPast
+                          ? 'bg-muted-foreground/30 border-muted-foreground/30'
+                          : 'bg-background border-border'
+                      }`} />
+                      
+                      <div className={`flex-1 p-2 rounded-lg transition-all ${
+                        isCurrentStatus 
+                          ? 'bg-primary/10 border-2 border-primary' 
+                          : isReachable && !isCurrentStatus
+                          ? 'bg-accent/5 border border-border'
+                          : 'opacity-40'
+                      }`}>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <Badge 
+                              variant={STATUS_BADGES[status as keyof typeof STATUS_BADGES] as any}
+                              className="text-xs"
+                            >
+                              {statusInfo.label}
+                            </Badge>
+                            {isCurrentStatus && (
+                              <span className="text-xs font-medium text-primary">← Huidige status</span>
+                            )}
+                            {isReachable && !isCurrentStatus && (
+                              <ArrowRight className="h-3 w-3 text-primary" />
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+                          {statusInfo.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
           {/* Current Status Display */}
           <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border-2">
             <span className="text-sm font-medium text-muted-foreground">Huidige status</span>
@@ -669,12 +729,15 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             </Badge>
           </div>
 
-          {/* Visual Status Grid */}
+          {/* Available Next Steps */}
           <div className="space-y-3">
-            <Label className="text-base font-semibold">Selecteer nieuwe status</Label>
-            <div className="grid grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-2">
+            <Label className="text-base font-semibold flex items-center gap-2">
+              <ArrowRight className="h-4 w-4" />
+              Beschikbare volgende stappen
+            </Label>
+            <div className="grid grid-cols-2 gap-3">
               {(isAdmin ? STATUSES : STATUSES.filter(status => 
-                ALLOWED_TRANSITIONS[currentStatus]?.includes(status) || status === currentStatus
+                ALLOWED_TRANSITIONS[currentStatus]?.includes(status)
               )).map((status) => {
                 const labels = isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
                 const statusInfo = labels[status as keyof typeof labels];
@@ -722,6 +785,14 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
                 );
               })}
             </div>
+            
+            {!isAdmin && ALLOWED_TRANSITIONS[currentStatus]?.length === 0 && (
+              <div className="p-4 rounded-lg bg-muted/20 border text-center">
+                <p className="text-sm text-muted-foreground">
+                  Geen volgende stappen beschikbaar. Dossier is in eindstatus.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Reason Input */}

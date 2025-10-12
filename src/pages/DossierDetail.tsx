@@ -11,11 +11,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { 
   ArrowLeft, Star, AlertCircle, User, Users, FileText, 
   Building2, DollarSign, Clock, MessageSquare,
-  CheckCircle2, XCircle, Send
+  CheckCircle2, XCircle, Send, Edit2, Save, X
 } from "lucide-react";
 import { PiMosque } from "react-icons/pi";
 import { MdOutlineShower } from "react-icons/md";
 import { AiOutlineExport } from "react-icons/ai";
+import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
@@ -62,6 +63,8 @@ const DossierDetail = () => {
   const [releaseDialogOpen, setReleaseDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [deleteReason, setDeleteReason] = useState("");
+  const [isEditingDeceased, setIsEditingDeceased] = useState(false);
+  const [editedDossier, setEditedDossier] = useState<any>(null);
 
   useEffect(() => {
     if (id) {
@@ -235,7 +238,51 @@ const DossierDetail = () => {
     setInvoices(invoicesData || []);
     setManualEvents(manualEventsData || []);
     setProgress(null); // Remove mock progress data
+    setEditedDossier(dossierData); // Initialize edited dossier
     setLoading(false);
+  };
+
+  const handleEditDeceased = () => {
+    setIsEditingDeceased(true);
+    setEditedDossier({ ...dossier });
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingDeceased(false);
+    setEditedDossier(dossier);
+  };
+
+  const handleSaveDeceased = async () => {
+    try {
+      const { error } = await supabase
+        .from('dossiers')
+        .update({
+          deceased_name: editedDossier.deceased_name,
+          deceased_first_name: editedDossier.deceased_first_name,
+          deceased_last_name: editedDossier.deceased_last_name,
+          deceased_dob: editedDossier.deceased_dob,
+          date_of_death: editedDossier.date_of_death,
+          deceased_gender: editedDossier.deceased_gender,
+          place_of_death: editedDossier.place_of_death
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Opgeslagen",
+        description: "Gegevens succesvol bijgewerkt"
+      });
+
+      setIsEditingDeceased(false);
+      fetchDossierData();
+    } catch (error: any) {
+      toast({
+        title: "Fout",
+        description: error.message || "Kon gegevens niet opslaan",
+        variant: "destructive"
+      });
+    }
   };
 
   const formatDate = (dateString: string | null) => {
@@ -598,29 +645,71 @@ const DossierDetail = () => {
         {/* Overview Tab - Professional Cards */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
-            {/* Overledene Card */}
             <Card>
               <CardHeader className="pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <User className="h-5 w-5 text-primary" />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <User className="h-5 w-5 text-primary" />
+                    </div>
+                    <CardTitle className="text-xl">Overledene</CardTitle>
                   </div>
-                  <CardTitle className="text-xl">Overledene</CardTitle>
+                  {!isEditingDeceased ? (
+                    <Button variant="outline" size="sm" onClick={handleEditDeceased}>
+                      <Edit2 className="h-4 w-4 mr-2" />
+                      Bewerken
+                    </Button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+                        <X className="h-4 w-4 mr-2" />
+                        Annuleren
+                      </Button>
+                      <Button variant="default" size="sm" onClick={handleSaveDeceased}>
+                        <Save className="h-4 w-4 mr-2" />
+                        Opslaan
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardHeader>
               <CardContent className="space-y-5">
                 <div className="space-y-1.5">
                   <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Naam</Label>
-                  <p className="text-base font-semibold">{dossier.deceased_name}</p>
+                  {isEditingDeceased ? (
+                    <Input
+                      value={editedDossier?.deceased_name || ''}
+                      onChange={(e) => setEditedDossier({ ...editedDossier, deceased_name: e.target.value })}
+                      placeholder="Volledige naam"
+                    />
+                  ) : (
+                    <p className="text-base font-semibold">{dossier.deceased_name}</p>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Geboortedatum</Label>
-                    <p className="text-sm">{formatDate(dossier.deceased_dob)}</p>
+                    {isEditingDeceased ? (
+                      <Input
+                        type="date"
+                        value={editedDossier?.deceased_dob || ''}
+                        onChange={(e) => setEditedDossier({ ...editedDossier, deceased_dob: e.target.value })}
+                      />
+                    ) : (
+                      <p className="text-sm">{formatDate(dossier.deceased_dob)}</p>
+                    )}
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Overlijdensdatum</Label>
-                    <p className="text-sm">{formatDate(dossier.date_of_death)}</p>
+                    {isEditingDeceased ? (
+                      <Input
+                        type="date"
+                        value={editedDossier?.date_of_death || ''}
+                        onChange={(e) => setEditedDossier({ ...editedDossier, date_of_death: e.target.value })}
+                      />
+                    ) : (
+                      <p className="text-sm">{formatDate(dossier.date_of_death)}</p>
+                    )}
                   </div>
                 </div>
                 <Separator />
@@ -634,26 +723,38 @@ const DossierDetail = () => {
                     />
                   </div>
                 </div>
-                {dossier.deceased_gender && (
-                  <>
-                    <Separator />
-                    <div className="space-y-1.5">
-                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Geslacht</Label>
-                      <p className="text-sm font-medium">
-                        {dossier.deceased_gender === 'M' ? 'Man' : 'Vrouw'}
-                      </p>
-                    </div>
-                  </>
-                )}
-                {dossier.place_of_death && (
-                  <>
-                    <Separator />
-                    <div className="space-y-1.5">
-                      <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Plaats van overlijden</Label>
-                      <p className="text-sm font-medium">{dossier.place_of_death}</p>
-                    </div>
-                  </>
-                )}
+                <Separator />
+                <div className="space-y-1.5">
+                  <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Geslacht</Label>
+                  {isEditingDeceased ? (
+                    <select
+                      className="w-full px-3 py-2 border rounded-md"
+                      value={editedDossier?.deceased_gender || ''}
+                      onChange={(e) => setEditedDossier({ ...editedDossier, deceased_gender: e.target.value })}
+                    >
+                      <option value="">Selecteer...</option>
+                      <option value="M">Man</option>
+                      <option value="V">Vrouw</option>
+                    </select>
+                  ) : (
+                    <p className="text-sm font-medium">
+                      {dossier.deceased_gender === 'M' ? 'Man' : dossier.deceased_gender === 'V' ? 'Vrouw' : 'N/A'}
+                    </p>
+                  )}
+                </div>
+                <Separator />
+                <div className="space-y-1.5">
+                  <Label className="text-xs uppercase tracking-wide text-muted-foreground font-medium">Plaats van overlijden</Label>
+                  {isEditingDeceased ? (
+                    <Input
+                      value={editedDossier?.place_of_death || ''}
+                      onChange={(e) => setEditedDossier({ ...editedDossier, place_of_death: e.target.value })}
+                      placeholder="Plaats van overlijden"
+                    />
+                  ) : (
+                    <p className="text-sm font-medium">{dossier.place_of_death || 'N/A'}</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
 

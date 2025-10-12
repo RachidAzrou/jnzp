@@ -46,9 +46,22 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
   }, [selectedMortuarium, selectedDate]);
 
   const fetchDossiers = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Get user's organization
+    const { data: userRole } = await supabase
+      .from("user_roles")
+      .select("organization_id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!userRole?.organization_id) return;
+
     const { data } = await supabase
       .from("dossiers")
       .select("id, display_id, deceased_name")
+      .eq("assigned_fd_org_id", userRole.organization_id)
       .is("deleted_at", null)
       .order("created_at", { ascending: false })
       .limit(50);

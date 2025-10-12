@@ -152,17 +152,20 @@ const Documenten = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-          Documentenbeheer
-        </h1>
-      </div>
+      <Card className="mb-6 animate-fade-in shadow-md bg-card/50 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+            Documentenbeheer
+          </CardTitle>
+        </CardHeader>
+      </Card>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4 mb-6">
-        <Card className="border-0 shadow-sm">
+      <div className="grid gap-4 md:grid-cols-4 mb-6 animate-fade-in"
+        style={{ animationDelay: '0.1s' }}>
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -174,46 +177,46 @@ const Documenten = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm">
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Goedgekeurd</p>
                 <p className="text-2xl font-semibold mt-1">{approvedCount}</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-600 opacity-50" />
+              <CheckCircle className="h-8 w-8 text-success opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm">
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">In behandeling</p>
                 <p className="text-2xl font-semibold mt-1">{pendingCount}</p>
               </div>
-              <Clock className="h-8 w-8 text-yellow-600 opacity-50" />
+              <Clock className="h-8 w-8 text-warning opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm">
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Afgewezen</p>
                 <p className="text-2xl font-semibold mt-1">{rejectedCount}</p>
               </div>
-              <XCircle className="h-8 w-8 text-red-600 opacity-50" />
+              <XCircle className="h-8 w-8 text-destructive opacity-50" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Document List */}
-      <div className="space-y-4">
-        <Card className="border-0 shadow-sm">
+      <div className="space-y-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <Card className="shadow-md bg-card/50 backdrop-blur-sm">
           <CardHeader className="pb-4">
             {/* Search Bar with Filter Toggle */}
             <div className="flex items-center gap-2">

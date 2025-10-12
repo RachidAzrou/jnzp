@@ -248,6 +248,18 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
         if (columnError) throw columnError;
         if (!column) throw new Error('Column not found for status');
 
+        // Get next position for this column
+        const { data: columnTasks } = await supabase
+          .from('kanban_tasks')
+          .select('position')
+          .eq('column_id', column.id)
+          .order('position', { ascending: false })
+          .limit(1);
+
+        const nextPosition = columnTasks && columnTasks.length > 0 
+          ? (columnTasks[0].position ?? 0) + 1 
+          : 0;
+
         // Create new manual task with assignee default to current user
         const { data: newTask, error } = await supabase
           .from('kanban_tasks')
@@ -264,7 +276,8 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
             assignee_id: formData.assignee_id || user.id,
             created_by: user.id,
             due_date: formData.due_date?.toISOString().split('T')[0],
-            labels: formData.labels
+            labels: formData.labels,
+            position: nextPosition
           } as any)
           .select()
           .single();

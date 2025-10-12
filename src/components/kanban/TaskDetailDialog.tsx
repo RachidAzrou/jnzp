@@ -576,8 +576,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </p>
         </DialogHeader>
 
-        <Tabs defaultValue="details" className="flex-1 overflow-hidden flex flex-col px-6">
-          <TabsList className="grid w-full grid-cols-4 mt-4">
+        <Tabs defaultValue="details" className="flex-1 overflow-hidden flex flex-col">
+          <TabsList className="grid w-full grid-cols-4 mt-4 mx-6">
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="activity">
               Activiteit ({activities.length})
@@ -591,7 +591,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsList>
 
           {/* Details Tab */}
-          <TabsContent value="details" className="flex-1 overflow-y-auto space-y-4 mt-4 h-[500px]">
+          <TabsContent value="details" className="flex-1 overflow-y-auto mt-4 px-6 pb-6">
             {task.dossier_id && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <FileText className="h-4 w-4" />
@@ -783,7 +783,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsContent>
 
           {/* Activity Tab */}
-          <TabsContent value="activity" className="flex-1 overflow-hidden mt-4 h-[500px]">
+          <TabsContent value="activity" className="flex-1 overflow-hidden mt-4 px-6 pb-6">
             <ScrollArea className="h-full pr-4">
               <div className="space-y-3">
                 {activities.map((activity) => (
@@ -809,7 +809,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsContent>
 
           {/* Comments Tab */}
-          <TabsContent value="comments" className="flex flex-col justify-between mt-4 h-[500px]">
+          <TabsContent value="comments" className="flex flex-col justify-between mt-4 px-6 pb-6 h-[calc(85vh-200px)]">
             <ScrollArea className="flex-1 pr-4 pb-3">
               <div className="space-y-3">
                 {comments.map((comment) => (
@@ -850,7 +850,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsContent>
 
           {/* Attachments Tab */}
-          <TabsContent value="attachments" className="flex-1 overflow-hidden flex flex-col gap-3 mt-4 h-[500px]">
+          <TabsContent value="attachments" className="flex-1 overflow-hidden flex flex-col gap-3 mt-4 px-6 pb-6 h-[calc(85vh-200px)]">
             <ScrollArea className="flex-1 pr-4">
               <div className="space-y-2">
                 {attachments.map((attachment) => (
@@ -910,7 +910,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-between pt-4 border-t">
+        <div className="flex justify-between px-6 py-4 border-t">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Terug

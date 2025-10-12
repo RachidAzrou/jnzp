@@ -437,19 +437,17 @@ const DossierDetail = () => {
                       <DropdownMenuItem onClick={() => setReleaseDialogOpen(true)}>
                         Dossier vrijgeven
                       </DropdownMenuItem>
-                      {dossier.status === 'CREATED' || dossier.status === 'INTAKE_IN_PROGRESS' ? (
-                        <DropdownMenuItem 
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => {
-                            // Open soft-delete dialog via state
-                            const deleteBtn = document.getElementById('soft-delete-trigger');
-                            deleteBtn?.click();
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Verwijder Draft
-                        </DropdownMenuItem>
-                      ) : null}
+                      <DropdownMenuItem 
+                        className="text-destructive focus:text-destructive"
+                        onClick={() => {
+                          // Open soft-delete dialog via state
+                          const deleteBtn = document.getElementById('soft-delete-trigger');
+                          deleteBtn?.click();
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Verwijder Dossier
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}

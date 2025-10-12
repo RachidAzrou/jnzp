@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 // FDReviewsCard removed - only for insurers/admins
 import OnboardingWizard from "@/components/OnboardingWizard";
-
 interface DossierData {
   id: string;
   display_id: string;
@@ -15,9 +14,10 @@ interface DossierData {
   flow: string;
   status: string;
 }
-
 const Dashboard = () => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const navigate = useNavigate();
   const [dossiers, setDossiers] = useState<DossierData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,35 +27,31 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalActive: 0,
     repatriation: 0,
-    local: 0,
+    local: 0
   });
-
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch user info
-        const { data: { user } } = await supabase.auth.getUser();
-        
+        const {
+          data: {
+            user
+          }
+        } = await supabase.auth.getUser();
         if (user) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("first_name, last_name")
-            .eq("id", user.id)
-            .single();
-          
+          const {
+            data: profile
+          } = await supabase.from("profiles").select("first_name, last_name").eq("id", user.id).single();
           if (profile) {
             setUserName(`${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user.email || '');
           }
 
           // Fetch user's organization and onboarding status
-          const { data: roleData } = await supabase
-            .from("user_roles")
-            .select("organization_id, role")
-            .eq("user_id", user.id)
-            .single();
-
+          const {
+            data: roleData
+          } = await supabase.from("user_roles").select("organization_id, role").eq("user_id", user.id).single();
           if (roleData?.organization_id) {
             setOrganizationId(roleData.organization_id);
 
@@ -64,12 +60,7 @@ const Dashboard = () => {
             if (professionalRoles.includes(roleData.role)) {
               // Check onboarding status
               try {
-                const onboardingResponse: any = await supabase
-                  .from("organization_onboarding" as any)
-                  .select("completed")
-                  .eq("organization_id", roleData.organization_id)
-                  .maybeSingle();
-
+                const onboardingResponse: any = await supabase.from("organization_onboarding" as any).select("completed").eq("organization_id", roleData.organization_id).maybeSingle();
                 if (onboardingResponse?.data?.completed !== undefined) {
                   setShowOnboarding(!onboardingResponse.data.completed);
                 } else {
@@ -85,73 +76,61 @@ const Dashboard = () => {
         }
 
         // Fetch active dossiers with their progress (exclude deleted and completed)
-        const { data: dossiersData, error: dossiersError } = await supabase
-          .from("dossiers")
-          .select(`
+        const {
+          data: dossiersData,
+          error: dossiersError
+        } = await supabase.from("dossiers").select(`
             id,
             display_id,
             deceased_name,
             flow,
             status
-          `)
-          .is("deleted_at", null)
-          .neq("status", "ARCHIVED" as any)
-          .order("updated_at", { ascending: false })
-          .limit(50);
-
+          `).is("deleted_at", null).neq("status", "ARCHIVED" as any).order("updated_at", {
+          ascending: false
+        }).limit(50);
         if (dossiersError) {
           console.error("Error fetching dossiers:", dossiersError);
         } else if (dossiersData) {
           setDossiers(dossiersData);
-          
+
           // Calculate stats
           setStats({
             totalActive: dossiersData.length,
             repatriation: dossiersData.filter(d => d.flow === 'REP').length,
-            local: dossiersData.filter(d => d.flow === 'LOC').length,
+            local: dossiersData.filter(d => d.flow === 'LOC').length
           });
         }
-        
         setLoading(false);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         setLoading(false);
       }
     };
-
     fetchDashboardData();
   }, []);
-
   if (loading) {
-    return (
-        <div className="flex items-center justify-center min-h-screen">
+    return <div className="flex items-center justify-center min-h-screen">
           <div className="flex flex-col items-center gap-3">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
           </div>
-        </div>
-    );
+        </div>;
   }
-
   const getCurrentDate = () => {
-    return new Date().toLocaleDateString('nl-NL', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return new Date().toLocaleDateString('nl-NL', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
-
-  return (
-    <div className="space-y-6 pb-8">
+  return <div className="space-y-6 pb-8">
       {/* Professional Header */}
       <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
         <CardContent className="p-6">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <FileText className="h-6 w-6 text-primary" />
-              </div>
+              
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
                 <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
@@ -164,12 +143,7 @@ const Dashboard = () => {
       </Card>
 
       {/* Onboarding Wizard */}
-      {showOnboarding && organizationId && (
-        <OnboardingWizard
-          organizationId={organizationId}
-          onComplete={() => setShowOnboarding(false)}
-        />
-      )}
+      {showOnboarding && organizationId && <OnboardingWizard organizationId={organizationId} onComplete={() => setShowOnboarding(false)} />}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 animate-fade-in">
@@ -229,21 +203,13 @@ const Dashboard = () => {
         </CardHeader>
 
         <CardContent>
-          {dossiers.length === 0 ? (
-            <div className="text-center py-12">
+          {dossiers.length === 0 ? <div className="text-center py-12">
               <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4 mx-auto">
                 <Clock className="w-8 h-8 text-muted-foreground" />
               </div>
               <p className="text-sm text-muted-foreground">{t("dashboard.noActiveDossiers")}</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {dossiers.map((dossier) => (
-                <div
-                  key={dossier.id}
-                  className="group rounded-lg border bg-card p-4 cursor-pointer hover:shadow-sm hover:border-primary/50 transition-all duration-200"
-                  onClick={() => navigate(`/dossiers/${dossier.id}`)}
-                >
+            </div> : <div className="space-y-2">
+              {dossiers.map(dossier => <div key={dossier.id} className="group rounded-lg border bg-card p-4 cursor-pointer hover:shadow-sm hover:border-primary/50 transition-all duration-200" onClick={() => navigate(`/dossiers/${dossier.id}`)}>
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -258,21 +224,14 @@ const Dashboard = () => {
                         </p>
                       </div>
                     </div>
-                    <Badge 
-                      variant="secondary"
-                      className="flex-shrink-0 text-xs bg-primary/10 text-primary border-primary/20"
-                    >
+                    <Badge variant="secondary" className="flex-shrink-0 text-xs bg-primary/10 text-primary border-primary/20">
                       {dossier.status}
                     </Badge>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                </div>)}
+            </div>}
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;

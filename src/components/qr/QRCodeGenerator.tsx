@@ -103,9 +103,8 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <QrCode className="h-4 w-4 mr-2" />
-          QR Code genereren
+        <Button variant="outline" size="icon">
+          <QrCode className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

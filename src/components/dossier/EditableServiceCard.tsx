@@ -70,97 +70,105 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
 
   if (!event) {
     return (
-      <Card>
+      <Card className="animate-fade-in">
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
+          <CardTitle className="text-lg">{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Nog niet ingepland</p>
+          <p className="text-sm text-muted-foreground">Nog niet ingepland</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card>
+    <Card className="animate-fade-in">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>{title}</CardTitle>
+            <CardTitle className="text-lg">{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </div>
           {!isEditing ? (
-            <Button onClick={() => setIsEditing(true)} variant="outline" size="sm">
-              <Edit2 className="h-4 w-4 mr-2" />
-              Bewerken
+            <Button 
+              onClick={() => setIsEditing(true)} 
+              variant="ghost" 
+              size="sm"
+              className="h-8 gap-1 text-xs"
+            >
+              <Edit2 className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Bewerken</span>
             </Button>
           ) : (
-            <div className="flex gap-2">
-              <Button onClick={handleSave} size="sm">
-                <Save className="h-4 w-4 mr-2" />
-                Opslaan
+            <div className="flex gap-1">
+              <Button onClick={handleSave} size="sm" className="h-8 text-xs">
+                <Save className="h-3.5 w-3.5 mr-1.5" />
+                <span className="hidden sm:inline">Opslaan</span>
               </Button>
-              <Button onClick={handleCancel} variant="outline" size="sm">
-                <X className="h-4 w-4 mr-2" />
-                Annuleren
+              <Button onClick={handleCancel} variant="ghost" size="sm" className="h-8 text-xs">
+                <X className="h-3.5 w-3.5 mr-1.5" />
+                <span className="hidden sm:inline">Annuleren</span>
               </Button>
             </div>
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">Status:</span>
-          <Badge>{event.status}</Badge>
+          <span className="text-xs font-medium">Status:</span>
+          <Badge variant="secondary" className="text-xs">{event.status}</Badge>
         </div>
 
         {isEditing ? (
-          <div className="space-y-3">
-            <div>
-              <Label>Geplande datum/tijd</Label>
+          <div className="space-y-3 animate-scale-in">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Geplande datum/tijd</Label>
               <Input
                 type="datetime-local"
                 value={editData.scheduled_at ? new Date(editData.scheduled_at).toISOString().slice(0, 16) : ""}
                 onChange={(e) => setEditData({ ...editData, scheduled_at: e.target.value })}
+                className="h-9"
               />
             </div>
-            <div>
-              <Label>Locatie</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Locatie</Label>
               <Input
                 value={editData.location_text || ""}
                 onChange={(e) => setEditData({ ...editData, location_text: e.target.value })}
+                className="h-9"
               />
             </div>
-            <div>
-              <Label>Notities</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Notities</Label>
               <Textarea
                 value={editData.notes || ""}
                 onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
-                rows={3}
+                rows={2}
+                className="text-sm"
               />
             </div>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2 text-sm animate-fade-in">
             {event.scheduled_at && (
-              <div>
-                <span className="text-sm font-medium">Datum/tijd: </span>
-                <span className="text-sm text-muted-foreground">
+              <div className="flex gap-2">
+                <span className="text-muted-foreground min-w-[80px]">Datum/tijd:</span>
+                <span className="font-medium">
                   {new Date(event.scheduled_at).toLocaleString("nl-NL")}
                 </span>
               </div>
             )}
             {event.location_text && (
-              <div>
-                <span className="text-sm font-medium">Locatie: </span>
-                <span className="text-sm text-muted-foreground">{event.location_text}</span>
+              <div className="flex gap-2">
+                <span className="text-muted-foreground min-w-[80px]">Locatie:</span>
+                <span className="font-medium">{event.location_text}</span>
               </div>
             )}
             {event.notes && (
-              <div>
-                <span className="text-sm font-medium">Notities: </span>
-                <span className="text-sm text-muted-foreground whitespace-pre-wrap">{event.notes}</span>
+              <div className="flex gap-2">
+                <span className="text-muted-foreground min-w-[80px]">Notities:</span>
+                <span className="whitespace-pre-wrap">{event.notes}</span>
               </div>
             )}
           </div>
@@ -169,3 +177,4 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
     </Card>
   );
 }
+

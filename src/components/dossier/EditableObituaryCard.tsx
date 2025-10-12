@@ -41,7 +41,7 @@ export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: E
   };
 
   return (
-    <Card>
+    <Card className="animate-fade-in">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -49,38 +49,43 @@ export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: E
             <CardDescription>Bewerk het overlijdensbericht</CardDescription>
           </div>
           {!isEditing ? (
-            <Button onClick={() => setIsEditing(true)} variant="outline" size="sm">
-              <Edit2 className="h-4 w-4 mr-2" />
-              Bewerken
+            <Button 
+              onClick={() => setIsEditing(true)} 
+              variant="ghost" 
+              size="sm"
+              className="h-8 gap-1 text-xs"
+            >
+              <Edit2 className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Bewerken</span>
             </Button>
           ) : (
-            <div className="flex gap-2">
-              <Button onClick={handleSave} size="sm">
-                <Save className="h-4 w-4 mr-2" />
-                Opslaan
+            <div className="flex gap-1">
+              <Button onClick={handleSave} size="sm" className="h-8 text-xs">
+                <Save className="h-3.5 w-3.5 mr-1.5" />
+                <span className="hidden sm:inline">Opslaan</span>
               </Button>
-              <Button onClick={handleCancel} variant="outline" size="sm">
-                <X className="h-4 w-4 mr-2" />
-                Annuleren
+              <Button onClick={handleCancel} variant="ghost" size="sm" className="h-8 text-xs">
+                <X className="h-3.5 w-3.5 mr-1.5" />
+                <span className="hidden sm:inline">Annuleren</span>
               </Button>
             </div>
           )}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="transition-all duration-200">
         {isEditing ? (
           <Textarea
             value={obituary}
             onChange={(e) => setObituary(e.target.value)}
             placeholder="Voer het overlijdensbericht in..."
-            className="min-h-[200px]"
+            className="min-h-[200px] animate-scale-in"
           />
         ) : (
-          <div className="prose max-w-none">
+          <div className="prose prose-sm max-w-none animate-fade-in">
             {obituary ? (
-              <p className="whitespace-pre-wrap">{obituary}</p>
+              <p className="whitespace-pre-wrap text-sm leading-relaxed">{obituary}</p>
             ) : (
-              <p className="text-muted-foreground italic">Nog geen overlijdensbericht toegevoegd</p>
+              <p className="text-muted-foreground text-sm italic">Nog geen overlijdensbericht toegevoegd</p>
             )}
           </div>
         )}
@@ -88,3 +93,4 @@ export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: E
     </Card>
   );
 }
+

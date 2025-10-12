@@ -113,14 +113,31 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
 
     const { data } = await supabase
       .from('user_roles')
-      .select('user_id, profiles(id, display_name, email)')
+      .select('user_id, profiles(id, first_name, last_name, email)')
       .eq('organization_id', userRole.organization_id);
 
     if (data) {
-      setTeamMembers(data.map((r: any) => ({
-        id: r.user_id,
-        name: r.profiles?.display_name || r.profiles?.email || 'Onbekend',
-      })));
+      const members = data.map((r: any) => {
+        const profile = r.profiles;
+        const name = profile?.first_name && profile?.last_name 
+          ? `${profile.first_name} ${profile.last_name}`
+          : profile?.email || 'Onbekend';
+        
+        return {
+          id: r.user_id,
+          name: name,
+          isCurrentUser: r.user_id === user.id
+        };
+      });
+
+      // Sorteer: huidige gebruiker eerst, daarna de rest alfabetisch
+      members.sort((a, b) => {
+        if (a.isCurrentUser) return -1;
+        if (b.isCurrentUser) return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      setTeamMembers(members);
     }
   };
 
@@ -307,9 +324,9 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">Niet toegewezen</SelectItem>
-                {teamMembers.map((member) => (
+                {teamMembers.map((member: any) => (
                   <SelectItem key={member.id} value={member.id}>
-                    {member.name}
+                    {member.isCurrentUser ? `${member.name} (jij)` : member.name}
                   </SelectItem>
                 ))}
               </SelectContent>

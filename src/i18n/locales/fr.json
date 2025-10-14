@@ -547,6 +547,58 @@
       "LEGAL_HOLD_FOLLOW_UP": "Suivi du blocage juridique"
     }
   },
+  "invoice": {
+    "number": "Numéro",
+    "type": "Type",
+    "from": "De",
+    "to": "À",
+    "amount": "Montant",
+    "status": "Statut",
+    "actions": "Actions",
+    "send": "Envoyer",
+    "pay": "Payer",
+    "success": "Succès",
+    "sent": "Facture envoyée",
+    "paid": "Paiement enregistré",
+    "updateError": "Impossible de mettre à jour la facture"
+  },
+  "hold": {
+    "legal": "Blocage juridique",
+    "insurer": "Blocage assureur",
+    "detailsTitle": "Détails du blocage",
+    "status": "Statut",
+    "blockedByAuthority": "Bloqué par l'autorité/procureur",
+    "blockedByInsurer": "Bloqué par l'assureur",
+    "reason": "Raison",
+    "authority": "Autorité",
+    "contactPerson": "Personne de contact",
+    "caseNumber": "Numéro de dossier",
+    "reference": "Référence",
+    "liftReason": "Raison de la levée *",
+    "liftReasonPlaceholder": "Pourquoi ce blocage est-il levé?",
+    "liftReasonRequired": "Fournir une raison pour lever le blocage",
+    "cancel": "Annuler",
+    "liftHold": "Lever le blocage",
+    "lifting": "Traitement...",
+    "liftSuccess": "Blocage levé",
+    "liftSuccessDesc": "Le blocage {type} a été levé avec succès",
+    "liftError": "Erreur lors de la levée du blocage",
+    "liftErrorDesc": "Impossible de lever le blocage"
+  },
+  "statusChanger": {
+    "changeStatus": "Modifier le statut",
+    "currentStatus": "Statut actuel",
+    "newStatus": "Nouveau statut",
+    "reason": "Raison",
+    "reasonPlaceholder": "Pourquoi le statut est-il modifié?",
+    "cancel": "Annuler",
+    "confirm": "Confirmer la modification",
+    "updating": "Mise à jour...",
+    "success": "Statut modifié",
+    "error": "Erreur lors de la modification du statut",
+    "blocked": "Bloqué",
+    "openTasks": "Tâches ouvertes"
+  },
   "toasts": {
     "success": {
       "saved": "Enregistré",

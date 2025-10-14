@@ -538,6 +538,58 @@
       "LEGAL_HOLD_FOLLOW_UP": "Legal hold follow-up"
     }
   },
+  "invoice": {
+    "number": "Number",
+    "type": "Type",
+    "from": "From",
+    "to": "To",
+    "amount": "Amount",
+    "status": "Status",
+    "actions": "Actions",
+    "send": "Send",
+    "pay": "Pay",
+    "success": "Success",
+    "sent": "Invoice sent",
+    "paid": "Payment registered",
+    "updateError": "Could not update invoice"
+  },
+  "hold": {
+    "legal": "Legal hold",
+    "insurer": "Insurer hold",
+    "detailsTitle": "Hold details",
+    "status": "Status",
+    "blockedByAuthority": "Blocked by authority/prosecutor",
+    "blockedByInsurer": "Blocked by insurer",
+    "reason": "Reason",
+    "authority": "Authority",
+    "contactPerson": "Contact person",
+    "caseNumber": "Case number",
+    "reference": "Reference",
+    "liftReason": "Reason for lifting *",
+    "liftReasonPlaceholder": "Why is this hold being lifted?",
+    "liftReasonRequired": "Provide a reason for lifting the hold",
+    "cancel": "Cancel",
+    "liftHold": "Lift hold",
+    "lifting": "Processing...",
+    "liftSuccess": "Hold lifted",
+    "liftSuccessDesc": "{type} hold has been successfully lifted",
+    "liftError": "Error lifting hold",
+    "liftErrorDesc": "Could not lift hold"
+  },
+  "statusChanger": {
+    "changeStatus": "Change status",
+    "currentStatus": "Current status",
+    "newStatus": "New status",
+    "reason": "Reason",
+    "reasonPlaceholder": "Why is the status being changed?",
+    "cancel": "Cancel",
+    "confirm": "Confirm change",
+    "updating": "Updating...",
+    "success": "Status changed",
+    "error": "Error changing status",
+    "blocked": "Blocked",
+    "openTasks": "Open tasks"
+  },
   "toasts": {
     "success": {
       "saved": "Saved",

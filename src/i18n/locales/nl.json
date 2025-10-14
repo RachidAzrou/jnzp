@@ -482,6 +482,58 @@
       "LEGAL_HOLD_FOLLOW_UP": "Legal hold opvolgen"
     }
   },
+  "invoice": {
+    "number": "Nummer",
+    "type": "Type",
+    "from": "Van",
+    "to": "Aan",
+    "amount": "Bedrag",
+    "status": "Status",
+    "actions": "Acties",
+    "send": "Verstuur",
+    "pay": "Betaal",
+    "success": "Succes",
+    "sent": "Factuur verzonden",
+    "paid": "Betaling geregistreerd",
+    "updateError": "Kon factuur niet bijwerken"
+  },
+  "hold": {
+    "legal": "Juridische blokkade",
+    "insurer": "Verzekeraar-blokkade",
+    "detailsTitle": "Details van de blokkade",
+    "status": "Status",
+    "blockedByAuthority": "Geblokkeerd door overheid/parket",
+    "blockedByInsurer": "Geblokkeerd door verzekeraar",
+    "reason": "Reden",
+    "authority": "Autoriteit",
+    "contactPerson": "Contactpersoon",
+    "caseNumber": "Zaaknummer",
+    "reference": "Referentie",
+    "liftReason": "Reden voor opheffen *",
+    "liftReasonPlaceholder": "Waarom wordt deze blokkade opgeheven?",
+    "liftReasonRequired": "Geef een reden op voor het opheffen van de blokkade",
+    "cancel": "Annuleren",
+    "liftHold": "Blokkade opheffen",
+    "lifting": "Bezig...",
+    "liftSuccess": "Blokkade opgeheven",
+    "liftSuccessDesc": "{type} blokkade is succesvol opgeheven",
+    "liftError": "Fout bij opheffen blokkade",
+    "liftErrorDesc": "Kon blokkade niet opheffen"
+  },
+  "statusChanger": {
+    "changeStatus": "Status wijzigen",
+    "currentStatus": "Huidige status",
+    "newStatus": "Nieuwe status",
+    "reason": "Reden",
+    "reasonPlaceholder": "Waarom wordt de status gewijzigd?",
+    "cancel": "Annuleren",
+    "confirm": "Bevestig wijziging",
+    "updating": "Bezig met bijwerken...",
+    "success": "Status gewijzigd",
+    "error": "Fout bij wijzigen status",
+    "blocked": "Geblokkeerd",
+    "openTasks": "Open taken"
+  },
   "toasts": {
     "success": {
       "saved": "Opgeslagen",

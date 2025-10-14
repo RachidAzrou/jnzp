@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Shield, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +38,7 @@ export function HoldBadge({
   canLift,
   onLift,
 }: HoldBadgeProps) {
+  const { t } = useTranslation();
   const [liftReason, setLiftReason] = useState("");
   const [isLifting, setIsLifting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -48,8 +50,8 @@ export function HoldBadge({
     if (!liftReason.trim()) {
       toast({
         variant: "destructive",
-        title: "Reden verplicht",
-        description: "Geef een reden op voor het opheffen van de blokkade",
+        title: t("hold.liftReasonRequired"),
+        description: t("hold.liftReasonRequired"),
       });
       return;
     }
@@ -66,12 +68,13 @@ export function HoldBadge({
 
       const result = data as { success?: boolean; error?: string };
       if (!result?.success) {
-        throw new Error(result?.error || "Kon blokkade niet opheffen");
+        throw new Error(result?.error || t("hold.liftErrorDesc"));
       }
 
+      const holdType = isLegal ? t("hold.legal") : t("hold.insurer");
       toast({
-        title: "Blokkade opgeheven",
-        description: `${isLegal ? "Juridische" : "Verzekeraar"} blokkade is succesvol opgeheven`,
+        title: t("hold.liftSuccess"),
+        description: t("hold.liftSuccessDesc", { type: holdType }),
       });
 
       setDialogOpen(false);
@@ -80,7 +83,7 @@ export function HoldBadge({
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Fout bij opheffen blokkade",
+        title: t("hold.liftError"),
         description: error.message,
       });
     } finally {
@@ -104,44 +107,44 @@ export function HoldBadge({
           ) : (
             <AlertTriangle className="h-3.5 w-3.5" />
           )}
-          {isLegal ? "Juridische blokkade" : "Verzekeraar-blokkade"}
+          {isLegal ? t("hold.legal") : t("hold.insurer")}
         </Badge>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {isLegal ? "Juridische blokkade" : "Verzekeraar-blokkade"}
+            {isLegal ? t("hold.legal") : t("hold.insurer")}
           </DialogTitle>
-          <DialogDescription>Details van de blokkade</DialogDescription>
+          <DialogDescription>{t("hold.detailsTitle")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <Label className="text-muted-foreground">Status</Label>
+            <Label className="text-muted-foreground">{t("hold.status")}</Label>
             <p className={`font-medium ${isLegal ? "text-red-600" : "text-orange-600"}`}>
               {isLegal
-                ? "Geblokkeerd door overheid/parket"
-                : "Geblokkeerd door verzekeraar"}
+                ? t("hold.blockedByAuthority")
+                : t("hold.blockedByInsurer")}
             </p>
           </div>
 
           {reason && (
             <div>
-              <Label className="text-muted-foreground">Reden</Label>
+              <Label className="text-muted-foreground">{t("hold.reason")}</Label>
               <p className="text-sm">{reason}</p>
             </div>
           )}
 
           {isLegal && authority && (
             <div>
-              <Label className="text-muted-foreground">Autoriteit</Label>
+              <Label className="text-muted-foreground">{t("hold.authority")}</Label>
               <p className="text-sm">{authority}</p>
             </div>
           )}
 
           {!isLegal && contactPerson && (
             <div>
-              <Label className="text-muted-foreground">Contactpersoon</Label>
+              <Label className="text-muted-foreground">{t("hold.contactPerson")}</Label>
               <p className="text-sm">{contactPerson}</p>
             </div>
           )}
@@ -149,7 +152,7 @@ export function HoldBadge({
           {reference && (
             <div>
               <Label className="text-muted-foreground">
-                {isLegal ? "Zaaknummer" : "Referentie"}
+                {isLegal ? t("hold.caseNumber") : t("hold.reference")}
               </Label>
               <p className="text-sm">{reference}</p>
             </div>
@@ -157,12 +160,12 @@ export function HoldBadge({
 
           {canLift && (
             <div className="pt-4 border-t">
-              <Label htmlFor="lift-reason">Reden voor opheffen *</Label>
+              <Label htmlFor="lift-reason">{t("hold.liftReason")}</Label>
               <Textarea
                 id="lift-reason"
                 value={liftReason}
                 onChange={(e) => setLiftReason(e.target.value)}
-                placeholder="Waarom wordt deze blokkade opgeheven?"
+                placeholder={t("hold.liftReasonPlaceholder")}
                 className="mt-2"
               />
             </div>
@@ -176,10 +179,10 @@ export function HoldBadge({
               onClick={() => setDialogOpen(false)}
               disabled={isLifting}
             >
-              Annuleren
+              {t("hold.cancel")}
             </Button>
             <Button onClick={handleLift} disabled={isLifting}>
-              {isLifting ? "Bezig..." : "Blokkade opheffen"}
+              {isLifting ? t("hold.lifting") : t("hold.liftHold")}
             </Button>
           </DialogFooter>
         )}

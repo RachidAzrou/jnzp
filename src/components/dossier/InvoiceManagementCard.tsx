@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Send, Check, AlertCircle, FileText } from "lucide-react";
 import {
   Dialog,
@@ -25,6 +26,7 @@ interface InvoiceManagementCardProps {
 
 export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagementCardProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
   const [actionType, setActionType] = useState<'send' | 'pay' | null>(null);
@@ -84,8 +86,8 @@ export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagement
       queryClient.invalidateQueries({ queryKey: ["dossier-invoices", dossierId] });
       queryClient.invalidateQueries({ queryKey: ["dossier-tasks", dossierId] });
       toast({
-        title: "Succes",
-        description: actionType === 'send' ? "Factuur verzonden" : "Betaling geregistreerd",
+        title: t("invoice.success"),
+        description: actionType === 'send' ? t("invoice.sent") : t("invoice.paid"),
       });
       setSelectedInvoice(null);
       setActionType(null);
@@ -93,8 +95,8 @@ export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagement
     },
     onError: (error) => {
       toast({
-        title: "Fout",
-        description: "Kon factuur niet bijwerken",
+        title: t("common.error"),
+        description: t("invoice.updateError"),
         variant: "destructive",
       });
     },
@@ -152,13 +154,13 @@ export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagement
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nummer</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Van</TableHead>
-                  <TableHead>Aan</TableHead>
-                  <TableHead>Bedrag</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Acties</TableHead>
+                  <TableHead>{t("invoice.number")}</TableHead>
+                  <TableHead>{t("invoice.type")}</TableHead>
+                  <TableHead>{t("invoice.from")}</TableHead>
+                  <TableHead>{t("invoice.to")}</TableHead>
+                  <TableHead>{t("invoice.amount")}</TableHead>
+                  <TableHead>{t("invoice.status")}</TableHead>
+                  <TableHead>{t("invoice.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -181,7 +183,7 @@ export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagement
                             onClick={() => handleAction(invoice, 'send')}
                           >
                             <Send className="h-4 w-4 mr-1" />
-                            Verstuur
+                            {t("invoice.send")}
                           </Button>
                         )}
                         {canPayInvoice(invoice) && (
@@ -190,7 +192,7 @@ export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagement
                             onClick={() => handleAction(invoice, 'pay')}
                           >
                             <Check className="h-4 w-4 mr-1" />
-                            Betaal
+                            {t("invoice.pay")}
                           </Button>
                         )}
                       </div>

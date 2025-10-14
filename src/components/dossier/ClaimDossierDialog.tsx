@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +28,7 @@ interface ClaimDossierDialogProps {
 }
 
 export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: ClaimDossierDialogProps) {
+  const { t } = useTranslation();
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -138,7 +140,7 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
             <Label htmlFor="note">Opmerking (optioneel)</Label>
             <Textarea
               id="note"
-              placeholder="Voeg een opmerking toe aan je claim..."
+              placeholder={t("forms.placeholders.claimNote")}
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={3}

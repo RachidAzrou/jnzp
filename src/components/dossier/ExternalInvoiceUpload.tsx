@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -129,7 +131,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
             <Label htmlFor="description">Omschrijving</Label>
             <Textarea
               id="description"
-              placeholder="Bijv. Mortuarium koelcel, Moskee dienst..."
+              placeholder={t("forms.placeholders.invoiceDescription")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -140,7 +142,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
               id="amount"
               type="number"
               step="0.01"
-              placeholder="€ 0.00"
+              placeholder={t("forms.placeholders.amount")}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />

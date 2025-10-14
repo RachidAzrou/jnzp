@@ -76,12 +76,12 @@ export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: E
       </CardHeader>
       <CardContent className="transition-all duration-200">
         {isEditing ? (
-          <Textarea
-            value={obituary}
-            onChange={(e) => setObituary(e.target.value)}
-            placeholder="Voer het overlijdensbericht in..."
-            className="min-h-[200px] animate-scale-in"
-          />
+            <Textarea
+              value={obituary}
+              onChange={(e) => setObituary(e.target.value)}
+              placeholder={t("forms.placeholders.obituaryText")}
+              className="min-h-[200px] animate-scale-in"
+            />
         ) : (
           <div className="prose prose-sm max-w-none animate-fade-in">
             {obituary ? (

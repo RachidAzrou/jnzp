@@ -1,19 +1,11 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { Upload } from "lucide-react";
 
 interface DocumentUploadDialogProps {
@@ -24,6 +16,7 @@ interface DocumentUploadDialogProps {
 // Removed DOC_TYPES - now using free text input
 
 export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: DocumentUploadDialogProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [docType, setDocType] = useState("");
@@ -155,7 +148,7 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
             <Label htmlFor="docType">Documenttype</Label>
             <Input
               id="docType"
-              placeholder="bijv. Overlijdensakte, Paspoort, Volmacht..."
+              placeholder={t("forms.placeholders.documentType")}
               value={docType}
               onChange={(e) => setDocType(e.target.value)}
               required

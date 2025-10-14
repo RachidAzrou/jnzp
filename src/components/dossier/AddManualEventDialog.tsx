@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,6 +23,7 @@ interface AddManualEventDialogProps {
 }
 
 export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEventDialogProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -89,7 +91,7 @@ export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEvent
           <div>
             <Label>Titel *</Label>
             <Input
-              placeholder="Bijv. 'Contact gehad met familie'"
+              placeholder={t("forms.placeholders.eventTitle")}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -97,7 +99,7 @@ export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEvent
           <div>
             <Label>Beschrijving</Label>
             <Textarea
-              placeholder="Optionele details..."
+              placeholder={t("forms.placeholders.eventDescription")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}

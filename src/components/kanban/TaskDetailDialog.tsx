@@ -570,9 +570,6 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                     {getPriorityLabel(task.priority)}
                   </Badge>
                 )}
-                <Badge className="text-sm px-3 py-1" variant={task.is_blocked ? "destructive" : "outline"}>
-                  {task.is_blocked ? "Geblokkeerd" : "Actief"}
-                </Badge>
               </div>
             </div>
             

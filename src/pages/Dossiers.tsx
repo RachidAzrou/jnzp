@@ -288,20 +288,20 @@ const Dossiers = () => {
 
       if ((data as any)?.success) {
         toast({
-          title: "Aanvraag geaccepteerd",
-          description: "Het dossier is aan jouw organisatie toegewezen",
+          title: t("dossiers.requestAccepted"),
+          description: t("dossiers.requestAcceptedDescription"),
         });
         fetchDossiers();
         fetchIncomingRequests();
         fetchClaimableCount();
       } else {
-        throw new Error((data as any)?.error || "Acceptatie mislukt");
+        throw new Error((data as any)?.error || t("dossiers.acceptanceFailed"));
       }
     } catch (error: any) {
       console.error("Error accepting request:", error);
       toast({
-        title: "Fout",
-        description: error.message || "Kon aanvraag niet accepteren",
+        title: t("common.error"),
+        description: error.message || t("dossiers.couldNotAcceptRequest"),
         variant: "destructive",
       });
     } finally {
@@ -312,8 +312,8 @@ const Dossiers = () => {
   const handleDeclineRequest = async () => {
     if (!selectedRequest || !declineReason.trim()) {
       toast({
-        title: "Reden vereist",
-        description: "Geef een reden op voor de weigering",
+        title: t("dossiers.reasonRequired"),
+        description: t("dossiers.reasonRequiredDescription"),
         variant: "destructive",
       });
       return;
@@ -331,8 +331,8 @@ const Dossiers = () => {
 
       if ((data as any)?.success) {
         toast({
-          title: "Aanvraag geweigerd",
-          description: "Het dossier blijft beschikbaar voor andere uitvaartondernemers",
+          title: t("dossiers.requestDeclined"),
+          description: t("dossiers.requestDeclinedDescription"),
         });
         setShowDeclineDialog(false);
         setDeclineReason("");
@@ -341,13 +341,13 @@ const Dossiers = () => {
         fetchIncomingRequests();
         fetchClaimableCount();
       } else {
-        throw new Error((data as any)?.error || "Weigering mislukt");
+        throw new Error((data as any)?.error || t("dossiers.declineFailed"));
       }
     } catch (error: any) {
       console.error("Error declining request:", error);
       toast({
-        title: "Fout",
-        description: error.message || "Kon aanvraag niet weigeren",
+        title: t("common.error"),
+        description: error.message || t("dossiers.couldNotDeclineRequest"),
         variant: "destructive",
       });
     } finally {
@@ -378,11 +378,11 @@ const Dossiers = () => {
 
   const getStatusLabel = (status: string) => {
     const statusMap: Record<string, string> = {
-      'CREATED': 'Nieuw dossier',
-      'IN_PROGRESS': 'In behandeling',
-      'UNDER_REVIEW': 'In controle',
-      'COMPLETED': 'Operationeel afgerond',
-      'CLOSED': 'Gearchiveerd',
+      'CREATED': t("status.created"),
+      'IN_PROGRESS': t("status.inProgress"),
+      'UNDER_REVIEW': t("status.underReview"),
+      'COMPLETED': t("status.completed"),
+      'CLOSED': t("status.closed"),
     };
     return statusMap[status.toUpperCase()] || status;
   };
@@ -420,12 +420,12 @@ const Dossiers = () => {
                   <FileText className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Beheer</p>
-                  <h1 className="text-2xl font-bold tracking-tight">Dossiers</h1>
+                  <p className="text-sm text-muted-foreground font-medium">{t("dossiers.management")}</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t("dossiers.title")}</h1>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground pl-15">
-                Beheer jouw dossiers en claim nieuwe aanvragen
+                {t("dossiers.subtitle")}
               </p>
             </div>
           </CardContent>
@@ -444,10 +444,10 @@ const Dossiers = () => {
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "my" | "all" | "incoming")} className="space-y-6">
           <TabsList className="bg-card border shadow-sm">
             <TabsTrigger value="my" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Mijn dossiers
+              {t("dossiers.myDossiers")}
             </TabsTrigger>
             <TabsTrigger value="all" className="relative data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Alle dossiers
+              {t("dossiers.allDossiers")}
               {claimableCount > 0 && (
                 <Badge variant="destructive" className="ml-2 px-2 py-0.5 text-xs h-5 rounded-full">
                   {claimableCount}
@@ -455,7 +455,7 @@ const Dossiers = () => {
               )}
             </TabsTrigger>
             <TabsTrigger value="incoming" className="relative data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Inkomende aanvragen
+              {t("dossiers.incomingRequests")}
               {incomingCount > 0 && (
                 <Badge variant="destructive" className="ml-2 px-2 py-0.5 text-xs h-5 rounded-full animate-pulse">
                   {incomingCount}
@@ -472,7 +472,7 @@ const Dossiers = () => {
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
-                      placeholder="Zoek op naam, ID, telefoon..."
+                      placeholder={t("dossiers.searchPlaceholder")}
                       className="pl-10 bg-background border-muted-foreground/20 focus:border-primary transition-colors"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}

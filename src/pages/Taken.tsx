@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Filter, Search, RefreshCw, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useTranslation } from "react-i18next";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
 import { TaskDialog } from "@/components/kanban/TaskDialog";
 import { TaskDetailDialog } from "@/components/kanban/TaskDetailDialog";
@@ -26,6 +27,7 @@ interface Board {
 }
 
 const Taken = () => {
+  const { t } = useTranslation();
   const [board, setBoard] = useState<Board | null>(null);
   const [loading, setLoading] = useState(true);
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
@@ -56,8 +58,8 @@ const Taken = () => {
     } catch (error: any) {
       console.error("Error fetching board:", error);
       toast({
-        title: "Fout",
-        description: "Kon takenbord niet laden",
+        title: t("common.error"),
+        description: t("tasks.couldNotLoadBoard"),
         variant: "destructive"
       });
     } finally {
@@ -78,7 +80,7 @@ const Taken = () => {
       <div className="container mx-auto p-6">
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            <p>Geen takenbord beschikbaar</p>
+            <p>{t("tasks.noBoardAvailable")}</p>
           </CardContent>
         </Card>
       </div>
@@ -97,12 +99,12 @@ const Taken = () => {
                   <CheckCircle className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Projectbeheer</p>
-                  <h1 className="text-2xl font-bold tracking-tight">Taken</h1>
+                  <p className="text-sm text-muted-foreground font-medium">{t("tasks.projectManagement")}</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t("tasks.title")}</h1>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground pl-15">
-                Sleep taken tussen kolommen om de status te wijzigen
+                {t("tasks.subtitle")}
               </p>
             </div>
           </CardContent>
@@ -117,7 +119,7 @@ const Taken = () => {
               </Button>
               <Button onClick={() => setIsTaskDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Nieuwe taak
+                {t("tasks.newTask")}
               </Button>
             </div>
           </CardContent>
@@ -130,7 +132,7 @@ const Taken = () => {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Zoek taken..."
+                  placeholder={t("tasks.searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9"
@@ -138,24 +140,24 @@ const Taken = () => {
               </div>
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
                 <SelectTrigger className="w-full sm:w-40">
-                  <SelectValue placeholder="Prioriteit" />
+                  <SelectValue placeholder={t("tasks.priority")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Alle prioriteiten</SelectItem>
-                  <SelectItem value="URGENT">Urgent</SelectItem>
-                  <SelectItem value="HIGH">Hoog</SelectItem>
-                  <SelectItem value="MEDIUM">Normaal</SelectItem>
-                  <SelectItem value="LOW">Laag</SelectItem>
+                  <SelectItem value="all">{t("tasks.allPriorities")}</SelectItem>
+                  <SelectItem value="URGENT">{t("tasks.urgent")}</SelectItem>
+                  <SelectItem value="HIGH">{t("tasks.high")}</SelectItem>
+                  <SelectItem value="MEDIUM">{t("tasks.normal")}</SelectItem>
+                  <SelectItem value="LOW">{t("tasks.low")}</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
                 <SelectTrigger className="w-full sm:w-40">
-                  <SelectValue placeholder="Toegewezen aan" />
+                  <SelectValue placeholder={t("tasks.assignedTo")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Iedereen</SelectItem>
-                  <SelectItem value="me">Aan mij</SelectItem>
-                  <SelectItem value="unassigned">Niet toegewezen</SelectItem>
+                  <SelectItem value="all">{t("tasks.everyone")}</SelectItem>
+                  <SelectItem value="me">{t("tasks.toMe")}</SelectItem>
+                  <SelectItem value="unassigned">{t("tasks.unassigned")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

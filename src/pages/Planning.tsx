@@ -145,7 +145,7 @@ const Planning = () => {
     } catch (error: any) {
       console.error("Error fetching planning data:", error);
       toast({
-        title: "Fout bij ophalen planning",
+        title: t("planning.error"),
         description: error.message,
         variant: "destructive"
       });
@@ -162,10 +162,10 @@ const Planning = () => {
       FAILED: "destructive"
     };
     const labels: Record<string, string> = {
-      PENDING: "In afwachting",
-      CONFIRMED: "Bevestigd",
-      COMPLETED: "Voltooid",
-      FAILED: "Mislukt"
+      PENDING: t("status.pending"),
+      CONFIRMED: t("status.confirmed"),
+      COMPLETED: t("status.completed"),
+      FAILED: t("status.failed")
     };
     return <Badge variant={variants[status] || "secondary"}>{labels[status] || status}</Badge>;
   };
@@ -213,7 +213,7 @@ const Planning = () => {
                   <Calendar className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Organisatie</p>
+                  <p className="text-sm text-muted-foreground font-medium">{t("planning.organization")}</p>
                   <h1 className="text-2xl font-bold tracking-tight">{t("planning.title")}</h1>
                 </div>
               </div>
@@ -339,19 +339,19 @@ const Planning = () => {
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <PiMosque className="h-5 w-5 text-muted-foreground" />
-                  Moskee Planning
+                  {t("planning.mosquePlanning")}
                 </CardTitle>
               </div>
               <Button size="sm" variant="outline" onClick={() => setMoskeeDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Nieuwe Afspraak
+                {t("planning.newAppointment")}
               </Button>
             </div>
           </CardHeader>
           <CardContent>
             {filteredMosqueServices.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">Geen moskee afspraken gepland</p>
+                <p className="text-sm text-muted-foreground">{t("planning.noMosqueAppointments")}</p>
               </div>
             ) : (
               <div className="hidden md:block">

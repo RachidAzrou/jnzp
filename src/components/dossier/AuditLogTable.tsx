@@ -34,11 +34,17 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
           
           const { data: profile } = await supabase
             .from("profiles")
-            .select("display_name, email")
+            .select("first_name, last_name, email")
             .eq("id", event.user_id)
-            .single();
+            .maybeSingle();
           
-          return { ...event, user: profile };
+          return { 
+            ...event, 
+            user: profile ? {
+              name: `${profile.first_name} ${profile.last_name}`.trim(),
+              email: profile.email
+            } : null
+          };
         })
       );
 
@@ -158,10 +164,8 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
                   {event.user_id ? (
                     event.user ? (
                       <div>
-                        <div className="font-medium">{event.user.display_name || event.user.email || 'Onbekend'}</div>
-                        {event.user.display_name && event.user.email && (
-                          <div className="text-xs text-muted-foreground">{event.user.email}</div>
-                        )}
+                        <div className="font-medium">{event.user.name}</div>
+                        <div className="text-xs text-muted-foreground">{event.user.email}</div>
                       </div>
                     ) : (
                       <div>

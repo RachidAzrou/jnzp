@@ -9,6 +9,7 @@ import { MessageSquare, Search, ExternalLink, Calendar, User } from "lucide-reac
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 type DossierWithMessages = {
   id: string;
@@ -26,6 +27,7 @@ export default function FDChatOverview() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchDossiers();
@@ -82,8 +84,8 @@ export default function FDChatOverview() {
     } catch (error: any) {
       console.error("Error fetching dossiers:", error);
       toast({
-        title: "Fout",
-        description: "Kon dossiers niet laden",
+        title: t("common.error"),
+        description: t("fdChatOverview.loadError"),
         variant: "destructive",
       });
     } finally {
@@ -117,12 +119,12 @@ export default function FDChatOverview() {
                   <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Communicatie</p>
-                  <h1 className="text-2xl font-bold tracking-tight">Chat Overzicht</h1>
+                  <p className="text-sm text-muted-foreground font-medium">{t("fdChatOverview.communication")}</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t("fdChatOverview.title")}</h1>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground pl-15">
-                Communiceer met families per dossier
+                {t("fdChatOverview.description")}
               </p>
             </div>
             
@@ -131,7 +133,7 @@ export default function FDChatOverview() {
                 variant="secondary" 
                 className="text-sm px-4 py-1.5 bg-primary/10 text-primary border-primary/20"
               >
-                {filteredDossiers.length} {filteredDossiers.length === 1 ? 'dossier' : 'dossiers'}
+                {filteredDossiers.length} {filteredDossiers.length === 1 ? t("dossiers.dossier") : t("dossiers.dossiers")}
               </Badge>
             </div>
           </div>
@@ -144,7 +146,7 @@ export default function FDChatOverview() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Zoek op naam of dossier nummer..."
+              placeholder={t("fdChatOverview.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 h-11"
@@ -156,8 +158,8 @@ export default function FDChatOverview() {
       {/* Chat List Card */}
       <Card className="animate-fade-in">
         <CardHeader>
-          <CardTitle className="text-lg">Dossier Chats</CardTitle>
-          <CardDescription>Selecteer een dossier om de chat te openen</CardDescription>
+          <CardTitle className="text-lg">{t("fdChatOverview.dossierChats")}</CardTitle>
+          <CardDescription>{t("fdChatOverview.selectDossier")}</CardDescription>
         </CardHeader>
         
         <CardContent className="space-y-3">
@@ -166,9 +168,9 @@ export default function FDChatOverview() {
               <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4 mx-auto">
                 <MessageSquare className="h-8 w-8 text-muted-foreground" />
               </div>
-              <p className="text-base font-medium mb-1">Geen chats gevonden</p>
+              <p className="text-base font-medium mb-1">{t("fdChatOverview.noChats")}</p>
               <p className="text-sm">
-                {searchTerm ? 'Probeer een andere zoekterm' : 'Start een chat door een dossier te openen'}
+                {searchTerm ? t("fdChatOverview.tryDifferentSearch") : t("fdChatOverview.startChat")}
               </p>
             </div>
           ) : (
@@ -223,7 +225,7 @@ export default function FDChatOverview() {
                   <div className="flex flex-col items-end gap-2">
                     {dossier.unread_count > 0 && (
                       <Badge className="bg-primary text-primary-foreground text-xs">
-                        {dossier.unread_count} nieuw
+                        {dossier.unread_count} {t("fdChatOverview.new")}
                       </Badge>
                     )}
                     <Button
@@ -236,7 +238,7 @@ export default function FDChatOverview() {
                       }}
                     >
                       <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
-                      Open
+                      {t("common.open")}
                     </Button>
                   </div>
                 </div>

@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,6 +49,7 @@ export default function FDChat() {
   const { dossierId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [dossier, setDossier] = useState<DossierInfo | null>(null);
   const [newMessage, setNewMessage] = useState("");
@@ -215,14 +217,14 @@ export default function FDChat() {
       setSelectedFile(null);
 
       toast({
-        title: "Bericht verzonden",
-        description: "Uw bericht is verstuurd",
+        title: t("fdChat.messageSent"),
+        description: t("fdChat.messageSentDesc"),
       });
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
-        title: "Fout",
-        description: "Bericht kon niet worden verzonden",
+        title: t("common.error"),
+        description: t("fdChat.sendError"),
         variant: "destructive",
       });
     } finally {
@@ -236,8 +238,8 @@ export default function FDChat() {
       // Check file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
         toast({
-          title: "Bestand te groot",
-          description: "Maximale bestandsgrootte is 10MB",
+          title: t("fdChat.fileTooLarge"),
+          description: t("fdChat.maxFileSize"),
           variant: "destructive",
         });
         return;
@@ -266,8 +268,8 @@ export default function FDChat() {
     } catch (error) {
       console.error('Error downloading file:', error);
       toast({
-        title: "Fout",
-        description: "Bestand kon niet worden gedownload",
+        title: t("common.error"),
+        description: t("fdChat.downloadError"),
         variant: "destructive",
       });
     }
@@ -288,16 +290,16 @@ export default function FDChat() {
       if (error) throw error;
 
       toast({
-        title: "Chat verwijderd",
-        description: "Alle chatberichten zijn verwijderd",
+        title: t("fdChat.chatDeleted"),
+        description: t("fdChat.chatDeletedDesc"),
       });
 
       navigate('/fd/chat');
     } catch (error) {
       console.error('Error deleting chat:', error);
       toast({
-        title: "Fout",
-        description: "Chat kon niet worden verwijderd",
+        title: t("common.error"),
+        description: t("fdChat.deleteError"),
         variant: "destructive",
       });
     } finally {
@@ -348,14 +350,14 @@ export default function FDChat() {
                   className="gap-2"
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  Terug
+                  {t("common.back")}
                 </Button>
                 <div>
                   <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-                    Chat
+                    {t("fdChat.title")}
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    Dossier {dossier?.display_id || dossier?.ref_number} — {dossier?.deceased_name}
+                    {t("dossiers.dossier")} {dossier?.display_id || dossier?.ref_number} — {dossier?.deceased_name}
                   </p>
                 </div>
               </div>
@@ -368,7 +370,7 @@ export default function FDChat() {
                     className="gap-2"
                   >
                     <ExternalLink className="h-4 w-4" />
-                    Open Dossier
+                    {t("fdChat.openDossier")}
                   </Button>
                 )}
                 
@@ -377,28 +379,27 @@ export default function FDChat() {
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" className="gap-2">
                         <Trash2 className="h-4 w-4" />
-                        Verwijder Chat
+                        {t("fdChat.deleteChat")}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle className="flex items-center gap-2">
                           <AlertTriangle className="h-5 w-5 text-destructive" />
-                          Chat verwijderen?
+                          {t("fdChat.deleteChatConfirm")}
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                          Weet je zeker dat je alle chatberichten voor dit dossier wilt verwijderen?
-                          Deze actie kan niet ongedaan worden gemaakt.
+                          {t("fdChat.deleteChatWarning")}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                        <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={handleDeleteChat}
                           disabled={isDeleting}
                           className="bg-destructive hover:bg-destructive/90"
                         >
-                          {isDeleting ? "Bezig met verwijderen..." : "Ja, verwijder chat"}
+                          {isDeleting ? t("fdChat.deleting") : t("fdChat.confirmDelete")}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -419,10 +420,10 @@ export default function FDChat() {
                 <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <Send className="h-4 w-4 text-primary" />
                 </div>
-                Conversatie
+                {t("fdChat.conversation")}
               </CardTitle>
               <Badge variant="outline" className="text-xs">
-                {messages.length} {messages.length === 1 ? 'bericht' : 'berichten'}
+                {messages.length} {messages.length === 1 ? t("fdChat.message") : t("fdChat.messages")}
               </Badge>
             </div>
           </CardHeader>
@@ -432,8 +433,8 @@ export default function FDChat() {
               {messages.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <Send className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <p className="font-medium">Nog geen berichten</p>
-                  <p className="text-sm mt-2">Start een conversatie met de familie</p>
+                  <p className="font-medium">{t("fdChat.noMessages")}</p>
+                  <p className="text-sm mt-2">{t("fdChat.startConversation")}</p>
                 </div>
               ) : (
                 messages.map((msg, index) => {
@@ -508,7 +509,7 @@ export default function FDChat() {
               )}
               <div className="flex gap-2">
                 <Textarea
-                  placeholder="Typ uw bericht..."
+                  placeholder={t("fdChat.typePlaceholder")}
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => {
@@ -534,7 +535,7 @@ export default function FDChat() {
                   disabled={sending}
                 >
                   <Paperclip className="h-4 w-4 mr-2" />
-                  Bijlage
+                  {t("fdChat.attachment")}
                 </Button>
                 <Button
                   onClick={handleSendMessage}
@@ -542,17 +543,17 @@ export default function FDChat() {
                   className="flex-1"
                 >
                   {sending ? (
-                    "Versturen..."
+                    t("fdChat.sending")
                   ) : (
                     <>
                       <Send className="h-4 w-4 mr-2" />
-                      Verstuur
+                      {t("fdChat.send")}
                     </>
                   )}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                💡 Berichten worden verzonden via het portal
+                💡 {t("fdChat.portalNotice")}
               </p>
             </div>
           </CardContent>
@@ -563,25 +564,25 @@ export default function FDChat() {
             <div className="space-y-6">
               <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
                 <CardHeader className="border-b bg-muted/30 p-6">
-                <CardTitle className="text-base">Dossier Informatie</CardTitle>
+                <CardTitle className="text-base">{t("fdChat.dossierInfo")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
                 <div>
-                  <p className="text-sm text-muted-foreground">Overledene</p>
-                  <p className="font-medium">{dossier.deceased_name || 'Nog in te vullen'}</p>
+                  <p className="text-sm text-muted-foreground">{t("dossiers.deceased")}</p>
+                  <p className="font-medium">{dossier.deceased_name || t("fdChat.toBeCompleted")}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Dossier-ID</p>
+                  <p className="text-sm text-muted-foreground">{t("dossiers.dossierId")}</p>
                   <p className="font-medium font-mono text-sm">{dossier.display_id || dossier.ref_number}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Status</p>
+                  <p className="text-sm text-muted-foreground">{t("dossiers.status")}</p>
                   <Badge>{dossier.status.replace(/_/g, ' ')}</Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Type</p>
+                  <p className="text-sm text-muted-foreground">{t("dossiers.type")}</p>
                   <Badge variant="outline">
-                    {dossier.flow === 'REP' ? 'Repatriëring' : dossier.flow === 'LOC' ? 'Lokaal' : 'Onbekend'}
+                    {dossier.flow === 'REP' ? t("flow.REP") : dossier.flow === 'LOC' ? t("flow.LOC") : t("flow.UNSET")}
                   </Badge>
                 </div>
               </CardContent>
@@ -590,7 +591,7 @@ export default function FDChat() {
               {/* Quick Actions Card */}
               <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
                 <CardHeader className="border-b bg-muted/30 p-6">
-                  <CardTitle className="text-base">Snelle Acties</CardTitle>
+                  <CardTitle className="text-base">{t("fdChat.quickActions")}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-3">
                 <Button
@@ -599,7 +600,7 @@ export default function FDChat() {
                   onClick={() => navigate(`/dossiers/${dossier.id}`)}
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
-                  Bekijk volledig dossier
+                  {t("fdChat.viewFullDossier")}
                 </Button>
                 <Button
                   variant="outline"
@@ -607,7 +608,7 @@ export default function FDChat() {
                   onClick={() => navigate(`/dossiers/${dossier.id}?tab=documents`)}
                 >
                   <Paperclip className="mr-2 h-4 w-4" />
-                  Documenten beheren
+                  {t("fdChat.manageDocuments")}
                 </Button>
                 </CardContent>
               </Card>

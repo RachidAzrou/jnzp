@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Building2, UserMinus, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface FDManagementCardProps {
   dossierId: string;
@@ -19,6 +20,8 @@ export default function FDManagementCard({
   assignedFdOrgId,
   assignmentStatus,
 }: FDManagementCardProps) {
+  const { t } = useTranslation();
+  const { toast } = useToast();
   const [releaseDialogOpen, setReleaseDialogOpen] = useState(false);
   const [releasing, setReleasing] = useState(false);
   const [approvingClaim, setApprovingClaim] = useState<string | null>(null);
@@ -79,15 +82,25 @@ export default function FDManagementCard({
 
       const result = data as any;
       if (result?.success) {
-        toast.success("Uitvaartonderneming ontkoppeld");
+        toast({
+          title: t("toasts.success.fdDecoupled"),
+        });
         setReleaseDialogOpen(false);
         window.location.reload();
       } else {
-        toast.error(result?.error || "Fout bij ontkoppelen");
+        toast({
+          title: t("toasts.errors.fdDecoupleError"),
+          description: result?.error,
+          variant: "destructive",
+        });
       }
     } catch (err: any) {
       console.error("Release error:", err);
-      toast.error("Fout bij ontkoppelen: " + err.message);
+      toast({
+        title: t("toasts.errors.fdDecoupleError"),
+        description: err.message,
+        variant: "destructive",
+      });
     } finally {
       setReleasing(false);
     }
@@ -95,7 +108,10 @@ export default function FDManagementCard({
 
   const handleApproveClaim = async (claimId: string, approved: boolean) => {
     if (!currentUserId) {
-      toast.error("Gebruiker niet ingelogd");
+      toast({
+        title: t("toasts.errors.notLoggedIn"),
+        variant: "destructive",
+      });
       return;
     }
     
@@ -110,15 +126,25 @@ export default function FDManagementCard({
 
       const result = data as any;
       if (result?.success) {
-        toast.success(approved ? "Overname goedgekeurd" : "Overname afgewezen");
+        toast({
+          title: approved ? t("toasts.success.takeoverApproved") : t("toasts.success.takeoverRejected"),
+        });
         refetchClaims();
         window.location.reload();
       } else {
-        toast.error(result?.error || "Fout bij verwerken");
+        toast({
+          title: t("toasts.errors.processError"),
+          description: result?.error,
+          variant: "destructive",
+        });
       }
     } catch (err: any) {
       console.error("Approval error:", err);
-      toast.error("Fout bij verwerken: " + err.message);
+      toast({
+        title: t("toasts.errors.processError"),
+        description: err.message,
+        variant: "destructive",
+      });
     } finally {
       setApprovingClaim(null);
     }

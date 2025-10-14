@@ -4,11 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Shield, Loader2, Copy, Download } from "lucide-react";
 import * as OTPAuth from "otpauth";
 import QRCode from "qrcode";
 
 export const TwoFactorSetup = () => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
   const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -17,7 +20,6 @@ export const TwoFactorSetup = () => {
   const [secret, setSecret] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
-  const { toast } = useToast();
 
   useEffect(() => {
     fetchSettings();
@@ -47,8 +49,8 @@ export const TwoFactorSetup = () => {
       
       if (!user) {
         toast({
-          title: "Fout",
-          description: "Geen gebruiker gevonden. Probeer opnieuw in te loggen.",
+          title: t("toasts.errors.noUser"),
+          description: t("toasts.errors.noUserDesc"),
           variant: "destructive",
         });
         return;
@@ -78,8 +80,8 @@ export const TwoFactorSetup = () => {
       setSetupMode(true);
     } catch (error: any) {
       toast({
-        title: "Fout bij genereren QR code",
-        description: error.message || "Er is iets misgegaan. Probeer het opnieuw.",
+        title: t("toasts.errors.qrGenerateError"),
+        description: error.message || t("toasts.errors.qrGenerateErrorDesc"),
         variant: "destructive",
       });
     } finally {
@@ -90,8 +92,8 @@ export const TwoFactorSetup = () => {
   const handleVerifyAndEnable = async () => {
     if (!verificationCode || verificationCode.length !== 6) {
       toast({
-        title: "Ongeldige code",
-        description: "Voer een 6-cijferige code in.",
+        title: t("toasts.errors.invalidCode"),
+        description: t("toasts.errors.invalidCodeDesc"),
         variant: "destructive",
       });
       return;
@@ -124,8 +126,8 @@ export const TwoFactorSetup = () => {
       
       if (delta === null) {
         toast({
-          title: "Ongeldige code",
-          description: "De verificatiecode is onjuist. Controleer of de tijd op uw telefoon correct is ingesteld.",
+          title: t("toasts.errors.invalidCode"),
+          description: t("toasts.errors.invalidCodeTimeDesc"),
           variant: "destructive",
         });
         setSaving(false);
@@ -146,7 +148,7 @@ export const TwoFactorSetup = () => {
 
         if (error) {
           toast({
-            title: "Fout",
+            title: t("toasts.errors.2faError"),
             description: error.message,
             variant: "destructive",
           });
@@ -164,16 +166,16 @@ export const TwoFactorSetup = () => {
           setEnabled(true);
           setSetupMode(false);
           toast({
-            title: "✅ 2FA Succesvol Ingesteld",
-            description: "Twee-factor authenticatie is geconfigureerd. Uw account is nu volledig beveiligd.",
+            title: t("toasts.success.2faSetupSuccess"),
+            description: t("toasts.success.2faSetupSuccessDesc"),
             duration: 5000,
           });
         }
       }
     } catch (error: any) {
       toast({
-        title: "Verificatie mislukt",
-        description: error.message || "Er is een fout opgetreden bij het verifiëren.",
+        title: t("toasts.errors.verificationFailed"),
+        description: error.message || t("toasts.errors.verificationFailedDesc"),
         variant: "destructive",
       });
     } finally {
@@ -197,15 +199,15 @@ export const TwoFactorSetup = () => {
 
       if (error) {
         toast({
-          title: "Fout",
+          title: t("toasts.errors.2faError"),
           description: error.message,
           variant: "destructive",
         });
       } else {
         setEnabled(false);
         toast({
-          title: "2FA uitgeschakeld",
-          description: "Tweefactorauthenticatie is uitgeschakeld.",
+          title: t("toasts.success.2faDisabled"),
+          description: t("toasts.success.2faDisabledDesc"),
         });
       }
     }
@@ -226,8 +228,8 @@ export const TwoFactorSetup = () => {
   const copyRecoveryCodes = () => {
     navigator.clipboard.writeText(recoveryCodes.join('\n'));
     toast({
-      title: "Gekopieerd",
-      description: "Recovery codes zijn gekopieerd naar klembord.",
+      title: t("toasts.success.recoveryCopied"),
+      description: t("toasts.success.recoveryCopiedDesc"),
     });
   };
 

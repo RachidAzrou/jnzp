@@ -9,6 +9,7 @@ import { TbAuth2Fa } from "react-icons/tb";
 import * as OTPAuth from "otpauth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { trustDevice } from "@/utils/deviceTrust";
 
 interface TwoFactorVerificationProps {
@@ -19,11 +20,12 @@ interface TwoFactorVerificationProps {
 }
 
 export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: TwoFactorVerificationProps) => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
   const [code, setCode] = useState("");
   const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [trustThisDevice, setTrustThisDevice] = useState(false);
-  const { toast } = useToast();
 
   const handleVerify = async () => {
     console.log("=== 2FA Verification Start ===");
@@ -32,10 +34,10 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
     
     if (!code || (isRecoveryMode ? code.length !== 8 : code.length !== 6)) {
       toast({
-        title: "Ongeldige code",
+        title: t("toasts.errors.invalidCode"),
         description: isRecoveryMode 
-          ? "Voer een 8-cijferige recovery code in."
-          : "Voer een 6-cijferige code in.",
+          ? t("toasts.errors.invalidRecoveryCodeLength")
+          : t("toasts.errors.invalidCodeDesc"),
         variant: "destructive",
       });
       return;
@@ -53,8 +55,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
         
         if (settingsError || !rawResponse) {
           toast({
-            title: "Fout",
-            description: "Kon 2FA instellingen niet ophalen.",
+            title: t("toasts.errors.2faError"),
+            description: t("toasts.errors.2faSettingsError"),
             variant: "destructive",
           });
           setVerifying(false);
@@ -71,8 +73,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
 
         if (!response.valid) {
           toast({
-            title: "Sessie verlopen",
-            description: response.error || "De verificatie sessie is verlopen. Log opnieuw in.",
+            title: t("toasts.errors.sessionExpired"),
+            description: response.error || t("toasts.errors.sessionExpiredDesc"),
             variant: "destructive",
           });
           onCancel();
@@ -83,8 +85,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
         
         if (!isValid) {
           toast({
-            title: "Ongeldige recovery code",
-            description: "De recovery code is onjuist.",
+            title: t("toasts.errors.invalidRecoveryCode"),
+            description: t("toasts.errors.invalidRecoveryCodeDesc"),
             variant: "destructive",
           });
           setVerifying(false);
@@ -98,8 +100,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
         });
 
         toast({
-          title: "Verificatie succesvol",
-          description: "U wordt ingelogd...",
+          title: t("toasts.success.verificationSuccess"),
+          description: t("toasts.success.verificationSuccessDesc"),
         });
 
         onVerified();
@@ -118,8 +120,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
 
         if (verifyError || !verifyData) {
           toast({
-            title: "Fout",
-            description: "Kon verificatie niet starten.",
+            title: t("toasts.errors.2faError"),
+            description: t("toasts.errors.verificationStartError"),
             variant: "destructive",
           });
           setVerifying(false);
@@ -138,8 +140,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
 
         if (!verifyResponse.success) {
           toast({
-            title: "Verificatie mislukt",
-            description: verifyResponse.error || "De verificatie is mislukt.",
+            title: t("toasts.errors.verificationFailed"),
+            description: verifyResponse.error || t("toasts.errors.verificationFailedDesc"),
             variant: "destructive",
           });
           setVerifying(false);
@@ -149,8 +151,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
         // Stap 2: Valideer de code client-side met de beschikbare periode
         if (!verifyResponse.secret || verifyResponse.period === undefined) {
           toast({
-            title: "Fout",
-            description: "Verificatie data ontbreekt.",
+            title: t("toasts.errors.2faError"),
+            description: t("toasts.errors.verificationDataMissing"),
             variant: "destructive",
           });
           setVerifying(false);
@@ -177,8 +179,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
 
         if (expectedToken !== code) {
           toast({
-            title: "Ongeldige code",
-            description: "De verificatiecode is onjuist.",
+            title: t("toasts.errors.invalidCode"),
+            description: t("toasts.errors.invalidCodeDesc"),
             variant: "destructive",
           });
           setVerifying(false);
@@ -194,8 +196,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
 
         if (claimError || !claimData) {
           toast({
-            title: "Fout",
-            description: "Kon periode niet claimen.",
+            title: t("toasts.errors.2faError"),
+            description: t("toasts.errors.periodClaimError"),
             variant: "destructive",
           });
           setVerifying(false);
@@ -210,8 +212,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
 
         if (!claimResponse.success) {
           toast({
-            title: "Code al gebruikt",
-            description: claimResponse.error || "Deze code is al gebruikt.",
+            title: t("toasts.errors.codeAlreadyUsed"),
+            description: claimResponse.error || t("toasts.errors.codeAlreadyUsedDesc"),
             variant: "destructive",
           });
           setVerifying(false);
@@ -223,15 +225,15 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
           const trusted = await trustDevice(userId);
           if (trusted) {
             toast({
-              title: "Apparaat vertrouwd",
-              description: "U hoeft 30 dagen geen 2FA in te voeren op dit apparaat.",
+              title: t("toasts.success.deviceTrusted"),
+              description: t("toasts.success.deviceTrustedDesc"),
             });
           }
         }
 
         toast({
-          title: "Verificatie succesvol",
-          description: "U wordt ingelogd...",
+          title: t("toasts.success.verificationSuccess"),
+          description: t("toasts.success.verificationSuccessDesc"),
         });
 
         onVerified();
@@ -242,8 +244,8 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
     } catch (error: any) {
       console.error("2FA verification error:", error);
       toast({
-        title: "Verificatie fout",
-        description: error.message || "Er is een fout opgetreden.",
+        title: t("toasts.errors.verificationError"),
+        description: error.message || t("toasts.errors.2faErrorDesc"),
         variant: "destructive",
       });
       setVerifying(false);

@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 
 interface NewFDDialogProps {
   open: boolean;
@@ -24,6 +24,7 @@ interface NewFDDialogProps {
 
 export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProps) {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [fdName, setFdName] = useState("");
   const [contactName, setContactName] = useState("");
@@ -74,14 +75,21 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
     },
     onSuccess: (orgId) => {
       queryClient.invalidateQueries({ queryKey: ['organizations'] });
-      toast.success("Nieuwe FD succesvol aangemaakt");
+      toast({
+        title: t("common.success"),
+        description: "Nieuwe FD succesvol aangemaakt",
+      });
       handleClose();
       onFDCreated(orgId);
     },
     onError: (error: any) => {
       console.error('❌ Error creating FD:', error);
       const errorMsg = error?.message || String(error);
-      toast.error(`Fout bij aanmaken FD: ${errorMsg}`);
+      toast({
+        title: t("toasts.errors.createError"),
+        description: errorMsg,
+        variant: "destructive",
+      });
     }
   });
 
@@ -97,12 +105,18 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
     e.preventDefault();
     
     if (!fdName.trim() || !contactName.trim() || !contactEmail.trim()) {
-      toast.error("Vul alle verplichte velden in");
+      toast({
+        title: t("toasts.errors.allFieldsRequiredShort"),
+        variant: "destructive",
+      });
       return;
     }
 
     if (!contactEmail.includes("@")) {
-      toast.error("Voer een geldig e-mailadres in");
+      toast({
+        title: t("toasts.errors.invalidEmail"),
+        variant: "destructive",
+      });
       return;
     }
 

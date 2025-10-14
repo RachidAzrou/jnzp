@@ -24,7 +24,8 @@ import {
   Phone,
   MapPin
 } from "lucide-react";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 
@@ -52,6 +53,8 @@ interface OrganizationVerificationCardProps {
 type ActionType = "verify" | "reject" | "more_info" | "migrate" | null;
 
 export function OrganizationVerificationCard({ organization }: OrganizationVerificationCardProps) {
+  const { t } = useTranslation();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<ActionType>(null);
@@ -68,12 +71,19 @@ export function OrganizationVerificationCard({ organization }: OrganizationVerif
       return data;
     },
     onSuccess: () => {
-      toast.success("Organisatie geactiveerd en defaults klaargezet");
+      toast({
+        title: t("toasts.success.orgActivated"),
+        description: t("toasts.success.orgActivatedDesc"),
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-organizations"] });
       handleCloseDialog();
     },
     onError: (error: any) => {
-      toast.error("Fout bij activeren: " + error.message);
+      toast({
+        title: t("toasts.errors.activateError"),
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -88,12 +98,18 @@ export function OrganizationVerificationCard({ organization }: OrganizationVerif
       return data;
     },
     onSuccess: () => {
-      toast.success("Organisatie afgewezen");
+      toast({
+        title: t("toasts.success.orgRejected"),
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-organizations"] });
       handleCloseDialog();
     },
     onError: (error: any) => {
-      toast.error("Fout bij afwijzen: " + error.message);
+      toast({
+        title: t("toasts.errors.rejectError"),
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -108,12 +124,18 @@ export function OrganizationVerificationCard({ organization }: OrganizationVerif
       return data;
     },
     onSuccess: () => {
-      toast.success("Extra info gevraagd");
+      toast({
+        title: t("toasts.success.infoRequested"),
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-organizations"] });
       handleCloseDialog();
     },
     onError: (error: any) => {
-      toast.error("Fout bij info verzoek: " + error.message);
+      toast({
+        title: t("toasts.errors.infoRequestError"),
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -126,11 +148,18 @@ export function OrganizationVerificationCard({ organization }: OrganizationVerif
       return data;
     },
     onSuccess: (data: any) => {
-      toast.success(`${data.migrated} ad-hoc dossiers gemigreerd`);
+      toast({
+        title: t("common.success"),
+        description: `${data.migrated} ad-hoc dossiers gemigreerd`,
+      });
       handleCloseDialog();
     },
     onError: (error: any) => {
-      toast.error("Fout bij migratie: " + error.message);
+      toast({
+        title: t("toasts.errors.migrationError"),
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 

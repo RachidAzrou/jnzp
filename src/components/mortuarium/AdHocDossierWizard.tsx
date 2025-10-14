@@ -16,7 +16,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { CalendarIcon, Loader2, CheckCircle, ArrowLeft, ArrowRight, UserPlus, AlertCircle } from "lucide-react";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { NewFDDialog } from "./NewFDDialog";
 
@@ -28,6 +28,7 @@ interface CoolCell {
 
 export function AdHocDossierWizard() {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
@@ -170,7 +171,10 @@ export function AdHocDossierWizard() {
       return dossier.id;
     },
     onSuccess: (dossierId) => {
-      toast.success("Ad-hoc dossier succesvol aangemaakt");
+      toast({
+        title: t("common.success"),
+        description: "Ad-hoc dossier succesvol aangemaakt",
+      });
       queryClient.invalidateQueries({ queryKey: ["mortuarium-dossiers"] });
       queryClient.invalidateQueries({ queryKey: ["cool-cells"] });
       queryClient.invalidateQueries({ queryKey: ["cool-cell-reservations"] });
@@ -179,7 +183,11 @@ export function AdHocDossierWizard() {
       navigate(`/dossier/${dossierId}`);
     },
     onError: (error: any) => {
-      toast.error("Fout bij aanmaken dossier: " + error.message);
+      toast({
+        title: t("toasts.errors.createError"),
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -199,7 +207,10 @@ export function AdHocDossierWizard() {
 
   const handleSubmit = () => {
     if (!canSubmit) {
-      toast.error("Vul alle verplichte velden correct in");
+      toast({
+        title: t("toasts.errors.allFieldsRequired"),
+        variant: "destructive",
+      });
       return;
     }
     createDossierMutation.mutate();

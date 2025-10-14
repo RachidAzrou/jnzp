@@ -8,7 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 
 interface SearchResult {
@@ -22,6 +23,8 @@ interface SearchResult {
 }
 
 export default function DossierZoeken() {
+  const { t } = useTranslation();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
@@ -33,7 +36,10 @@ export default function DossierZoeken() {
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
-      toast.error("Voer een dossiernummer in");
+      toast({
+        title: t("toasts.errors.enterDossierNumber"),
+        variant: "destructive",
+      });
       return;
     }
 
@@ -90,14 +96,21 @@ export default function DossierZoeken() {
 
       if (claimError) throw claimError;
 
-      toast.success("Claim ingediend. Familie ontvangt een bevestigingsverzoek.");
+      toast({
+        title: t("common.success"),
+        description: "Claim ingediend. Familie ontvangt een bevestigingsverzoek.",
+      });
       setClaimDialogOpen(false);
       setResult(null);
       setSearchQuery("");
       setClaimReason("");
     } catch (err: any) {
       console.error("Claim error:", err);
-      toast.error("Fout bij claimen: " + err.message);
+      toast({
+        title: t("toasts.errors.claimError"),
+        description: err.message,
+        variant: "destructive",
+      });
     } finally {
       setClaiming(false);
     }

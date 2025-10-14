@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Send, CheckCircle, Eye, FileText } from "lucide-react";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 
@@ -35,6 +35,7 @@ interface Invoice {
 
 export default function MortuariumFacturatie() {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<string>("ALL");
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
@@ -90,14 +91,21 @@ export default function MortuariumFacturatie() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Factuur verzonden");
+      toast({
+        title: t("common.success"),
+        description: "Factuur verzonden",
+      });
       queryClient.invalidateQueries({ queryKey: ["mortuarium-invoices"] });
       setSendDialogOpen(false);
       setMessage("");
       setSelectedInvoice(null);
     },
     onError: (error) => {
-      toast.error("Fout bij verzenden: " + error.message);
+      toast({
+        title: t("toasts.errors.sendError"),
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -111,14 +119,21 @@ export default function MortuariumFacturatie() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Factuur gemarkeerd als betaald");
+      toast({
+        title: t("common.success"),
+        description: "Factuur gemarkeerd als betaald",
+      });
       queryClient.invalidateQueries({ queryKey: ["mortuarium-invoices"] });
       setPaidDialogOpen(false);
       setNote("");
       setSelectedInvoice(null);
     },
     onError: (error) => {
-      toast.error("Fout bij markeren als betaald: " + error.message);
+      toast({
+        title: t("toasts.errors.markPaidError"),
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 

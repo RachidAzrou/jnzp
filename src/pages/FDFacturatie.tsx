@@ -18,7 +18,7 @@ import { calculateInvoiceAmounts, validateInvoiceData } from "@/lib/invoiceCalcu
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast as sonnerToast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 type Invoice = {
   id: string;
@@ -88,6 +88,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function FDFacturatie() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -229,11 +230,18 @@ export default function FDFacturatie() {
       if (error) throw error;
     },
     onSuccess: () => {
-      sonnerToast.success("Ontvangst bevestigd");
+      toast({
+        title: t("common.success"),
+        description: "Ontvangst bevestigd",
+      });
       queryClient.invalidateQueries({ queryKey: ["fd-received-invoices"] });
     },
     onError: (error: any) => {
-      sonnerToast.error("Fout bij bevestigen: " + error.message);
+      toast({
+        title: t("toasts.errors.confirmError"),
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 

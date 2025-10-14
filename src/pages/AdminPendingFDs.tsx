@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, XCircle, Loader2, Building2, Mail, Phone, MapPin } from "lucide-react";
 import {
   AlertDialog,
@@ -36,6 +36,7 @@ interface PendingFD {
 
 export default function AdminPendingFDs() {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const [pendingFDs, setPendingFDs] = useState<PendingFD[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -60,7 +61,10 @@ export default function AdminPendingFDs() {
       setPendingFDs((data as any) || []);
     } catch (error: any) {
       console.error("Error loading pending FDs:", error);
-      toast.error("Fout bij laden van pending FD's");
+      toast({
+        title: t("toasts.errors.loadError"),
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -96,16 +100,20 @@ export default function AdminPendingFDs() {
         .eq("related_id", selectedFD.id)
         .eq("related_type", "organization");
 
-      toast.success(
-        action === "approve"
+      toast({
+        title: t("common.success"),
+        description: action === "approve"
           ? "FD succesvol goedgekeurd"
-          : "FD succesvol geweigerd"
-      );
+          : "FD succesvol geweigerd",
+      });
 
       loadPendingFDs();
     } catch (error: any) {
       console.error("Error updating FD status:", error);
-      toast.error("Fout bij bijwerken van FD status");
+      toast({
+        title: t("toasts.errors.updateError"),
+        variant: "destructive",
+      });
     } finally {
       setActionLoading(null);
       setSelectedFD(null);

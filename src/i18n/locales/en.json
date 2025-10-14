@@ -52,7 +52,19 @@
     "changing": "Changing...",
     "resetPasswordDescription": "Enter your email address. If this email address is known to us, you will receive a recovery link."
   },
+  "auth": {
+    "twoFARequired": "⚠️ 2FA Required",
+    "twoFAGracePeriod": "You have 24 hours to set up two-factor authentication. Temporary access to settings granted.",
+    "error": {
+      "registrationIncomplete": "Registration Incomplete",
+      "registrationIncompleteDescription": "Your registration is incomplete. Please contact support.",
+      "accessDenied": "⛔ Access Denied",
+      "organizationPendingApproval": "Your organization is pending approval. You will receive an email when your account is approved."
+    }
+  },
   "register": {
+    "businessNumberPlaceholder": "BE 0123.456.789 or 0123456789",
+    "businessNumberRequired": "Business/VAT number required",
     "title": "Register at JanazApp",
     "subtitle": "Create an account to get started",
     "stepRole": "Choose role",
@@ -83,6 +95,17 @@
     "registrationFailed": "Registration failed",
     "requestSubmitted": "Request submitted",
     "requestSubmittedDescription": "Your request will be reviewed by an administrator. You will receive a message once your account has been approved."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "newDocumentUploaded": "New document uploaded",
+    "newDocumentUploadedMessage": "A new document has been added to file {{dossier}}",
+    "taskCompleted": "Task completed",
+    "taskCompletedMessage": "Document review for file {{dossier}} is complete",
+    "actionRequired": "Action required",
+    "actionRequiredMessage": "Documents for file {{dossier}} are awaiting approval"
   },
   "invite": {
     "title": "Accept invitation",
@@ -545,6 +568,7 @@
     "description": "Description",
     "target": "Target",
     "reason": "Reason",
+    "optional": "optional",
     "feature": "Feature",
     "scope": "Scope",
     "provider": "Provider",

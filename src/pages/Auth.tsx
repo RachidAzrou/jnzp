@@ -260,8 +260,8 @@ const Auth = () => {
             // Professional user (scope='ORG') has NO organization - incomplete registration
             await supabase.auth.signOut();
             toast({
-              title: "Registratie Incompleet",
-              description: "Uw registratie is niet compleet. Neem contact op met support.",
+              title: t("auth.error.registrationIncomplete"),
+              description: t("auth.error.registrationIncompleteDescription"),
               variant: "destructive",
             });
             setLoading(false);
@@ -385,8 +385,8 @@ const Auth = () => {
               }
               
               toast({
-                title: "⚠️ 2FA Vereist",
-                description: "U heeft 24 uur om twee-factor authenticatie in te stellen. Tijdelijke toegang tot instellingen is verleend.",
+                title: t("auth.twoFARequired"),
+                description: t("auth.twoFAGracePeriod"),
                 variant: "default",
                 duration: 6000,
               });
@@ -401,8 +401,8 @@ const Auth = () => {
               // These users cannot setup 2FA themselves (pending approval)
               await supabase.auth.signOut();
               toast({
-                title: "⛔ Toegang Geweigerd",
-                description: "Uw organisatie is nog in behandeling. U ontvangt een e-mail wanneer uw account is goedgekeurd.",
+                title: t("auth.error.accessDenied"),
+                description: t("auth.error.organizationPendingApproval"),
                 variant: "destructive",
                 duration: 8000,
               });

@@ -421,7 +421,7 @@ const Register = () => {
                         <Label htmlFor="business-number" className="text-sm">
                           {t('register.businessNumber')}
                           {selectedRole === "mosque" && (
-                            <span className="text-muted-foreground text-xs ml-1">(optioneel)</span>
+                            <span className="text-muted-foreground text-xs ml-1">({t('common.optional')})</span>
                           )}
                         </Label>
                         <div className="relative">
@@ -443,7 +443,7 @@ const Register = () => {
                                 validateBusinessNumber(businessNumber.trim());
                               }
                             }}
-                            placeholder={selectedRole === "mosque" ? "Optioneel" : "BE 0123.456.789 of 0123456789"}
+                            placeholder={selectedRole === "mosque" ? t('common.optional') : t('register.businessNumberPlaceholder')}
                             required={selectedRole !== "mosque"}
                             className={`h-10 pr-10 ${
                               businessNumberError ? 'border-destructive focus-visible:ring-destructive' : ''
@@ -460,7 +460,7 @@ const Register = () => {
                         </div>
                         {selectedRole !== "mosque" && !businessNumberError && (
                           <p className="text-xs text-muted-foreground">
-                            KBO/BTW-nummer verplicht
+                            {t('register.businessNumberRequired')}
                           </p>
                         )}
                         {businessNumberError && (

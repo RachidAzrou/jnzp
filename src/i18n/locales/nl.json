@@ -83,7 +83,19 @@
     "sendResetLink": "Verstuur reset-link",
     "sending": "Versturen..."
   },
+  "auth": {
+    "twoFARequired": "⚠️ 2FA Vereist",
+    "twoFAGracePeriod": "U heeft 24 uur om twee-factor authenticatie in te stellen. Tijdelijke toegang tot instellingen is verleend.",
+    "error": {
+      "registrationIncomplete": "Registratie Incompleet",
+      "registrationIncompleteDescription": "Uw registratie is niet compleet. Neem contact op met support.",
+      "accessDenied": "⛔ Toegang Geweigerd",
+      "organizationPendingApproval": "Uw organisatie is nog in behandeling. U ontvangt een e-mail wanneer uw account is goedgekeurd."
+    }
+  },
   "register": {
+    "businessNumberPlaceholder": "BE 0123.456.789 of 0123456789",
+    "businessNumberRequired": "KBO/BTW-nummer verplicht",
     "title": "Registreren bij JanazApp",
     "subtitle": "Maak een account aan om aan de slag te gaan",
     "stepRole": "Kies rol",
@@ -121,6 +133,17 @@
     "registrationFailed": "Registratie mislukt",
     "requestSubmitted": "Aanvraag ingediend",
     "requestSubmittedDescription": "Uw aanvraag wordt beoordeeld door een administrator. U ontvangt bericht zodra uw account is goedgekeurd."
+  },
+  "notifications": {
+    "title": "Meldingen",
+    "markAllRead": "Alles gelezen",
+    "noNotifications": "Geen meldingen",
+    "newDocumentUploaded": "Nieuw document geüpload",
+    "newDocumentUploadedMessage": "Er is een nieuw document toegevoegd aan dossier {{dossier}}",
+    "taskCompleted": "Taak voltooid",
+    "taskCompletedMessage": "Document review voor dossier {{dossier}} is afgerond",
+    "actionRequired": "Actie vereist",
+    "actionRequiredMessage": "Documenten voor dossier {{dossier}} wachten op goedkeuring"
   },
   "invite": {
     "title": "Uitnodiging accepteren",
@@ -578,7 +601,8 @@
     "confirm": "Bevestigen",
     "edit": "Bewerken",
     "of": "van",
-    "create": "Aanmaken"
+    "create": "Aanmaken",
+    "optional": "optioneel"
   },
   "onboarding": {
     "welcomeTitle": "Welkom bij JanazApp",

@@ -52,7 +52,19 @@
     "changing": "Modification en cours...",
     "resetPasswordDescription": "Entrez votre adresse e-mail. Si cette adresse e-mail nous est connue, vous recevrez un lien de récupération."
   },
+  "auth": {
+    "twoFARequired": "⚠️ 2FA Requis",
+    "twoFAGracePeriod": "Vous avez 24 heures pour configurer l'authentification à deux facteurs. Accès temporaire aux paramètres accordé.",
+    "error": {
+      "registrationIncomplete": "Inscription Incomplète",
+      "registrationIncompleteDescription": "Votre inscription n'est pas complète. Veuillez contacter le support.",
+      "accessDenied": "⛔ Accès Refusé",
+      "organizationPendingApproval": "Votre organisation est en cours de vérification. Vous recevrez un e-mail lorsque votre compte sera approuvé."
+    }
+  },
   "register": {
+    "businessNumberPlaceholder": "BE 0123.456.789 ou 0123456789",
+    "businessNumberRequired": "Numéro BCE/TVA requis",
     "title": "S'inscrire à JanazApp",
     "subtitle": "Créez un compte pour commencer",
     "stepRole": "Choisir le rôle",
@@ -83,6 +95,17 @@
     "registrationFailed": "Échec de l'inscription",
     "requestSubmitted": "Demande soumise",
     "requestSubmittedDescription": "Votre demande sera examinée par un administrateur. Vous recevrez un message dès que votre compte sera approuvé."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Tout marquer comme lu",
+    "noNotifications": "Aucune notification",
+    "newDocumentUploaded": "Nouveau document téléchargé",
+    "newDocumentUploadedMessage": "Un nouveau document a été ajouté au dossier {{dossier}}",
+    "taskCompleted": "Tâche terminée",
+    "taskCompletedMessage": "Révision du document pour le dossier {{dossier}} est terminée",
+    "actionRequired": "Action requise",
+    "actionRequiredMessage": "Documents du dossier {{dossier}} en attente d'approbation"
   },
   "invite": {
     "title": "Accepter l'invitation",
@@ -545,6 +568,7 @@
     "description": "Description",
     "target": "Cible",
     "reason": "Raison",
+    "optional": "optionnel",
     "feature": "Fonctionnalité",
     "scope": "Portée",
     "provider": "Fournisseur",

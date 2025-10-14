@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import { nl } from "date-fns/locale";
+import { nl, fr, enGB } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 interface Notification {
   id: string;
@@ -24,10 +25,19 @@ interface Notification {
 }
 
 export function NotificationPanel() {
+  const { t, i18n } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'fr': return fr;
+      case 'en': return enGB;
+      default: return nl;
+    }
+  };
 
   useEffect(() => {
     fetchNotifications();
@@ -63,8 +73,8 @@ export function NotificationPanel() {
       const mockNotifications: Notification[] = [
         {
           id: "1",
-          title: "Nieuw document geüpload",
-          message: "Er is een nieuw document toegevoegd aan dossier REP-000123",
+          title: t("notifications.newDocumentUploaded"),
+          message: t("notifications.newDocumentUploadedMessage", { dossier: "REP-000123" }),
           type: "info",
           read: false,
           action_url: "/dossiers/123",
@@ -72,16 +82,16 @@ export function NotificationPanel() {
         },
         {
           id: "2",
-          title: "Taak voltooid",
-          message: "Document review voor dossier LOC-000456 is afgerond",
+          title: t("notifications.taskCompleted"),
+          message: t("notifications.taskCompletedMessage", { dossier: "LOC-000456" }),
           type: "success",
           read: false,
           created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
         },
         {
           id: "3",
-          title: "Actie vereist",
-          message: "Documenten voor dossier REP-000789 wachten op goedkeuring",
+          title: t("notifications.actionRequired"),
+          message: t("notifications.actionRequiredMessage", { dossier: "REP-000789" }),
           type: "warning",
           read: true,
           action_url: "/documenten",
@@ -188,7 +198,7 @@ export function NotificationPanel() {
       </PopoverTrigger>
       <PopoverContent className="w-80 sm:w-96 p-0" align="end">
         <div className="flex items-center justify-between border-b px-4 py-3">
-          <h3 className="font-semibold text-base">Meldingen</h3>
+          <h3 className="font-semibold text-base">{t("notifications.title")}</h3>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -196,7 +206,7 @@ export function NotificationPanel() {
               onClick={markAllAsRead}
               className="h-8 text-xs"
             >
-              Alles gelezen
+              {t("notifications.markAllRead")}
             </Button>
           )}
         </div>
@@ -206,7 +216,7 @@ export function NotificationPanel() {
             <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
               <Bell className="h-12 w-12 text-muted-foreground/30 mb-3" />
               <p className="text-sm text-muted-foreground">
-                Geen meldingen
+                {t("notifications.noNotifications")}
               </p>
             </div>
           ) : (
@@ -243,7 +253,7 @@ export function NotificationPanel() {
                         <span>
                           {formatDistanceToNow(new Date(notification.created_at), {
                             addSuffix: true,
-                            locale: nl,
+                            locale: getDateLocale(),
                           })}
                         </span>
                       </div>

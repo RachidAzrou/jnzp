@@ -38,24 +38,24 @@ export const PendingApprovalScreen = ({
             </div>
             <div className="space-y-2">
               <h1 className="text-2xl font-bold text-foreground">
-                Wachten op goedkeuring
+                {t("pendingApproval.waitingTitle")}
               </h1>
               {organizationName && (
                 <p className="text-sm text-muted-foreground">
-                  Organisatie: <span className="font-medium">{organizationName}</span>
+                  {t("pendingApproval.organization")}: <span className="font-medium">{organizationName}</span>
                 </p>
               )}
             </div>
             <div className="space-y-4">
               <p className="text-muted-foreground">
-                Je registratie is ontvangen en wordt momenteel beoordeeld door onze beheerders.
+                {t("pendingApproval.receivedDescription")}
               </p>
               <p className="text-muted-foreground">
-                Je ontvangt een e-mail zodra je account is goedgekeurd.
+                {t("pendingApproval.emailNotification")}
               </p>
               <div className="bg-muted p-4 rounded-lg">
                 <p className="text-sm text-muted-foreground">
-                  Dit kan enkele werkdagen duren. Je kunt deze pagina sluiten en later terugkomen.
+                  {t("pendingApproval.timeframeNote")}
                 </p>
               </div>
             </div>
@@ -67,26 +67,26 @@ export const PendingApprovalScreen = ({
             </div>
             <div className="space-y-2">
               <h1 className="text-2xl font-bold text-foreground">
-                Registratie afgekeurd
+                {t("pendingApproval.rejectedTitle")}
               </h1>
               {organizationName && (
                 <p className="text-sm text-muted-foreground">
-                  Organisatie: <span className="font-medium">{organizationName}</span>
+                  {t("pendingApproval.organization")}: <span className="font-medium">{organizationName}</span>
                 </p>
               )}
             </div>
             <div className="space-y-4">
               <p className="text-muted-foreground">
-                Helaas is je registratie niet goedgekeurd.
+                {t("pendingApproval.rejectedDescription")}
               </p>
               {rejectionReason && (
                 <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg">
-                  <p className="text-sm font-medium text-destructive mb-1">Reden:</p>
+                  <p className="text-sm font-medium text-destructive mb-1">{t("pendingApproval.reasonLabel")}:</p>
                   <p className="text-sm text-muted-foreground">{rejectionReason}</p>
                 </div>
               )}
               <p className="text-sm text-muted-foreground">
-                Neem contact op met support voor meer informatie.
+                {t("pendingApproval.contactSupport")}
               </p>
             </div>
           </>
@@ -97,7 +97,7 @@ export const PendingApprovalScreen = ({
           variant="outline"
           className="w-full"
         >
-          Uitloggen
+          {t("navigation.logout")}
         </Button>
       </Card>
     </div>

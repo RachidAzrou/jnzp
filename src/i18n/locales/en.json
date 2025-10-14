@@ -101,6 +101,23 @@
     "expired": "This invitation has expired. Request a new one from your organization administrator",
     "cancelled": "This invitation has been cancelled"
   },
+  "checkEmail": {
+    "title": "Confirm your email address",
+    "description": "We have sent you a verification link. Click on it to activate your account.",
+    "spamNotice": "Also check your spam/junk folder if you cannot find the email.",
+    "backToLogin": "Back to login"
+  },
+  "pendingApproval": {
+    "waitingTitle": "Waiting for approval",
+    "organization": "Organization",
+    "receivedDescription": "Your registration has been received and is currently being reviewed by our administrators.",
+    "emailNotification": "You will receive an email once your account has been approved.",
+    "timeframeNote": "This may take a few business days. You can close this page and come back later.",
+    "rejectedTitle": "Registration rejected",
+    "rejectedDescription": "Unfortunately, your registration has not been approved.",
+    "reasonLabel": "Reason",
+    "contactSupport": "Contact support for more information."
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back",
@@ -125,6 +142,29 @@
     "toDocuments": "To documents",
     "filterOnRep": "Filter on REP",
     "filterOnLoc": "Filter on LOC"
+  },
+  "familyApp": {
+    "welcome": "Welcome to JanazApp",
+    "subtitle": "The family environment is now available via our mobile application",
+    "downloadTitle": "Download the mobile app",
+    "description": "Manage your case, communicate with the funeral director, upload documents and stay informed of the status - all from your smartphone.",
+    "downloadOn": "Download on the",
+    "appStore": "App Store",
+    "downloadVia": "Get it on",
+    "googlePlay": "Google Play",
+    "needHelp": "Need help?",
+    "helpCenter": "Help Center",
+    "professionalNote": "For funeral directors, mosques and other professionals:",
+    "loginHere": "Log in here to the web environment"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "commentMention": "You were mentioned in a comment",
+    "commentReply": "New reply to your comment",
+    "dossierComment": "New comment in case {{ref}}",
+    "newNotification": "New notification"
   },
   "dossiers": {
     "title": "Dossiers",

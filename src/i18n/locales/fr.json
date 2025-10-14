@@ -101,6 +101,23 @@
     "expired": "Cette invitation a expiré. Demandez-en une nouvelle à votre administrateur d'organisation",
     "cancelled": "Cette invitation a été annulée"
   },
+  "checkEmail": {
+    "title": "Confirmez votre adresse e-mail",
+    "description": "Nous vous avons envoyé un lien de vérification. Cliquez dessus pour activer votre compte.",
+    "spamNotice": "Vérifiez également votre dossier spam/courrier indésirable si vous ne trouvez pas l'e-mail.",
+    "backToLogin": "Retour à la connexion"
+  },
+  "pendingApproval": {
+    "waitingTitle": "En attente d'approbation",
+    "organization": "Organisation",
+    "receivedDescription": "Votre inscription a été reçue et est actuellement examinée par nos administrateurs.",
+    "emailNotification": "Vous recevrez un e-mail dès que votre compte sera approuvé.",
+    "timeframeNote": "Cela peut prendre quelques jours ouvrables. Vous pouvez fermer cette page et revenir plus tard.",
+    "rejectedTitle": "Inscription rejetée",
+    "rejectedDescription": "Malheureusement, votre inscription n'a pas été approuvée.",
+    "reasonLabel": "Raison",
+    "contactSupport": "Contactez le support pour plus d'informations."
+  },
   "dashboard": {
     "title": "Tableau de bord",
     "welcome": "Bon retour",
@@ -125,6 +142,29 @@
     "toDocuments": "Vers les documents",
     "filterOnRep": "Filtrer sur REP",
     "filterOnLoc": "Filtrer sur LOC"
+  },
+  "familyApp": {
+    "welcome": "Bienvenue chez JanazApp",
+    "subtitle": "L'environnement familial est désormais disponible via notre application mobile",
+    "downloadTitle": "Téléchargez l'application mobile",
+    "description": "Gérez votre dossier, communiquez avec l'entrepreneur de pompes funèbres, téléchargez des documents et restez informé du statut - le tout depuis votre smartphone.",
+    "downloadOn": "Télécharger dans l'",
+    "appStore": "App Store",
+    "downloadVia": "Télécharger via",
+    "googlePlay": "Google Play",
+    "needHelp": "Besoin d'aide?",
+    "helpCenter": "Centre d'aide",
+    "professionalNote": "Pour les entrepreneurs de pompes funèbres, les mosquées et autres professionnels:",
+    "loginHere": "Connectez-vous ici à l'environnement web"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Tout marquer comme lu",
+    "noNotifications": "Aucune notification",
+    "commentMention": "Vous avez été mentionné dans un commentaire",
+    "commentReply": "Nouvelle réponse à votre commentaire",
+    "dossierComment": "Nouveau commentaire dans le dossier {{ref}}",
+    "newNotification": "Nouvelle notification"
   },
   "dossiers": {
     "title": "Dossiers",

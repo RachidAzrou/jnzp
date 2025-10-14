@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Smartphone, Apple, ExternalLink } from "lucide-react";
 import { FaGooglePlay } from "react-icons/fa";
 import logoJanazApp from "@/assets/logo-janazapp.png";
+import { useTranslation } from "react-i18next";
 
 export default function FamilieAppDownload() {
-  const appStoreUrl = "https://apps.apple.com/app/janazapp"; // TODO: Update with actual URL
-  const playStoreUrl = "https://play.google.com/store/apps/details?id=com.janazapp"; // TODO: Update with actual URL
+  const { t } = useTranslation();
+  const appStoreUrl = "https://apps.apple.com/app/janazapp";
+  const playStoreUrl = "https://play.google.com/store/apps/details?id=com.janazapp";
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary/10 via-background to-primary/5">
@@ -20,10 +22,10 @@ export default function FamilieAppDownload() {
             />
           </div>
           <CardTitle className="text-3xl font-bold">
-            Welkom bij de JanazApp
+            {t("familyApp.welcome")}
           </CardTitle>
           <CardDescription className="text-lg">
-            De familieomgeving is nu beschikbaar via onze mobiele applicatie
+            {t("familyApp.subtitle")}
           </CardDescription>
         </CardHeader>
         
@@ -32,9 +34,9 @@ export default function FamilieAppDownload() {
             <div className="flex items-start gap-3">
               <Smartphone className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold mb-2">Download de mobiele app</h3>
+                <h3 className="font-semibold mb-2">{t("familyApp.downloadTitle")}</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Beheer uw dossier, communiceer met de uitvaartondernemer, upload documenten en blijf op de hoogte van de status - allemaal vanaf uw smartphone.
+                  {t("familyApp.description")}
                 </p>
               </div>
             </div>
@@ -48,8 +50,8 @@ export default function FamilieAppDownload() {
             >
               <Apple className="h-8 w-8" />
               <div className="text-left">
-                <div className="text-xs opacity-90">Download in de</div>
-                <div className="font-semibold">App Store</div>
+                <div className="text-xs opacity-90">{t("familyApp.downloadOn")}</div>
+                <div className="font-semibold">{t("familyApp.appStore")}</div>
               </div>
             </Button>
 
@@ -60,14 +62,14 @@ export default function FamilieAppDownload() {
             >
               <FaGooglePlay className="h-7 w-7" />
               <div className="text-left">
-                <div className="text-xs opacity-90">Download via</div>
-                <div className="font-semibold">Google Play</div>
+                <div className="text-xs opacity-90">{t("familyApp.downloadVia")}</div>
+                <div className="font-semibold">{t("familyApp.googlePlay")}</div>
               </div>
             </Button>
           </div>
 
           <div className="pt-4 border-t space-y-3">
-            <h3 className="font-semibold text-sm">Hulp nodig?</h3>
+            <h3 className="font-semibold text-sm">{t("familyApp.needHelp")}</h3>
             <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 variant="outline"
@@ -75,7 +77,7 @@ export default function FamilieAppDownload() {
                 onClick={() => window.open('/privacy', '_blank')}
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Privacybeleid
+                {t("settings.privacyPolicy")}
               </Button>
               <Button
                 variant="outline"
@@ -83,17 +85,17 @@ export default function FamilieAppDownload() {
                 onClick={() => window.open('https://help.janazapp.com', '_blank')}
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Helpcenter
+                {t("familyApp.helpCenter")}
               </Button>
             </div>
           </div>
 
           <div className="text-center text-sm text-muted-foreground pt-4">
             <p>
-              Voor uitvaartondernemers, moskeeën en andere professionals: 
+              {t("familyApp.professionalNote")}
               <br />
               <a href="/auth" className="text-primary hover:underline">
-                Log hier in op de webomgeving
+                {t("familyApp.loginHere")}
               </a>
             </p>
           </div>

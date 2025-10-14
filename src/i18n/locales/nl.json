@@ -139,6 +139,23 @@
     "expired": "Deze uitnodiging is verlopen. Vraag een nieuwe aan bij je organisatiebeheerder",
     "cancelled": "Deze uitnodiging is geannuleerd"
   },
+  "checkEmail": {
+    "title": "Bevestig je e-mailadres",
+    "description": "We hebben je een verificatielink gestuurd. Klik daarop om je account te activeren.",
+    "spamNotice": "Check ook je spam/ongewenste e-mail map als je de mail niet kunt vinden.",
+    "backToLogin": "Terug naar inloggen"
+  },
+  "pendingApproval": {
+    "waitingTitle": "Wachten op goedkeuring",
+    "organization": "Organisatie",
+    "receivedDescription": "Je registratie is ontvangen en wordt momenteel beoordeeld door onze beheerders.",
+    "emailNotification": "Je ontvangt een e-mail zodra je account is goedgekeurd.",
+    "timeframeNote": "Dit kan enkele werkdagen duren. Je kunt deze pagina sluiten en later terugkomen.",
+    "rejectedTitle": "Registratie afgekeurd",
+    "rejectedDescription": "Helaas is je registratie niet goedgekeurd.",
+    "reasonLabel": "Reden",
+    "contactSupport": "Neem contact op met support voor meer informatie."
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welkom",
@@ -173,6 +190,29 @@
     "myRecentCompletedFiles": "Mijn recent voltooide dossiers",
     "manageAllTasks": "Alle taken beheren",
     "date": "datum"
+  },
+  "familyApp": {
+    "welcome": "Welkom bij de JanazApp",
+    "subtitle": "De familieomgeving is nu beschikbaar via onze mobiele applicatie",
+    "downloadTitle": "Download de mobiele app",
+    "description": "Beheer uw dossier, communiceer met de uitvaartondernemer, upload documenten en blijf op de hoogte van de status - allemaal vanaf uw smartphone.",
+    "downloadOn": "Download in de",
+    "appStore": "App Store",
+    "downloadVia": "Download via",
+    "googlePlay": "Google Play",
+    "needHelp": "Hulp nodig?",
+    "helpCenter": "Helpcenter",
+    "professionalNote": "Voor uitvaartondernemers, moskeeën en andere professionals:",
+    "loginHere": "Log hier in op de webomgeving"
+  },
+  "notifications": {
+    "title": "Meldingen",
+    "markAllRead": "Alles markeren als gelezen",
+    "noNotifications": "Geen meldingen",
+    "commentMention": "U bent genoemd in een opmerking",
+    "commentReply": "Nieuwe reactie op uw opmerking",
+    "dossierComment": "Nieuwe opmerking in dossier {{ref}}",
+    "newNotification": "Nieuwe melding"
   },
   "dossiers": {
     "title": "Dossiers",

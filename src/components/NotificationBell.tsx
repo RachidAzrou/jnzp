@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import { nl } from "date-fns/locale";
+import { nl, fr, enGB } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 interface Notification {
   id: string;
@@ -29,6 +30,15 @@ export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'fr': return fr;
+      case 'en': return enGB;
+      default: return nl;
+    }
+  };
 
   useEffect(() => {
     getCurrentUser();
@@ -115,13 +125,13 @@ export function NotificationBell() {
   const getNotificationText = (notification: Notification) => {
     switch (notification.type) {
       case 'COMMENT_MENTION':
-        return `U bent genoemd in een opmerking`;
+        return t("notifications.commentMention");
       case 'COMMENT_REPLY':
-        return `Nieuwe reactie op uw opmerking`;
+        return t("notifications.commentReply");
       case 'DOSSIER_COMMENT':
-        return `Nieuwe opmerking in dossier ${notification.meta.ref || ''}`;
+        return t("notifications.dossierComment", { ref: notification.meta.ref || '' });
       default:
-        return 'Nieuwe melding';
+        return t("notifications.newNotification");
     }
   };
 
@@ -142,21 +152,21 @@ export function NotificationBell() {
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-semibold">Meldingen</h3>
+          <h3 className="font-semibold">{t("notifications.title")}</h3>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
               size="sm"
               onClick={markAllAsRead}
             >
-              Alles markeren als gelezen
+              {t("notifications.markAllRead")}
             </Button>
           )}
         </div>
         <div className="max-h-96 overflow-y-auto">
           {notifications.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
-              Geen meldingen
+              {t("notifications.noNotifications")}
             </div>
           ) : (
             notifications.map((notification) => (
@@ -178,7 +188,7 @@ export function NotificationBell() {
                     <p className="text-xs text-muted-foreground mt-1">
                       {formatDistanceToNow(new Date(notification.created_at), {
                         addSuffix: true,
-                        locale: nl
+                        locale: getDateLocale()
                       })}
                     </p>
                   </div>

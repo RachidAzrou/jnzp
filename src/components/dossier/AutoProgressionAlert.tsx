@@ -49,12 +49,13 @@ export function AutoProgressionAlert({ dossierId, currentStatus }: AutoProgressi
       const blockData = blocked as { blocked?: boolean } | null;
       setBlockInfo(blockData);
 
-      // Tel open taken
+      // Tel open taken (niet-gearchiveerd)
       const { count } = await supabase
         .from("kanban_tasks")
         .select("*", { count: "exact", head: true })
         .eq("dossier_id", dossierId)
-        .neq("status", "DONE");
+        .neq("status", "DONE")
+        .is("archived_at", null);
 
       setOpenTasks(count || 0);
       setCanProgress(count === 0 && !blockData?.blocked && currentStatus !== "CLOSED");

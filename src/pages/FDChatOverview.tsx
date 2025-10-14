@@ -35,9 +35,22 @@ export default function FDChatOverview() {
 
   const fetchDossiers = async () => {
     try {
+      // First get the user's organization
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: userRole } = await supabase
+        .from("user_roles")
+        .select("organization_id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (!userRole) return;
+
       const { data: dossiersData, error } = await supabase
         .from("dossiers")
         .select("id, display_id, deceased_name, status")
+        .eq("assigned_fd_org_id", userRole.organization_id)
         .is("deleted_at", null)
         .order("created_at", { ascending: false });
 

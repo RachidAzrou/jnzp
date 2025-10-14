@@ -20,7 +20,10 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("audit_events")
-        .select("*")
+        .select(`
+          *,
+          user:profiles!audit_events_user_id_fkey(display_name, email)
+        `)
         .eq("dossier_id", dossierId)
         .order("created_at", { ascending: false })
         .limit(100);
@@ -90,6 +93,28 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
     return roleMap[role] || role;
   };
 
+  const formatActionName = (eventType: string) => {
+    const actionMap: Record<string, string> = {
+      STATUS_CHANGED: "Status gewijzigd",
+      DOCUMENT_UPLOADED: "Document geüpload",
+      DOCUMENT_APPROVED: "Document goedgekeurd",
+      DOCUMENT_REJECTED: "Document afgekeurd",
+      DOSSIER_CREATED: "Dossier aangemaakt",
+      DOSSIER_UPDATED: "Dossier bijgewerkt",
+      DOSSIER_DELETED: "Dossier verwijderd",
+      FD_RELEASE: "FD vrijgegeven",
+      FAMILY_RELEASE: "Familie vrijgegeven FD",
+      CLAIM_APPROVED: "Claim goedgekeurd",
+      CLAIM_REJECTED: "Claim afgewezen",
+      USER_CREATED: "Gebruiker aangemaakt",
+      USER_UPDATED: "Gebruiker bijgewerkt",
+      PASSWORD_CHANGED: "Wachtwoord gewijzigd",
+      HOLD_SET: "Blokkering ingesteld",
+      HOLD_LIFTED: "Blokkering opgeheven",
+    };
+    return actionMap[eventType] || eventType.replace(/_/g, " ").toLowerCase();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -99,69 +124,54 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
         )}
       </div>
 
-      <div className="border rounded-lg">
+      <div className="relative w-full overflow-x-auto rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[180px]">Tijd</TableHead>
+              <TableHead className="w-[140px]">Tijd</TableHead>
               <TableHead>Gebruiker</TableHead>
               <TableHead>Rol</TableHead>
-              {isPlatformAdmin && <TableHead>Organisatie</TableHead>}
-              <TableHead>Actie</TableHead>
+              <TableHead>Wat</TableHead>
               <TableHead>Details</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {auditEvents.map((event: any) => (
               <TableRow key={event.id}>
-                <TableCell className="font-mono text-sm">
-                  {format(new Date(event.created_at), "dd MMM yyyy HH:mm", { locale: nl })}
+                <TableCell className="text-sm">
+                  {format(new Date(event.created_at), "dd MMM HH:mm", { locale: nl })}
                 </TableCell>
-                <TableCell>
-                  {event.user_id ? (
-                    <span className="text-sm font-mono">{event.user_id.slice(0, 8)}...</span>
+                <TableCell className="text-sm">
+                  {event.user_id && event.user ? (
+                    <div>
+                      <div className="font-medium">{event.user.display_name || event.user.email}</div>
+                      {event.user.display_name && (
+                        <div className="text-xs text-muted-foreground">{event.user.email}</div>
+                      )}
+                    </div>
                   ) : (
                     <span className="text-muted-foreground">Systeem</span>
                   )}
                 </TableCell>
                 <TableCell>
-                  {event.actor_role && (
-                    <Badge variant={getRoleBadgeVariant(event.actor_role)}>
+                  {event.actor_role ? (
+                    <Badge variant={getRoleBadgeVariant(event.actor_role)} className="text-xs">
                       {formatRoleName(event.actor_role)}
                     </Badge>
+                  ) : (
+                    <span className="text-muted-foreground text-xs">-</span>
                   )}
                 </TableCell>
-                {isPlatformAdmin && (
-                  <TableCell>
-                    {event.organization_id ? (
-                      <span className="text-sm font-mono">{event.organization_id.slice(0, 8)}...</span>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </TableCell>
-                )}
-                <TableCell>
-                  <Badge variant={getActionBadgeVariant(event.event_type)}>
-                    {event.event_type}
-                  </Badge>
+                <TableCell className="text-sm font-medium">
+                  {formatActionName(event.event_type)}
                 </TableCell>
                 <TableCell>
-                  <div className="space-y-1">
-                    <p className="text-sm">{event.description}</p>
+                  <div className="space-y-1 text-sm">
+                    <p>{event.description}</p>
                     {event.reason && (
                       <p className="text-xs text-muted-foreground">
                         <span className="font-semibold">Reden:</span> {event.reason}
                       </p>
-                    )}
-                    {event.metadata && Object.keys(event.metadata).length > 0 && (
-                      <details className="text-xs">
-                        <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                          Metadata
-                        </summary>
-                        <pre className="mt-1 overflow-auto rounded bg-muted p-2">
-                          {JSON.stringify(event.metadata, null, 2)}
-                        </pre>
-                      </details>
                     )}
                   </div>
                 </TableCell>

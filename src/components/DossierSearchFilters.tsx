@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 export type DossierFilters = {
   search: string;
@@ -20,6 +21,8 @@ interface DossierSearchFiltersProps {
 }
 
 export function DossierSearchFilters({ filters, onFiltersChange, onReset }: DossierSearchFiltersProps) {
+  const { t } = useTranslation();
+  
   const hasActiveFilters = 
     filters.search !== "" ||
     filters.flow !== "ALL" ||
@@ -29,16 +32,16 @@ export function DossierSearchFilters({ filters, onFiltersChange, onReset }: Doss
   return (
     <div className="space-y-4 p-4 border rounded-lg bg-card" role="search" aria-label="Dossier filters">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Filters</h3>
+        <h3 className="text-lg font-semibold">{t("filters.title")}</h3>
         {hasActiveFilters && (
           <Button
             variant="ghost"
             size="sm"
             onClick={onReset}
-            aria-label="Reset alle filters"
+            aria-label={t("filters.resetAll")}
           >
             <X className="h-4 w-4 mr-2" aria-hidden="true" />
-            Reset
+            {t("filters.reset")}
           </Button>
         )}
       </div>
@@ -46,75 +49,75 @@ export function DossierSearchFilters({ filters, onFiltersChange, onReset }: Doss
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Search */}
         <div className="space-y-2">
-          <Label htmlFor="search">Zoeken</Label>
+          <Label htmlFor="search">{t("filters.search")}</Label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <Input
               id="search"
-              placeholder="Naam, NIS, Polis..."
+              placeholder={t("filters.searchPlaceholder")}
               value={filters.search}
               onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
               className="pl-9"
-              aria-label="Zoek op naam, NIS of polisnummer"
+              aria-label={t("filters.searchAria")}
             />
           </div>
         </div>
 
         {/* Flow */}
         <div className="space-y-2">
-          <Label htmlFor="flow">Flow Type</Label>
+          <Label htmlFor="flow">{t("filters.flowType")}</Label>
           <Select
             value={filters.flow}
             onValueChange={(value) => onFiltersChange({ ...filters, flow: value as DossierFilters["flow"] })}
           >
-            <SelectTrigger id="flow" aria-label="Selecteer flow type">
+            <SelectTrigger id="flow" aria-label={t("filters.selectFlowType")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">Alle</SelectItem>
-              <SelectItem value="LOC">Lokaal (LOC)</SelectItem>
-              <SelectItem value="REP">Repatriëring (REP)</SelectItem>
+              <SelectItem value="ALL">{t("filters.all")}</SelectItem>
+              <SelectItem value="LOC">{t("flow.local")} (LOC)</SelectItem>
+              <SelectItem value="REP">{t("flow.repatriation")} (REP)</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Status */}
         <div className="space-y-2">
-          <Label htmlFor="status">Status</Label>
+          <Label htmlFor="status">{t("filters.status")}</Label>
           <Select
             value={filters.status}
             onValueChange={(value) => onFiltersChange({ ...filters, status: value })}
           >
-            <SelectTrigger id="status" aria-label="Selecteer status">
+            <SelectTrigger id="status" aria-label={t("filters.selectStatus")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">Alle</SelectItem>
-              <SelectItem value="CREATED">Aangemaakt</SelectItem>
-              <SelectItem value="INTAKE_PENDING">Intake Lopend</SelectItem>
-              <SelectItem value="INTAKE_COMPLETE">Intake Compleet</SelectItem>
-              <SelectItem value="PLANNED">Gepland</SelectItem>
-              <SelectItem value="IN_PROGRESS">In Behandeling</SelectItem>
-              <SelectItem value="COMPLETED">Voltooid</SelectItem>
+              <SelectItem value="ALL">{t("filters.all")}</SelectItem>
+              <SelectItem value="CREATED">{t("dossiers.status.created")}</SelectItem>
+              <SelectItem value="INTAKE_PENDING">{t("dossiers.status.intakePending")}</SelectItem>
+              <SelectItem value="INTAKE_COMPLETE">{t("dossiers.status.intakeComplete")}</SelectItem>
+              <SelectItem value="PLANNED">{t("dossiers.status.planned")}</SelectItem>
+              <SelectItem value="IN_PROGRESS">{t("dossiers.status.inProgress")}</SelectItem>
+              <SelectItem value="COMPLETED">{t("dossiers.status.completed")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Priority */}
         <div className="space-y-2">
-          <Label htmlFor="priority">Prioriteit</Label>
+          <Label htmlFor="priority">{t("filters.priority")}</Label>
           <Select
             value={filters.priority}
             onValueChange={(value) => onFiltersChange({ ...filters, priority: value as DossierFilters["priority"] })}
           >
-            <SelectTrigger id="priority" aria-label="Selecteer prioriteit">
+            <SelectTrigger id="priority" aria-label={t("filters.selectPriority")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">Alle</SelectItem>
-              <SelectItem value="HIGH">Hoog</SelectItem>
-              <SelectItem value="MEDIUM">Normaal</SelectItem>
-              <SelectItem value="LOW">Laag</SelectItem>
+              <SelectItem value="ALL">{t("filters.all")}</SelectItem>
+              <SelectItem value="HIGH">{t("common.priority.high")}</SelectItem>
+              <SelectItem value="MEDIUM">{t("common.priority.medium")}</SelectItem>
+              <SelectItem value="LOW">{t("common.priority.low")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -122,14 +125,14 @@ export function DossierSearchFilters({ filters, onFiltersChange, onReset }: Doss
 
       {/* Active Filters Summary */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap gap-2" role="status" aria-live="polite" aria-label="Actieve filters">
+        <div className="flex flex-wrap gap-2" role="status" aria-live="polite" aria-label={t("filters.activeFilters")}>
           {filters.search && (
             <Badge variant="secondary">
-              Zoekterm: {filters.search}
+              {t("filters.searchTerm")} {filters.search}
               <button
                 onClick={() => onFiltersChange({ ...filters, search: "" })}
                 className="ml-2 hover:text-destructive"
-                aria-label="Verwijder zoekterm filter"
+                aria-label={t("filters.removeSearchTerm")}
               >
                 <X className="h-3 w-3" aria-hidden="true" />
               </button>
@@ -141,7 +144,7 @@ export function DossierSearchFilters({ filters, onFiltersChange, onReset }: Doss
               <button
                 onClick={() => onFiltersChange({ ...filters, flow: "ALL" })}
                 className="ml-2 hover:text-destructive"
-                aria-label="Verwijder flow filter"
+                aria-label={t("filters.removeFlow")}
               >
                 <X className="h-3 w-3" aria-hidden="true" />
               </button>
@@ -153,7 +156,7 @@ export function DossierSearchFilters({ filters, onFiltersChange, onReset }: Doss
               <button
                 onClick={() => onFiltersChange({ ...filters, status: "ALL" })}
                 className="ml-2 hover:text-destructive"
-                aria-label="Verwijder status filter"
+                aria-label={t("filters.removeStatus")}
               >
                 <X className="h-3 w-3" aria-hidden="true" />
               </button>
@@ -161,11 +164,11 @@ export function DossierSearchFilters({ filters, onFiltersChange, onReset }: Doss
           )}
           {filters.priority !== "ALL" && (
             <Badge variant="secondary">
-              Prioriteit: {filters.priority}
+              {t("filters.priority")}: {filters.priority}
               <button
                 onClick={() => onFiltersChange({ ...filters, priority: "ALL" })}
                 className="ml-2 hover:text-destructive"
-                aria-label="Verwijder prioriteit filter"
+                aria-label={t("filters.removePriority")}
               >
                 <X className="h-3 w-3" aria-hidden="true" />
               </button>

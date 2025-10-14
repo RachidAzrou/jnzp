@@ -454,6 +454,99 @@
     "backToDashboard": "Retour au tableau de bord",
     "adHocTag": "Inscription ad-hoc"
   },
+  "mortuariumAdHoc": {
+    "backToDashboard": "Retour au tableau de bord",
+    "adHocTag": "Inscription ad-hoc"
+  },
+  "filters": {
+    "title": "Filtres",
+    "reset": "Réinitialiser",
+    "resetAll": "Réinitialiser tous les filtres",
+    "search": "Rechercher",
+    "searchPlaceholder": "Nom, NIN, Police...",
+    "searchAria": "Rechercher par nom, NIN ou numéro de police",
+    "flowType": "Type de Flux",
+    "selectFlowType": "Sélectionner le type de flux",
+    "all": "Tous",
+    "status": "Statut",
+    "selectStatus": "Sélectionner le statut",
+    "priority": "Priorité",
+    "selectPriority": "Sélectionner la priorité",
+    "activeFilters": "Filtres actifs",
+    "searchTerm": "Terme de recherche:",
+    "removeSearchTerm": "Supprimer le filtre de recherche",
+    "removeFlow": "Supprimer le filtre de flux",
+    "removeStatus": "Supprimer le filtre de statut",
+    "removePriority": "Supprimer le filtre de priorité"
+  },
+  "audit": {
+    "title": "Journal d'audit",
+    "noEvents": "Aucun événement d'audit trouvé pour ce dossier.",
+    "adminView": "Admin Plateforme - Toutes les organisations visibles",
+    "timeHeader": "Heure",
+    "userHeader": "Utilisateur",
+    "roleHeader": "Rôle",
+    "actionHeader": "Action",
+    "detailsHeader": "Détails",
+    "user": "Utilisateur",
+    "system": "Système",
+    "reason": "Raison:"
+  },
+  "familyContacts": {
+    "title": "Famille & Contacts",
+    "description": "Gérer les membres de la famille et les contacts",
+    "add": "Ajouter",
+    "name": "Nom",
+    "nameRequired": "Nom *",
+    "relationship": "Relation",
+    "phone": "Téléphone",
+    "email": "Email",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce contact?",
+    "noContacts": "Aucun contact ajouté"
+  },
+  "serviceCard": {
+    "notScheduled": "Pas encore planifié",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "status": "Statut:",
+    "scheduledDateTime": "Date/heure prévue",
+    "location": "Emplacement",
+    "notes": "Notes",
+    "dateTime": "Date/heure:",
+    "locationLabel": "Emplacement:"
+  },
+  "tasks": {
+    "title": "Tâches",
+    "all": "Toutes",
+    "pending": "En cours",
+    "completed": "Terminées",
+    "noTasks": "Aucune tâche trouvée",
+    "taskUpdated": "Tâche mise à jour",
+    "statusChanged": "Statut changé en {status}",
+    "loadError": "Les tâches n'ont pas pu être chargées",
+    "overdue": "En retard",
+    "deadline": "Date limite:",
+    "statuses": {
+      "PENDING": "À faire",
+      "IN_PROGRESS": "En cours",
+      "COMPLETED": "Terminé",
+      "CANCELLED": "Annulé"
+    },
+    "types": {
+      "DOC_REVIEW": "Examiner le document",
+      "DOC_REUPLOAD_REQUEST": "Télécharger à nouveau le document",
+      "INTAKE_COMPLETE": "Terminer l'admission",
+      "MOSQUE_CONFIRM": "Confirmer la mosquée",
+      "WASH_START": "Commencer le lavage",
+      "FLIGHT_REGISTER": "Enregistrer le vol",
+      "LEGAL_HOLD_FOLLOW_UP": "Suivi du blocage juridique"
+    }
+  },
   "toasts": {
     "success": {
       "saved": "Enregistré",

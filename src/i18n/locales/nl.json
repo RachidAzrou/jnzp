@@ -389,6 +389,99 @@
     "backToDashboard": "Terug naar dashboard",
     "adHocTag": "Ad-hoc aanmelding"
   },
+  "mortuariumAdHoc": {
+    "backToDashboard": "Terug naar dashboard",
+    "adHocTag": "Ad-hoc aanmelding"
+  },
+  "filters": {
+    "title": "Filters",
+    "reset": "Reset",
+    "resetAll": "Reset alle filters",
+    "search": "Zoeken",
+    "searchPlaceholder": "Naam, NIS, Polis...",
+    "searchAria": "Zoek op naam, NIS of polisnummer",
+    "flowType": "Flow Type",
+    "selectFlowType": "Selecteer flow type",
+    "all": "Alle",
+    "status": "Status",
+    "selectStatus": "Selecteer status",
+    "priority": "Prioriteit",
+    "selectPriority": "Selecteer prioriteit",
+    "activeFilters": "Actieve filters",
+    "searchTerm": "Zoekterm:",
+    "removeSearchTerm": "Verwijder zoekterm filter",
+    "removeFlow": "Verwijder flow filter",
+    "removeStatus": "Verwijder status filter",
+    "removePriority": "Verwijder prioriteit filter"
+  },
+  "audit": {
+    "title": "Auditlog",
+    "noEvents": "Geen audit events gevonden voor dit dossier.",
+    "adminView": "Platform Admin - Alle organisaties zichtbaar",
+    "timeHeader": "Tijd",
+    "userHeader": "Gebruiker",
+    "roleHeader": "Rol",
+    "actionHeader": "Wat",
+    "detailsHeader": "Details",
+    "user": "Gebruiker",
+    "system": "Systeem",
+    "reason": "Reden:"
+  },
+  "familyContacts": {
+    "title": "Familie & Contacten",
+    "description": "Beheer familieleden en contactpersonen",
+    "add": "Toevoegen",
+    "name": "Naam",
+    "nameRequired": "Naam *",
+    "relationship": "Relatie",
+    "phone": "Telefoon",
+    "email": "Email",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "confirmDelete": "Weet je zeker dat je dit contact wilt verwijderen?",
+    "noContacts": "Nog geen contacten toegevoegd"
+  },
+  "serviceCard": {
+    "notScheduled": "Nog niet ingepland",
+    "edit": "Bewerken",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "status": "Status:",
+    "scheduledDateTime": "Geplande datum/tijd",
+    "location": "Locatie",
+    "notes": "Notities",
+    "dateTime": "Datum/tijd:",
+    "locationLabel": "Locatie:"
+  },
+  "tasks": {
+    "title": "Taken",
+    "all": "Alle",
+    "pending": "Lopend",
+    "completed": "Voltooid",
+    "noTasks": "Geen taken gevonden",
+    "taskUpdated": "Taak bijgewerkt",
+    "statusChanged": "Status gewijzigd naar {status}",
+    "loadError": "Taken konden niet worden geladen",
+    "overdue": "Te laat",
+    "deadline": "Deadline:",
+    "statuses": {
+      "PENDING": "Te doen",
+      "IN_PROGRESS": "Bezig",
+      "COMPLETED": "Voltooid",
+      "CANCELLED": "Geannuleerd"
+    },
+    "types": {
+      "DOC_REVIEW": "Document beoordelen",
+      "DOC_REUPLOAD_REQUEST": "Document opnieuw uploaden",
+      "INTAKE_COMPLETE": "Intake afronden",
+      "MOSQUE_CONFIRM": "Moskee bevestigen",
+      "WASH_START": "Wassplaats starten",
+      "FLIGHT_REGISTER": "Vlucht registreren",
+      "LEGAL_HOLD_FOLLOW_UP": "Legal hold opvolgen"
+    }
+  },
   "toasts": {
     "success": {
       "saved": "Opgeslagen",

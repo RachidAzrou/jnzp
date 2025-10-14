@@ -87,7 +87,7 @@ const Archief = () => {
         .eq("status", "DONE")
         .not("archived_at", "is", null)
         .not("dossier_id", "is", null)
-        .order("completed_at", { ascending: false });
+        .order("archived_at", { ascending: false });
 
       if (tasksError) throw tasksError;
       
@@ -122,7 +122,7 @@ const Archief = () => {
         .eq("status", "DONE")
         .not("archived_at", "is", null)
         .is("dossier_id", null)
-        .order("completed_at", { ascending: false });
+        .order("archived_at", { ascending: false });
 
       if (looseTasksError) throw looseTasksError;
       

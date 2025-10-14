@@ -15,6 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useTranslation } from "react-i18next";
 
 interface PendingFD {
   id: string;
@@ -34,6 +35,7 @@ interface PendingFD {
 }
 
 export default function AdminPendingFDs() {
+  const { t } = useTranslation();
   const [pendingFDs, setPendingFDs] = useState<PendingFD[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -124,15 +126,15 @@ export default function AdminPendingFDs() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Pending FD Goedkeuringen</h1>
+        <h1 className="text-3xl font-bold">{t("admin.pendingFDs.title")}</h1>
         <p className="text-muted-foreground mt-2">
-          Beoordeel en keur nieuwe uitvaartondernemers goed
+          {t("admin.pendingFDs.description")}
         </p>
       </div>
 
       {pendingFDs.length === 0 ? (
         <Card className="p-8 text-center">
-          <p className="text-muted-foreground">Geen pending FD's gevonden</p>
+          <p className="text-muted-foreground">{t("admin.pendingFDs.noPending")}</p>
         </Card>
       ) : (
         <div className="grid gap-4">
@@ -147,18 +149,18 @@ export default function AdminPendingFDs() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-xl font-semibold">{fd.company_name}</h3>
-                        <Badge variant="secondary">Pending</Badge>
+                        <Badge variant="secondary">{t("admin.pendingFDs.pending")}</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">{fd.legal_name}</p>
                       <p className="text-sm text-muted-foreground">
-                        Ondernemingsnummer: {fd.business_number}
+                        {t("admin.pendingFDs.businessNumber")}: {fd.business_number}
                       </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <h4 className="font-semibold text-sm mb-2">Contactpersoon</h4>
+                      <h4 className="font-semibold text-sm mb-2">{t("admin.pendingFDs.contactPerson")}</h4>
                       <div className="space-y-1 text-sm">
                         <p>{fd.contact_first_name} {fd.contact_last_name}</p>
                         <div className="flex items-center gap-2 text-muted-foreground">
@@ -173,7 +175,7 @@ export default function AdminPendingFDs() {
                     </div>
 
                     <div>
-                      <h4 className="font-semibold text-sm mb-2">Adres</h4>
+                      <h4 className="font-semibold text-sm mb-2">{t("admin.pendingFDs.address")}</h4>
                       <div className="flex items-start gap-2 text-sm text-muted-foreground">
                         <MapPin className="h-4 w-4 mt-0.5" />
                         <div>
@@ -186,7 +188,7 @@ export default function AdminPendingFDs() {
                   </div>
 
                   <p className="text-xs text-muted-foreground">
-                    Aangemaakt: {new Date(fd.created_at).toLocaleString("nl-NL")}
+                    {t("admin.pendingFDs.createdAt")}: {new Date(fd.created_at).toLocaleString("nl-NL")}
                   </p>
                 </div>
 
@@ -202,7 +204,7 @@ export default function AdminPendingFDs() {
                     ) : (
                       <>
                         <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Goedkeuren
+                        {t("admin.pendingFDs.approve")}
                       </>
                     )}
                   </Button>
@@ -217,7 +219,7 @@ export default function AdminPendingFDs() {
                     ) : (
                       <>
                         <XCircle className="h-4 w-4 mr-2" />
-                        Weigeren
+                        {t("admin.pendingFDs.reject")}
                       </>
                     )}
                   </Button>
@@ -232,18 +234,18 @@ export default function AdminPendingFDs() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {action === "approve" ? "FD Goedkeuren" : "FD Weigeren"}
+              {action === "approve" ? t("admin.pendingFDs.approveConfirm") : t("admin.pendingFDs.rejectConfirm")}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {action === "approve"
-                ? `Weet je zeker dat je ${selectedFD?.company_name} wilt goedkeuren? De FD krijgt volledige toegang tot het platform.`
-                : `Weet je zeker dat je ${selectedFD?.company_name} wilt weigeren? Deze actie kan niet ongedaan worden gemaakt.`}
+                ? `${t("common.confirm")} ${selectedFD?.company_name} ${t("admin.pendingFDs.approveMessage")}`
+                : `${t("common.confirm")} ${selectedFD?.company_name} ${t("admin.pendingFDs.rejectMessage")}`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmAction}>
-              Bevestigen
+              {t("common.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

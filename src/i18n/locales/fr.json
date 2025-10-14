@@ -719,16 +719,31 @@
     "audit": {
       "title": "Journal d'audit",
       "searchLabel": "Rechercher",
-      "eventsCount": "Événements"
+      "eventsCount": "Événements",
+      "description": "Voir toutes les actions critiques du système"
     },
     "config": {
       "title": "Configuration",
-      "featureFlags": "Indicateurs de fonctionnalités"
+      "featureFlags": "Indicateurs de fonctionnalités",
+      "description": "Gérer les indicateurs de fonctionnalités et les paramètres de la plateforme",
+      "saving": "En cours...",
+      "save": "Enregistrer",
+      "noFeatureFlags": "Aucun indicateur de fonctionnalité trouvé"
     },
     "dashboard": {
       "title": "Tableau de bord Admin",
       "latestEvents": "Derniers événements",
-      "quickActions": "Actions rapides"
+      "quickActions": "Actions rapides",
+      "currentDate": "Aujourd'hui est",
+      "systemOverview": "Aperçu du système",
+      "activeDossiers": "Dossiers actifs",
+      "pendingDocuments": "Docs à réviser",
+      "blockedDays": "Blocages mosquée",
+      "coolerCellsOccupied": "Cellules réfrigérées occupées",
+      "integrationErrors": "Erreurs d'intégration",
+      "pendingInvoices": "Factures en attente",
+      "pendingOrgs": "Organisations à vérifier",
+      "noRecentEvents": "Aucun événement récent"
     },
     "directory": {
       "title": "Répertoire",
@@ -747,19 +762,64 @@
       "title": "Demandes RGPD"
     },
     "integrations": {
-      "title": "Intégrations"
+      "title": "Intégrations",
+      "description": "Surveiller et gérer les intégrations API externes",
+      "retry": "Réessayer",
+      "noIntegrations": "Aucune intégration trouvée",
+      "lastSync": "Dernière synchro"
     },
     "invoices": {
       "title": "Factures",
-      "invoicesCount": "Factures"
+      "invoicesCount": "Factures",
+      "description": "Aperçu de toutes les factures de la plateforme",
+      "export": "Exporter CSV",
+      "noInvoices": "Aucune facture trouvée"
     },
     "organizations": {
-      "title": "Organisations"
+      "title": "Organisations",
+      "description": "Gérer la vérification et l'activation des organisations",
+      "pending": "En attente",
+      "reviewRequired": "Info supplémentaire",
+      "active": "Actif",
+      "rejected": "Rejeté",
+      "noPending": "Aucune organisation en attente",
+      "noReviewRequired": "Aucune organisation nécessitant des informations supplémentaires",
+      "noActive": "Aucune organisation active",
+      "noRejected": "Aucune organisation rejetée"
     },
     "users": {
       "title": "Utilisateurs",
       "searchLabel": "Rechercher",
-      "usersCount": "Utilisateurs"
+      "usersCount": "Utilisateurs",
+      "description": "Gérer les comptes utilisateurs et les rôles",
+      "delete": "Supprimer",
+      "deleteConfirm": "Supprimer l'utilisateur",
+      "deleteMessage": "Êtes-vous sûr de vouloir supprimer cet utilisateur? Cette action est irréversible.",
+      "deleteSuccess": "Utilisateur supprimé",
+      "deleteError": "Impossible de supprimer l'utilisateur",
+      "userDeleted": "Utilisateur déjà supprimé",
+      "userDeletedDesc": "n'existe plus dans le système",
+      "cannotDeleteSelf": "Vous ne pouvez pas supprimer votre propre compte"
+    },
+    "pendingFDs": {
+      "title": "Approbations FD en attente",
+      "description": "Examiner et approuver les nouvelles demandes de directeurs de funérailles",
+      "company": "Entreprise",
+      "contactPerson": "Personne de contact",
+      "address": "Adresse",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "approveConfirm": "Approuver FD",
+      "rejectConfirm": "Rejeter FD",
+      "approveMessage": "voulez approuver? Le FD aura un accès complet à la plateforme.",
+      "rejectMessage": "voulez rejeter? Cette action est irréversible.",
+      "approveSuccess": "FD approuvé avec succès",
+      "rejectSuccess": "FD rejeté avec succès",
+      "actionError": "Erreur lors de la mise à jour du statut FD",
+      "noPending": "Aucun FD en attente trouvé",
+      "pending": "En attente",
+      "businessNumber": "Numéro d'entreprise",
+      "createdAt": "Créé le"
     }
   },
   "fdRequests": {

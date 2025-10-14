@@ -783,16 +783,31 @@
     "audit": {
       "title": "Audit Log",
       "searchLabel": "Zoeken",
-      "eventsCount": "Events"
+      "eventsCount": "Events",
+      "description": "Bekijk alle kritieke acties in het systeem"
     },
     "config": {
       "title": "Configuratie",
-      "featureFlags": "Feature Flags"
+      "featureFlags": "Feature Flags",
+      "description": "Beheer feature flags en platforminstellingen",
+      "saving": "Bezig...",
+      "save": "Opslaan",
+      "noFeatureFlags": "Geen feature flags gevonden"
     },
     "dashboard": {
       "title": "Admin Dashboard",
       "latestEvents": "Laatste Events",
-      "quickActions": "Snelkoppelingen"
+      "quickActions": "Snelkoppelingen",
+      "currentDate": "Vandaag is",
+      "systemOverview": "Systeemoverzicht",
+      "activeDossiers": "Actieve Dossiers",
+      "pendingDocuments": "Docs te reviewen",
+      "blockedDays": "Moskee blokkades",
+      "coolerCellsOccupied": "Koelcellen bezet",
+      "integrationErrors": "Integratie fouten",
+      "pendingInvoices": "Openstaande facturen",
+      "pendingOrgs": "Organisaties ter controle",
+      "noRecentEvents": "Geen recente events"
     },
     "directory": {
       "title": "Directory",
@@ -811,19 +826,64 @@
       "title": "GDPR Verzoeken"
     },
     "integrations": {
-      "title": "Integraties"
+      "title": "Integraties",
+      "description": "Monitor en beheer externe API integraties",
+      "retry": "Opnieuw proberen",
+      "noIntegrations": "Geen integraties gevonden",
+      "lastSync": "Laatste sync"
     },
     "invoices": {
       "title": "Facturen",
-      "invoicesCount": "Facturen"
+      "invoicesCount": "Facturen",
+      "description": "Overzicht van alle facturen in het platform",
+      "export": "Exporteer CSV",
+      "noInvoices": "Geen facturen gevonden"
     },
     "organizations": {
-      "title": "Organisaties"
+      "title": "Organisaties",
+      "description": "Beheer organisatie verificaties en activering",
+      "pending": "In afwachting",
+      "reviewRequired": "Extra info",
+      "active": "Actief",
+      "rejected": "Afgewezen",
+      "noPending": "Geen organisaties in afwachting",
+      "noReviewRequired": "Geen organisaties met extra info aanvraag",
+      "noActive": "Geen actieve organisaties",
+      "noRejected": "Geen afgewezen organisaties"
     },
     "users": {
       "title": "Gebruikers",
       "searchLabel": "Zoeken",
-      "usersCount": "Gebruikers"
+      "usersCount": "Gebruikers",
+      "description": "Beheer gebruikersaccounts en rollen",
+      "delete": "Verwijderen",
+      "deleteConfirm": "Gebruiker verwijderen",
+      "deleteMessage": "Weet je zeker dat je deze gebruiker wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "deleteSuccess": "Gebruiker verwijderd",
+      "deleteError": "Kon gebruiker niet verwijderen",
+      "userDeleted": "Gebruiker al verwijderd",
+      "userDeletedDesc": "bestaat niet meer in het systeem",
+      "cannotDeleteSelf": "Je kunt je eigen account niet verwijderen"
+    },
+    "pendingFDs": {
+      "title": "Pending FD Goedkeuringen",
+      "description": "Beoordeel en keur nieuwe uitvaartondernemers goed",
+      "company": "Bedrijf",
+      "contactPerson": "Contactpersoon",
+      "address": "Adres",
+      "approve": "Goedkeuren",
+      "reject": "Weigeren",
+      "approveConfirm": "FD Goedkeuren",
+      "rejectConfirm": "FD Weigeren",
+      "approveMessage": "wilt goedkeuren? De FD krijgt volledige toegang tot het platform.",
+      "rejectMessage": "wilt weigeren? Deze actie kan niet ongedaan worden gemaakt.",
+      "approveSuccess": "FD succesvol goedgekeurd",
+      "rejectSuccess": "FD succesvol geweigerd",
+      "actionError": "Fout bij bijwerken van FD status",
+      "noPending": "Geen pending FD's gevonden",
+      "pending": "Pending",
+      "businessNumber": "Ondernemingsnummer",
+      "createdAt": "Aangemaakt"
     }
   },
   "fdRequests": {

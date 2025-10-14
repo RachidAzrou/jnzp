@@ -173,6 +173,73 @@ export default function AdminDashboard() {
                 ))}
               </div>
             ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">{t("admin.dashboard.noRecentEvents")}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">{t("admin.dashboard.quickActions")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start h-9"
+                onClick={() => navigate("/admin/directory")}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                {t("admin.directory.title")}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start h-9"
+                onClick={() => navigate("/admin/dossiers")}
+              >
+                <FolderOpen className="mr-2 h-4 w-4" />
+                {t("admin.dossiers.title")}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start h-9"
+                onClick={() => navigate("/admin/documents")}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                {t("admin.documentReview.title")}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start h-9"
+                onClick={() => navigate("/admin/integrations")}
+              >
+                <Activity className="mr-2 h-4 w-4" />
+                {t("admin.integrations.title")}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start h-9"
+                onClick={() => navigate("/admin/invoices")}
+              >
+                <Receipt className="mr-2 h-4 w-4" />
+                {t("admin.invoices.title")}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start h-9"
+                onClick={() => navigate("/admin/audit")}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                {t("admin.audit.title")}
+              </Button>
+              </div>
+            ) : (
               <p className="text-sm text-muted-foreground text-center py-8">Geen recente events</p>
             )}
           </CardContent>

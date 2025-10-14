@@ -97,14 +97,14 @@ export default function AdminIntegrations() {
         return (
           <Badge className="bg-green-600 hover:bg-green-700 text-white border-0 text-xs">
             <CheckCircle className="mr-1 h-3 w-3" />
-            Actief
+            {t("status.active")}
           </Badge>
         );
       case "ERROR":
         return (
           <Badge className="bg-red-600 hover:bg-red-700 text-white border-0 text-xs">
             <AlertCircle className="mr-1 h-3 w-3" />
-            Fout
+            {t("common.error")}
           </Badge>
         );
       default:
@@ -136,7 +136,7 @@ export default function AdminIntegrations() {
           {t("admin.integrations.title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Monitor en beheer externe API integraties
+          {t("admin.integrations.description")}
         </p>
       </div>
 
@@ -159,7 +159,7 @@ export default function AdminIntegrations() {
               {integrations.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-8">
-                    Geen integraties gevonden
+                    {t("admin.integrations.noIntegrations")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -185,7 +185,7 @@ export default function AdminIntegrations() {
                           onClick={() => handleRetry(integration.id)}
                         >
                           <RefreshCw className="mr-1 h-4 w-4" />
-                          Opnieuw proberen
+                          {t("admin.integrations.retry")}
                         </Button>
                       )}
                     </TableCell>

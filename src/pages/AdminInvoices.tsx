@@ -116,7 +116,7 @@ export default function AdminInvoices() {
           {t("admin.invoices.title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Overzicht van alle facturen in het platform
+          {t("admin.invoices.description")}
         </p>
       </div>
 
@@ -125,7 +125,7 @@ export default function AdminInvoices() {
           <div className="flex justify-end">
             <Button onClick={handleExport} variant="outline" size="sm">
               <Download className="mr-2 h-4 w-4" />
-              Exporteer CSV
+              {t("admin.invoices.export")}
             </Button>
           </div>
         </CardContent>
@@ -149,7 +149,7 @@ export default function AdminInvoices() {
               {invoices.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-8">
-                    Geen facturen gevonden
+                    {t("admin.invoices.noInvoices")}
                   </TableCell>
                 </TableRow>
               ) : (

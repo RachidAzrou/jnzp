@@ -719,16 +719,31 @@
     "audit": {
       "title": "Audit Log",
       "searchLabel": "Search",
-      "eventsCount": "Events"
+      "eventsCount": "Events",
+      "description": "View all critical actions in the system"
     },
     "config": {
       "title": "Configuration",
-      "featureFlags": "Feature Flags"
+      "featureFlags": "Feature Flags",
+      "description": "Manage feature flags and platform settings",
+      "saving": "Saving...",
+      "save": "Save",
+      "noFeatureFlags": "No feature flags found"
     },
     "dashboard": {
       "title": "Admin Dashboard",
       "latestEvents": "Latest Events",
-      "quickActions": "Quick Actions"
+      "quickActions": "Quick Actions",
+      "currentDate": "Today is",
+      "systemOverview": "System Overview",
+      "activeDossiers": "Active Dossiers",
+      "pendingDocuments": "Docs to review",
+      "blockedDays": "Mosque blocks",
+      "coolerCellsOccupied": "Cooler cells occupied",
+      "integrationErrors": "Integration errors",
+      "pendingInvoices": "Pending invoices",
+      "pendingOrgs": "Organizations pending",
+      "noRecentEvents": "No recent events"
     },
     "directory": {
       "title": "Directory",
@@ -747,19 +762,64 @@
       "title": "GDPR Requests"
     },
     "integrations": {
-      "title": "Integrations"
+      "title": "Integrations",
+      "description": "Monitor and manage external API integrations",
+      "retry": "Retry",
+      "noIntegrations": "No integrations found",
+      "lastSync": "Last sync"
     },
     "invoices": {
       "title": "Invoices",
-      "invoicesCount": "Invoices"
+      "invoicesCount": "Invoices",
+      "description": "Overview of all invoices in the platform",
+      "export": "Export CSV",
+      "noInvoices": "No invoices found"
     },
     "organizations": {
-      "title": "Organizations"
+      "title": "Organizations",
+      "description": "Manage organization verification and activation",
+      "pending": "Pending",
+      "reviewRequired": "Extra info",
+      "active": "Active",
+      "rejected": "Rejected",
+      "noPending": "No pending organizations",
+      "noReviewRequired": "No organizations requiring extra information",
+      "noActive": "No active organizations",
+      "noRejected": "No rejected organizations"
     },
     "users": {
       "title": "Users",
       "searchLabel": "Search",
-      "usersCount": "Users"
+      "usersCount": "Users",
+      "description": "Manage user accounts and roles",
+      "delete": "Delete",
+      "deleteConfirm": "Delete User",
+      "deleteMessage": "Are you sure you want to delete this user? This action cannot be undone.",
+      "deleteSuccess": "User deleted",
+      "deleteError": "Could not delete user",
+      "userDeleted": "User already deleted",
+      "userDeletedDesc": "no longer exists in the system",
+      "cannotDeleteSelf": "You cannot delete your own account"
+    },
+    "pendingFDs": {
+      "title": "Pending FD Approvals",
+      "description": "Review and approve new funeral director applications",
+      "company": "Company",
+      "contactPerson": "Contact person",
+      "address": "Address",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approveConfirm": "Approve FD",
+      "rejectConfirm": "Reject FD",
+      "approveMessage": "approve? The FD will get full access to the platform.",
+      "rejectMessage": "reject? This action cannot be undone.",
+      "approveSuccess": "FD approved successfully",
+      "rejectSuccess": "FD rejected successfully",
+      "actionError": "Error updating FD status",
+      "noPending": "No pending FDs found",
+      "pending": "Pending",
+      "businessNumber": "Business number",
+      "createdAt": "Created at"
     }
   },
   "fdRequests": {

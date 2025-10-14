@@ -109,7 +109,7 @@ export default function AdminAudit() {
           {t("admin.audit.title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Bekijk alle kritieke acties in het systeem
+          {t("admin.audit.description")}
         </p>
       </div>
 

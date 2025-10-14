@@ -207,7 +207,7 @@ export default function AdminUsers() {
           {t("admin.users.title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Beheer gebruikersaccounts en rollen
+          {t("admin.users.description")}
         </p>
       </div>
 
@@ -236,10 +236,10 @@ export default function AdminUsers() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Email</TableHead>
-                <TableHead className="font-medium text-sm">Rol</TableHead>
-                <TableHead className="font-medium text-sm">Aangemaakt</TableHead>
-                <TableHead className="font-medium text-sm">Acties</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.email")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.role")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("admin.pendingFDs.createdAt")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("common.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -260,10 +260,10 @@ export default function AdminUsers() {
                       }}
                       disabled={user.id === currentUserId}
                       className="text-destructive hover:text-destructive disabled:opacity-50"
-                      title={user.id === currentUserId ? "Je kunt je eigen account niet verwijderen" : ""}
+                      title={user.id === currentUserId ? t("admin.users.cannotDeleteSelf") : ""}
                     >
                       <Trash2 className="mr-1 h-4 w-4" />
-                      Verwijderen
+                      {t("admin.users.delete")}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -277,10 +277,9 @@ export default function AdminUsers() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Gebruiker verwijderen</DialogTitle>
+            <DialogTitle>{t("admin.users.deleteConfirm")}</DialogTitle>
             <DialogDescription>
-              Weet je zeker dat je <strong>{userToDelete?.email}</strong> wilt verwijderen?
-              Deze actie kan niet ongedaan worden gemaakt.
+              {t("admin.users.deleteMessage")} <strong>{userToDelete?.email}</strong>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -291,13 +290,13 @@ export default function AdminUsers() {
                 setUserToDelete(null);
               }}
             >
-              Annuleren
+              {t("common.cancel")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteUser}
             >
-              Verwijderen
+              {t("admin.users.delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

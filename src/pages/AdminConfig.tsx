@@ -115,12 +115,12 @@ export default function AdminConfig() {
             {t("admin.config.title")}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Beheer feature flags en platforminstellingen
+            {t("admin.config.description")}
           </p>
         </div>
         <Button onClick={handleSave} disabled={saving} size="sm">
           <Save className="mr-2 h-4 w-4" />
-          {saving ? "Bezig..." : "Opslaan"}
+          {saving ? t("admin.config.saving") : t("admin.config.save")}
         </Button>
       </div>
 
@@ -142,7 +142,7 @@ export default function AdminConfig() {
               {flags.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-8">
-                    Geen feature flags gevonden
+                    {t("admin.config.noFeatureFlags")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -160,7 +160,7 @@ export default function AdminConfig() {
                           onCheckedChange={(checked) => handleToggle(flag.key, checked)}
                         />
                         <Label className="text-sm">
-                          {flag.enabled ? "Aan" : "Uit"}
+                          {flag.enabled ? t("common.on") : t("common.off")}
                         </Label>
                       </div>
                     </TableCell>

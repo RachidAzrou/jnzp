@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { OrganizationVerificationCard } from "@/components/admin/OrganizationVerificationCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "react-i18next";
 
 interface Organization {
   id: string;
@@ -24,6 +25,7 @@ interface Organization {
 }
 
 export default function AdminOrganizations() {
+  const { t } = useTranslation();
   const { data: organizations, isLoading } = useQuery({
     queryKey: ["admin-organizations"],
     queryFn: async () => {
@@ -71,9 +73,9 @@ export default function AdminOrganizations() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Organisaties</h1>
+        <h1 className="text-3xl font-bold">{t("admin.organizations.title")}</h1>
         <p className="text-muted-foreground mt-2">
-          Beheer organisatie verificaties en activering
+          {t("admin.organizations.description")}
         </p>
       </div>
 
@@ -82,7 +84,7 @@ export default function AdminOrganizations() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              In afwachting
+              {t("admin.organizations.pending")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -96,7 +98,7 @@ export default function AdminOrganizations() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Extra info
+              {t("admin.organizations.reviewRequired")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -110,7 +112,7 @@ export default function AdminOrganizations() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Actief
+              {t("admin.organizations.active")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -124,7 +126,7 @@ export default function AdminOrganizations() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Afgewezen
+              {t("admin.organizations.rejected")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -141,19 +143,19 @@ export default function AdminOrganizations() {
         <TabsList>
           <TabsTrigger value="pending" className="gap-2">
             <AlertCircle className="h-4 w-4" />
-            In afwachting ({pendingOrgs.length})
+            {t("admin.organizations.pending")} ({pendingOrgs.length})
           </TabsTrigger>
           <TabsTrigger value="review" className="gap-2">
             <AlertCircle className="h-4 w-4" />
-            Extra info ({reviewRequiredOrgs.length})
+            {t("admin.organizations.reviewRequired")} ({reviewRequiredOrgs.length})
           </TabsTrigger>
           <TabsTrigger value="active" className="gap-2">
             <CheckCircle className="h-4 w-4" />
-            Actief ({activeOrgs.length})
+            {t("admin.organizations.active")} ({activeOrgs.length})
           </TabsTrigger>
           <TabsTrigger value="rejected" className="gap-2">
             <XCircle className="h-4 w-4" />
-            Afgewezen ({rejectedOrgs.length})
+            {t("admin.organizations.rejected")} ({rejectedOrgs.length})
           </TabsTrigger>
         </TabsList>
 
@@ -162,7 +164,7 @@ export default function AdminOrganizations() {
             <Card>
               <CardContent className="text-center py-8 text-muted-foreground">
                 <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Geen organisaties in afwachting</p>
+                <p>{t("admin.organizations.noPending")}</p>
               </CardContent>
             </Card>
           ) : (
@@ -179,7 +181,7 @@ export default function AdminOrganizations() {
             <Card>
               <CardContent className="text-center py-8 text-muted-foreground">
                 <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Geen organisaties met extra info aanvraag</p>
+                <p>{t("admin.organizations.noReviewRequired")}</p>
               </CardContent>
             </Card>
           ) : (
@@ -196,7 +198,7 @@ export default function AdminOrganizations() {
             <Card>
               <CardContent className="text-center py-8 text-muted-foreground">
                 <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Geen actieve organisaties</p>
+                <p>{t("admin.organizations.noActive")}</p>
               </CardContent>
             </Card>
           ) : (
@@ -213,7 +215,7 @@ export default function AdminOrganizations() {
             <Card>
               <CardContent className="text-center py-8 text-muted-foreground">
                 <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Geen afgewezen organisaties</p>
+                <p>{t("admin.organizations.noRejected")}</p>
               </CardContent>
             </Card>
           ) : (

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ interface OrgUser {
 }
 
 export function DossierComments({ dossierId, organizationId }: DossierCommentsProps) {
+  const { t } = useTranslation();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -291,7 +293,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
           ref={textareaRef}
           value={newComment}
           onChange={(e) => handleTextChange(e.target.value, e.target.selectionStart)}
-          placeholder="Voeg een opmerking toe... Gebruik @ om collega's te taggen"
+          placeholder={t("forms.placeholders.comment")}
           rows={3}
           disabled={isSubmitting}
           className="resize-none"

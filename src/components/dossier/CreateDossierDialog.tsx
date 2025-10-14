@@ -452,7 +452,7 @@ export function CreateDossierDialog() {
                 onValueChange={(value) => handleInputChange("relationship", value)}
               >
                 <SelectTrigger className={errors.relationship ? "border-destructive" : ""}>
-                  <SelectValue placeholder="Selecteer relatie" />
+                  <SelectValue placeholder={t("forms.placeholders.selectRelation")} />
                 </SelectTrigger>
                 <SelectContent className="bg-background z-50">
                   <SelectItem value="Zoon">Zoon</SelectItem>
@@ -499,7 +499,7 @@ export function CreateDossierDialog() {
                   type="email"
                   value={formData.contact_email}
                   onChange={(e) => handleInputChange("contact_email", e.target.value)}
-                  placeholder="voorbeeld@email.nl"
+                  placeholder={t("forms.placeholders.email")}
                   className={errors.contact_email ? "border-destructive" : ""}
                 />
                 {errors.contact_email && (
@@ -557,7 +557,7 @@ export function CreateDossierDialog() {
                     id="mosque"
                     value={formData.mosque}
                     onChange={(e) => handleInputChange("mosque", e.target.value)}
-                    placeholder="Naam van de moskee"
+                    placeholder={t("forms.placeholders.mosqueName")}
                   />
                   <p className="text-xs text-muted-foreground">
                     💡 De moskee kan later nog worden gewijzigd.
@@ -570,7 +570,7 @@ export function CreateDossierDialog() {
                     id="cemetery"
                     value={formData.cemetery}
                     onChange={(e) => handleInputChange("cemetery", e.target.value)}
-                    placeholder="Naam van de begraafplaats"
+                    placeholder={t("forms.placeholders.cemeteryName")}
                   />
                 </div>
               </>

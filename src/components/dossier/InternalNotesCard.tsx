@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,7 @@ interface InternalNotesCardProps {
 }
 
 export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: InternalNotesCardProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [notes, setNotes] = useState(initialNotes || "");
   const [saving, setSaving] = useState(false);
@@ -82,7 +84,7 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
         {isEditing ? (
           <div className="space-y-4">
             <Textarea
-              placeholder="Voeg interne notities toe over dit dossier..."
+              placeholder={t("forms.placeholders.internalNotes")}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={8}

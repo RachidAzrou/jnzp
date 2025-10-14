@@ -554,21 +554,52 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl h-[85vh] overflow-hidden flex flex-col gap-0 p-0" aria-describedby="task-detail-description">
         <DialogHeader className="px-6 pt-6 pb-4 border-b bg-gradient-to-r from-background to-muted/20">
-          <DialogTitle className="flex items-center justify-between gap-4">
-            <span className="flex-1 text-xl">{editMode ? "Taak bewerken" : task.title}</span>
-            <div className="flex items-center gap-2">
-              {task.priority && (
-                <Badge variant={
-                  task.priority === 'CRITICAL' ? 'destructive' : 
-                  task.priority === 'HIGH' ? 'default' : 
-                  'secondary'
-                }>
-                  {getPriorityLabel(task.priority)}
+          <DialogTitle className="flex flex-col gap-3">
+            <div className="flex items-start justify-between gap-4">
+              <span className="flex-1 text-2xl font-bold">{editMode ? "Taak bewerken" : task.title}</span>
+              <div className="flex items-center gap-2">
+                {task.priority && (
+                  <Badge 
+                    className="text-sm px-3 py-1" 
+                    variant={
+                      task.priority === 'CRITICAL' ? 'destructive' : 
+                      task.priority === 'HIGH' ? 'default' : 
+                      'secondary'
+                    }
+                  >
+                    {getPriorityLabel(task.priority)}
+                  </Badge>
+                )}
+                <Badge className="text-sm px-3 py-1" variant={task.is_blocked ? "destructive" : "outline"}>
+                  {task.is_blocked ? "Geblokkeerd" : "Actief"}
                 </Badge>
+              </div>
+            </div>
+            
+            {/* Key Info Row */}
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              {task.dossier_id && (
+                <div className="flex items-center gap-1.5 text-primary">
+                  <FileText className="h-4 w-4" />
+                  <span className="font-medium">Dossier: {task.dossier_id.substring(0, 8)}</span>
+                </div>
               )}
-              <Badge variant={task.is_blocked ? "destructive" : "outline"}>
-                {task.is_blocked ? "Geblokkeerd" : "Actief"}
-              </Badge>
+              {task.due_date && (
+                <div className="flex items-center gap-1.5">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Deadline: {format(new Date(task.due_date), 'dd MMM yyyy', { locale: nl })}</span>
+                </div>
+              )}
+              {assignedUser && (
+                <div className="flex items-center gap-1.5">
+                  <Avatar className="h-5 w-5">
+                    <AvatarFallback className="text-xs">
+                      {assignedUser.name?.substring(0, 2).toUpperCase() || 'FD'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span>{assignedUser.name}</span>
+                </div>
+              )}
             </div>
           </DialogTitle>
           <p id="task-detail-description" className="sr-only">
@@ -592,41 +623,46 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
           {/* Details Tab */}
           <TabsContent value="details" className="flex-1 overflow-y-auto mt-4 px-6 pb-6">
-            {task.dossier_id && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <FileText className="h-4 w-4" />
-                <span>Dossier: {task.dossier_id.substring(0, 8)}</span>
-              </div>
-            )}
-
             <div className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-base font-semibold">Titel</Label>
-                {editMode ? (
-                  <Input
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-base font-medium">{task.title}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-base font-semibold">Beschrijving</Label>
+              {/* Beschrijving - meest prominent */}
+              <div className="space-y-2 p-4 rounded-lg bg-muted/30 border">
+                <Label className="text-sm font-medium text-muted-foreground">Beschrijving</Label>
                 {editMode ? (
                   <Textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
-                    className="mt-1"
+                    className="mt-1 text-base"
+                    placeholder="Voeg een beschrijving toe..."
                   />
                 ) : (
-                  <p className="text-base font-medium whitespace-pre-wrap">
+                  <p className="text-base leading-relaxed whitespace-pre-wrap">
                     {task.description || "Geen beschrijving"}
                   </p>
                 )}
+              </div>
+
+              {/* Grid met belangrijke details */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2 p-4 rounded-lg border bg-card">
+                  <Label className="text-sm font-medium text-muted-foreground">Titel</Label>
+                  {editMode ? (
+                    <Input
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className="mt-1"
+                    />
+                  ) : (
+                    <p className="text-base font-semibold">{task.title}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2 p-4 rounded-lg border bg-card">
+                  <Label className="text-sm font-medium text-muted-foreground">Status</Label>
+                  <Badge className="text-sm w-fit" variant={task.is_blocked ? "destructive" : "outline"}>
+                    {task.is_blocked ? "Geblokkeerd" : "Actief"}
+                  </Badge>
+                </div>
               </div>
 
               <div className="space-y-2">

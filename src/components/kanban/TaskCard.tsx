@@ -149,6 +149,16 @@ export function TaskCard({
               <h4 className={`font-medium text-sm leading-snug ${isOverdue ? 'text-destructive' : 'text-foreground'}`}>
                 {task.title}
               </h4>
+              {task.description && (
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                  {task.description}
+                </p>
+              )}
+              {task.dossier_id && (
+                <div className="flex items-center gap-1.5 mt-2 text-xs text-primary">
+                  <span>Dossier: {task.dossier_id.substring(0, 8)}</span>
+                </div>
+              )}
               {task.is_deferred && (
                 <div className="flex items-center gap-1.5 mt-2 text-xs text-amber-700 dark:text-amber-400">
                   <Clock className="h-3.5 w-3.5" />

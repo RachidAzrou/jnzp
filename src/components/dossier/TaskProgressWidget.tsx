@@ -72,12 +72,12 @@ export function TaskProgressWidget({ dossierId }: TaskProgressWidgetProps) {
   }
 
   return (
-    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
-      <CardHeader className="pb-3">
+    <Card className="bg-muted/30 border-border/50">
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            <CardTitle className="text-lg">Takenvoortgang</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Takenvoortgang</CardTitle>
           </div>
           <Button
             variant="ghost"
@@ -89,37 +89,37 @@ export function TaskProgressWidget({ dossierId }: TaskProgressWidgetProps) {
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
           </Button>
         </div>
-        <CardDescription>
+        <CardDescription className="text-xs">
           Voltooid voor deze fase
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
           {/* Progress bar */}
-          <div className="relative h-3 bg-blue-100 dark:bg-blue-900/30 rounded-full overflow-hidden">
+          <div className="relative h-2 bg-muted rounded-full overflow-hidden">
             <div
-              className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500 ease-out"
+              className="absolute inset-y-0 left-0 bg-primary/60 transition-all duration-500 ease-out"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
 
           {/* Stats */}
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <span className="font-medium">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              <span>
                 {completedTasks} van {totalTasks} taken
               </span>
             </div>
-            <Badge variant={progressPercentage === 100 ? "default" : "secondary"}>
+            <Badge variant="secondary" className="text-xs">
               {progressPercentage}%
             </Badge>
           </div>
 
           {/* Completion message */}
           {progressPercentage === 100 && (
-            <div className="text-xs text-center text-green-700 dark:text-green-400 font-medium py-1 px-3 bg-green-100 dark:bg-green-900/30 rounded-md">
-              ✅ Alle taken afgerond voor deze fase!
+            <div className="text-xs text-center text-muted-foreground py-1 px-3 bg-muted/50 rounded-md">
+              ✅ Alle taken afgerond
             </div>
           )}
         </div>

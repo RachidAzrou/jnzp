@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Scale, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface LegalHoldBadgeProps {
   legal_hold_active: boolean;
@@ -16,6 +17,8 @@ export function LegalHoldBadge({
   legal_hold_case_number,
   onViewDetails,
 }: LegalHoldBadgeProps) {
+  const { t } = useTranslation();
+  
   if (!legal_hold_active) {
     return null;
   }
@@ -28,11 +31,10 @@ export function LegalHoldBadge({
             variant="outline"
             className="bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100 px-3 py-1.5 text-xs sm:text-sm font-medium cursor-help transition-colors"
             role="status"
-            aria-label="Dossier onder juridische hold"
+            aria-label={t("legalHold.ariaLabel")}
           >
             <Scale className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5" aria-hidden="true" />
-            <span className="hidden sm:inline">Onder juridische hold</span>
-            <span className="sm:hidden">Legal hold</span>
+            <span>{t("legalHold.active")}</span>
           </Badge>
         </TooltipTrigger>
         <TooltipContent
@@ -45,9 +47,9 @@ export function LegalHoldBadge({
             <div className="flex items-start gap-2">
               <Scale className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-semibold text-sm mb-1">Juridische hold</h4>
+                <h4 className="font-semibold text-sm mb-1">{t("legalHold.title")}</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Dossier is geblokkeerd tot vrijgave door parket (niet-natuurlijk overlijden).
+                  {t("legalHold.description")}
                 </p>
               </div>
             </div>
@@ -56,13 +58,13 @@ export function LegalHoldBadge({
               <div className="space-y-2 pt-2 border-t">
                 {legal_hold_authority && (
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-xs font-medium text-muted-foreground">Autoriteit:</span>
+                    <span className="text-xs font-medium text-muted-foreground">{t("legalHold.authority")}</span>
                     <span className="text-sm font-medium">{legal_hold_authority}</span>
                   </div>
                 )}
                 {legal_hold_case_number && (
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-xs font-medium text-muted-foreground">Zaaknummer:</span>
+                    <span className="text-xs font-medium text-muted-foreground">{t("legalHold.caseNumber")}</span>
                     <span className="text-sm font-medium font-mono">{legal_hold_case_number}</span>
                   </div>
                 )}
@@ -77,7 +79,7 @@ export function LegalHoldBadge({
                 className="w-full mt-2 text-xs hover:bg-amber-50"
               >
                 <ExternalLink className="h-3 w-3 mr-1.5" />
-                Bekijk details in tijdlijn
+                {t("legalHold.viewDetails")}
               </Button>
             )}
           </div>

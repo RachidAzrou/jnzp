@@ -73,20 +73,19 @@ export function BlockDossierDialog({ dossierId, dossierRef, onSuccess }: BlockDo
       <DialogTrigger asChild>
         <Button variant="destructive" size="sm">
           <ShieldAlert className="h-4 w-4 mr-2" />
-          Blokkeer Dossier
+          {t("blockDossier.button")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Dossier Blokkeren</DialogTitle>
+          <DialogTitle>{t("blockDossier.title")}</DialogTitle>
           <DialogDescription>
-            U staat op het punt dossier <strong>{dossierRef}</strong> te blokkeren.
-            Dit plaatst een legal hold op het dossier en blokkeert de claim.
+            {t("blockDossier.description", { ref: dossierRef })}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="reason">Reden voor blokkade *</Label>
+            <Label htmlFor="reason">{t("blockDossier.reasonLabel")}</Label>
             <Textarea
               id="reason"
               placeholder={t("forms.placeholders.blockReason")}
@@ -95,16 +94,16 @@ export function BlockDossierDialog({ dossierId, dossierRef, onSuccess }: BlockDo
               rows={4}
             />
             <p className="text-sm text-muted-foreground">
-              Deze reden wordt gelogd in het audit trail en is zichtbaar voor de uitvaartondernemer.
+              {t("blockDossier.reasonNote")}
             </p>
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={isBlocking}>
-            Annuleren
+            {t("blockDossier.cancel")}
           </Button>
           <Button variant="destructive" onClick={handleBlock} disabled={isBlocking}>
-            {isBlocking ? "Blokkeren..." : "Bevestig Blokkade"}
+            {isBlocking ? t("blockDossier.blocking") : t("blockDossier.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -386,6 +386,74 @@
         "La famille est satisfaite du service"
       ]
   },
+  "flow": {
+    "notSet": "Non défini",
+    "local": "Local",
+    "repatriation": "Rapatriement",
+    "selectPlaceholder": "Sélectionner le flux",
+    "flowChanged": "Type de flux modifié",
+    "flowChangedDesc": "Le dossier est maintenant défini comme {flowType}. Le statut et les tâches ont été automatiquement mis à jour.",
+    "flowError": "Le type de flux n'a pas pu être modifié"
+  },
+  "legalHold": {
+    "title": "Blocage juridique",
+    "active": "Sous blocage juridique",
+    "description": "Le dossier est bloqué jusqu'à la libération par le parquet (décès non naturel).",
+    "authority": "Autorité:",
+    "caseNumber": "Numéro de dossier:",
+    "viewDetails": "Voir les détails dans la chronologie",
+    "ariaLabel": "Dossier sous blocage juridique"
+  },
+  "obituary": {
+    "title": "Avis de décès",
+    "editDescription": "Modifier l'avis de décès",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "placeholder": "Entrez le texte de l'avis de décès...",
+    "noObituary": "Aucun avis de décès ajouté",
+    "saved": "Avis de décès enregistré",
+    "saveError": "Erreur lors de l'enregistrement"
+  },
+  "blockDossier": {
+    "button": "Bloquer le Dossier",
+    "title": "Bloquer le Dossier",
+    "description": "Vous êtes sur le point de bloquer le dossier {ref}. Cela place un blocage juridique sur le dossier et bloque la réclamation.",
+    "reasonLabel": "Raison du blocage *",
+    "reasonPlaceholder": "Fournir une raison pour le blocage...",
+    "reasonNote": "Cette raison sera enregistrée dans la piste d'audit et est visible pour le directeur de funérailles.",
+    "cancel": "Annuler",
+    "confirm": "Confirmer le Blocage",
+    "blocking": "Blocage en cours..."
+  },
+  "feedback": {
+    "requestFeedback": "Demander un Avis",
+    "requestFeedbackTitle": "Demander l'avis de la Famille",
+    "requestFeedbackDesc": "Générer un lien pour demander l'avis de la famille.",
+    "generatedLink": "Lien d'avis généré",
+    "chooseMethod": "Cliquez sur le bouton pour générer un lien d'avis.",
+    "createLinkOnly": "Générer le Lien",
+    "linkCreated": "Lien d'avis créé",
+    "linkCreatedDesc": "Le lien d'avis a été créé avec succès.",
+    "linkCopied": "Lien copié",
+    "linkCopiedDesc": "Le lien d'avis a été copié dans le presse-papiers.",
+    "createError": "Erreur lors de la création du lien",
+    "loading": "Chargement..."
+  },
+  "fdReviews": {
+    "title": "Avis des Familles",
+    "loading": "Chargement...",
+    "noReviews": "Aucun avis reçu"
+  },
+  "policyVerification": {
+    "apiVerified": "Police confirmée par l'assureur",
+    "manualVerified": "Police confirmée manuellement",
+    "pending": "Police en attente de vérification"
+  },
+  "mortuariumAdHoc": {
+    "backToDashboard": "Retour au tableau de bord",
+    "adHocTag": "Inscription ad-hoc"
+  },
   "toasts": {
     "success": {
       "saved": "Enregistré",

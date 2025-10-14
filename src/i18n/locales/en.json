@@ -377,6 +377,74 @@
         "Family is satisfied with the service"
       ]
   },
+  "flow": {
+    "notSet": "Not set",
+    "local": "Local",
+    "repatriation": "Repatriation",
+    "selectPlaceholder": "Select flow",
+    "flowChanged": "Flow type changed",
+    "flowChangedDesc": "Dossier is now set as {flowType}. Status and tasks have been automatically updated.",
+    "flowError": "Flow type could not be changed"
+  },
+  "legalHold": {
+    "title": "Legal hold",
+    "active": "Under legal hold",
+    "description": "Dossier is blocked until release by prosecutor (non-natural death).",
+    "authority": "Authority:",
+    "caseNumber": "Case number:",
+    "viewDetails": "View details in timeline",
+    "ariaLabel": "Dossier under legal hold"
+  },
+  "obituary": {
+    "title": "Obituary",
+    "editDescription": "Edit the obituary",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "placeholder": "Enter the obituary text...",
+    "noObituary": "No obituary added yet",
+    "saved": "Obituary saved",
+    "saveError": "Error saving"
+  },
+  "blockDossier": {
+    "button": "Block Dossier",
+    "title": "Block Dossier",
+    "description": "You are about to block dossier {ref}. This places a legal hold on the dossier and blocks the claim.",
+    "reasonLabel": "Reason for blocking *",
+    "reasonPlaceholder": "Provide a reason for blocking...",
+    "reasonNote": "This reason will be logged in the audit trail and is visible to the funeral director.",
+    "cancel": "Cancel",
+    "confirm": "Confirm Block",
+    "blocking": "Blocking..."
+  },
+  "feedback": {
+    "requestFeedback": "Request Feedback",
+    "requestFeedbackTitle": "Request Family Feedback",
+    "requestFeedbackDesc": "Generate a link to request feedback from the family.",
+    "generatedLink": "Generated feedback link",
+    "chooseMethod": "Click the button to generate a feedback link.",
+    "createLinkOnly": "Generate Link",
+    "linkCreated": "Feedback link created",
+    "linkCreatedDesc": "The feedback link has been successfully created.",
+    "linkCopied": "Link copied",
+    "linkCopiedDesc": "The feedback link has been copied to the clipboard.",
+    "createError": "Error creating link",
+    "loading": "Loading..."
+  },
+  "fdReviews": {
+    "title": "Family Reviews",
+    "loading": "Loading...",
+    "noReviews": "No reviews received yet"
+  },
+  "policyVerification": {
+    "apiVerified": "Policy confirmed by insurer",
+    "manualVerified": "Policy manually confirmed",
+    "pending": "Policy pending verification"
+  },
+  "mortuariumAdHoc": {
+    "backToDashboard": "Back to dashboard",
+    "adHocTag": "Ad-hoc registration"
+  },
   "toasts": {
     "success": {
       "saved": "Saved",

@@ -28,12 +28,12 @@ export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: E
       
       if (error) throw error;
       
-      toast({ title: t("errors.obituarySaved") });
+      toast({ title: t("obituary.saved") });
       setIsEditing(false);
       onUpdate();
     } catch (error) {
       console.error(error);
-      toast({ title: t("errors.errorSaving"), variant: "destructive" });
+      toast({ title: t("obituary.saveError"), variant: "destructive" });
     }
   };
 
@@ -47,8 +47,8 @@ export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: E
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Overlijdensbericht</CardTitle>
-            <CardDescription>Bewerk het overlijdensbericht</CardDescription>
+            <CardTitle>{t("obituary.title")}</CardTitle>
+            <CardDescription>{t("obituary.editDescription")}</CardDescription>
           </div>
           {!isEditing ? (
             <Button 
@@ -58,17 +58,17 @@ export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: E
               className="h-8 gap-1 text-xs"
             >
               <Edit2 className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Bewerken</span>
+              <span className="hidden sm:inline">{t("obituary.edit")}</span>
             </Button>
           ) : (
             <div className="flex gap-1">
               <Button onClick={handleSave} size="sm" className="h-8 text-xs">
                 <Save className="h-3.5 w-3.5 mr-1.5" />
-                <span className="hidden sm:inline">Opslaan</span>
+                <span className="hidden sm:inline">{t("obituary.save")}</span>
               </Button>
               <Button onClick={handleCancel} variant="ghost" size="sm" className="h-8 text-xs">
                 <X className="h-3.5 w-3.5 mr-1.5" />
-                <span className="hidden sm:inline">Annuleren</span>
+                <span className="hidden sm:inline">{t("obituary.cancel")}</span>
               </Button>
             </div>
           )}
@@ -87,7 +87,7 @@ export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: E
             {obituary ? (
               <p className="whitespace-pre-wrap text-sm leading-relaxed">{obituary}</p>
             ) : (
-              <p className="text-muted-foreground text-sm italic">Nog geen overlijdensbericht toegevoegd</p>
+              <p className="text-muted-foreground text-sm italic">{t("obituary.noObituary")}</p>
             )}
           </div>
         )}

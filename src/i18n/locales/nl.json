@@ -321,6 +321,74 @@
     "error": "Er is een fout opgetreden",
     "emptyState": "Geen dossiers om weer te geven"
   },
+  "flow": {
+    "notSet": "Niet ingesteld",
+    "local": "Lokaal",
+    "repatriation": "Repatriëring",
+    "selectPlaceholder": "Selecteer flow",
+    "flowChanged": "Flowtype gewijzigd",
+    "flowChangedDesc": "Dossier is nu ingesteld als {flowType}. Status en taken zijn automatisch bijgewerkt.",
+    "flowError": "Flowtype kon niet worden gewijzigd"
+  },
+  "legalHold": {
+    "title": "Juridische hold",
+    "active": "Onder juridische hold",
+    "description": "Dossier is geblokkeerd tot vrijgave door parket (niet-natuurlijk overlijden).",
+    "authority": "Autoriteit:",
+    "caseNumber": "Zaaknummer:",
+    "viewDetails": "Bekijk details in tijdlijn",
+    "ariaLabel": "Dossier onder juridische hold"
+  },
+  "obituary": {
+    "title": "Overlijdensbericht",
+    "editDescription": "Bewerk het overlijdensbericht",
+    "edit": "Bewerken",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "placeholder": "Voer het overlijdensbericht in...",
+    "noObituary": "Nog geen overlijdensbericht toegevoegd",
+    "saved": "Overlijdensbericht opgeslagen",
+    "saveError": "Fout bij opslaan"
+  },
+  "blockDossier": {
+    "button": "Blokkeer Dossier",
+    "title": "Dossier Blokkeren",
+    "description": "U staat op het punt dossier {ref} te blokkeren. Dit plaatst een legal hold op het dossier en blokkeert de claim.",
+    "reasonLabel": "Reden voor blokkade *",
+    "reasonPlaceholder": "Geef een reden voor de blokkade...",
+    "reasonNote": "Deze reden wordt gelogd in het audit trail en is zichtbaar voor de uitvaartondernemer.",
+    "cancel": "Annuleren",
+    "confirm": "Bevestig Blokkade",
+    "blocking": "Blokkeren..."
+  },
+  "feedback": {
+    "requestFeedback": "Vraag Feedback",
+    "requestFeedbackTitle": "Familie Feedback Aanvragen",
+    "requestFeedbackDesc": "Genereer een link om feedback aan te vragen van de familie.",
+    "generatedLink": "Gegenereerde feedback link",
+    "chooseMethod": "Klik op de knop om een feedback link te genereren.",
+    "createLinkOnly": "Genereer Link",
+    "linkCreated": "Feedback link aangemaakt",
+    "linkCreatedDesc": "De feedback link is succesvol aangemaakt.",
+    "linkCopied": "Link gekopieerd",
+    "linkCopiedDesc": "De feedback link is gekopieerd naar het klembord.",
+    "createError": "Fout bij aanmaken link",
+    "loading": "Laden..."
+  },
+  "fdReviews": {
+    "title": "Familie Beoordelingen",
+    "loading": "Laden...",
+    "noReviews": "Nog geen beoordelingen ontvangen"
+  },
+  "policyVerification": {
+    "apiVerified": "Polis bevestigd door verzekeraar",
+    "manualVerified": "Polis handmatig bevestigd",
+    "pending": "Polis nog te controleren"
+  },
+  "mortuariumAdHoc": {
+    "backToDashboard": "Terug naar dashboard",
+    "adHocTag": "Ad-hoc aanmelding"
+  },
   "toasts": {
     "success": {
       "saved": "Opgeslagen",

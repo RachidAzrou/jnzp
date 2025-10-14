@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 export function FDReviewsCard() {
+  const { t } = useTranslation();
   const [reviews, setReviews] = useState<any[]>([]);
   const [avgRating, setAvgRating] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -68,11 +70,11 @@ export function FDReviewsCard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Star className="h-5 w-5" />
-            Familie Beoordelingen
+            {t("fdReviews.title")}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Laden...</p>
+          <p className="text-sm text-muted-foreground">{t("fdReviews.loading")}</p>
         </CardContent>
       </Card>
     );
@@ -84,7 +86,7 @@ export function FDReviewsCard() {
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Star className="h-5 w-5" />
-            Familie Beoordelingen
+            {t("fdReviews.title")}
           </div>
           {reviews.length > 0 && (
             <Badge variant="secondary" className="text-lg">
@@ -96,7 +98,7 @@ export function FDReviewsCard() {
       <CardContent>
         {reviews.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-8">
-            Nog geen beoordelingen ontvangen
+            {t("fdReviews.noReviews")}
           </p>
         ) : (
           <div className="space-y-4">

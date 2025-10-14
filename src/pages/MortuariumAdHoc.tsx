@@ -18,7 +18,7 @@ export default function MortuariumAdHoc() {
           className="mb-4"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Terug naar dashboard
+          {t("mortuariumAdHoc.backToDashboard")}
         </Button>
         
         <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
@@ -30,7 +30,7 @@ export default function MortuariumAdHoc() {
                     <Plus className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium">Ad-hoc aanmelding</p>
+                    <p className="text-sm text-muted-foreground font-medium">{t("mortuariumAdHoc.adHocTag")}</p>
                     <h1 className="text-2xl font-bold tracking-tight">{t("mortuarium.adHoc.title")}</h1>
                   </div>
                 </div>

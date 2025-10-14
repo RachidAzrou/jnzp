@@ -47,8 +47,8 @@ export default function AdminConfig() {
     } catch (error) {
       console.error("Error fetching feature flags:", error);
       toast({
-        title: "Fout bij ophalen",
-        description: "Kon feature flags niet ophalen",
+        title: t("adminConfig.loadError"),
+        description: t("adminConfig.loadError"),
         variant: "destructive",
       });
     } finally {
@@ -81,16 +81,16 @@ export default function AdminConfig() {
       });
 
       toast({
-        title: "Opgeslagen",
-        description: "Feature flags zijn bijgewerkt",
+        title: t("adminConfig.saved"),
+        description: t("adminConfig.savedDesc"),
       });
 
       fetchFeatureFlags();
     } catch (error) {
       console.error("Error saving feature flags:", error);
       toast({
-        title: "Fout",
-        description: "Kon feature flags niet opslaan",
+        title: t("common.error"),
+        description: t("adminConfig.saveError"),
         variant: "destructive",
       });
     } finally {

@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -31,6 +32,7 @@ const ITEMS_PER_PAGE = 20;
 const Archief = () => {
   const navigate = useNavigate();
   const { organizationId } = useUserRole();
+  const { t } = useTranslation();
   
   const [activeTab, setActiveTab] = useState<"dossiers" | "tasks-dossier" | "tasks-loose">("dossiers");
   const [archivedDossiers, setArchivedDossiers] = useState<any[]>([]);
@@ -277,8 +279,8 @@ const Archief = () => {
                   <Archive className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold tracking-tight">Archief</h1>
-                  <p className="text-sm text-muted-foreground">Afgeronde dossiers en taken (alleen-lezen)</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t("archive.title")}</h1>
+                  <p className="text-sm text-muted-foreground">{t("archive.description")}</p>
                 </div>
               </div>
             </div>
@@ -291,7 +293,7 @@ const Archief = () => {
             <div className="flex justify-end">
               <Button onClick={exportToCSV} variant="outline" className="gap-2">
                 <Download className="h-4 w-4" />
-                Exporteer naar CSV
+                {t("archive.exportCSV")}
               </Button>
             </div>
           </CardContent>

@@ -26,9 +26,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Mail, MessageSquare } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "react-i18next";
 
 export default function AdminNotificationTemplates() {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingTemplate, setEditingTemplate] = useState<any>(null);
@@ -64,14 +66,14 @@ export default function AdminNotificationTemplates() {
 
     if (error) {
       toast({
-        title: "Fout",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Opgeslagen",
-        description: "Template succesvol opgeslagen",
+        title: t("notificationTemplates.saved"),
+        description: t("notificationTemplates.savedDesc"),
       });
       setDialogOpen(false);
       setEditingTemplate(null);
@@ -80,7 +82,7 @@ export default function AdminNotificationTemplates() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Weet u zeker dat u deze template wilt verwijderen?")) return;
+    if (!confirm(t("notificationTemplates.deleteConfirm"))) return;
 
     const { error } = await supabase
       .from("notification_templates")
@@ -89,14 +91,14 @@ export default function AdminNotificationTemplates() {
 
     if (error) {
       toast({
-        title: "Fout",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Verwijderd",
-        description: "Template succesvol verwijderd",
+        title: t("notificationTemplates.deleted"),
+        description: t("notificationTemplates.deletedDesc"),
       });
       fetchTemplates();
     }

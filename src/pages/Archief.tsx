@@ -72,7 +72,7 @@ const Archief = () => {
       if (dossiersError) throw dossiersError;
       setArchivedDossiers(dossiersData || []);
 
-      // Fetch completed tasks with dossier
+      // Fetch archived tasks with dossier (done EN gearchiveerd)
       const { data: tasksData, error: tasksError } = await supabase
         .from("kanban_tasks")
         .select(`
@@ -82,35 +82,73 @@ const Archief = () => {
             display_id,
             deceased_name,
             flow
-          ),
-          assignee:profiles(
-            id,
-            display_name
           )
         `)
         .eq("status", "DONE")
+        .not("archived_at", "is", null)
         .not("dossier_id", "is", null)
         .order("completed_at", { ascending: false });
 
       if (tasksError) throw tasksError;
-      setArchivedTasks(tasksData || []);
+      
+      // Haal assignee info apart op
+      const enrichedTasks = await Promise.all(
+        (tasksData || []).map(async (task) => {
+          if (task.assignee_id) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("id, first_name, last_name")
+              .eq("id", task.assignee_id)
+              .maybeSingle();
+            
+            return {
+              ...task,
+              assignee: profile ? {
+                id: profile.id,
+                display_name: `${profile.first_name} ${profile.last_name}`.trim()
+              } : null
+            };
+          }
+          return { ...task, assignee: null };
+        })
+      );
+      
+      setArchivedTasks(enrichedTasks);
 
-      // Fetch loose tasks (without dossier_id)
+      // Fetch loose archived tasks (zonder dossier_id, maar WEL gearchiveerd)
       const { data: looseTasksData, error: looseTasksError } = await supabase
         .from("kanban_tasks")
-        .select(`
-          *,
-          assignee:profiles(
-            id,
-            display_name
-          )
-        `)
+        .select("*")
         .eq("status", "DONE")
+        .not("archived_at", "is", null)
         .is("dossier_id", null)
         .order("completed_at", { ascending: false });
 
       if (looseTasksError) throw looseTasksError;
-      setLooseTasks(looseTasksData || []);
+      
+      // Haal assignee info apart op voor losse taken
+      const enrichedLooseTasks = await Promise.all(
+        (looseTasksData || []).map(async (task) => {
+          if (task.assignee_id) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("id, first_name, last_name")
+              .eq("id", task.assignee_id)
+              .maybeSingle();
+            
+            return {
+              ...task,
+              assignee: profile ? {
+                id: profile.id,
+                display_name: `${profile.first_name} ${profile.last_name}`.trim()
+              } : null
+            };
+          }
+          return { ...task, assignee: null };
+        })
+      );
+      
+      setLooseTasks(enrichedLooseTasks);
 
     } catch (error) {
       console.error("Error fetching archived data:", error);

@@ -573,6 +573,7 @@
     "unassigned": "Niet toegewezen",
     "noBoardAvailable": "Geen takenbord beschikbaar",
     "couldNotLoadBoard": "Kon takenbord niet laden",
+    "loading": "Laden...",
     "myTasks": "Mijn Taken",
     "startIntake": "Intake starten",
     "completeIntake": "Intake voltooien",

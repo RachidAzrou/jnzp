@@ -522,6 +522,7 @@
     "unassigned": "Unassigned",
     "noBoardAvailable": "No task board available",
     "couldNotLoadBoard": "Could not load task board",
+    "loading": "Loading...",
     "myTasks": "My Tasks",
     "startIntake": "Start intake",
     "completeIntake": "Complete intake",

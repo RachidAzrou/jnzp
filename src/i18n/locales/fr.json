@@ -522,6 +522,7 @@
     "unassigned": "Non attribué",
     "noBoardAvailable": "Aucun tableau de tâches disponible",
     "couldNotLoadBoard": "Impossible de charger le tableau de tâches",
+    "loading": "Chargement...",
     "myTasks": "Mes Tâches",
     "startIntake": "Démarrer l'admission",
     "completeIntake": "Terminer l'admission",

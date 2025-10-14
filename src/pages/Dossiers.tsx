@@ -533,12 +533,12 @@ const Dossiers = () => {
                   <Table>
                     <TableHeader>
                       <TableRow className="border-b">
-                        <TableHead className="font-medium">Case ID</TableHead>
-                        <TableHead className="font-medium">Overledene</TableHead>
-                        <TableHead className="font-medium">Type</TableHead>
-                        <TableHead className="font-medium">Status</TableHead>
-                        <TableHead className="font-medium">Laatste update</TableHead>
-                        <TableHead className="font-medium text-right">Acties</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.caseId")}</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.deceased")}</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.type")}</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.status")}</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.lastUpdate")}</TableHead>
+                        <TableHead className="font-medium text-right">{t("dossiers.actions")}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -676,19 +676,19 @@ const Dossiers = () => {
                   <Table>
                     <TableHeader>
                       <TableRow className="border-b">
-                        <TableHead className="font-medium">Case ID</TableHead>
-                        <TableHead className="font-medium">Overledene</TableHead>
-                        <TableHead className="font-medium">Type</TableHead>
-                        <TableHead className="font-medium">Status</TableHead>
-                        <TableHead className="font-medium">Toewijzing</TableHead>
-                        <TableHead className="font-medium text-right">Acties</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.caseId")}</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.deceased")}</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.type")}</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.status")}</TableHead>
+                        <TableHead className="font-medium">{t("dossiers.assignment")}</TableHead>
+                        <TableHead className="font-medium text-right">{t("dossiers.actions")}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {currentDossiers.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={6} className="text-center py-12 text-sm text-muted-foreground">
-                            Geen dossiers gevonden
+                            {t("dossiers.noDossiersFound")}
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -853,7 +853,7 @@ const Dossiers = () => {
                       <div className="rounded-full bg-muted p-4">
                         <Clock className="h-8 w-8 text-muted-foreground" />
                       </div>
-                      <p className="text-sm text-muted-foreground">Geen inkomende aanvragen</p>
+                      <p className="text-sm text-muted-foreground">{t("dossiers.noIncomingRequests")}</p>
                     </div>
                   </CardContent>
                 </Card>

@@ -283,14 +283,14 @@ const Planning = () => {
                 <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Dossier</TableHead>
-                    <TableHead>Naam</TableHead>
-                    <TableHead>Locatie</TableHead>
-                    <TableHead>Van</TableHead>
-                    <TableHead>Tot</TableHead>
-                    <TableHead>Koelcel</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Acties</TableHead>
+                    <TableHead>{t("planning.columns.dossier")}</TableHead>
+                    <TableHead>{t("planning.columns.name")}</TableHead>
+                    <TableHead>{t("planning.columns.location")}</TableHead>
+                    <TableHead>{t("planning.columns.from")}</TableHead>
+                    <TableHead>{t("planning.columns.to")}</TableHead>
+                    <TableHead>{t("planning.columns.coolCell")}</TableHead>
+                    <TableHead>{t("planning.columns.status")}</TableHead>
+                    <TableHead>{t("planning.columns.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -358,11 +358,11 @@ const Planning = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Dossier</TableHead>
-                      <TableHead>Naam</TableHead>
-                      <TableHead>Locatie</TableHead>
-                      <TableHead>Gepland op</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>{t("planning.columns.dossier")}</TableHead>
+                      <TableHead>{t("planning.columns.name")}</TableHead>
+                      <TableHead>{t("planning.columns.location")}</TableHead>
+                      <TableHead>{t("planning.columns.scheduledAt")}</TableHead>
+                      <TableHead>{t("planning.columns.status")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -372,9 +372,9 @@ const Planning = () => {
                           {service.dossier_ref}
                         </TableCell>
                         <TableCell className="text-sm">{service.deceased_name}</TableCell>
-                        <TableCell className="text-sm">{service.location || "Niet opgegeven"}</TableCell>
+                        <TableCell className="text-sm">{service.location || t("planning.notSpecified")}</TableCell>
                         <TableCell className="text-sm">
-                          {service.scheduled_at ? format(new Date(service.scheduled_at), "dd/MM/yyyy HH:mm", { locale: nl }) : "Niet gepland"}
+                          {service.scheduled_at ? format(new Date(service.scheduled_at), "dd/MM/yyyy HH:mm", { locale: nl }) : t("planning.notPlanned")}
                         </TableCell>
                         <TableCell>{getServiceStatusBadge(service.status)}</TableCell>
                       </TableRow>
@@ -412,11 +412,11 @@ const Planning = () => {
                 <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Dossier</TableHead>
-                    <TableHead>Naam</TableHead>
-                    <TableHead>Bestemming</TableHead>
-                    <TableHead>Aangemaakt</TableHead>
-                    <TableHead>Acties</TableHead>
+                    <TableHead>{t("planning.columns.dossier")}</TableHead>
+                    <TableHead>{t("planning.columns.name")}</TableHead>
+                    <TableHead>{t("planning.columns.destination")}</TableHead>
+                    <TableHead>{t("planning.columns.created")}</TableHead>
+                    <TableHead>{t("planning.columns.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

@@ -251,7 +251,8 @@
     "reasonRequired": "Reason required",
     "reasonRequiredDescription": "Please provide a reason for declining",
     "acceptanceFailed": "Acceptance failed",
-    "declineFailed": "Decline failed"
+    "declineFailed": "Decline failed",
+    "noIncomingRequests": "No incoming requests"
   },
   "dossiers": {
     "dossier": "case",
@@ -1892,7 +1893,22 @@
     "newFlight": "New flight",
     "noMortuariumAppointments": "No mortuary appointments found",
     "noMosqueAppointments": "No mosque appointments found",
-    "noFlights": "No flights found"
+    "noFlights": "No flights found",
+    "notSpecified": "Not specified",
+    "notPlanned": "Not planned",
+    "columns": {
+      "dossier": "Dossier",
+      "name": "Name",
+      "location": "Location",
+      "from": "From",
+      "to": "To",
+      "coolCell": "Cool Cell",
+      "status": "Status",
+      "actions": "Actions",
+      "scheduledAt": "Scheduled at",
+      "destination": "Destination",
+      "created": "Created"
+    }
   },
   "tasks": {
     "title": "Tasks",

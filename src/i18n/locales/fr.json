@@ -260,7 +260,8 @@
     "reasonRequired": "Raison requise",
     "reasonRequiredDescription": "Veuillez fournir une raison pour le refus",
     "acceptanceFailed": "Échec de l'acceptation",
-    "declineFailed": "Échec du refus"
+    "declineFailed": "Échec du refus",
+    "noIncomingRequests": "Aucune demande entrante"
   },
   "dossiers": {
     "dossier": "dossier",
@@ -1909,6 +1910,36 @@
     "unassigned": "Non assigné",
     "couldNotLoadBoard": "Impossible de charger le tableau des tâches",
     "noBoardAvailable": "Aucun tableau de tâches disponible pour cette organisation"
+  },
+  "planning": {
+    "title": "Planification",
+    "subtitle": "Gérer l'agenda et les tâches",
+    "organization": "Organisation",
+    "searchPlaceholder": "Rechercher par dossier, nom ou lieu…",
+    "error": "Erreur lors du chargement de la planification",
+    "mortuariumPlanning": "Planification Mortuaire",
+    "mosquePlanning": "Planification Mosquée",
+    "flightPlanning": "Planification Vols",
+    "newAppointment": "Nouveau rendez-vous",
+    "newFlight": "Nouveau vol",
+    "noMortuariumAppointments": "Aucun rendez-vous mortuaire trouvé",
+    "noMosqueAppointments": "Aucun rendez-vous mosquée trouvé",
+    "noFlights": "Aucun vol trouvé",
+    "notSpecified": "Non spécifié",
+    "notPlanned": "Non planifié",
+    "columns": {
+      "dossier": "Dossier",
+      "name": "Nom",
+      "location": "Lieu",
+      "from": "De",
+      "to": "À",
+      "coolCell": "Cellule froide",
+      "status": "Statut",
+      "actions": "Actions",
+      "scheduledAt": "Prévu à",
+      "destination": "Destination",
+      "created": "Créé"
+    }
   }
 }
 

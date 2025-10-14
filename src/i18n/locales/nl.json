@@ -304,7 +304,8 @@
     "reasonRequired": "Reden vereist",
     "reasonRequiredDescription": "Geef een reden op voor het afwijzen",
     "acceptanceFailed": "Acceptatie mislukt",
-    "declineFailed": "Afwijzing mislukt"
+    "declineFailed": "Afwijzing mislukt",
+    "noIncomingRequests": "Geen inkomende aanvragen"
   },
   "documents": {
     "title": "Documenten",
@@ -1952,7 +1953,22 @@
     "newFlight": "Nieuwe vlucht",
     "noMortuariumAppointments": "Geen mortuarium afspraken gevonden",
     "noMosqueAppointments": "Geen moskee afspraken gevonden",
-    "noFlights": "Geen vluchten gevonden"
+    "noFlights": "Geen vluchten gevonden",
+    "notSpecified": "Niet opgegeven",
+    "notPlanned": "Niet gepland",
+    "columns": {
+      "dossier": "Dossier",
+      "name": "Naam",
+      "location": "Locatie",
+      "from": "Van",
+      "to": "Tot",
+      "coolCell": "Koelcel",
+      "status": "Status",
+      "actions": "Acties",
+      "scheduledAt": "Gepland op",
+      "destination": "Bestemming",
+      "created": "Aangemaakt"
+    }
   },
   "tasks": {
     "title": "Taken",

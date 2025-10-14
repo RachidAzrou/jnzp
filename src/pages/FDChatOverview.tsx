@@ -38,6 +38,7 @@ export default function FDChatOverview() {
       const { data: dossiersData, error } = await supabase
         .from("dossiers")
         .select("id, display_id, deceased_name, status")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (error) throw error;

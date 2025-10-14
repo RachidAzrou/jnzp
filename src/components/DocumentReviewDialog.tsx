@@ -39,8 +39,8 @@ export function DocumentReviewDialog({
   const handleSubmit = async () => {
     if (!reviewDecision) {
       toast({
-        title: "Selecteer een beoordeling",
-        description: "Kies Goedkeuren of Afkeuren.",
+        title: t("toasts.errors.selectDecision"),
+        description: t("toasts.errors.selectDecisionDesc"),
         variant: "destructive",
       });
       return;
@@ -48,8 +48,8 @@ export function DocumentReviewDialog({
 
     if (reviewDecision === "reject" && !rejectionReason.trim()) {
       toast({
-        title: "Reden verplicht",
-        description: "Geef een reden op voor afwijzing.",
+        title: t("toasts.errors.reasonRequired"),
+        description: t("toasts.errors.rejectReasonRequired"),
         variant: "destructive",
       });
       return;
@@ -102,8 +102,10 @@ export function DocumentReviewDialog({
       }
 
       toast({
-        title: reviewDecision === "approve" ? "Document goedgekeurd" : "Document afgewezen",
-        description: `${document.doc_type} is ${reviewDecision === "approve" ? "goedgekeurd" : "afgewezen"}.`,
+        title: reviewDecision === "approve" ? t("toasts.success.documentApproved") : t("toasts.success.documentRejected"),
+        description: reviewDecision === "approve" 
+          ? t("toasts.success.documentApprovedDesc", { type: document.doc_type })
+          : t("toasts.success.documentRejectedDesc", { type: document.doc_type }),
       });
 
       onReviewComplete();
@@ -111,8 +113,8 @@ export function DocumentReviewDialog({
     } catch (error) {
       console.error("Error reviewing document:", error);
       toast({
-        title: "Fout",
-        description: "Er ging iets mis bij het beoordelen van het document.",
+        title: t("toasts.errors.error"),
+        description: t("toasts.errors.documentReviewError"),
         variant: "destructive",
       });
     } finally {

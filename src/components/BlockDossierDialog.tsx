@@ -32,8 +32,8 @@ export function BlockDossierDialog({ dossierId, dossierRef, onSuccess }: BlockDo
   const handleBlock = async () => {
     if (!reason.trim()) {
       toast({
-        title: "Reden verplicht",
-        description: "Geef een reden op voor het blokkeren van dit dossier.",
+        title: t("toasts.errors.reasonRequired"),
+        description: t("toasts.errors.blockReasonRequired"),
         variant: "destructive",
       });
       return;
@@ -49,8 +49,8 @@ export function BlockDossierDialog({ dossierId, dossierRef, onSuccess }: BlockDo
       if (error) throw error;
 
       toast({
-        title: "✅ Dossier geblokkeerd",
-        description: `Dossier ${dossierRef} is succesvol geblokkeerd.`,
+        title: t("toasts.success.dossierBlocked"),
+        description: t("toasts.success.dossierBlockedDesc", { ref: dossierRef }),
       });
 
       setOpen(false);
@@ -59,8 +59,8 @@ export function BlockDossierDialog({ dossierId, dossierRef, onSuccess }: BlockDo
     } catch (error: any) {
       console.error('Error blocking dossier:', error);
       toast({
-        title: "Fout bij blokkeren",
-        description: error.message || "Er is een fout opgetreden bij het blokkeren van het dossier.",
+        title: t("toasts.errors.blockError"),
+        description: error.message || t("toasts.errors.blockErrorDesc"),
         variant: "destructive",
       });
     } finally {

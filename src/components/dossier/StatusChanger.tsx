@@ -261,8 +261,8 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       });
 
       toast({
-        title: t("errors.statusUpdated"),
-        description: t("errors.statusUpdatedDescription", { status: statusLabels[newStatus]?.label }),
+        title: t("toasts.success.statusUpdated"),
+        description: t("toasts.success.statusUpdatedDesc", { status: statusLabels[newStatus]?.label }),
       });
 
       setOpen(false);
@@ -271,8 +271,8 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     } catch (error: any) {
       console.error("Error changing status:", error);
       toast({
-        title: t("errors.error"),
-        description: t("errors.couldNotChangeStatus"),
+        title: t("toasts.errors.error"),
+        description: t("toasts.errors.couldNotChangeStatus"),
         variant: "destructive",
       });
     }

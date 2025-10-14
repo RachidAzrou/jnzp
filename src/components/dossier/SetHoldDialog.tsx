@@ -54,8 +54,8 @@ export function SetHoldDialog({
     if (!reason.trim()) {
       toast({
         variant: "destructive",
-        title: "Reden verplicht",
-        description: "Geef een reden op voor de blokkade",
+        title: t("toasts.errors.reasonRequired"),
+        description: t("toasts.errors.reasonRequiredDesc"),
       });
       return;
     }
@@ -78,10 +78,10 @@ export function SetHoldDialog({
       }
 
       toast({
-        title: "Blokkade geactiveerd",
-        description: `${
-          holdType === "LEGAL" ? "Juridische" : "Verzekeraar"
-        } blokkade is succesvol gezet`,
+        title: t("toasts.success.holdActivated"),
+        description: t("toasts.success.holdActivatedDesc", {
+          type: holdType === "LEGAL" ? "Juridische" : "Verzekeraar"
+        }),
       });
 
       setOpen(false);
@@ -92,7 +92,7 @@ export function SetHoldDialog({
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Fout bij zetten blokkade",
+        title: t("toasts.errors.holdSetError"),
         description: error.message,
       });
     } finally {

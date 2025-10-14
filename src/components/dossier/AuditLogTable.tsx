@@ -18,18 +18,31 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
   const { data: auditEvents, isLoading } = useQuery({
     queryKey: ["audit-events", dossierId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: events, error } = await supabase
         .from("audit_events")
-        .select(`
-          *,
-          user:profiles!audit_events_user_id_fkey(display_name, email)
-        `)
+        .select("*")
         .eq("dossier_id", dossierId)
         .order("created_at", { ascending: false })
         .limit(100);
 
       if (error) throw error;
-      return data;
+
+      // Fetch user details for each event
+      const eventsWithUsers = await Promise.all(
+        (events || []).map(async (event) => {
+          if (!event.user_id) return { ...event, user: null };
+          
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("display_name, email")
+            .eq("id", event.user_id)
+            .single();
+          
+          return { ...event, user: profile };
+        })
+      );
+
+      return eventsWithUsers;
     },
   });
 

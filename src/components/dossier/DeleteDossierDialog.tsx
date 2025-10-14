@@ -43,6 +43,9 @@ export function DeleteDossierDialog({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const canDelete = DELETABLE_STATUSES.includes(currentStatus);
+  const cannotDeleteReason = !canDelete 
+    ? `Dossiers met status "${currentStatus}" kunnen niet verwijderd worden. Alleen dossiers met status "Nieuw" of "Intake" zijn verwijderbaar.`
+    : null;
 
   const handleDelete = async () => {
     if (!deleteReason.trim()) {
@@ -106,10 +109,6 @@ export function DeleteDossierDialog({
     }
   };
 
-  if (!canDelete) {
-    return null; // Don't show the button if deletion is not allowed
-  }
-
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
@@ -122,11 +121,20 @@ export function DeleteDossierDialog({
             Dossier verwijderen
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-4 text-left pt-2">
-            <p>
-              Weet je zeker dat je dossier <strong>{dossierDisplayId}</strong> wilt verwijderen?
-            </p>
-            
-            <Alert variant="destructive">
+            {cannotDeleteReason ? (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  {cannotDeleteReason}
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <>
+                <p>
+                  Weet je zeker dat je dossier <strong>{dossierDisplayId}</strong> wilt verwijderen?
+                </p>
+                
+                <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 <strong>Let op:</strong> Deze actie kan alleen uitgevoerd worden voor dossiers in de status 
@@ -150,20 +158,26 @@ export function DeleteDossierDialog({
                 Deze reden wordt gelogd in het auditlog
               </p>
             </div>
+              </>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Annuleren</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={(e) => {
-              e.preventDefault();
-              handleDelete();
-            }}
-            disabled={isDeleting || !deleteReason.trim()}
-            className="bg-destructive hover:bg-destructive/90"
-          >
-            {isDeleting ? "Bezig met verwijderen..." : "Ja, verwijder dossier"}
-          </AlertDialogAction>
+          <AlertDialogCancel disabled={isDeleting}>
+            {cannotDeleteReason ? "Sluiten" : "Annuleren"}
+          </AlertDialogCancel>
+          {!cannotDeleteReason && (
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
+              disabled={isDeleting || !deleteReason.trim()}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {isDeleting ? "Bezig met verwijderen..." : "Ja, verwijder dossier"}
+            </AlertDialogAction>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

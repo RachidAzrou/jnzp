@@ -232,7 +232,9 @@
     "requestAccepted": "Demande acceptée",
     "requestDeclined": "Demande refusée"
   },
-  "documents": {
+  "dossiers": {
+    "dossier": "dossier",
+    "dossiers": "dossiers",
     "title": "Documents",
     "uploadDocuments": "Télécharger des documents",
     "downloadSelected": "Télécharger la sélection",

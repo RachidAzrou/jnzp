@@ -238,6 +238,8 @@
     "newNotification": "Nieuwe melding"
   },
   "dossiers": {
+    "dossier": "dossier",
+    "dossiers": "dossiers",
     "title": "Dossiers",
     "newDossier": "Nieuw Dossier",
     "displayId": "Dossier ID",

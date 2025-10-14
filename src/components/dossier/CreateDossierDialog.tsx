@@ -27,17 +27,17 @@ import { Plus, Loader2, User, Users, Building2, FileText } from "lucide-react";
 import { z } from "zod";
 import { Separator } from "@/components/ui/separator";
 
-// Validation schema - errors are shown via translation keys
-const dossierSchema = z.object({
-  first_name: z.string().trim().min(1, "Voornaam is verplicht").max(100, "Voornaam mag maximaal 100 karakters zijn"),
-  last_name: z.string().trim().min(1, "Achternaam is verplicht").max(100, "Achternaam mag maximaal 100 karakters zijn"),
+// Validation schema - errors use translation keys
+const createDossierSchema = (t: (key: string) => string) => z.object({
+  first_name: z.string().trim().min(1, t("forms.errors.firstNameRequired")).max(100, t("forms.errors.firstNameTooLong")),
+  last_name: z.string().trim().min(1, t("forms.errors.lastNameRequired")).max(100, t("forms.errors.lastNameTooLong")),
   gender: z.union([z.literal("M"), z.literal("V"), z.literal("X")]),
   flow: z.union([z.literal("LOC"), z.literal("REP")]),
-  address_of_death: z.string().trim().min(1, "Adres van overlijden is verplicht").max(200),
-  contact_name: z.string().trim().min(1, "Naam contactpersoon is verplicht").max(100),
-  contact_phone: z.string().trim().min(1, "Telefoonnummer is verplicht").max(20),
-  contact_email: z.string().trim().email("Ongeldig e-mailadres").max(255).optional().or(z.literal("")),
-  relationship: z.string().trim().min(1, "Relatie is verplicht"),
+  address_of_death: z.string().trim().min(1, t("forms.errors.addressRequired")).max(200),
+  contact_name: z.string().trim().min(1, t("forms.errors.contactNameRequired")).max(100),
+  contact_phone: z.string().trim().min(1, t("forms.errors.phoneRequired")).max(20),
+  contact_email: z.string().trim().email(t("forms.errors.invalidEmail")).max(255).optional().or(z.literal("")),
+  relationship: z.string().trim().min(1, t("forms.errors.relationshipRequired")),
   has_insurance: z.union([z.literal("yes"), z.literal("no"), z.literal("unknown")]),
   policy_number: z.string().trim().max(100).optional().or(z.literal("")),
   destination: z.string().trim().max(200).optional(),
@@ -46,7 +46,25 @@ const dossierSchema = z.object({
   notes: z.string().trim().max(1000).optional(),
 });
 
-type DossierFormData = z.infer<typeof dossierSchema>;
+
+type DossierFormData = {
+  first_name: string;
+  last_name: string;
+  gender: "M" | "V" | "X";
+  flow: "LOC" | "REP";
+  address_of_death: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_email?: string;
+  relationship: string;
+  has_insurance: "yes" | "no" | "unknown";
+  policy_number?: string;
+  destination?: string;
+  mosque?: string;
+  cemetery?: string;
+  notes?: string;
+};
+
 
 export function CreateDossierDialog() {
   const [open, setOpen] = useState(false);
@@ -89,6 +107,7 @@ export function CreateDossierDialog() {
 
     try {
       // Validate form data
+      const dossierSchema = createDossierSchema(t);
       const validatedData = dossierSchema.parse(formData);
 
       // Get current user and organization
@@ -314,7 +333,7 @@ export function CreateDossierDialog() {
                   id="first_name"
                   value={formData.first_name}
                   onChange={(e) => handleInputChange("first_name", e.target.value)}
-                  placeholder="Bijv. Ahmed"
+                  placeholder={t("forms.placeholders.firstName")}
                   className={errors.first_name ? "border-destructive" : ""}
                 />
                 {errors.first_name && (
@@ -330,7 +349,7 @@ export function CreateDossierDialog() {
                   id="last_name"
                   value={formData.last_name}
                   onChange={(e) => handleInputChange("last_name", e.target.value)}
-                  placeholder="Bijv. El Mansouri"
+                  placeholder={t("forms.placeholders.lastName")}
                   className={errors.last_name ? "border-destructive" : ""}
                 />
                 {errors.last_name && (
@@ -369,7 +388,7 @@ export function CreateDossierDialog() {
                 id="address_of_death"
                 value={formData.address_of_death}
                 onChange={(e) => handleInputChange("address_of_death", e.target.value)}
-                placeholder="Bijv. Damrak 1, 1012 LG Amsterdam"
+                placeholder={t("forms.placeholders.address")}
                 className={errors.address_of_death ? "border-destructive" : ""}
               />
               {errors.address_of_death && (
@@ -416,7 +435,7 @@ export function CreateDossierDialog() {
                 id="contact_name"
                 value={formData.contact_name}
                 onChange={(e) => handleInputChange("contact_name", e.target.value)}
-                placeholder="Volledige naam"
+                placeholder={t("forms.placeholders.contactName")}
                 className={errors.contact_name ? "border-destructive" : ""}
               />
               {errors.contact_name && (
@@ -463,7 +482,7 @@ export function CreateDossierDialog() {
                   type="tel"
                   value={formData.contact_phone}
                   onChange={(e) => handleInputChange("contact_phone", e.target.value)}
-                  placeholder="+31 6 12345678"
+                  placeholder={t("forms.placeholders.phone")}
                   className={errors.contact_phone ? "border-destructive" : ""}
                 />
                 {errors.contact_phone && (
@@ -525,7 +544,7 @@ export function CreateDossierDialog() {
                   id="policy_number"
                   value={formData.policy_number}
                   onChange={(e) => handleInputChange("policy_number", e.target.value)}
-                  placeholder="Bijv. POL-123456"
+                  placeholder={t("forms.placeholders.policyNumber")}
                 />
               </div>
             )}
@@ -564,7 +583,7 @@ export function CreateDossierDialog() {
                   id="destination"
                   value={formData.destination}
                   onChange={(e) => handleInputChange("destination", e.target.value)}
-                  placeholder="Bijv. Casablanca, Marokko"
+                  placeholder={t("forms.placeholders.destination")}
                 />
               </div>
             )}
@@ -585,7 +604,7 @@ export function CreateDossierDialog() {
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => handleInputChange("notes", e.target.value)}
-                placeholder="Bijv. 'Familie heeft speciale wensen voor de dienst...'"
+                placeholder={t("forms.placeholders.notes")}
                 rows={3}
                 className="resize-none"
               />

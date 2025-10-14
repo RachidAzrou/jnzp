@@ -844,6 +844,33 @@
     "create": "Create",
     "reset": "Reset"
   },
+  "forms": {
+    "errors": {
+      "required": "This field is required",
+      "firstNameRequired": "First name is required",
+      "firstNameTooLong": "First name must be max 100 characters",
+      "lastNameRequired": "Last name is required",
+      "lastNameTooLong": "Last name must be max 100 characters",
+      "addressRequired": "Address is required",
+      "contactNameRequired": "Contact name is required",
+      "phoneRequired": "Phone number is required",
+      "invalidEmail": "Invalid email address",
+      "relationshipRequired": "Relationship is required"
+    },
+    "placeholders": {
+      "firstName": "E.g. Ahmed",
+      "lastName": "E.g. El Mansouri",
+      "address": "E.g. Dam Square 1, 1012 JL Amsterdam",
+      "contactName": "Full name",
+      "phone": "+31 6 12345678",
+      "email": "example@email.com",
+      "policyNumber": "E.g. POL-123456",
+      "mosqueName": "Name of the mosque",
+      "cemeteryName": "Name of the cemetery",
+      "destination": "E.g. Casablanca, Morocco",
+      "notes": "E.g. 'Family has special requests for the service...'"
+    }
+  },
   "onboarding": {
     "welcomeTitle": "Welcome to JanazApp",
     "completeSteps": "Complete these steps to get started",

@@ -890,6 +890,33 @@
     "view": "Bekijken",
     "reset": "Reset"
   },
+  "forms": {
+    "errors": {
+      "required": "Dit veld is verplicht",
+      "firstNameRequired": "Voornaam is verplicht",
+      "firstNameTooLong": "Voornaam mag maximaal 100 karakters zijn",
+      "lastNameRequired": "Achternaam is verplicht",
+      "lastNameTooLong": "Achternaam mag maximaal 100 karakters zijn",
+      "addressRequired": "Adres is verplicht",
+      "contactNameRequired": "Naam contactpersoon is verplicht",
+      "phoneRequired": "Telefoonnummer is verplicht",
+      "invalidEmail": "Ongeldig e-mailadres",
+      "relationshipRequired": "Relatie is verplicht"
+    },
+    "placeholders": {
+      "firstName": "Bijv. Ahmed",
+      "lastName": "Bijv. El Mansouri",
+      "address": "Bijv. Damrak 1, 1012 LG Amsterdam",
+      "contactName": "Volledige naam",
+      "phone": "+31 6 12345678",
+      "email": "voorbeeld@email.nl",
+      "policyNumber": "Bijv. POL-123456",
+      "mosqueName": "Naam van de moskee",
+      "cemeteryName": "Naam van de begraafplaats",
+      "destination": "Bijv. Casablanca, Marokko",
+      "notes": "Bijv. 'Familie heeft speciale wensen voor de dienst...'"
+    }
+  },
   "onboarding": {
     "welcomeTitle": "Welkom bij JanazApp",
     "completeSteps": "Voltooi deze stappen om te beginnen",

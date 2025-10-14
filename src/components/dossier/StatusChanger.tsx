@@ -272,7 +272,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       console.error("Error changing status:", error);
       toast({
         title: t("errors.error"),
-        description: error.message || t("errors.couldNotChangeStatus"),
+        description: t("errors.couldNotChangeStatus"),
         variant: "destructive",
       });
     }

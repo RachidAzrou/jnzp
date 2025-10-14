@@ -49,11 +49,13 @@ import { EditableObituaryCard } from "@/components/dossier/EditableObituaryCard"
 import { EditableServiceCard } from "@/components/dossier/EditableServiceCard";
 import { AutoProgressionAlert } from "@/components/dossier/AutoProgressionAlert";
 import { TaskProgressWidget } from "@/components/dossier/TaskProgressWidget";
+import { useTranslation } from "react-i18next";
 
 const DossierDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [dossier, setDossier] = useState<any>(null);
   const [documents, setDocuments] = useState<any[]>([]);
@@ -173,8 +175,8 @@ const DossierDetail = () => {
     
     if (!isAdminRole && !isOwnOrganization) {
       toast({
-        title: "Geen toegang",
-        description: "Je hebt geen toegang tot dit dossier. Het is niet toegewezen aan jouw organisatie.",
+        title: t("dossierDetail.noAccess"),
+        description: t("dossierDetail.noAccessDescription"),
         variant: "destructive",
       });
       navigate("/dossiers");
@@ -290,8 +292,8 @@ const DossierDetail = () => {
       fetchDossierData();
     } catch (error: any) {
       toast({
-        title: "Fout",
-        description: error.message || "Kon gegevens niet opslaan",
+        title: t("common.error"),
+        description: error.message || t("dossierDetail.saveError"),
         variant: "destructive"
       });
     }
@@ -559,16 +561,16 @@ const DossierDetail = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Dossier verwijderen?</AlertDialogTitle>
+              <AlertDialogTitle>{t("dossierDetail.deleteDossier")}</AlertDialogTitle>
               <AlertDialogDescription>
-                Dit is een onomkeerbare actie. Het dossier wordt gearchiveerd en verborgen.
+                {t("dossierDetail.deleteWarning")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <div className="py-4">
-              <Label htmlFor="delete-reason">Reden voor verwijdering *</Label>
+              <Label htmlFor="delete-reason">{t("dossierDetail.deleteReason")}</Label>
               <Textarea
                 id="delete-reason"
-                placeholder="Bijv. 'Foutief aangemaakt', 'Dubbel dossier'..."
+                placeholder={t("dossierDetail.deleteReasonPlaceholder")}
                 value={deleteReason}
                 onChange={(e) => setDeleteReason(e.target.value)}
                 className="mt-2"
@@ -577,14 +579,14 @@ const DossierDetail = () => {
             </div>
             <AlertDialogFooter>
               <AlertDialogCancel onClick={() => setDeleteReason("")}>
-                Annuleren
+                {t("common.cancel")}
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={async () => {
                   if (!deleteReason.trim()) {
                     toast({
-                      title: "Reden verplicht",
-                      description: "Geef een reden op voor het verwijderen",
+                      title: t("dossierDetail.reasonRequired"),
+                      description: t("dossierDetail.reasonRequiredDescription"),
                       variant: "destructive",
                     });
                     return;
@@ -599,22 +601,22 @@ const DossierDetail = () => {
                     if (error) throw error;
 
                     toast({
-                      title: "Dossier verwijderd",
-                      description: "Het dossier is gearchiveerd",
+                      title: t("dossierDetail.dossierDeleted"),
+                      description: t("dossierDetail.dossierArchived"),
                     });
 
                     navigate("/dossiers");
                   } catch (error: any) {
                     toast({
-                      title: "Fout",
-                      description: error.message || "Kon dossier niet verwijderen",
+                      title: t("common.error"),
+                      description: error.message || t("dossierDetail.deleteError"),
                       variant: "destructive",
                     });
                   }
                 }}
                 className="bg-destructive hover:bg-destructive/90"
               >
-                Verwijderen
+                {t("common.delete")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -705,17 +707,17 @@ const DossierDetail = () => {
                     className="h-8 gap-1 text-xs"
                   >
                     <Edit2 className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Bewerken</span>
+                    <span className="hidden sm:inline">{t("common.edit")}</span>
                   </Button>
                 ) : (
                   <div className="flex gap-1">
                     <Button variant="default" size="sm" onClick={handleSaveDeceased} className="h-8 text-xs">
                       <Save className="h-3.5 w-3.5 mr-1.5" />
-                      <span className="hidden sm:inline">Opslaan</span>
+                      <span className="hidden sm:inline">{t("common.save")}</span>
                     </Button>
                     <Button variant="ghost" size="sm" onClick={handleCancelEdit} className="h-8 text-xs">
                       <X className="h-3.5 w-3.5 mr-1.5" />
-                      <span className="hidden sm:inline">Annuleren</span>
+                      <span className="hidden sm:inline">{t("common.cancel")}</span>
                     </Button>
                   </div>
                 )}

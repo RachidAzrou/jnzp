@@ -60,8 +60,8 @@ export default function AdminDirectory() {
     } catch (error) {
       console.error("Error fetching organizations:", error);
       toast({
-        title: "Fout bij ophalen",
-        description: "Kon organisaties niet ophalen",
+        title: t("common.error"),
+        description: t("admin.directory.loadError"),
         variant: "destructive",
       });
     } finally {
@@ -263,28 +263,28 @@ export default function AdminDirectory() {
               size="sm"
               onClick={() => setStatusFilter(null)}
             >
-              Alle statussen
+              {t("dossiers.allStatuses")}
             </Button>
             <Button
               variant={statusFilter === "ACTIVE" ? "default" : "outline"}
               size="sm"
               onClick={() => setStatusFilter("ACTIVE")}
             >
-              Actief
+              {t("admin.directory.active")}
             </Button>
             <Button
               variant={statusFilter === "PENDING_VERIFICATION" ? "default" : "outline"}
               size="sm"
               onClick={() => setStatusFilter("PENDING_VERIFICATION")}
             >
-              Ter controle
+              {t("admin.directory.pending")}
             </Button>
             <Button
               variant={statusFilter === "INACTIVE" ? "default" : "outline"}
               size="sm"
               onClick={() => setStatusFilter("INACTIVE")}
             >
-              Inactief
+              {t("admin.directory.inactive")}
             </Button>
           </div>
         </CardContent>
@@ -311,7 +311,7 @@ export default function AdminDirectory() {
               {filteredOrgs.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                    Geen organisaties gevonden
+                    {t("admin.directory.noOrganizations")}
                   </TableCell>
                 </TableRow>
               ) : (

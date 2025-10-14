@@ -493,6 +493,7 @@
   },
   "settings": {
     "title": "Instellingen",
+    "manageSettings": "Beheer uw profiel en organisatie instellingen",
     "profile": "Profiel",
     "account": "Account",
     "security": "Beveiliging",
@@ -562,6 +563,29 @@
     "noOrganizationDesc": "U bent niet gekoppeld aan een organisatie",
     "errorLoading": "Fout bij laden",
     "creating": "Aanmaken..."
+  },
+  "dossierDetail": {
+    "noAccess": "Geen toegang",
+    "noAccessDescription": "Je hebt geen toegang tot dit dossier. Het is niet toegewezen aan jouw organisatie.",
+    "saveError": "Kon gegevens niet opslaan",
+    "deleteDossier": "Dossier verwijderen?",
+    "deleteWarning": "Dit is een onomkeerbare actie. Het dossier wordt gearchiveerd en verborgen.",
+    "deleteReason": "Reden voor verwijdering *",
+    "deleteReasonPlaceholder": "Bijv. 'Foutief aangemaakt', 'Dubbel dossier'...",
+    "reasonRequired": "Reden verplicht",
+    "reasonRequiredDescription": "Geef een reden op voor het verwijderen",
+    "dossierDeleted": "Dossier verwijderd",
+    "dossierArchived": "Het dossier is gearchiveerd",
+    "deleteError": "Kon dossier niet verwijderen"
+  },
+  "admin": {
+    "directory": {
+      "loadError": "Kon organisaties niet ophalen",
+      "active": "Actief",
+      "pending": "Ter controle",
+      "inactive": "Inactief",
+      "noOrganizations": "Geen organisaties gevonden"
+    }
   },
   "status": {
     "CREATED": "Aangemaakt",

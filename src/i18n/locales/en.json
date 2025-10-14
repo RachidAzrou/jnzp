@@ -442,6 +442,7 @@
   },
   "settings": {
     "title": "Settings",
+    "manageSettings": "Manage your profile and organization settings",
     "profile": "Profile",
     "account": "Account",
     "security": "Security",
@@ -511,6 +512,29 @@
     "noOrganizationDesc": "You are not linked to an organization",
     "errorLoading": "Error loading",
     "creating": "Creating..."
+  },
+  "dossierDetail": {
+    "noAccess": "No access",
+    "noAccessDescription": "You do not have access to this dossier. It is not assigned to your organization.",
+    "saveError": "Could not save data",
+    "deleteDossier": "Delete dossier?",
+    "deleteWarning": "This is an irreversible action. The dossier will be archived and hidden.",
+    "deleteReason": "Reason for deletion *",
+    "deleteReasonPlaceholder": "E.g. 'Created in error', 'Duplicate dossier'...",
+    "reasonRequired": "Reason required",
+    "reasonRequiredDescription": "Please provide a reason for deletion",
+    "dossierDeleted": "Dossier deleted",
+    "dossierArchived": "The dossier has been archived",
+    "deleteError": "Could not delete dossier"
+  },
+  "admin": {
+    "directory": {
+      "loadError": "Could not load organizations",
+      "active": "Active",
+      "pending": "Pending",
+      "inactive": "Inactive",
+      "noOrganizations": "No organizations found"
+    }
   },
   "status": {
     "CREATED": "Created",

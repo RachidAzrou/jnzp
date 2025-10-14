@@ -235,7 +235,7 @@ const Instellingen = () => {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground pl-15">
-                  Beheer uw profiel en organisatie instellingen
+                  {t("settings.manageSettings")}
                 </p>
               </div>
             </div>

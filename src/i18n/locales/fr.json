@@ -442,6 +442,7 @@
   },
   "settings": {
     "title": "Paramètres",
+    "manageSettings": "Gérez votre profil et les paramètres de l'organisation",
     "profile": "Profil",
     "account": "Compte",
     "security": "Sécurité",
@@ -511,6 +512,29 @@
     "noOrganizationDesc": "Vous n'êtes lié à aucune organisation",
     "errorLoading": "Erreur de chargement",
     "creating": "Création..."
+  },
+  "dossierDetail": {
+    "noAccess": "Accès refusé",
+    "noAccessDescription": "Vous n'avez pas accès à ce dossier. Il n'est pas attribué à votre organisation.",
+    "saveError": "Impossible d'enregistrer les données",
+    "deleteDossier": "Supprimer le dossier?",
+    "deleteWarning": "Cette action est irréversible. Le dossier sera archivé et masqué.",
+    "deleteReason": "Raison de la suppression *",
+    "deleteReasonPlaceholder": "Ex. 'Créé par erreur', 'Dossier en double'...",
+    "reasonRequired": "Raison requise",
+    "reasonRequiredDescription": "Veuillez indiquer une raison pour la suppression",
+    "dossierDeleted": "Dossier supprimé",
+    "dossierArchived": "Le dossier a été archivé",
+    "deleteError": "Impossible de supprimer le dossier"
+  },
+  "admin": {
+    "directory": {
+      "loadError": "Impossible de charger les organisations",
+      "active": "Actif",
+      "pending": "En attente",
+      "inactive": "Inactif",
+      "noOrganizations": "Aucune organisation trouvée"
+    }
   },
   "status": {
     "CREATED": "Créé",

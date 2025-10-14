@@ -135,9 +135,7 @@ export default function AdminDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 animate-fade-in">
         <KPICard title="Actieve Dossiers" value={stats.activeDossiers} icon={FileCheck} />
         <KPICard title="Docs te reviewen" value={stats.pendingDocs} icon={FileCheck} />
-        <KPICard title="Moskee blokkades" value={stats.mosqueDayBlocks} icon=
-
-{AlertCircle} />
+        <KPICard title="Moskee blokkades" value={stats.mosqueDayBlocks} icon={AlertCircle} />
         <KPICard title="Koelcellen bezet" value={stats.coolerCellOccupancy} icon={Refrigerator} />
       </div>
 
@@ -237,73 +235,6 @@ export default function AdminDashboard() {
               >
                 <FileText className="mr-2 h-4 w-4" />
                 {t("admin.audit.title")}
-              </Button>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground text-center py-8">Geen recente events</p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t("admin.dashboard.quickActions")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="justify-start h-9"
-                onClick={() => navigate("/admin/directory")}
-              >
-                <Building2 className="mr-2 h-4 w-4" />
-                Directory
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="justify-start h-9"
-                onClick={() => navigate("/admin/dossiers")}
-              >
-                <FolderOpen className="mr-2 h-4 w-4" />
-                Dossiers
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="justify-start h-9"
-                onClick={() => navigate("/admin/documents")}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Docs Review
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="justify-start h-9"
-                onClick={() => navigate("/admin/integrations")}
-              >
-                <Activity className="mr-2 h-4 w-4" />
-                Integraties
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="justify-start h-9"
-                onClick={() => navigate("/admin/invoices")}
-              >
-                <Receipt className="mr-2 h-4 w-4" />
-                Facturatie
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="justify-start h-9"
-                onClick={() => navigate("/admin/audit")}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Auditlog
               </Button>
             </div>
           </CardContent>

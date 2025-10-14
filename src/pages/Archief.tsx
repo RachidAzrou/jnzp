@@ -304,15 +304,15 @@ const Archief = () => {
           <TabsList className="bg-card border shadow-sm">
             <TabsTrigger value="dossiers" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <FileText className="h-4 w-4 mr-2" />
-              Dossiers ({archivedDossiers.length})
+              {t("archive.dossiers")} ({archivedDossiers.length})
             </TabsTrigger>
             <TabsTrigger value="tasks-dossier" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <CheckCircle className="h-4 w-4 mr-2" />
-              Taken (per dossier) ({archivedTasks.length})
+              {t("archive.tasksPerDossier")} ({archivedTasks.length})
             </TabsTrigger>
             <TabsTrigger value="tasks-loose" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <CheckCircle className="h-4 w-4 mr-2" />
-              Losse taken ({looseTasks.length})
+              {t("archive.looseTasks")} ({looseTasks.length})
             </TabsTrigger>
           </TabsList>
 
@@ -323,7 +323,7 @@ const Archief = () => {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
-                    placeholder={activeTab === "dossiers" ? "Zoek op naam of ID..." : "Zoek op taak, dossier ID of naam..."}
+                    placeholder={activeTab === "dossiers" ? t("archive.searchByNameOrId") : t("archive.searchByTask")}
                     className="pl-10 bg-background"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -335,9 +335,9 @@ const Archief = () => {
                       <SelectValue placeholder="Flow filter" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Alle flows</SelectItem>
-                      <SelectItem value="LOC">Lokale uitvaart</SelectItem>
-                      <SelectItem value="REP">Repatriëring</SelectItem>
+                      <SelectItem value="all">{t("archive.allFlows")}</SelectItem>
+                      <SelectItem value="LOC">{t("archive.localFuneral")}</SelectItem>
+                      <SelectItem value="REP">{t("archive.repatriation")}</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -355,15 +355,15 @@ const Archief = () => {
                       <TableHead>Display ID</TableHead>
                       <TableHead>Overleden</TableHead>
                       <TableHead>Flow</TableHead>
-                      <TableHead>Afgesloten op</TableHead>
-                      <TableHead>Acties</TableHead>
+                      <TableHead>{t("archive.closedOn")}</TableHead>
+                      <TableHead>{t("archive.actions")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {currentItems.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                          Geen afgeronde dossiers gevonden
+                          {t("archive.noClosedDossiers")}
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -383,7 +383,7 @@ const Archief = () => {
                               size="sm"
                               onClick={() => navigate(`/dossiers/${dossier.id}`)}
                             >
-                              Bekijken
+                              {t("archive.view")}
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -396,7 +396,7 @@ const Archief = () => {
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between mt-6 pt-6 border-t">
                     <p className="text-sm text-muted-foreground">
-                      Pagina {currentPage} van {totalPages} ({filteredItems.length} resultaten)
+                      {t("archive.page")} {currentPage} {t("archive.of")} {totalPages} ({filteredItems.length} {t("archive.results")})
                     </p>
                     <div className="flex items-center gap-2">
                       <Button
@@ -428,20 +428,20 @@ const Archief = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Taak</TableHead>
+                      <TableHead>{t("archive.task")}</TableHead>
                       <TableHead>Dossier</TableHead>
                       <TableHead>Overleden</TableHead>
                       <TableHead>Flow</TableHead>
-                      <TableHead>Prioriteit</TableHead>
-                      <TableHead>Afgesloten op</TableHead>
-                      <TableHead>Toegewezen aan</TableHead>
+                      <TableHead>{t("archive.priority")}</TableHead>
+                      <TableHead>{t("archive.closedOn")}</TableHead>
+                      <TableHead>{t("archive.assignedTo")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {currentItems.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                          Geen afgeronde taken gevonden
+                          {t("archive.noClosedTasks")}
                         </TableCell>
                       </TableRow>
                     ) : (

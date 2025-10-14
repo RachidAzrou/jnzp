@@ -1,4 +1,4 @@
-import { Search, User, LogOut, Settings } from "lucide-react";
+import { User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -82,16 +82,7 @@ export function TopBar() {
     <header className="sticky top-0 z-10 flex h-14 sm:h-16 items-center gap-2 sm:gap-4 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 px-3 sm:px-6 shadow-sm">
       <SidebarTrigger className="h-10 w-10 sm:h-9 sm:w-9 flex-shrink-0" />
       
-      <div className="flex-1 flex items-center gap-2 sm:gap-4 overflow-hidden">
-        <div className="relative w-full max-w-md hidden sm:block">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder={t("common.search")}
-            className="pl-10 h-10 bg-background/50 border-input/50 focus:bg-background transition-colors"
-          />
-        </div>
-      </div>
+      <div className="flex-1"></div>
 
       <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
         <LanguageSwitcher />

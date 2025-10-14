@@ -198,7 +198,7 @@ export function AppSidebar() {
         <SidebarGroup className="mt-4 sm:mt-6">
           {!isCollapsed && (
             <SidebarGroupLabel className="px-4 sm:px-6 text-sidebar-foreground/60 text-xs uppercase tracking-wider font-semibold mb-2">
-              Navigatie
+              {t("navigation.title")}
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>

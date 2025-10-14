@@ -784,6 +784,7 @@
     "noCompletedTasks": "Geen voltooide taken"
   },
   "navigation": {
+    "title": "Navigatie",
     "dashboard": "Dashboard",
     "dossiers": "Dossiers",
     "claims": "Claims",

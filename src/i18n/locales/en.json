@@ -726,6 +726,7 @@
     "noCompletedTasks": "No completed tasks"
   },
   "navigation": {
+    "title": "Navigation",
     "dashboard": "Dashboard",
     "dossiers": "Dossiers",
     "planning": "Planning",

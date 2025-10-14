@@ -726,6 +726,7 @@
     "noCompletedTasks": "Aucune tâche terminée"
   },
   "navigation": {
+    "title": "Navigation",
     "dashboard": "Tableau de bord",
     "dossiers": "Dossiers",
     "planning": "Planification",

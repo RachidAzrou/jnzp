@@ -126,24 +126,24 @@ export default function AdminDashboard() {
         <CardContent className="p-6">
           <div className="flex-1">
             <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Platform Dashboard</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{t("admin.dashboard.title")}</h1>
           </div>
         </CardContent>
       </Card>
 
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 animate-fade-in">
-        <KPICard title="Actieve Dossiers" value={stats.activeDossiers} icon={FileCheck} />
-        <KPICard title="Docs te reviewen" value={stats.pendingDocs} icon={FileCheck} />
-        <KPICard title="Moskee blokkades" value={stats.mosqueDayBlocks} icon={AlertCircle} />
-        <KPICard title="Koelcellen bezet" value={stats.coolerCellOccupancy} icon={Refrigerator} />
+        <KPICard title={t("admin.dashboard.activeDossiers")} value={stats.activeDossiers} icon={FileCheck} />
+        <KPICard title={t("admin.dashboard.docsToReview")} value={stats.pendingDocs} icon={FileCheck} />
+        <KPICard title={t("admin.dashboard.mosqueDayBlocks")} value={stats.mosqueDayBlocks} icon={AlertCircle} />
+        <KPICard title={t("admin.dashboard.coolCellOccupancy")} value={stats.coolerCellOccupancy} icon={Refrigerator} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 animate-fade-in">
-        <KPICard title="Integratie fouten" value={stats.integrationErrors} icon={Activity} />
-        <KPICard title="Openstaande facturen" value={stats.pendingInvoices} icon={Receipt} />
-        <KPICard title="Organisaties ter controle" value={stats.pendingOrgs} icon={Building2} />
-        <KPICard title="Organisaties ter controle" value={stats.pendingOrgs} icon={Building2} />
+        <KPICard title={t("admin.dashboard.integrationErrors")} value={stats.integrationErrors} icon={Activity} />
+        <KPICard title={t("admin.dashboard.pendingInvoices")} value={stats.pendingInvoices} icon={Receipt} />
+        <KPICard title={t("admin.dashboard.pendingOrgs")} value={stats.pendingOrgs} icon={Building2} />
+        <KPICard title={t("admin.dashboard.pendingOrgs")} value={stats.pendingOrgs} icon={Building2} />
       </div>
 
       {/* Alerts & Quick Actions */}

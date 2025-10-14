@@ -1610,6 +1610,18 @@
     "created": "Webhook créé",
     "deleted": "Webhook supprimé",
     "tested": "Test envoyé"
+  },
+  "toast": {
+    "success": "Succès",
+    "error": "Erreur",
+    "warning": "Avertissement",
+    "info": "Information",
+    "saved": "Enregistré",
+    "deleted": "Supprimé",
+    "updated": "Mis à jour",
+    "created": "Créé",
+    "loading": "Chargement...",
+    "processing": "Traitement..."
   }
 }
 

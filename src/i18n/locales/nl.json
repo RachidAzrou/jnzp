@@ -1675,6 +1675,18 @@
     "created": "Webhook aangemaakt",
     "deleted": "Webhook verwijderd",
     "tested": "Test verzonden"
+  },
+  "toast": {
+    "success": "Succes",
+    "error": "Fout",
+    "warning": "Waarschuwing",
+    "info": "Informatie",
+    "saved": "Opgeslagen",
+    "deleted": "Verwijderd",
+    "updated": "Bijgewerkt",
+    "created": "Aangemaakt",
+    "loading": "Laden...",
+    "processing": "Verwerken..."
   }
 }
 

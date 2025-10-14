@@ -155,13 +155,20 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
                   {format(new Date(event.created_at), "dd MMM HH:mm", { locale: nl })}
                 </TableCell>
                 <TableCell className="text-sm">
-                  {event.user_id && event.user ? (
-                    <div>
-                      <div className="font-medium">{event.user.display_name || event.user.email}</div>
-                      {event.user.display_name && (
-                        <div className="text-xs text-muted-foreground">{event.user.email}</div>
-                      )}
-                    </div>
+                  {event.user_id ? (
+                    event.user ? (
+                      <div>
+                        <div className="font-medium">{event.user.display_name || event.user.email || 'Onbekend'}</div>
+                        {event.user.display_name && event.user.email && (
+                          <div className="text-xs text-muted-foreground">{event.user.email}</div>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="font-medium">Gebruiker</div>
+                        <div className="text-xs text-muted-foreground">{event.user_id.slice(0, 8)}...</div>
+                      </div>
+                    )
                   ) : (
                     <span className="text-muted-foreground">Systeem</span>
                   )}

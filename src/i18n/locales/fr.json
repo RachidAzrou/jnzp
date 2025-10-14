@@ -225,7 +225,12 @@
     "city": "Ville",
     "dateCreated": "Date de Création",
     "allStatuses": "Tous les Statuts",
-    "allFlows": "Tous les Types"
+    "allFlows": "Tous les Types",
+    "myDossiers": "Mes Dossiers",
+    "allDossiers": "Tous les Dossiers",
+    "incomingRequests": "Demandes Entrantes",
+    "requestAccepted": "Demande acceptée",
+    "requestDeclined": "Demande refusée"
   },
   "documents": {
     "title": "Documents",
@@ -355,7 +360,11 @@
     "noPlanningDescription": "Planifiez vos premières funérailles pour commencer.",
     "date": "Date",
     "location": "Lieu",
-    "transport": "Transport"
+    "transport": "Transport",
+    "loadError": "Erreur lors du chargement des données de planification",
+    "newReservation": "Nouvelle Réservation",
+    "newFlight": "Nouveau Vol",
+    "newService": "Nouveau Service"
   },
   "invoicing": {
     "title": "Facturation",
@@ -406,7 +415,7 @@
     "taskUpdated": "Tâche mise à jour",
     "taskDeleted": "Tâche supprimée",
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette tâche?",
-    "deleteWarning": "Cette action ne peut pas être annulée.",
+     "deleteWarning": "Cette action ne peut pas être annulée.",
     "status": {
       "TODO": "À faire",
       "IN_PROGRESS": "En cours",
@@ -419,6 +428,9 @@
       "HIGH": "Élevée",
       "CRITICAL": "Critique"
     },
+    "loadError": "Erreur lors du chargement des tâches",
+    "allPriorities": "Toutes les priorités",
+    "allAssignees": "Tous les assignés",
     "noComments": "Aucun commentaire",
     "noAttachments": "Aucune pièce jointe",
     "addedComment": "Commentaire ajouté",

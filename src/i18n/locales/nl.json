@@ -273,7 +273,12 @@
     "city": "Stad",
     "dateCreated": "Datum Aangemaakt",
     "allStatuses": "Alle Statussen",
-    "allFlows": "Alle Types"
+    "allFlows": "Alle Types",
+    "myDossiers": "Mijn Dossiers",
+    "allDossiers": "Alle Dossiers",
+    "incomingRequests": "Inkomende Verzoeken",
+    "requestAccepted": "Verzoek geaccepteerd",
+    "requestDeclined": "Verzoek afgewezen"
   },
   "documents": {
     "title": "Documenten",
@@ -406,7 +411,11 @@
     "transport": "Transport",
     "mosque": "Moskee",
     "service": "Dienst",
-    "schedule": "Inplannen"
+    "schedule": "Inplannen",
+    "loadError": "Fout bij het laden van planningsgegevens",
+    "newReservation": "Nieuwe Reservering",
+    "newFlight": "Nieuwe Vlucht",
+    "newService": "Nieuwe Dienst"
   },
   "invoicing": {
     "title": "Facturatie",
@@ -457,7 +466,7 @@
     "taskUpdated": "Taak bijgewerkt",
     "taskDeleted": "Taak verwijderd",
     "confirmDelete": "Weet u zeker dat u deze taak wilt verwijderen?",
-    "deleteWarning": "Deze actie kan niet ongedaan worden gemaakt.",
+     "deleteWarning": "Deze actie kan niet ongedaan worden gemaakt.",
     "status": {
       "TODO": "Te doen",
       "IN_PROGRESS": "Bezig",
@@ -470,6 +479,9 @@
       "HIGH": "Hoog",
       "CRITICAL": "Kritiek"
     },
+    "loadError": "Fout bij het laden van taken",
+    "allPriorities": "Alle prioriteiten",
+    "allAssignees": "Alle toegewezenen",
     "noComments": "Nog geen opmerkingen",
     "noAttachments": "Nog geen bijlagen",
     "addedComment": "Opmerking toegevoegd",

@@ -225,7 +225,12 @@
     "city": "City",
     "dateCreated": "Date Created",
     "allStatuses": "All Statuses",
-    "allFlows": "All Types"
+    "allFlows": "All Types",
+    "myDossiers": "My Dossiers",
+    "allDossiers": "All Dossiers",
+    "incomingRequests": "Incoming Requests",
+    "requestAccepted": "Request accepted",
+    "requestDeclined": "Request declined"
   },
   "documents": {
     "title": "Documents",
@@ -355,7 +360,11 @@
     "noPlanningDescription": "Schedule your first funeral to get started.",
     "date": "Date",
     "location": "Location",
-    "transport": "Transport"
+    "transport": "Transport",
+    "loadError": "Error loading planning data",
+    "newReservation": "New Reservation",
+    "newFlight": "New Flight",
+    "newService": "New Service"
   },
   "invoicing": {
     "title": "Invoicing",
@@ -406,7 +415,7 @@
     "taskUpdated": "Task updated",
     "taskDeleted": "Task deleted",
     "confirmDelete": "Are you sure you want to delete this task?",
-    "deleteWarning": "This action cannot be undone.",
+     "deleteWarning": "This action cannot be undone.",
     "status": {
       "TODO": "To Do",
       "IN_PROGRESS": "In Progress",
@@ -419,6 +428,9 @@
       "HIGH": "High",
       "CRITICAL": "Critical"
     },
+    "loadError": "Error loading tasks",
+    "allPriorities": "All priorities",
+    "allAssignees": "All assignees",
     "noComments": "No comments yet",
     "noAttachments": "No attachments yet",
     "addedComment": "Comment added",

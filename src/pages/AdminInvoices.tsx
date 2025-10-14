@@ -110,21 +110,26 @@ export default function AdminInvoices() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="page-title flex items-center gap-2">
-            <Receipt className="h-6 w-6" />
-            {t("admin.invoices.title")}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Overzicht van alle facturen in het platform
-          </p>
-        </div>
-        <Button onClick={handleExport} variant="outline" size="sm">
-          <Download className="mr-2 h-4 w-4" />
-          Exporteer CSV
-        </Button>
+      <div>
+        <h1 className="page-title flex items-center gap-2">
+          <Receipt className="h-6 w-6" />
+          {t("admin.invoices.title")}
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Overzicht van alle facturen in het platform
+        </p>
       </div>
+
+      <Card className="border-0 shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex justify-end">
+            <Button onClick={handleExport} variant="outline" size="sm">
+              <Download className="mr-2 h-4 w-4" />
+              Exporteer CSV
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">

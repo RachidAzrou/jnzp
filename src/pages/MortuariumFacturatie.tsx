@@ -165,27 +165,30 @@ export default function MortuariumFacturatie() {
       <div className="space-y-6 max-w-[1600px] mx-auto">
         <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
           <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="space-y-2 flex-1 min-w-[280px]">
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground font-medium">Financieel</p>
-                    <h1 className="text-2xl font-bold tracking-tight">Facturatie</h1>
-                  </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <FileText className="h-6 w-6 text-primary" />
                 </div>
-                <p className="text-sm text-muted-foreground pl-15">
-                  Beheer mortuarium facturen
-                </p>
+                <div>
+                  <p className="text-sm text-muted-foreground font-medium">Financieel</p>
+                  <h1 className="text-2xl font-bold tracking-tight">Facturatie</h1>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nieuwe factuur
-                </Button>
-              </div>
+              <p className="text-sm text-muted-foreground pl-15">
+                Beheer mortuarium facturen
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-4">
+            <div className="flex justify-end">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Nieuwe factuur
+              </Button>
             </div>
           </CardContent>
         </Card>

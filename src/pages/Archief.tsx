@@ -270,19 +270,25 @@ const Archief = () => {
         {/* Header */}
         <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30">
           <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="space-y-2 flex-1 min-w-[280px]">
-                <p className="text-sm text-muted-foreground font-medium">{getCurrentDate()}</p>
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Archive className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Archief</h1>
-                    <p className="text-sm text-muted-foreground">Afgeronde dossiers en taken (alleen-lezen)</p>
-                  </div>
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground font-medium">{getCurrentDate()}</p>
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Archive className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight">Archief</h1>
+                  <p className="text-sm text-muted-foreground">Afgeronde dossiers en taken (alleen-lezen)</p>
                 </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Action Bar */}
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-4">
+            <div className="flex justify-end">
               <Button onClick={exportToCSV} variant="outline" className="gap-2">
                 <Download className="h-4 w-4" />
                 Exporteer naar CSV

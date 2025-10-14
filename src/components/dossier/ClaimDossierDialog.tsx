@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { Loader2, AlertTriangle, User, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -29,6 +29,7 @@ interface ClaimDossierDialogProps {
 
 export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: ClaimDossierDialogProps) {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -50,12 +51,14 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
       }
 
       if (result.requires_approval) {
-        toast.success("Claim aangevraagd", {
-          description: "Familie moet de claim nog goedkeuren. Je ontvangt een notificatie zodra dit gebeurt.",
+        toast({
+          title: t("toasts.success.claimRequested"),
+          description: t("toasts.success.claimRequestedDesc"),
         });
       } else {
-        toast.success("Dossier geclaimd", {
-          description: "Het dossier is succesvol toegewezen aan jouw organisatie.",
+        toast({
+          title: t("toasts.success.dossierClaimed"),
+          description: t("toasts.success.dossierClaimedDesc"),
         });
       }
 
@@ -64,8 +67,10 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
       setNote("");
     } catch (error: any) {
       console.error("Error claiming dossier:", error);
-      toast.error("Fout bij claimen", {
-        description: error.message || "Er is een fout opgetreden bij het claimen van het dossier.",
+      toast({
+        title: t("toasts.errors.claimError"),
+        description: error.message || t("toasts.errors.claimErrorDesc"),
+        variant: "destructive",
       });
     } finally {
       setLoading(false);

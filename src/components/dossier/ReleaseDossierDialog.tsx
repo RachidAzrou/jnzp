@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 
 interface ReleaseDossierDialogProps {
@@ -35,17 +35,26 @@ export default function ReleaseDossierDialog({
   const [reason, setReason] = useState("");
   const [customReason, setCustomReason] = useState("");
   const { t } = useTranslation();
+  const { toast } = useToast();
 
   const handleRelease = async () => {
     if (!reason) {
-      toast.error("Selecteer een reden");
+      toast({
+        title: t("toasts.errors.reasonRequired"),
+        description: "Selecteer een reden",
+        variant: "destructive",
+      });
       return;
     }
 
     const finalReason = reason === "other" ? customReason : RELEASE_REASONS.find(r => r.value === reason)?.label || "";
     
     if (!finalReason.trim()) {
-      toast.error("Voer een reden in");
+      toast({
+        title: t("toasts.errors.reasonRequired"),
+        description: "Voer een reden in",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -61,15 +70,26 @@ export default function ReleaseDossierDialog({
 
       const result = data as any;
       if (result?.success) {
-        toast.success("Dossier vrijgegeven. Familie is op de hoogte gebracht.");
+        toast({
+          title: t("common.success"),
+          description: "Dossier vrijgegeven. Familie is op de hoogte gebracht.",
+        });
         onOpenChange(false);
         onSuccess?.();
       } else {
-        toast.error(result?.error || "Fout bij vrijgeven");
+        toast({
+          title: t("common.error"),
+          description: result?.error || "Fout bij vrijgeven",
+          variant: "destructive",
+        });
       }
     } catch (err: any) {
       console.error("Release error:", err);
-      toast.error("Fout bij vrijgeven: " + err.message);
+      toast({
+        title: t("common.error"),
+        description: "Fout bij vrijgeven: " + err.message,
+        variant: "destructive",
+      });
     } finally {
       setReleasing(false);
     }

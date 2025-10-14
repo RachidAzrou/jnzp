@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { PlayCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -29,6 +30,7 @@ export function ActivateDossierButton({
   onActivated 
 }: ActivateDossierButtonProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [activating, setActivating] = useState(false);
@@ -40,11 +42,11 @@ export function ActivateDossierButton({
 
   const handleActivate = async () => {
     if (!reason.trim()) {
-      toast({
-        title: "Reden vereist",
-        description: "Geef een korte reden voor activering",
-        variant: "destructive",
-      });
+    toast({
+      title: t("toasts.errors.activationReasonRequired"),
+      description: t("toasts.errors.activationReasonRequiredDesc"),
+      variant: "destructive",
+    });
       return;
     }
 
@@ -61,8 +63,8 @@ export function ActivateDossierButton({
 
     if (error) {
       toast({
-        title: "Fout",
-        description: "Dossier kon niet worden geactiveerd",
+        title: t("toasts.errors.activationError"),
+        description: t("toasts.errors.activationErrorDesc"),
         variant: "destructive",
       });
       setActivating(false);
@@ -79,8 +81,8 @@ export function ActivateDossierButton({
     });
 
     toast({
-      title: "✅ Dossier Geactiveerd",
-      description: `Het dossier is nu operationeel. Automatische taken zijn aangemaakt voor ${flow === 'REP' ? 'repatriëring' : 'lokale begrafenis'}.`,
+      title: t("toasts.success.dossierActivated"),
+      description: t("toasts.success.dossierActivatedDesc", { flow: flow === 'REP' ? 'repatriëring' : 'lokale begrafenis' }),
       duration: 6000,
     });
 

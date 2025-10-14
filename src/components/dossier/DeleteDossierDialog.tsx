@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Trash2, AlertTriangle } from "lucide-react";
 import {
   AlertDialog,
@@ -37,6 +38,7 @@ export function DeleteDossierDialog({
   isFD = false 
 }: DeleteDossierDialogProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
@@ -50,8 +52,8 @@ export function DeleteDossierDialog({
   const handleDelete = async () => {
     if (!deleteReason.trim()) {
       toast({
-        title: "Reden verplicht",
-        description: "Geef een reden op voor het verwijderen van dit dossier",
+        title: t("toasts.errors.deleteReasonRequired"),
+        description: t("toasts.errors.deleteReasonRequiredDesc"),
         variant: "destructive",
       });
       return;
@@ -91,8 +93,8 @@ export function DeleteDossierDialog({
       });
 
       toast({
-        title: "Dossier verwijderd",
-        description: `Dossier ${dossierDisplayId} is succesvol verwijderd`,
+        title: t("toasts.success.dossierDeleted"),
+        description: t("toasts.success.dossierDeletedDesc", { displayId: dossierDisplayId }),
       });
 
       // Navigate back to dossiers list
@@ -100,8 +102,8 @@ export function DeleteDossierDialog({
     } catch (error: any) {
       console.error("Error deleting dossier:", error);
       toast({
-        title: "Fout bij verwijderen",
-        description: error.message || "Kon dossier niet verwijderen",
+        title: t("toasts.errors.deleteError"),
+        description: error.message || t("toasts.errors.deleteErrorDesc"),
         variant: "destructive",
       });
     } finally {

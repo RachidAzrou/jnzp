@@ -13,6 +13,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 type VerificationStatus = "pending" | "verified" | "rejected";
 
@@ -71,6 +72,7 @@ const mockOrganizations: Organization[] = [
 ];
 
 export function OrganizationVerificationPanel() {
+  const { t } = useTranslation();
   const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations);
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
@@ -94,8 +96,8 @@ export function OrganizationVerificationPanel() {
     );
 
     toast({
-      title: "Organisatie Geverifieerd",
-      description: `${selectedOrg.name} is succesvol geverifieerd.`,
+      title: t("toasts.success.organizationVerified"),
+      description: t("toasts.success.organizationVerifiedDesc", { name: selectedOrg.name }),
     });
 
     setVerifyDialogOpen(false);
@@ -105,8 +107,8 @@ export function OrganizationVerificationPanel() {
   const handleReject = () => {
     if (!selectedOrg || !rejectionReason.trim()) {
       toast({
-        title: "Reden Vereist",
-        description: "Geef een reden voor afwijzing op.",
+        title: t("toasts.errors.verificationReasonRequired"),
+        description: t("toasts.errors.verificationReasonRequiredDesc"),
         variant: "destructive",
       });
       return;
@@ -121,8 +123,8 @@ export function OrganizationVerificationPanel() {
     );
 
     toast({
-      title: "Organisatie Afgewezen",
-      description: `${selectedOrg.name} is afgewezen.`,
+      title: t("toasts.success.organizationRejected"),
+      description: t("toasts.success.organizationRejectedDesc", { name: selectedOrg.name }),
       variant: "destructive",
     });
 

@@ -122,6 +122,23 @@
     "requestSubmitted": "Aanvraag ingediend",
     "requestSubmittedDescription": "Uw aanvraag wordt beoordeeld door een administrator. U ontvangt bericht zodra uw account is goedgekeurd."
   },
+  "invite": {
+    "title": "Uitnodiging accepteren",
+    "description": "U bent uitgenodigd om lid te worden van {{organization}} als {{role}}",
+    "accept": "Accepteer uitnodiging",
+    "invalidInvite": "Ongeldige uitnodiging",
+    "loadFailed": "Kon uitnodiging niet laden",
+    "loginRequired": "Inloggen vereist",
+    "loginRequiredDesc": "Je moet eerst inloggen om de uitnodiging te accepteren",
+    "acceptFailed": "Accepteren mislukt",
+    "backToLogin": "Terug naar login",
+    "notFound": "Uitnodiging niet gevonden",
+    "notFoundDesc": "Deze uitnodiging bestaat niet of is niet meer geldig",
+    "notValid": "Uitnodiging niet geldig",
+    "alreadyAccepted": "Deze uitnodiging is al geaccepteerd",
+    "expired": "Deze uitnodiging is verlopen. Vraag een nieuwe aan bij je organisatiebeheerder",
+    "cancelled": "Deze uitnodiging is geannuleerd"
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welkom",

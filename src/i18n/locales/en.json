@@ -84,6 +84,23 @@
     "requestSubmitted": "Request submitted",
     "requestSubmittedDescription": "Your request will be reviewed by an administrator. You will receive a message once your account has been approved."
   },
+  "invite": {
+    "title": "Accept invitation",
+    "description": "You have been invited to join {{organization}} as {{role}}",
+    "accept": "Accept invitation",
+    "invalidInvite": "Invalid invitation",
+    "loadFailed": "Could not load invitation",
+    "loginRequired": "Login required",
+    "loginRequiredDesc": "You must log in first to accept the invitation",
+    "acceptFailed": "Accept failed",
+    "backToLogin": "Back to login",
+    "notFound": "Invitation not found",
+    "notFoundDesc": "This invitation does not exist or is no longer valid",
+    "notValid": "Invitation not valid",
+    "alreadyAccepted": "This invitation has already been accepted",
+    "expired": "This invitation has expired. Request a new one from your organization administrator",
+    "cancelled": "This invitation has been cancelled"
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back",

@@ -84,6 +84,23 @@
     "requestSubmitted": "Demande soumise",
     "requestSubmittedDescription": "Votre demande sera examinée par un administrateur. Vous recevrez un message dès que votre compte sera approuvé."
   },
+  "invite": {
+    "title": "Accepter l'invitation",
+    "description": "Vous êtes invité à rejoindre {{organization}} en tant que {{role}}",
+    "accept": "Accepter l'invitation",
+    "invalidInvite": "Invitation invalide",
+    "loadFailed": "Impossible de charger l'invitation",
+    "loginRequired": "Connexion requise",
+    "loginRequiredDesc": "Vous devez d'abord vous connecter pour accepter l'invitation",
+    "acceptFailed": "Échec de l'acceptation",
+    "backToLogin": "Retour à la connexion",
+    "notFound": "Invitation introuvable",
+    "notFoundDesc": "Cette invitation n'existe pas ou n'est plus valide",
+    "notValid": "Invitation non valide",
+    "alreadyAccepted": "Cette invitation a déjà été acceptée",
+    "expired": "Cette invitation a expiré. Demandez-en une nouvelle à votre administrateur d'organisation",
+    "cancelled": "Cette invitation a été annulée"
+  },
   "dashboard": {
     "title": "Tableau de bord",
     "welcome": "Bon retour",

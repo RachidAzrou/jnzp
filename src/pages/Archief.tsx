@@ -77,16 +77,18 @@ const Archief = () => {
         .from("kanban_tasks")
         .select(`
           *,
-          dossier:dossiers(
+          dossier:dossiers!inner(
             id,
             display_id,
             deceased_name,
-            flow
+            flow,
+            assigned_fd_org_id
           )
         `)
         .eq("status", "DONE")
         .not("archived_at", "is", null)
         .not("dossier_id", "is", null)
+        .eq("dossier.assigned_fd_org_id", organizationId)
         .order("archived_at", { ascending: false });
 
       if (tasksError) throw tasksError;

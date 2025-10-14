@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Edit2, Save, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -28,6 +29,7 @@ interface EditableServiceCardProps {
 
 export function EditableServiceCard({ event, title, description, onUpdate }: EditableServiceCardProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     scheduled_at: event?.scheduled_at || "",
@@ -50,12 +52,12 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
       
       if (error) throw error;
       
-      toast({ title: "Service bijgewerkt" });
+      toast({ title: t("errors.serviceUpdated") });
       setIsEditing(false);
       onUpdate();
     } catch (error) {
       console.error(error);
-      toast({ title: "Fout bij opslaan", variant: "destructive" });
+      toast({ title: t("errors.errorSaving"), variant: "destructive" });
     }
   };
 

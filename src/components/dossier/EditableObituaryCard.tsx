@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Edit2, Save, X } from "lucide-react";
 
 interface EditableObituaryCardProps {
@@ -14,6 +15,7 @@ interface EditableObituaryCardProps {
 
 export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: EditableObituaryCardProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [obituary, setObituary] = useState(initialObituary || "");
 
@@ -26,12 +28,12 @@ export function EditableObituaryCard({ dossierId, initialObituary, onUpdate }: E
       
       if (error) throw error;
       
-      toast({ title: "Overlijdensbericht opgeslagen" });
+      toast({ title: t("errors.obituarySaved") });
       setIsEditing(false);
       onUpdate();
     } catch (error) {
       console.error(error);
-      toast({ title: "Fout bij opslaan", variant: "destructive" });
+      toast({ title: t("errors.errorSaving"), variant: "destructive" });
     }
   };
 

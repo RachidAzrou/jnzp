@@ -175,8 +175,8 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   const handleStatusChange = async () => {
     if (!newStatus || newStatus === currentStatus) {
       toast({
-        title: "Geen wijziging",
-        description: "Selecteer een andere status",
+        title: t("errors.noChange"),
+        description: t("errors.selectDifferentStatus"),
         variant: "destructive",
       });
       return;
@@ -186,8 +186,8 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     if (blockInfo?.blocked) {
       toast({
         variant: "destructive",
-        title: "Dossier geblokkeerd",
-        description: blockInfo.message || "Dit dossier is geblokkeerd en kan niet worden gewijzigd",
+        title: t("errors.dossierBlocked"),
+        description: blockInfo.message || t("errors.dossierBlockedDescription"),
       });
       return;
     }
@@ -196,8 +196,8 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     if (openTasks > 0 && !isAdmin) {
       toast({
         variant: "destructive",
-        title: "Taken niet afgerond",
-        description: `Er zijn nog ${openTasks} open taken. Deze moeten eerst afgerond worden.`,
+        title: t("errors.tasksNotCompleted"),
+        description: t("errors.tasksNotCompletedDescription", { count: openTasks }),
       });
       return;
     }
@@ -205,8 +205,8 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     // Check if admin override is needed for restricted transitions
     if (!isAdmin && !allowedNextStatuses.includes(newStatus)) {
       toast({
-        title: "Niet toegestaan",
-        description: "Deze statuswijziging vereist admin rechten",
+        title: t("errors.notAllowed"),
+        description: t("errors.notAllowedDescription"),
         variant: "destructive",
       });
       return;
@@ -261,8 +261,8 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
       });
 
       toast({
-        title: "Status bijgewerkt",
-        description: `Status gewijzigd naar: ${statusLabels[newStatus]?.label}`,
+        title: t("errors.statusUpdated"),
+        description: t("errors.statusUpdatedDescription", { status: statusLabels[newStatus]?.label }),
       });
 
       setOpen(false);
@@ -271,8 +271,8 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
     } catch (error: any) {
       console.error("Error changing status:", error);
       toast({
-        title: "Fout",
-        description: error.message || "Kon status niet wijzigen",
+        title: t("errors.error"),
+        description: error.message || t("errors.couldNotChangeStatus"),
         variant: "destructive",
       });
     }

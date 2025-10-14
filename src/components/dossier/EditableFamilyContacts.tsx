@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Trash2, Plus, Edit2, Save, X } from "lucide-react";
 
 interface FamilyContact {
@@ -24,6 +25,7 @@ interface EditableFamilyContactsProps {
 
 export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: EditableFamilyContactsProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [editData, setEditData] = useState<Partial<FamilyContact>>({});
@@ -41,7 +43,7 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
 
   const handleSave = async () => {
     if (!editData.name) {
-      toast({ title: "Naam is verplicht", variant: "destructive" });
+      toast({ title: t("errors.nameRequired"), variant: "destructive" });
       return;
     }
 
@@ -52,7 +54,7 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
           .insert([{ ...editData, dossier_id: dossierId, name: editData.name }]);
         
         if (error) throw error;
-        toast({ title: "Contact toegevoegd" });
+        toast({ title: t("errors.contactAdded") });
       } else if (editingId) {
         const { error } = await supabase
           .from("family_contacts")
@@ -60,14 +62,14 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
           .eq("id", editingId);
         
         if (error) throw error;
-        toast({ title: "Contact bijgewerkt" });
+        toast({ title: t("errors.contactUpdated") });
       }
       
       handleCancel();
       onUpdate();
     } catch (error) {
       console.error(error);
-      toast({ title: "Fout bij opslaan", variant: "destructive" });
+      toast({ title: t("errors.errorSaving"), variant: "destructive" });
     }
   };
 
@@ -81,11 +83,11 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
         .eq("id", id);
       
       if (error) throw error;
-      toast({ title: "Contact verwijderd" });
+      toast({ title: t("errors.contactDeleted") });
       onUpdate();
     } catch (error) {
       console.error(error);
-      toast({ title: "Fout bij verwijderen", variant: "destructive" });
+      toast({ title: t("errors.errorDeleting"), variant: "destructive" });
     }
   };
 

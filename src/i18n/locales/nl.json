@@ -457,6 +457,27 @@
       "enterDossierNumber": "Voer een dossiernummer in",
       "markPaidError": "Fout bij markeren als betaald",
       "confirmError": "Fout bij bevestigen"
+    },
+    "error": {
+      "failed": "Er is een fout opgetreden",
+      "cancel_failed": "Fout bij annuleren",
+      "save_failed": "Fout bij opslaan",
+      "generic": "Fout",
+      "email_required": "E-mail verplicht",
+      "reason_required": "Reden verplicht"
+    },
+    "contact": {
+      "added": "Contact toegevoegd",
+      "deleted": "Contact verwijderd"
+    },
+    "mosque": {
+      "janazah_cancelled": "Janazah geannuleerd",
+      "settings_saved": "Instellingen opgeslagen",
+      "token_renewed": "Token vernieuwd",
+      "token_created": "Token aangemaakt",
+      "copied_to_clipboard": "Gekopieerd naar klembord",
+      "invite_functionality": "Uitnodiging versturen",
+      "invite_not_available": "Functionaliteit nog niet beschikbaar"
     }
   }
 }

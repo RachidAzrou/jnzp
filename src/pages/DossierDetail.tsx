@@ -843,7 +843,7 @@ const DossierDetail = () => {
                       };
                       if (newContact.name) {
                         supabase.from("family_contacts").insert([newContact]).then(() => {
-                          toast({ title: "Contact toegevoegd" });
+                          toast({ title: t("toast.contact.added") });
                           fetchDossierData();
                         });
                       }
@@ -879,10 +879,10 @@ const DossierDetail = () => {
                             onClick={async () => {
                               if (confirm("Verwijderen?")) {
                                 await supabase.from("family_contacts").delete().eq("id", contact.id);
-                                toast({ title: "Contact verwijderd" });
+                                toast({ title: t("toast.contact.deleted") });
                                 fetchDossierData();
                               }
-                            }} 
+                            }}
                             variant="ghost" 
                             size="sm"
                             className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"

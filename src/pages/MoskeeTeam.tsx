@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { UserPlus, Trash2, Users } from "lucide-react";
 
 type TeamMember = {
@@ -19,6 +20,7 @@ type TeamMember = {
 
 export default function MoskeeTeam() {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
@@ -65,7 +67,7 @@ export default function MoskeeTeam() {
   const inviteMutation = useMutation({
     mutationFn: async (email: string) => {
       // In production: call edge function to send invitation
-      toast({ title: "Uitnodiging versturen", description: "Functionaliteit nog niet beschikbaar" });
+      toast({ title: t("toast.mosque.invite_functionality"), description: t("toast.mosque.invite_not_available") });
     },
     onSuccess: () => {
       setInviteDialogOpen(false);
@@ -75,7 +77,7 @@ export default function MoskeeTeam() {
 
   const handleInvite = () => {
     if (!inviteEmail.trim()) {
-      toast({ title: "E-mail verplicht", variant: "destructive" });
+      toast({ title: t("toast.error.email_required"), variant: "destructive" });
       return;
     }
     inviteMutation.mutate(inviteEmail);

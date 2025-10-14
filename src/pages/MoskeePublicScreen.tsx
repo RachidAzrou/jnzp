@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Copy, RefreshCw, Monitor } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -21,6 +22,7 @@ type PublicAnnouncement = {
 
 export default function MoskeePublicScreen() {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedLanguage, setSelectedLanguage] = useState<'nl' | 'ar'>('nl');
 
@@ -101,16 +103,16 @@ export default function MoskeePublicScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["public-feed"] });
-      toast({ title: publicFeed ? "Token vernieuwd" : "Token aangemaakt" });
+      toast({ title: publicFeed ? t("toast.mosque.token_renewed") : t("toast.mosque.token_created") });
     },
     onError: (error) => {
-      toast({ title: "Fout", description: String(error), variant: "destructive" });
+      toast({ title: t("toast.error.generic"), description: String(error), variant: "destructive" });
     },
   });
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast({ title: "Gekopieerd naar klembord" });
+    toast({ title: t("toast.mosque.copied_to_clipboard") });
   };
 
   const publicUrl = publicFeed

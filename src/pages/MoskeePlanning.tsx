@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { X, Calendar, Clock } from "lucide-react";
@@ -40,6 +41,7 @@ type MosqueService = {
 
 export default function MoskeePlanning() {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -105,13 +107,13 @@ export default function MoskeePlanning() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mosque-services"] });
-      toast({ title: "Janazah geannuleerd" });
+      toast({ title: t("toast.mosque.janazah_cancelled") });
       setCancelDialogOpen(false);
       setSelectedService(null);
       setCancelReason("");
     },
     onError: (error) => {
-      toast({ title: "Fout bij annuleren", description: String(error), variant: "destructive" });
+      toast({ title: t("toast.error.cancel_failed"), description: String(error), variant: "destructive" });
     },
   });
 
@@ -123,7 +125,7 @@ export default function MoskeePlanning() {
   const handleCancelSubmit = () => {
     if (!selectedService) return;
     if (!cancelReason.trim()) {
-      toast({ title: "Reden verplicht", variant: "destructive" });
+      toast({ title: t("toast.error.reason_required"), variant: "destructive" });
       return;
     }
     cancelMutation.mutate({ serviceId: selectedService.id, reason: cancelReason });

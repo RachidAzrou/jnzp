@@ -463,6 +463,26 @@
       "blockErrorDesc": "Une erreur s'est produite lors du blocage du dossier",
       "noChange": "Aucun changement",
       "selectDifferentStatus": "Sélectionner un autre statut",
+      "cancel_failed": "Erreur lors de l'annulation",
+      "save_failed": "Erreur lors de l'enregistrement",
+      "generic": "Erreur",
+      "email_required": "E-mail requis",
+      "reason_required": "Raison requise"
+    },
+    "contact": {
+      "added": "Contact ajouté",
+      "deleted": "Contact supprimé"
+    },
+    "mosque": {
+      "janazah_cancelled": "Janazah annulée",
+      "settings_saved": "Paramètres enregistrés",
+      "token_renewed": "Jeton renouvelé",
+      "token_created": "Jeton créé",
+      "copied_to_clipboard": "Copié dans le presse-papiers",
+      "invite_functionality": "Envoyer une invitation",
+      "invite_not_available": "Fonctionnalité pas encore disponible"
+    },
+    "additionalErrors": {
       "dossierBlocked": "Dossier bloqué",
       "dossierBlockedDesc": "Ce dossier ne peut pas être modifié",
       "tasksNotCompleted": "Tâches non terminées",

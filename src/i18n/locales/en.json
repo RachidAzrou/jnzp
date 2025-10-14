@@ -463,6 +463,26 @@
       "statusChangeError": "Error changing status",
       "couldNotChangeStatus": "Status could not be changed",
       "holdSetError": "Error setting hold",
+      "cancel_failed": "Error cancelling",
+      "save_failed": "Error saving",
+      "generic": "Error",
+      "email_required": "Email required",
+      "reason_required": "Reason required"
+    },
+    "contact": {
+      "added": "Contact added",
+      "deleted": "Contact deleted"
+    },
+    "mosque": {
+      "janazah_cancelled": "Janazah cancelled",
+      "settings_saved": "Settings saved",
+      "token_renewed": "Token renewed",
+      "token_created": "Token created",
+      "copied_to_clipboard": "Copied to clipboard",
+      "invite_functionality": "Send invitation",
+      "invite_not_available": "Functionality not yet available"
+    },
+    "additionalErrors": {
       "titleRequired": "Title required",
       "titleRequiredDesc": "Enter a title for the task",
       "taskError": "Task error",

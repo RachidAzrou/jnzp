@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Save, Building2 } from "lucide-react";
 
 export default function MoskeeSettings() {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [orgName, setOrgName] = useState("");
   const [address, setAddress] = useState("");
@@ -81,10 +83,10 @@ export default function MoskeeSettings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mosque-org"] });
-      toast({ title: "Instellingen opgeslagen" });
+      toast({ title: t("toast.mosque.settings_saved") });
     },
     onError: (error) => {
-      toast({ title: "Fout bij opslaan", description: String(error), variant: "destructive" });
+      toast({ title: t("toast.error.save_failed"), description: String(error), variant: "destructive" });
     },
   });
 

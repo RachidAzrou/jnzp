@@ -3983,6 +3983,10 @@ export type Database = {
           organization_id: string
         }[]
       }
+      get_user_roles: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"][]
+      }
       handle_fd_request: {
         Args: {
           p_approved: boolean
@@ -3990,6 +3994,20 @@ export type Database = {
           p_rejection_reason?: string
         }
         Returns: Json
+      }
+      has_all_roles: {
+        Args: {
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      has_any_role: {
+        Args: {
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _user_id: string
+        }
+        Returns: boolean
       }
       has_role: {
         Args: {
@@ -4006,6 +4024,10 @@ export type Database = {
         Args: { p_email: string }
         Returns: boolean
       }
+      is_admin: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       is_admin_or_platform_admin: {
         Args: { _user_id: string }
         Returns: boolean
@@ -4014,16 +4036,44 @@ export type Database = {
         Args: { p_role: Database["public"]["Enums"]["app_role"] }
         Returns: boolean
       }
+      is_any_admin: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       is_dossier_blocked: {
         Args: { p_dossier_id: string }
         Returns: Json
       }
+      is_family: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
+      is_funeral_director: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
+      is_insurer: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
+      is_mortuarium: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
+      is_mosque: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       is_org_admin: {
-        Args: { _org_id: string; _user_id: string }
+        Args: { _org_id: string; _user_id: string } | { _user_id: string }
         Returns: boolean
       }
       is_org_admin_for: {
         Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_platform_admin: {
+        Args: { _user_id: string }
         Returns: boolean
       }
       is_thread_member: {

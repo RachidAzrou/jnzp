@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "react-i18next";
 
 type ReservationDetails = {
   id: string;
@@ -35,6 +36,7 @@ export function CoolCellReservationSheet({
   open,
   onOpenChange,
 }: CoolCellReservationSheetProps) {
+  const { t } = useTranslation();
   const [reservation, setReservation] = useState<ReservationDetails | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -122,18 +124,18 @@ export function CoolCellReservationSheet({
         ) : reservation ? (
           <div className="space-y-6 mt-6">
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">Status</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">{t("coolCell.status")}</h3>
               <Badge className={getStatusColor(reservation.status)}>
                 {getStatusLabel(reservation.status)}
               </Badge>
             </div>
 
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">Periode</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">{t("coolCell.period")}</h3>
               <p className="text-sm">
                 {format(new Date(reservation.start_at), "d MMMM yyyy 'om' HH:mm", { locale: nl })}
               </p>
-              <p className="text-sm text-muted-foreground">tot</p>
+              <p className="text-sm text-muted-foreground">{t("coolCell.until")}</p>
               <p className="text-sm">
                 {format(new Date(reservation.end_at), "d MMMM yyyy 'om' HH:mm", { locale: nl })}
               </p>
@@ -142,7 +144,7 @@ export function CoolCellReservationSheet({
             {reservation.organization && (
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-2">
-                  Uitvaartonderneming
+                  {t("coolCell.funeralHome")}
                 </h3>
                 <p className="text-sm font-medium">{reservation.organization.name}</p>
               </div>
@@ -150,20 +152,20 @@ export function CoolCellReservationSheet({
 
             {reservation.dossier && (
               <div className="space-y-4 border-t pt-4">
-                <h3 className="font-medium">Dossiergegevens</h3>
+                <h3 className="font-medium">{t("coolCell.dossierInfo")}</h3>
                 
                 <div>
-                  <p className="text-sm text-muted-foreground">Dossier ID</p>
+                  <p className="text-sm text-muted-foreground">{t("coolCell.dossierId")}</p>
                   <p className="text-sm font-medium">{reservation.dossier.display_id || reservation.dossier.ref_number}</p>
                 </div>
 
                 <div>
-                  <p className="text-sm text-muted-foreground">Overledene</p>
+                  <p className="text-sm text-muted-foreground">{t("coolCell.deceased")}</p>
                   <p className="text-sm font-medium">{reservation.dossier.deceased_name}</p>
                 </div>
 
                 <div>
-                  <p className="text-sm text-muted-foreground">Dossierstatus</p>
+                  <p className="text-sm text-muted-foreground">{t("coolCell.dossierStatus")}</p>
                   <Badge variant="outline">{reservation.dossier.status}</Badge>
                 </div>
               </div>
@@ -171,13 +173,13 @@ export function CoolCellReservationSheet({
 
             {reservation.note && (
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Notitie</h3>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">{t("coolCell.note")}</h3>
                 <p className="text-sm">{reservation.note}</p>
               </div>
             )}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground mt-6">Geen details beschikbaar</p>
+          <p className="text-sm text-muted-foreground mt-6">{t("coolCell.noDetails")}</p>
         )}
       </SheetContent>
     </Sheet>

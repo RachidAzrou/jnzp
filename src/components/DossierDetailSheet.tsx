@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar, MapPin, FileText, Plane, Building2, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 interface DossierDetailSheetProps {
   dossier: any;
@@ -18,6 +19,8 @@ interface DossierDetailSheetProps {
 }
 
 export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetailSheetProps) {
+  const { t } = useTranslation();
+  
   if (!dossier) return null;
 
   const getStatusLabel = (status: string) => {
@@ -89,23 +92,23 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
           <div>
             <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Overledene
+              {t("dossierDetail.deceasedTitle")}
             </h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-muted-foreground">Naam</p>
+                <p className="text-muted-foreground">{t("dossierDetail.name")}</p>
                 <p className="font-medium">{dossier.deceased_name}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Geboortedatum</p>
+                <p className="text-muted-foreground">{t("dossierDetail.dateOfBirth")}</p>
                 <p className="font-medium">{formatDate(dossier.deceased_dob)}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Overlijdensdatum</p>
+                <p className="text-muted-foreground">{t("dossierDetail.dateOfDeath")}</p>
                 <p className="font-medium">{formatDate(dossier.date_of_death)}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Dossier aangemaakt</p>
+                <p className="text-muted-foreground">{t("dossierDetail.dossierCreated")}</p>
                 <p className="font-medium">{formatDate(dossier.created_at)}</p>
               </div>
             </div>
@@ -117,29 +120,29 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
           <div>
             <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
               <Building2 className="h-4 w-4" />
-              Betrokken Partijen
+              {t("dossierDetail.involvedParties")}
             </h3>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <div>
-                  <p className="text-muted-foreground text-xs">Uitvaartondernemer</p>
+                  <p className="text-muted-foreground text-xs">{t("dossierDetail.funeralDirector")}</p>
                   <p className="font-medium">
-                    {dossier.assigned_fd_org_id ? "Toegewezen" : "Niet toegewezen"}
+                    {dossier.assigned_fd_org_id ? t("dossierDetail.assigned") : t("dossierDetail.notAssigned")}
                   </p>
                 </div>
                 {dossier.assigned_fd_org_id && (
-                  <Badge variant="outline">Actief</Badge>
+                  <Badge variant="outline">{t("dossierDetail.active")}</Badge>
                 )}
               </div>
               <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <div>
-                  <p className="text-muted-foreground text-xs">Verzekeraar</p>
+                  <p className="text-muted-foreground text-xs">{t("dossierDetail.insurer")}</p>
                   <p className="font-medium">
-                    {dossier.insurer_org_id ? "Gekoppeld" : "Niet gekoppeld"}
+                    {dossier.insurer_org_id ? t("dossierDetail.linked") : t("dossierDetail.notLinked")}
                   </p>
                 </div>
                 {dossier.insurer_org_id && (
-                  <Badge variant="outline">Actief</Badge>
+                  <Badge variant="outline">{t("dossierDetail.active")}</Badge>
                 )}
               </div>
             </div>

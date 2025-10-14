@@ -599,6 +599,39 @@
     "blocked": "Bloqué",
     "openTasks": "Tâches ouvertes"
   },
+  "documentUpload": {
+    "dossier": "Dossier",
+    "selectDossier": "Sélectionner le dossier",
+    "loading": "Chargement...",
+    "noDossiers": "Aucun dossier disponible"
+  },
+  "coolCell": {
+    "status": "Statut",
+    "period": "Période",
+    "until": "jusqu'à",
+    "funeralHome": "Entreprise funéraire",
+    "dossierInfo": "Informations du dossier",
+    "dossierId": "ID du dossier",
+    "deceased": "Défunt",
+    "dossierStatus": "Statut du dossier",
+    "note": "Note",
+    "noDetails": "Aucun détail disponible"
+  },
+  "dossierDetail": {
+    "deceasedTitle": "Défunt",
+    "name": "Nom",
+    "dateOfBirth": "Date de naissance",
+    "dateOfDeath": "Date de décès",
+    "dossierCreated": "Dossier créé",
+    "involvedParties": "Parties Impliquées",
+    "funeralDirector": "Directeur funéraire",
+    "assigned": "Assigné",
+    "notAssigned": "Non assigné",
+    "insurer": "Assureur",
+    "linked": "Lié",
+    "notLinked": "Non lié",
+    "active": "Actif"
+  },
   "toasts": {
     "success": {
       "saved": "Enregistré",

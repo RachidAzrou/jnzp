@@ -20,6 +20,7 @@ import {
 import { Upload, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface DocumentUploadDialogProps {
   dossiers?: any[];
@@ -34,6 +35,7 @@ export function DocumentUploadDialog({
   onOpenChange, 
   onUploadComplete 
 }: DocumentUploadDialogProps) {
+  const { t } = useTranslation();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
   const setOpen = onOpenChange || setInternalOpen;
@@ -178,16 +180,16 @@ export function DocumentUploadDialog({
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="dossier">Dossier</Label>
+            <Label htmlFor="dossier">{t("documentUpload.dossier")}</Label>
             <Select value={selectedDossier} onValueChange={setSelectedDossier}>
               <SelectTrigger id="dossier">
-                <SelectValue placeholder="Selecteer dossier" />
+                <SelectValue placeholder={t("documentUpload.selectDossier")} />
               </SelectTrigger>
               <SelectContent>
                 {loadingDossiers ? (
-                  <SelectItem value="loading" disabled>Laden...</SelectItem>
+                  <SelectItem value="loading" disabled>{t("documentUpload.loading")}</SelectItem>
                 ) : availableDossiers.length === 0 ? (
-                  <SelectItem value="none" disabled>Geen dossiers beschikbaar</SelectItem>
+                  <SelectItem value="none" disabled>{t("documentUpload.noDossiers")}</SelectItem>
                 ) : (
                   availableDossiers.map((d) => (
                     <SelectItem key={d.id} value={d.id}>

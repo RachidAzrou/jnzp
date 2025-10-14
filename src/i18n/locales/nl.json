@@ -534,6 +534,39 @@
     "blocked": "Geblokkeerd",
     "openTasks": "Open taken"
   },
+  "documentUpload": {
+    "dossier": "Dossier",
+    "selectDossier": "Selecteer dossier",
+    "loading": "Laden...",
+    "noDossiers": "Geen dossiers beschikbaar"
+  },
+  "coolCell": {
+    "status": "Status",
+    "period": "Periode",
+    "until": "tot",
+    "funeralHome": "Uitvaartonderneming",
+    "dossierInfo": "Dossiergegevens",
+    "dossierId": "Dossier ID",
+    "deceased": "Overledene",
+    "dossierStatus": "Dossierstatus",
+    "note": "Notitie",
+    "noDetails": "Geen details beschikbaar"
+  },
+  "dossierDetail": {
+    "deceasedTitle": "Overledene",
+    "name": "Naam",
+    "dateOfBirth": "Geboortedatum",
+    "dateOfDeath": "Overlijdensdatum",
+    "dossierCreated": "Dossier aangemaakt",
+    "involvedParties": "Betrokken Partijen",
+    "funeralDirector": "Uitvaartondernemer",
+    "assigned": "Toegewezen",
+    "notAssigned": "Niet toegewezen",
+    "insurer": "Verzekeraar",
+    "linked": "Gekoppeld",
+    "notLinked": "Niet gekoppeld",
+    "active": "Actief"
+  },
   "toasts": {
     "success": {
       "saved": "Opgeslagen",

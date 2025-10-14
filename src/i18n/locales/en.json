@@ -590,6 +590,39 @@
     "blocked": "Blocked",
     "openTasks": "Open tasks"
   },
+  "documentUpload": {
+    "dossier": "Dossier",
+    "selectDossier": "Select dossier",
+    "loading": "Loading...",
+    "noDossiers": "No dossiers available"
+  },
+  "coolCell": {
+    "status": "Status",
+    "period": "Period",
+    "until": "until",
+    "funeralHome": "Funeral home",
+    "dossierInfo": "Dossier information",
+    "dossierId": "Dossier ID",
+    "deceased": "Deceased",
+    "dossierStatus": "Dossier status",
+    "note": "Note",
+    "noDetails": "No details available"
+  },
+  "dossierDetail": {
+    "deceasedTitle": "Deceased",
+    "name": "Name",
+    "dateOfBirth": "Date of birth",
+    "dateOfDeath": "Date of death",
+    "dossierCreated": "Dossier created",
+    "involvedParties": "Involved Parties",
+    "funeralDirector": "Funeral director",
+    "assigned": "Assigned",
+    "notAssigned": "Not assigned",
+    "insurer": "Insurer",
+    "linked": "Linked",
+    "notLinked": "Not linked",
+    "active": "Active"
+  },
   "toasts": {
     "success": {
       "saved": "Saved",

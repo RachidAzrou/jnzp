@@ -885,7 +885,9 @@
     "edit": "Bewerken",
     "of": "van",
     "create": "Aanmaken",
-    "optional": "optioneel"
+    "optional": "optioneel",
+    "view": "Bekijken",
+    "reset": "Reset"
   },
   "onboarding": {
     "welcomeTitle": "Welkom bij JanazApp",
@@ -1936,6 +1938,40 @@
     "created": "Aangemaakt",
     "loading": "Laden...",
     "processing": "Verwerken..."
+  },
+  "planning": {
+    "title": "Planning",
+    "subtitle": "Beheer agenda en taken",
+    "organization": "Organisatie",
+    "searchPlaceholder": "Zoek op dossier, naam of locatie…",
+    "error": "Fout bij ophalen planning",
+    "mortuariumPlanning": "Mortuarium Planning",
+    "mosquePlanning": "Moskee Planning",
+    "flightPlanning": "Vluchten Planning",
+    "newAppointment": "Nieuwe afspraak",
+    "newFlight": "Nieuwe vlucht",
+    "noMortuariumAppointments": "Geen mortuarium afspraken gevonden",
+    "noMosqueAppointments": "Geen moskee afspraken gevonden",
+    "noFlights": "Geen vluchten gevonden"
+  },
+  "tasks": {
+    "title": "Taken",
+    "subtitle": "Beheer taken en projecten",
+    "projectManagement": "Projectbeheer",
+    "newTask": "Nieuwe taak",
+    "searchPlaceholder": "Zoek taken...",
+    "priority": "Prioriteit",
+    "assignedTo": "Toegewezen aan",
+    "allPriorities": "Alle prioriteiten",
+    "urgent": "Urgent",
+    "high": "Hoog",
+    "normal": "Normaal",
+    "low": "Laag",
+    "everyone": "Iedereen",
+    "toMe": "Aan mij",
+    "unassigned": "Niet toegewezen",
+    "couldNotLoadBoard": "Kon takenbord niet laden",
+    "noBoardAvailable": "Geen takenbord beschikbaar voor deze organisatie"
   }
 }
 

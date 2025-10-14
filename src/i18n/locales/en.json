@@ -840,7 +840,8 @@
     "success": "Success",
     "error": "Error",
     "of": "of",
-    "create": "Create"
+    "create": "Create",
+    "reset": "Reset"
   },
   "onboarding": {
     "welcomeTitle": "Welcome to JanazApp",
@@ -1872,6 +1873,45 @@
     "created": "Created",
     "loading": "Loading...",
     "processing": "Processing..."
+  },
+  "notFound": {
+    "title": "404 - Page not found",
+    "message": "The page you are looking for does not exist.",
+    "returnHome": "Return to home"
+  },
+  "planning": {
+    "title": "Planning",
+    "subtitle": "Manage calendar and tasks",
+    "organization": "Organization",
+    "searchPlaceholder": "Search by dossier, name or location…",
+    "error": "Error loading planning",
+    "mortuariumPlanning": "Mortuary Planning",
+    "mosquePlanning": "Mosque Planning",
+    "flightPlanning": "Flight Planning",
+    "newAppointment": "New appointment",
+    "newFlight": "New flight",
+    "noMortuariumAppointments": "No mortuary appointments found",
+    "noMosqueAppointments": "No mosque appointments found",
+    "noFlights": "No flights found"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "subtitle": "Manage tasks and projects",
+    "projectManagement": "Project Management",
+    "newTask": "New task",
+    "searchPlaceholder": "Search tasks...",
+    "priority": "Priority",
+    "assignedTo": "Assigned to",
+    "allPriorities": "All priorities",
+    "urgent": "Urgent",
+    "high": "High",
+    "normal": "Normal",
+    "low": "Low",
+    "everyone": "Everyone",
+    "toMe": "To me",
+    "unassigned": "Unassigned",
+    "couldNotLoadBoard": "Could not load task board",
+    "noBoardAvailable": "No task board available for this organization"
   }
 }
 

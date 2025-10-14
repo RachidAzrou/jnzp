@@ -144,7 +144,16 @@
   "dashboard": {
     "title": "Tableau de bord",
     "welcome": "Bon retour",
-    "activeDossiers": "Dossiers Actifs",
+    "welcomeBack": "Bienvenue",
+    "totalActive": "Total Actif",
+    "activeDossiers": "Dossiers actifs",
+    "repatriation": "Rapatriement",
+    "ongoingRepatriations": "Rapatriements en cours",
+    "local": "Local",
+    "localFunerals": "Funérailles locales",
+    "activeFiles": "Dossiers Actifs",
+    "filesProgress": "Aperçu des dossiers en cours",
+    "noActiveDossiers": "Aucun dossier actif",
     "openTasks": "Tâches Ouvertes",
     "recentActivity": "Activité Récente",
     "legalHold": "Retention légale",
@@ -840,7 +849,8 @@
     "success": "Succès",
     "error": "Erreur",
     "of": "de",
-    "create": "Créer"
+    "create": "Créer",
+    "reset": "Réinitialiser"
   },
   "onboarding": {
     "welcomeTitle": "Bienvenue sur JanazApp",
@@ -1343,13 +1353,15 @@
   },
   "planning": {
     "title": "Planification",
+    "subtitle": "Gérer l'agenda et les tâches",
+    "organization": "Organisation",
     "mortuariumPlanning": "Planification Mortuaire",
     "mosquePlanning": "Planification Mosquée",
     "flightPlanning": "Planification des Vols",
     "newAppointment": "Nouveau rendez-vous",
     "newFlight": "Nouveau vol",
     "noMortuariumAppointments": "Aucun rendez-vous mortuaire prévu",
-    "noMosqueCeremonies": "Aucune Janaza (service de prière) prévue",
+    "noMosqueAppointments": "Aucune Janaza (service de prière) prévue",
     "noFlights": "Aucun vol prévu",
     "location": "Emplacement",
     "dateTime": "Date et heure",
@@ -1360,7 +1372,8 @@
     "arrival": "Arrivée",
     "reservation": "Réservation",
     "awb": "AWB",
-    "searchPlaceholder": "Rechercher par numéro de dossier ou nom..."
+    "searchPlaceholder": "Rechercher par dossier, nom ou lieu…",
+    "error": "Erreur lors du chargement de la planification"
   },
   "mosque": {
     "dashboard": {
@@ -1872,6 +1885,30 @@
     "created": "Créé",
     "loading": "Chargement...",
     "processing": "Traitement..."
+  },
+  "notFound": {
+    "title": "404 - Page non trouvée",
+    "message": "La page que vous recherchez n'existe pas.",
+    "returnHome": "Retour à l'accueil"
+  },
+  "tasks": {
+    "title": "Tâches",
+    "subtitle": "Gérer les tâches et projets",
+    "projectManagement": "Gestion de projet",
+    "newTask": "Nouvelle tâche",
+    "searchPlaceholder": "Rechercher des tâches...",
+    "priority": "Priorité",
+    "assignedTo": "Assigné à",
+    "allPriorities": "Toutes les priorités",
+    "urgent": "Urgent",
+    "high": "Haute",
+    "normal": "Normale",
+    "low": "Basse",
+    "everyone": "Tout le monde",
+    "toMe": "À moi",
+    "unassigned": "Non assigné",
+    "couldNotLoadBoard": "Impossible de charger le tableau des tâches",
+    "noBoardAvailable": "Aucun tableau de tâches disponible pour cette organisation"
   }
 }
 

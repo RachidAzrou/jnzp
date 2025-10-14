@@ -1455,5 +1455,75 @@
     "pdfError": "Impossible de générer le PDF",
     "validationError": "Erreur de validation",
     "dataError": "Impossible d'obtenir les données de facturation"
+  },
+  "archive": {
+    "title": "Archive",
+    "searchArchive": "Rechercher dans l'archive...",
+    "noArchivedDossiers": "Aucun dossier archivé trouvé",
+    "restoredDossier": "Dossier restauré",
+    "restoreFailed": "Impossible de restaurer le dossier"
+  },
+  "documents": {
+    "title": "Documents",
+    "uploadDocument": "Télécharger un Document",
+    "documentType": "Type de Document",
+    "selectFile": "Sélectionner un Fichier",
+    "uploading": "Téléchargement...",
+    "uploadSuccess": "Document téléchargé avec succès",
+    "uploadFailed": "Échec du téléchargement",
+    "deleteDocument": "Supprimer le document",
+    "downloadDocument": "Télécharger le document"
+  },
+  "planning": {
+    "title": "Planification",
+    "flights": "Vols",
+    "mortuarium": "Mortuaire",
+    "mosque": "Mosquée",
+    "addFlight": "Ajouter un vol",
+    "editFlight": "Modifier le vol",
+    "flightNumber": "Numéro de vol",
+    "departure": "Départ",
+    "arrival": "Arrivée",
+    "airline": "Compagnie aérienne",
+    "addReservation": "Ajouter une réservation"
+  },
+  "feedback": {
+    "title": "Retour d'information",
+    "submitFeedback": "Envoyer un Retour",
+    "yourFeedback": "Votre Retour",
+    "feedbackPlaceholder": "Partagez votre expérience avec nous...",
+    "rating": "Évaluation",
+    "submit": "Envoyer",
+    "thankYou": "Merci pour votre retour!",
+    "submissionFailed": "Impossible d'envoyer le retour"
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "addWebhook": "Ajouter un Webhook",
+    "url": "URL",
+    "events": "Événements",
+    "active": "Actif",
+    "testWebhook": "Tester le Webhook",
+    "deleteWebhook": "Supprimer le Webhook"
+  },
+  "reports": {
+    "title": "Rapports",
+    "generate": "Générer un Rapport",
+    "dateRange": "Plage de dates",
+    "reportType": "Type de rapport",
+    "download": "Télécharger",
+    "monthly": "Mensuel",
+    "quarterly": "Trimestriel",
+    "yearly": "Annuel"
+  },
+  "audit": {
+    "title": "Journal d'Audit",
+    "searchLogs": "Rechercher dans les logs...",
+    "action": "Action",
+    "user": "Utilisateur",
+    "timestamp": "Horodatage",
+    "details": "Détails",
+    "export": "Exporter"
   }
 }
+

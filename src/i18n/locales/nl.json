@@ -1520,5 +1520,75 @@
     "pdfError": "Kon PDF niet genereren",
     "validationError": "Validatiefout",
     "dataError": "Kon factuurgegevens niet ophalen"
+  },
+  "archive": {
+    "title": "Archief",
+    "searchArchive": "Zoek in archief...",
+    "noArchivedDossiers": "Geen gearchiveerde dossiers gevonden",
+    "restoredDossier": "Dossier hersteld",
+    "restoreFailed": "Kon dossier niet herstellen"
+  },
+  "documents": {
+    "title": "Documenten",
+    "uploadDocument": "Document Uploaden",
+    "documentType": "Document Type",
+    "selectFile": "Bestand Selecteren",
+    "uploading": "Uploaden...",
+    "uploadSuccess": "Document succesvol geüpload",
+    "uploadFailed": "Uploaden mislukt",
+    "deleteDocument": "Document verwijderen",
+    "downloadDocument": "Document downloaden"
+  },
+  "planning": {
+    "title": "Planning",
+    "flights": "Vluchten",
+    "mortuarium": "Mortuarium",
+    "mosque": "Moskee",
+    "addFlight": "Vlucht toevoegen",
+    "editFlight": "Vlucht bewerken",
+    "flightNumber": "Vluchtnummer",
+    "departure": "Vertrek",
+    "arrival": "Aankomst",
+    "airline": "Luchtvaartmaatschappij",
+    "addReservation": "Reservering toevoegen"
+  },
+  "feedback": {
+    "title": "Feedback",
+    "submitFeedback": "Feedback Versturen",
+    "yourFeedback": "Uw Feedback",
+    "feedbackPlaceholder": "Deel uw ervaring met ons...",
+    "rating": "Beoordeling",
+    "submit": "Verstuur",
+    "thankYou": "Bedankt voor uw feedback!",
+    "submissionFailed": "Kon feedback niet versturen"
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "addWebhook": "Webhook Toevoegen",
+    "url": "URL",
+    "events": "Gebeurtenissen",
+    "active": "Actief",
+    "testWebhook": "Test Webhook",
+    "deleteWebhook": "Webhook Verwijderen"
+  },
+  "reports": {
+    "title": "Rapporten",
+    "generate": "Genereer Rapport",
+    "dateRange": "Datumbereik",
+    "reportType": "Rapporttype",
+    "download": "Download",
+    "monthly": "Maandelijks",
+    "quarterly": "Kwartaal",
+    "yearly": "Jaarlijks"
+  },
+  "audit": {
+    "title": "Audit Log",
+    "searchLogs": "Zoek logs...",
+    "action": "Actie",
+    "user": "Gebruiker",
+    "timestamp": "Tijdstip",
+    "details": "Details",
+    "export": "Exporteer"
   }
 }
+

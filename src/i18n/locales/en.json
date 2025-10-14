@@ -1455,5 +1455,75 @@
     "pdfError": "Could not generate PDF",
     "validationError": "Validation error",
     "dataError": "Could not retrieve invoice data"
+  },
+  "archive": {
+    "title": "Archive",
+    "searchArchive": "Search archive...",
+    "noArchivedDossiers": "No archived dossiers found",
+    "restoredDossier": "Dossier restored",
+    "restoreFailed": "Could not restore dossier"
+  },
+  "documents": {
+    "title": "Documents",
+    "uploadDocument": "Upload Document",
+    "documentType": "Document Type",
+    "selectFile": "Select File",
+    "uploading": "Uploading...",
+    "uploadSuccess": "Document uploaded successfully",
+    "uploadFailed": "Upload failed",
+    "deleteDocument": "Delete document",
+    "downloadDocument": "Download document"
+  },
+  "planning": {
+    "title": "Planning",
+    "flights": "Flights",
+    "mortuarium": "Mortuary",
+    "mosque": "Mosque",
+    "addFlight": "Add flight",
+    "editFlight": "Edit flight",
+    "flightNumber": "Flight number",
+    "departure": "Departure",
+    "arrival": "Arrival",
+    "airline": "Airline",
+    "addReservation": "Add reservation"
+  },
+  "feedback": {
+    "title": "Feedback",
+    "submitFeedback": "Submit Feedback",
+    "yourFeedback": "Your Feedback",
+    "feedbackPlaceholder": "Share your experience with us...",
+    "rating": "Rating",
+    "submit": "Submit",
+    "thankYou": "Thank you for your feedback!",
+    "submissionFailed": "Could not submit feedback"
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "addWebhook": "Add Webhook",
+    "url": "URL",
+    "events": "Events",
+    "active": "Active",
+    "testWebhook": "Test Webhook",
+    "deleteWebhook": "Delete Webhook"
+  },
+  "reports": {
+    "title": "Reports",
+    "generate": "Generate Report",
+    "dateRange": "Date Range",
+    "reportType": "Report Type",
+    "download": "Download",
+    "monthly": "Monthly",
+    "quarterly": "Quarterly",
+    "yearly": "Yearly"
+  },
+  "audit": {
+    "title": "Audit Log",
+    "searchLogs": "Search logs...",
+    "action": "Action",
+    "user": "User",
+    "timestamp": "Timestamp",
+    "details": "Details",
+    "export": "Export"
   }
 }
+

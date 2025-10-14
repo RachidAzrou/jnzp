@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface ReleaseDossierDialogProps {
   open: boolean;
@@ -33,6 +34,7 @@ export default function ReleaseDossierDialog({
   const [releasing, setReleasing] = useState(false);
   const [reason, setReason] = useState("");
   const [customReason, setCustomReason] = useState("");
+  const { t } = useTranslation();
 
   const handleRelease = async () => {
     if (!reason) {
@@ -106,7 +108,7 @@ export default function ReleaseDossierDialog({
               <Label htmlFor="customReason">Andere reden *</Label>
               <Textarea
                 id="customReason"
-                placeholder="Omschrijf de reden..."
+                placeholder={t("forms.placeholders.releaseDescription")}
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
                 rows={3}

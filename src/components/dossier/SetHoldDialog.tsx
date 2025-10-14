@@ -16,6 +16,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, AlertTriangle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SetHoldDialogProps {
   dossierId: string;
@@ -39,6 +40,7 @@ export function SetHoldDialog({
   const [reference, setReference] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   // Alleen admin kan legal holds zetten, alleen verzekeraar kan insurer holds zetten
   const canSetLegal = isAdmin;
@@ -147,7 +149,7 @@ export function SetHoldDialog({
               id="reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Waarom wordt dit dossier geblokkeerd?"
+              placeholder={t("forms.placeholders.holdReason")}
               className="mt-2"
             />
           </div>

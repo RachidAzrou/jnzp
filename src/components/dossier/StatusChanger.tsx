@@ -394,14 +394,14 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
             {/* Reason (optional) */}
             <div className="space-y-1.5">
               <Label htmlFor="reason" className="text-sm">Reden (optioneel)</Label>
-              <Textarea
-                id="reason"
-                placeholder="Waarom wordt de status gewijzigd?"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                rows={2}
-                className="text-sm"
-              />
+            <Textarea
+              id="reason"
+              placeholder={t("forms.placeholders.statusChangeReason")}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              rows={2}
+              className="text-sm"
+            />
             </div>
           </div>
 

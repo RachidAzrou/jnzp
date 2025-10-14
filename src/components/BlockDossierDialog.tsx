@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ShieldAlert } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface BlockDossierDialogProps {
   dossierId: string;
@@ -26,6 +27,7 @@ export function BlockDossierDialog({ dossierId, dossierRef, onSuccess }: BlockDo
   const [reason, setReason] = useState("");
   const [isBlocking, setIsBlocking] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleBlock = async () => {
     if (!reason.trim()) {
@@ -87,7 +89,7 @@ export function BlockDossierDialog({ dossierId, dossierRef, onSuccess }: BlockDo
             <Label htmlFor="reason">Reden voor blokkade *</Label>
             <Textarea
               id="reason"
-              placeholder="Geef een gedetailleerde reden op voor het blokkeren van dit dossier..."
+              placeholder={t("forms.placeholders.blockReason")}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={4}

@@ -18,6 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 interface TaskDialogProps {
   boardId: string;
@@ -43,6 +44,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
     labels: [] as string[]
   });
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (open) {
@@ -327,7 +329,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
             <Input
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="Wat moet er gebeuren?"
+              placeholder={t("forms.placeholders.taskTitle")}
             />
           </div>
 
@@ -336,7 +338,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
             <Textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Voeg details toe..."
+              placeholder={t("forms.placeholders.taskDescription")}
               rows={4}
             />
           </div>

@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Eye, Download, CheckCircle, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface DocumentReviewDialogProps {
   document: any;
@@ -33,6 +34,7 @@ export function DocumentReviewDialog({
   const [noteToFamily, setNoteToFamily] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleSubmit = async () => {
     if (!reviewDecision) {
@@ -198,7 +200,7 @@ export function DocumentReviewDialog({
                 id="rejection-reason"
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Bijvoorbeeld: Document onleesbaar, verkeerde informatie, etc."
+                placeholder={t("forms.placeholders.rejectionReason")}
                 rows={3}
               />
             </div>

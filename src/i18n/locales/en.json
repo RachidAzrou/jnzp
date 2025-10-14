@@ -2438,6 +2438,34 @@
     "unassigned": "Unassigned",
     "couldNotLoadBoard": "Could not load task board",
     "noBoardAvailable": "No task board available for this organization"
+  },
+  "statusChanger": {
+    "title": "Change status",
+    "current": "Current",
+    "newStatus": "New status",
+    "reason": "Reason (optional)",
+    "reasonPlaceholder": "Why are you changing the status?",
+    "dossierBlocked": "Dossier blocked",
+    "blockedReason": "Reason",
+    "blockedAuthority": "Authority",
+    "blockedContact": "Contact",
+    "tasksRemaining": "There are still {count} open tasks for this status.",
+    "tasksCompleteFirst": "Complete these first before changing the status.",
+    "allTasksComplete": "All tasks are completed. The dossier can automatically move to the next phase.",
+    "noTransitions": "No status changes possible.",
+    "adminOverride": "Admin",
+    "change": "Change status"
+  },
+  "auditLog": {
+    "title": "Audit log",
+    "time": "Time",
+    "user": "User",
+    "role": "Role",
+    "action": "Action",
+    "details": "Details",
+    "system": "System",
+    "noEvents": "No audit events found for this dossier.",
+    "reason": "Reason"
   }
 }
 

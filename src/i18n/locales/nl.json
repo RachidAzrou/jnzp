@@ -725,5 +725,33 @@
       "invite_functionality": "Uitnodiging versturen",
       "invite_not_available": "Functionaliteit nog niet beschikbaar"
     }
+  },
+  "statusChanger": {
+    "title": "Status wijzigen",
+    "current": "Huidig",
+    "newStatus": "Nieuwe status",
+    "reason": "Reden (optioneel)",
+    "reasonPlaceholder": "Waarom wijzigt u de status?",
+    "dossierBlocked": "Dossier geblokkeerd",
+    "blockedReason": "Reden",
+    "blockedAuthority": "Autoriteit",
+    "blockedContact": "Contact",
+    "tasksRemaining": "Er zijn nog {count} open taken voor deze status.",
+    "tasksCompleteFirst": "Rond deze eerst af voordat u de status wijzigt.",
+    "allTasksComplete": "Alle taken zijn afgerond. Het dossier kan automatisch naar de volgende fase.",
+    "noTransitions": "Geen statuswijzigingen mogelijk.",
+    "adminOverride": "Admin",
+    "change": "Status wijzigen"
+  },
+  "auditLog": {
+    "title": "Auditlog",
+    "time": "Tijd",
+    "user": "Gebruiker",
+    "role": "Rol",
+    "action": "Wat",
+    "details": "Details",
+    "system": "Systeem",
+    "noEvents": "Geen audit events gevonden voor dit dossier.",
+    "reason": "Reden"
   }
 }

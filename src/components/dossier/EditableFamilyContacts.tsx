@@ -74,7 +74,7 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Weet je zeker dat je dit contact wilt verwijderen?")) return;
+    if (!confirm(t("familyContact.confirmDelete"))) return;
     
     try {
       const { error } = await supabase
@@ -96,8 +96,8 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Familie & Contacten</CardTitle>
-            <CardDescription>Beheer familieleden en contactpersonen</CardDescription>
+            <CardTitle>{t("familyContact.title")}</CardTitle>
+            <CardDescription>{t("familyContact.description")}</CardDescription>
           </div>
           <Button 
             onClick={() => setIsAdding(true)} 
@@ -107,7 +107,7 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
             disabled={isAdding}
           >
             <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Toevoegen</span>
+            <span className="hidden sm:inline">{t("familyContact.add")}</span>
           </Button>
         </div>
       </CardHeader>
@@ -116,7 +116,7 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
           <div className="rounded-lg border bg-accent/5 p-4 space-y-3 animate-scale-in">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">Naam *</Label>
+                <Label className="text-xs">{t("familyContact.name")} *</Label>
                 <Input
                   value={editData.name || ""}
                   onChange={(e) => setEditData({ ...editData, name: e.target.value })}
@@ -124,7 +124,7 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Relatie</Label>
+                <Label className="text-xs">{t("familyContact.relationship")}</Label>
                 <Input
                   value={editData.relationship || ""}
                   onChange={(e) => setEditData({ ...editData, relationship: e.target.value })}
@@ -132,7 +132,7 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Telefoon</Label>
+                <Label className="text-xs">{t("familyContact.phone")}</Label>
                 <Input
                   value={editData.phone || ""}
                   onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
@@ -140,7 +140,7 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Email</Label>
+                <Label className="text-xs">{t("familyContact.email")}</Label>
                 <Input
                   type="email"
                   value={editData.email || ""}
@@ -152,11 +152,11 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
             <div className="flex gap-2">
               <Button onClick={handleSave} size="sm" className="h-8 text-xs">
                 <Save className="h-3.5 w-3.5 mr-1.5" />
-                Opslaan
+                {t("familyContact.save")}
               </Button>
               <Button onClick={handleCancel} variant="ghost" size="sm" className="h-8 text-xs">
                 <X className="h-3.5 w-3.5 mr-1.5" />
-                Annuleren
+                {t("familyContact.cancel")}
               </Button>
             </div>
           </div>
@@ -252,7 +252,7 @@ export function EditableFamilyContacts({ dossierId, contacts, onUpdate }: Editab
 
         {contacts.length === 0 && !isAdding && (
           <div className="text-center text-muted-foreground py-8 text-sm animate-fade-in">
-            Nog geen contacten toegevoegd
+            {t("familyContact.noContacts")}
           </div>
         )}
       </CardContent>

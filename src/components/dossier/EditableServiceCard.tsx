@@ -78,7 +78,7 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
           <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Nog niet ingepland</p>
+          <p className="text-sm text-muted-foreground">{t("service.notScheduled")}</p>
         </CardContent>
       </Card>
     );
@@ -100,17 +100,17 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
               className="h-8 gap-1 text-xs"
             >
               <Edit2 className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Bewerken</span>
+              <span className="hidden sm:inline">{t("service.edit")}</span>
             </Button>
           ) : (
             <div className="flex gap-1">
               <Button onClick={handleSave} size="sm" className="h-8 text-xs">
                 <Save className="h-3.5 w-3.5 mr-1.5" />
-                <span className="hidden sm:inline">Opslaan</span>
+                <span className="hidden sm:inline">{t("service.save")}</span>
               </Button>
               <Button onClick={handleCancel} variant="ghost" size="sm" className="h-8 text-xs">
                 <X className="h-3.5 w-3.5 mr-1.5" />
-                <span className="hidden sm:inline">Annuleren</span>
+                <span className="hidden sm:inline">{t("service.cancel")}</span>
               </Button>
             </div>
           )}
@@ -118,14 +118,14 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium">Status:</span>
+          <span className="text-xs font-medium">{t("service.status")}:</span>
           <Badge variant="secondary" className="text-xs">{event.status}</Badge>
         </div>
 
         {isEditing ? (
           <div className="space-y-3 animate-scale-in">
             <div className="space-y-1.5">
-              <Label className="text-xs">Geplande datum/tijd</Label>
+              <Label className="text-xs">{t("service.scheduledDateTime")}</Label>
               <Input
                 type="datetime-local"
                 value={editData.scheduled_at ? new Date(editData.scheduled_at).toISOString().slice(0, 16) : ""}
@@ -134,7 +134,7 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Locatie</Label>
+              <Label className="text-xs">{t("service.location")}</Label>
               <Input
                 value={editData.location_text || ""}
                 onChange={(e) => setEditData({ ...editData, location_text: e.target.value })}
@@ -142,7 +142,7 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Notities</Label>
+              <Label className="text-xs">{t("service.notes")}</Label>
               <Textarea
                 value={editData.notes || ""}
                 onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
@@ -155,7 +155,7 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
           <div className="space-y-2 text-sm animate-fade-in">
             {event.scheduled_at && (
               <div className="flex gap-2">
-                <span className="text-muted-foreground min-w-[80px]">Datum/tijd:</span>
+                <span className="text-muted-foreground min-w-[80px]">{t("service.dateTime")}:</span>
                 <span className="font-medium">
                   {new Date(event.scheduled_at).toLocaleString("nl-NL")}
                 </span>
@@ -163,13 +163,13 @@ export function EditableServiceCard({ event, title, description, onUpdate }: Edi
             )}
             {event.location_text && (
               <div className="flex gap-2">
-                <span className="text-muted-foreground min-w-[80px]">Locatie:</span>
+                <span className="text-muted-foreground min-w-[80px]">{t("service.location")}:</span>
                 <span className="font-medium">{event.location_text}</span>
               </div>
             )}
             {event.notes && (
               <div className="flex gap-2">
-                <span className="text-muted-foreground min-w-[80px]">Notities:</span>
+                <span className="text-muted-foreground min-w-[80px]">{t("service.notes")}:</span>
                 <span className="whitespace-pre-wrap">{event.notes}</span>
               </div>
             )}

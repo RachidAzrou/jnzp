@@ -2450,6 +2450,34 @@
       "destination": "Destination",
       "created": "Créé"
     }
+  },
+  "statusChanger": {
+    "title": "Modifier le statut",
+    "current": "Actuel",
+    "newStatus": "Nouveau statut",
+    "reason": "Raison (optionnel)",
+    "reasonPlaceholder": "Pourquoi modifiez-vous le statut?",
+    "dossierBlocked": "Dossier bloqué",
+    "blockedReason": "Raison",
+    "blockedAuthority": "Autorité",
+    "blockedContact": "Contact",
+    "tasksRemaining": "Il reste encore {count} tâches ouvertes pour ce statut.",
+    "tasksCompleteFirst": "Terminez-les d'abord avant de modifier le statut.",
+    "allTasksComplete": "Toutes les tâches sont terminées. Le dossier peut automatiquement passer à la phase suivante.",
+    "noTransitions": "Aucun changement de statut possible.",
+    "adminOverride": "Admin",
+    "change": "Modifier le statut"
+  },
+  "auditLog": {
+    "title": "Journal d'audit",
+    "time": "Heure",
+    "user": "Utilisateur",
+    "role": "Rôle",
+    "action": "Action",
+    "details": "Détails",
+    "system": "Système",
+    "noEvents": "Aucun événement d'audit trouvé pour ce dossier.",
+    "reason": "Raison"
   }
 }
 

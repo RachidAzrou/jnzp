@@ -284,12 +284,12 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
         <DialogTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
             <Edit className="h-4 w-4" />
-            Status wijzigen
+            {t("statusChanger.title")}
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Status wijzigen</DialogTitle>
+            <DialogTitle>{t("statusChanger.title")}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -300,12 +300,12 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
                 <AlertDescription>
                   <strong>{blockInfo.message}</strong>
                   <br />
-                  {blockInfo.reason && <span className="text-sm">Reden: {blockInfo.reason}</span>}
+                  {blockInfo.reason && <span className="text-sm">{t("statusChanger.blockedReason")}: {blockInfo.reason}</span>}
                   {blockInfo.authority && (
-                    <span className="text-sm block">Autoriteit: {blockInfo.authority}</span>
+                    <span className="text-sm block">{t("statusChanger.blockedAuthority")}: {blockInfo.authority}</span>
                   )}
                   {blockInfo.contact && (
-                    <span className="text-sm block">Contact: {blockInfo.contact}</span>
+                    <span className="text-sm block">{t("statusChanger.blockedContact")}: {blockInfo.contact}</span>
                   )}
                 </AlertDescription>
               </Alert>

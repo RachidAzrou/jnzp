@@ -16,6 +16,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useCanDrag } from "@/hooks/useCanDrag";
+import { useTranslation } from "react-i18next";
 
 interface Task {
   id: string;
@@ -56,6 +57,7 @@ export function TaskCard({
   dragEnabled = true,
   onMarkAsDone 
 }: TaskCardProps) {
+  const { t } = useTranslation();
   const canDrag = useCanDrag();
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -75,25 +77,25 @@ export function TaskCard({
       case 'CRITICAL':
         return { 
           variant: 'default' as const, 
-          label: 'Kritisch',
+          label: t("tasks.critical"),
           className: 'bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20'
         };
       case 'HIGH':
         return { 
           variant: 'default' as const, 
-          label: 'Hoog',
+          label: t("tasks.high"),
           className: 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/20 hover:bg-orange-500/20'
         };
       case 'MEDIUM':
         return { 
           variant: 'default' as const, 
-          label: 'Medium',
+          label: t("tasks.medium"),
           className: 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'
         };
       case 'LOW':
         return { 
           variant: 'secondary' as const, 
-          label: 'Laag',
+          label: t("tasks.low"),
           className: 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
         };
       default:
@@ -162,7 +164,7 @@ export function TaskCard({
               {task.is_deferred && (
                 <div className="flex items-center gap-1.5 mt-2 text-xs text-amber-700 dark:text-amber-400">
                   <Clock className="h-3.5 w-3.5" />
-                  <span>Uitgesteld</span>
+                  <span>{t("tasks.deferred")}</span>
                 </div>
               )}
             </div>
@@ -176,7 +178,7 @@ export function TaskCard({
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-xs max-w-xs">
-                      {task.blocked_reason || 'Geblokkeerd door parket (Legal Hold)'}
+                      {task.blocked_reason || t("tasks.blockedByLegalHold")}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -186,10 +188,10 @@ export function TaskCard({
                   <TooltipTrigger asChild>
                     <div className="p-1 rounded bg-muted">
                       <Settings className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                    </div>
+                  </div>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p className="text-xs">Automatisch aangemaakt</p>
+                    <p className="text-xs">{t("tasks.autoCreated")}</p>
                   </TooltipContent>
                 </Tooltip>
               )}

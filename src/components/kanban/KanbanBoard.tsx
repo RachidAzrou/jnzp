@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import {
   DndContext,
   DragEndEvent,
@@ -62,6 +63,7 @@ export function KanbanBoard({
   assigneeFilter,
   onTaskClick
 }: KanbanBoardProps) {
+  const { t } = useTranslation();
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -156,7 +158,7 @@ export function KanbanBoard({
     } catch (error: any) {
       console.error('Error fetching board data:', error);
       toast({
-        title: 'Fout bij laden',
+        title: t("tasks.loadingError"),
         description: error.message,
         variant: 'destructive',
       });
@@ -227,18 +229,18 @@ export function KanbanBoard({
         from_value: oldColumnId || 'unassigned',
         to_value: newColumnId,
         metadata: {
-          from_column: columns.find((c) => c.id === oldColumnId)?.label || 'Geen kolom',
-          to_column: columns.find((c) => c.id === newColumnId)?.label || 'Onbekend',
+          from_column: columns.find((c) => c.id === oldColumnId)?.label || t("tasks.noAccess"),
+          to_column: columns.find((c) => c.id === newColumnId)?.label || t("common.unknown"),
         },
       });
 
       toast({
-        title: "Taak verplaatst",
+        title: t("tasks.taskMoved"),
       });
     } catch (error: any) {
       toast({
-        title: "Fout",
-        description: error.message || "Kon taak niet verplaatsen",
+        title: t("common.error"),
+        description: error.message || t("tasks.couldNotMoveTask"),
         variant: "destructive",
       });
       // Rollback on error
@@ -250,8 +252,8 @@ export function KanbanBoard({
     const task = tasks.find(t => t.id === taskId);
     if (!task || task.is_blocked) {
       toast({
-        title: "Kan niet afronden",
-        description: task?.blocked_reason || "Deze taak kan niet afgerond worden",
+        title: t("tasks.cannotComplete"),
+        description: task?.blocked_reason || t("tasks.cannotCompleteDescription"),
         variant: "destructive",
       });
       return;
@@ -267,8 +269,8 @@ export function KanbanBoard({
 
     if (!doneColumns || doneColumns.length === 0) {
       toast({
-        title: "Fout",
-        description: "Kan 'Afgerond' kolom niet vinden",
+        title: t("common.error"),
+        description: t("tasks.cannotFindDoneColumn"),
         variant: "destructive",
       });
       return;
@@ -281,13 +283,13 @@ export function KanbanBoard({
 
     if (error) {
       toast({
-        title: "Fout",
-        description: "Kon taak niet afronden",
+        title: t("common.error"),
+        description: t("tasks.couldNotCompleteTask"),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Taak afgerond",
+        title: t("tasks.taskCompleted"),
       });
       fetchBoardData();
     }
@@ -346,7 +348,7 @@ export function KanbanBoard({
         <div className="text-center space-y-2">
           <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground" />
           <p className="text-muted-foreground">
-            Geen kolommen geconfigureerd voor dit bord
+            {t("tasks.noBoardColumnsConfigured")}
           </p>
         </div>
       </Card>

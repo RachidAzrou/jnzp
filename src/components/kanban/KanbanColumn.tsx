@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TaskCard } from "./TaskCard";
 import { Info } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Column {
   id: string;
@@ -42,6 +43,7 @@ interface KanbanColumnProps {
 }
 
 export function KanbanColumn({ column, tasks, onTaskClick, onMarkTaskAsDone, dragEnabled = true }: KanbanColumnProps) {
+  const { t } = useTranslation();
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   });
@@ -73,7 +75,7 @@ export function KanbanColumn({ column, tasks, onTaskClick, onMarkTaskAsDone, dra
             {column.is_done && (
               <div className="text-[10px] text-muted-foreground/50 flex items-center gap-1 w-fit opacity-60">
                 <Info className="h-2.5 w-2.5" />
-                Verplaatst naar Archief na 24u
+                {t("tasks.movedToArchiveAfter24h")}
               </div>
             )}
           </div>
@@ -90,7 +92,7 @@ export function KanbanColumn({ column, tasks, onTaskClick, onMarkTaskAsDone, dra
           ))}
           {tasks.length === 0 && (
             <div className="text-center py-8 text-sm text-muted-foreground">
-              Sleep taken hierheen
+              {t("tasks.dragTasksHere")}
             </div>
           )}
         </CardContent>

@@ -2501,6 +2501,45 @@
     "typeLegalHoldFollowUp": "Follow Up Legal Hold",
     "overdue": "Overdue",
     "deadline": "Deadline"
+  },
+  "timeline": {
+    "title": "Timeline",
+    "noEvents": "No events yet",
+    "eventStatusChanged": "Status changed",
+    "eventStatusAutoChanged": "Status automatically changed",
+    "eventTaskCreated": "Task created",
+    "eventTaskCompleted": "Task completed",
+    "eventDocumentUploaded": "Document added",
+    "eventDocumentApproved": "Document approved",
+    "eventDocumentRejected": "Document rejected",
+    "eventMosqueStatusChanged": "Janazah status changed",
+    "eventLegalHoldSet": "Legal hold placed",
+    "eventLegalHoldRemoved": "Legal hold removed",
+    "typeEvent": "Event",
+    "typeTask": "Task",
+    "typeDocument": "Document",
+    "system": "System",
+    "user": "User",
+    "documentApproved": "Document approved",
+    "documentUploaded": "Document uploaded"
+  },
+  "comments": {
+    "placeholder": "Write a comment...",
+    "mentionTip": "Tip: Use @ to tag colleagues",
+    "post": "Post",
+    "noComments": "No comments yet",
+    "startDiscussion": "Start the discussion!",
+    "edited": "Edited",
+    "save": "Save",
+    "cancel": "Cancel",
+    "posted": "Comment posted",
+    "postedDesc": "Your comment has been successfully added.",
+    "updated": "Comment updated",
+    "updatedDesc": "Your changes have been saved.",
+    "deleted": "Comment deleted",
+    "deletedDesc": "The comment has been hidden.",
+    "confirmDelete": "Are you sure you want to hide this comment?",
+    "error": "Error"
   }
 }
 

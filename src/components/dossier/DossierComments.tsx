@@ -194,12 +194,12 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
 
       setNewComment("");
       toast({
-        title: "Opmerking geplaatst",
-        description: "Uw opmerking is succesvol toegevoegd."
+        title: t("comments.posted"),
+        description: t("comments.postedDesc")
       });
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("comments.error"),
         description: error.message,
         variant: "destructive"
       });
@@ -228,12 +228,12 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
       setEditingId(null);
       setEditText("");
       toast({
-        title: "Opmerking bijgewerkt",
-        description: "Uw wijzigingen zijn opgeslagen."
+        title: t("comments.updated"),
+        description: t("comments.updatedDesc")
       });
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("comments.error"),
         description: error.message,
         variant: "destructive"
       });
@@ -241,7 +241,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
   };
 
   const handleDelete = async (commentId: string) => {
-    if (!confirm("Weet u zeker dat u deze opmerking wilt verbergen?")) return;
+    if (!confirm(t("comments.confirmDelete"))) return;
 
     try {
       const { error } = await supabase
@@ -252,12 +252,12 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
       if (error) throw error;
 
       toast({
-        title: "Opmerking verwijderd",
-        description: "De opmerking is verborgen."
+        title: t("comments.deleted"),
+        description: t("comments.deletedDesc")
       });
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("comments.error"),
         description: error.message,
         variant: "destructive"
       });
@@ -326,7 +326,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
         
         <div className="flex justify-between items-center">
           <p className="text-xs text-muted-foreground">
-            Tip: Gebruik @ om collega's te taggen
+            {t("comments.mentionTip")}
           </p>
           <Button 
             onClick={handleSubmit} 
@@ -335,7 +335,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
             className="h-8"
           >
             <Send className="h-3.5 w-3.5 mr-2" />
-            Plaatsen
+            {t("comments.post")}
           </Button>
         </div>
       </div>
@@ -347,8 +347,8 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
             <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-3 mx-auto">
               <MessageSquare className="h-6 w-6 text-muted-foreground" />
             </div>
-            <p className="text-sm font-medium mb-1">Nog geen opmerkingen</p>
-            <p className="text-xs text-muted-foreground">Start de discussie!</p>
+            <p className="text-sm font-medium mb-1">{t("comments.noComments")}</p>
+            <p className="text-xs text-muted-foreground">{t("comments.startDiscussion")}</p>
           </div>
         ) : (
           comments.map((comment, index) => (
@@ -377,7 +377,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                     </span>
                     {comment.updated_at && (
                       <Badge variant="outline" className="text-xs h-5">
-                        Bewerkt
+                        {t("comments.edited")}
                       </Badge>
                     )}
                   </div>
@@ -420,7 +420,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                         className="h-8"
                         onClick={() => handleEdit(comment.id)}
                       >
-                        Opslaan
+                        {t("comments.save")}
                       </Button>
                       <Button
                         variant="outline"
@@ -431,7 +431,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                           setEditText("");
                         }}
                       >
-                        Annuleren
+                        {t("comments.cancel")}
                       </Button>
                     </div>
                   </div>

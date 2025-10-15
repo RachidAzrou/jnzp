@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 interface TimelineEvent {
   id: string;
@@ -31,6 +32,7 @@ interface DossierTimelineProps {
 }
 
 export function DossierTimeline({ dossierId }: DossierTimelineProps) {
+  const { t } = useTranslation();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -63,7 +65,7 @@ export function DossierTimeline({ dossierId }: DossierTimelineProps) {
           id: event.id,
           type: 'DOSSIER_EVENT',
           timestamp: event.created_at,
-          actor: 'Systeem',
+          actor: t("timeline.system"),
           title: getEventTitle(event.event_type),
           description: event.event_description,
           icon: getEventIcon(event.event_type),
@@ -77,8 +79,8 @@ export function DossierTimeline({ dossierId }: DossierTimelineProps) {
           id: doc.id,
           type: 'DOCUMENT_EVENT',
           timestamp: doc.uploaded_at,
-          actor: 'Gebruiker',
-          title: doc.status === 'APPROVED' ? 'Document goedgekeurd' : 'Document geüpload',
+          actor: t("timeline.user"),
+          title: doc.status === 'APPROVED' ? t("timeline.documentApproved") : t("timeline.documentUploaded"),
           description: `${doc.doc_type} (${doc.file_name})`,
           icon: FileText,
           metadata: { doc_type: doc.doc_type, status: doc.status },
@@ -100,16 +102,16 @@ export function DossierTimeline({ dossierId }: DossierTimelineProps) {
 
   const getEventTitle = (eventType: string) => {
     const titles: Record<string, string> = {
-      'STATUS_CHANGED': 'Status gewijzigd',
-      'STATUS_AUTO_CHANGED': 'Status automatisch gewijzigd',
-      'TASK_CREATED': 'Taak aangemaakt',
-      'TASK_COMPLETED': 'Taak afgerond',
-      'DOCUMENT_UPLOADED': 'Document toegevoegd',
-      'DOCUMENT_APPROVED': 'Document goedgekeurd',
-      'DOCUMENT_REJECTED': 'Document afgekeurd',
-      'MOSQUE_STATUS_CHANGED': 'Janazah status gewijzigd',
-      'LEGAL_HOLD_SET': 'Juridische blokkade geplaatst',
-      'LEGAL_HOLD_REMOVED': 'Juridische blokkade opgeheven',
+      'STATUS_CHANGED': t("timeline.eventStatusChanged"),
+      'STATUS_AUTO_CHANGED': t("timeline.eventStatusAutoChanged"),
+      'TASK_CREATED': t("timeline.eventTaskCreated"),
+      'TASK_COMPLETED': t("timeline.eventTaskCompleted"),
+      'DOCUMENT_UPLOADED': t("timeline.eventDocumentUploaded"),
+      'DOCUMENT_APPROVED': t("timeline.eventDocumentApproved"),
+      'DOCUMENT_REJECTED': t("timeline.eventDocumentRejected"),
+      'MOSQUE_STATUS_CHANGED': t("timeline.eventMosqueStatusChanged"),
+      'LEGAL_HOLD_SET': t("timeline.eventLegalHoldSet"),
+      'LEGAL_HOLD_REMOVED': t("timeline.eventLegalHoldRemoved"),
     };
     return titles[eventType] || eventType.replace(/_/g, ' ');
   };
@@ -143,7 +145,7 @@ export function DossierTimeline({ dossierId }: DossierTimelineProps) {
       <Card>
         <CardContent className="p-8 text-center text-muted-foreground">
           <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>Nog geen gebeurtenissen</p>
+          <p>{t("timeline.noEvents")}</p>
         </CardContent>
       </Card>
     );
@@ -152,7 +154,7 @@ export function DossierTimeline({ dossierId }: DossierTimelineProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tijdlijn</CardTitle>
+        <CardTitle>{t("timeline.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -196,9 +198,9 @@ export function DossierTimeline({ dossierId }: DossierTimelineProps) {
                       </div>
                     </div>
                     <Badge variant="outline" className="text-xs">
-                      {event.type === 'DOSSIER_EVENT' && 'Event'}
-                      {event.type === 'TASK_EVENT' && 'Taak'}
-                      {event.type === 'DOCUMENT_EVENT' && 'Document'}
+                      {event.type === 'DOSSIER_EVENT' && t("timeline.typeEvent")}
+                      {event.type === 'TASK_EVENT' && t("timeline.typeTask")}
+                      {event.type === 'DOCUMENT_EVENT' && t("timeline.typeDocument")}
                     </Badge>
                   </div>
                 </div>

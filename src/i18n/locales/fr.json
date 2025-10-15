@@ -2513,6 +2513,45 @@
     "typeLegalHoldFollowUp": "Suivi de blocage légal",
     "overdue": "En retard",
     "deadline": "Date limite"
+  },
+  "timeline": {
+    "title": "Chronologie",
+    "noEvents": "Pas encore d'événements",
+    "eventStatusChanged": "Statut modifié",
+    "eventStatusAutoChanged": "Statut automatiquement modifié",
+    "eventTaskCreated": "Tâche créée",
+    "eventTaskCompleted": "Tâche terminée",
+    "eventDocumentUploaded": "Document ajouté",
+    "eventDocumentApproved": "Document approuvé",
+    "eventDocumentRejected": "Document rejeté",
+    "eventMosqueStatusChanged": "Statut Janazah modifié",
+    "eventLegalHoldSet": "Blocage légal placé",
+    "eventLegalHoldRemoved": "Blocage légal levé",
+    "typeEvent": "Événement",
+    "typeTask": "Tâche",
+    "typeDocument": "Document",
+    "system": "Système",
+    "user": "Utilisateur",
+    "documentApproved": "Document approuvé",
+    "documentUploaded": "Document téléchargé"
+  },
+  "comments": {
+    "placeholder": "Écrire un commentaire...",
+    "mentionTip": "Astuce : Utilisez @ pour taguer des collègues",
+    "post": "Publier",
+    "noComments": "Pas encore de commentaires",
+    "startDiscussion": "Lancez la discussion !",
+    "edited": "Modifié",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "posted": "Commentaire publié",
+    "postedDesc": "Votre commentaire a été ajouté avec succès.",
+    "updated": "Commentaire mis à jour",
+    "updatedDesc": "Vos modifications ont été enregistrées.",
+    "deleted": "Commentaire supprimé",
+    "deletedDesc": "Le commentaire a été masqué.",
+    "confirmDelete": "Êtes-vous sûr de vouloir masquer ce commentaire ?",
+    "error": "Erreur"
   }
 }
 

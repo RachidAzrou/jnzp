@@ -75,7 +75,7 @@ export function KanbanColumn({ column, tasks, onTaskClick, onMarkTaskAsDone, dra
             {column.is_done && (
               <div className="text-[10px] text-muted-foreground/50 flex items-center gap-1 w-fit opacity-60">
                 <Info className="h-2.5 w-2.5" />
-                {t("tasks.movedToArchiveAfter24h")}
+                {t("tasks.movedToArchiveAt24h")}
               </div>
             )}
           </div>

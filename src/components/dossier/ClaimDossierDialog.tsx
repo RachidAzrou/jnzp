@@ -79,20 +79,20 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
 
   const getFlowLabel = (flow: string) => {
     const flowMap: Record<string, string> = {
-      LOC: "Lokaal",
-      REP: "Repatriëring",
-      UNSET: "Niet ingesteld",
+      LOC: t("claimDossier.flowLoc"),
+      REP: t("claimDossier.flowRep"),
+      UNSET: t("claimDossier.flowUnset"),
     };
     return flowMap[flow] || flow;
   };
 
   const getStatusLabel = (status: string) => {
     const statusMap: Record<string, string> = {
-      CREATED: "Nieuw dossier",
-      IN_PROGRESS: "In behandeling",
-      UNDER_REVIEW: "In controle",
-      COMPLETED: "Operationeel afgerond",
-      CLOSED: "Gearchiveerd",
+      CREATED: t("claimDossier.statusCreated"),
+      IN_PROGRESS: t("claimDossier.statusInProgress"),
+      UNDER_REVIEW: t("claimDossier.statusUnderReview"),
+      COMPLETED: t("claimDossier.statusCompleted"),
+      CLOSED: t("claimDossier.statusClosed"),
     };
     return statusMap[status] || status;
   };
@@ -101,9 +101,9 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Dossier claimen</DialogTitle>
+          <DialogTitle>{t("claimDossier.title")}</DialogTitle>
           <DialogDescription>
-            Bevestig dat je dit dossier wilt claimen voor jouw organisatie.
+            {t("claimDossier.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -122,7 +122,7 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
               {dossier.deceased_gender && (
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <User className="h-4 w-4" />
-                  <span>{dossier.deceased_gender === "M" ? "Man" : "Vrouw"}</span>
+                  <span>{dossier.deceased_gender === "M" ? t("claimDossier.genderMale") : t("claimDossier.genderFemale")}</span>
                 </div>
               )}
               {dossier.date_of_death && (
@@ -135,14 +135,14 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
 
             <div className="pt-2 border-t">
               <Badge variant="secondary" className="text-xs">
-                Status: {getStatusLabel(dossier.status)}
+                {t("claimDossier.status")}: {getStatusLabel(dossier.status)}
               </Badge>
             </div>
           </div>
 
           {/* Note */}
           <div className="space-y-2">
-            <Label htmlFor="note">Opmerking (optioneel)</Label>
+            <Label htmlFor="note">{t("claimDossier.noteLabel")}</Label>
             <Textarea
               id="note"
               placeholder={t("forms.placeholders.claimNote")}
@@ -152,7 +152,7 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
               disabled={loading}
             />
             <p className="text-xs text-muted-foreground">
-              Deze opmerking wordt gedeeld met de familie.
+              {t("claimDossier.noteHint")}
             </p>
           </div>
 
@@ -160,18 +160,18 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription className="text-sm">
-              De claim wordt in afwachting gezet totdat de familie deze goedkeurt via de Familie-app.
+              {t("claimDossier.approvalInfo")}
             </AlertDescription>
           </Alert>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
-            Annuleren
+            {t("claimDossier.cancel")}
           </Button>
           <Button onClick={handleClaim} disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Claim aanvragen
+            {t("claimDossier.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

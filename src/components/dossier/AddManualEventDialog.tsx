@@ -33,8 +33,8 @@ export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEvent
   const handleAdd = async () => {
     if (!title.trim()) {
       toast({
-        title: "Titel vereist",
-        description: "Voer een titel in voor het event",
+        title: t("addManualEvent.titleRequired"),
+        description: t("addManualEvent.titleRequiredDesc"),
         variant: "destructive",
       });
       return;
@@ -52,8 +52,8 @@ export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEvent
 
     if (error) {
       toast({
-        title: "Fout",
-        description: "Event kon niet worden toegevoegd",
+        title: t("addManualEvent.error"),
+        description: t("addManualEvent.errorDesc"),
         variant: "destructive",
       });
       setSaving(false);
@@ -61,8 +61,8 @@ export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEvent
     }
 
     toast({
-      title: "Event toegevoegd",
-      description: "Het handmatige event is toegevoegd aan de tijdlijn",
+      title: t("addManualEvent.success"),
+      description: t("addManualEvent.successDesc"),
     });
 
     setOpen(false);
@@ -77,19 +77,19 @@ export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEvent
       <DialogTrigger asChild>
         <Button variant="outline">
           <Plus className="mr-2 h-4 w-4" />
-          Event toevoegen
+          {t("addManualEvent.trigger")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Handmatig event toevoegen</DialogTitle>
+          <DialogTitle>{t("addManualEvent.title")}</DialogTitle>
           <DialogDescription>
-            Voeg een eigen notitie of gebeurtenis toe aan de tijdlijn
+            {t("addManualEvent.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label>Titel *</Label>
+            <Label>{t("addManualEvent.titleLabel")} *</Label>
             <Input
               placeholder={t("forms.placeholders.eventTitle")}
               value={title}
@@ -97,7 +97,7 @@ export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEvent
             />
           </div>
           <div>
-            <Label>Beschrijving</Label>
+            <Label>{t("addManualEvent.descriptionLabel")}</Label>
             <Textarea
               placeholder={t("forms.placeholders.eventDescription")}
               value={description}
@@ -108,10 +108,10 @@ export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEvent
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Annuleren
+            {t("addManualEvent.cancel")}
           </Button>
           <Button onClick={handleAdd} disabled={saving}>
-            {saving ? "Toevoegen..." : "Event toevoegen"}
+            {saving ? t("addManualEvent.submitting") : t("addManualEvent.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

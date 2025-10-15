@@ -46,7 +46,7 @@ export function DeleteDossierDialog({
 
   const canDelete = DELETABLE_STATUSES.includes(currentStatus);
   const cannotDeleteReason = !canDelete 
-    ? `Dossiers met status "${currentStatus}" kunnen niet verwijderd worden. Alleen dossiers met status "Nieuw" of "Intake" zijn verwijderbaar.`
+    ? t("deleteDossier.cannotDelete", { currentStatus })
     : null;
 
   const handleDelete = async () => {
@@ -120,7 +120,7 @@ export function DeleteDossierDialog({
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2 text-destructive">
             <AlertTriangle className="h-5 w-5" />
-            Dossier verwijderen
+            {t("deleteDossier.title")}
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-4 text-left pt-2">
             {cannotDeleteReason ? (
@@ -133,31 +133,29 @@ export function DeleteDossierDialog({
             ) : (
               <>
                 <p>
-                  Weet je zeker dat je dossier <strong>{dossierDisplayId}</strong> wilt verwijderen?
+                  {t("deleteDossier.confirmMessage", { dossierDisplayId })}
                 </p>
                 
                 <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                <strong>Let op:</strong> Deze actie kan alleen uitgevoerd worden voor dossiers in de status 
-                "Nieuw" of "Intake". Het dossier wordt niet permanent verwijderd maar wordt verborgen 
-                en kan later door een admin worden teruggehaald indien nodig.
+                <strong>{t("common.warning")}:</strong> {t("deleteDossier.warning")}
               </AlertDescription>
             </Alert>
 
             <div className="space-y-2">
               <Label className="text-base font-semibold text-foreground">
-                Reden voor verwijdering <span className="text-destructive">*</span>
+                {t("deleteDossier.reasonLabel")} <span className="text-destructive">*</span>
               </Label>
               <Textarea
-                placeholder="Bijv. 'Verkeerd aangemaakt dossier' of 'Dubbel ingevoerd'"
+                placeholder={t("deleteDossier.reasonPlaceholder")}
                 value={deleteReason}
                 onChange={(e) => setDeleteReason(e.target.value)}
                 rows={3}
                 className="resize-none"
               />
               <p className="text-xs text-muted-foreground">
-                Deze reden wordt gelogd in het auditlog
+                {t("deleteDossier.reasonHint")}
               </p>
             </div>
               </>
@@ -166,7 +164,7 @@ export function DeleteDossierDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>
-            {cannotDeleteReason ? "Sluiten" : "Annuleren"}
+            {cannotDeleteReason ? t("deleteDossier.close") : t("deleteDossier.cancel")}
           </AlertDialogCancel>
           {!cannotDeleteReason && (
             <AlertDialogAction
@@ -177,7 +175,7 @@ export function DeleteDossierDialog({
               disabled={isDeleting || !deleteReason.trim()}
               className="bg-destructive hover:bg-destructive/90"
             >
-              {isDeleting ? "Bezig met verwijderen..." : "Ja, verwijder dossier"}
+              {isDeleting ? t("deleteDossier.deleting") : t("deleteDossier.confirm")}
             </AlertDialogAction>
           )}
         </AlertDialogFooter>

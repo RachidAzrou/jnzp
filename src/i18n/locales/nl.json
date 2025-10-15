@@ -106,6 +106,7 @@
     "insurer": "Verzekeraar Portaal"
   },
   "common": {
+    "management": "Beheer",
     "loading": "Laden...",
     "save": "Opslaan",
     "cancel": "Annuleren",

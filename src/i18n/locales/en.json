@@ -244,6 +244,7 @@
     "wassingDescription": "Planning and facility information"
   },
   "common": {
+    "management": "Management",
     "cancel": "Cancel",
     "submit": "Submit",
     "edit": "Edit",

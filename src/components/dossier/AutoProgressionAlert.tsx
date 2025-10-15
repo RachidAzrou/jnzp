@@ -56,7 +56,7 @@ export function AutoProgressionAlert({ dossierId, currentStatus }: AutoProgressi
         .from("kanban_tasks")
         .select("*", { count: "exact", head: true })
         .eq("dossier_id", dossierId)
-        .neq("status", "DONE")
+        .neq("status", "AFGEROND")
         .is("archived_at", null);
 
       setOpenTasks(count || 0);

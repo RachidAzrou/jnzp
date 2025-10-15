@@ -52,7 +52,7 @@ export function TaskProgressWidget({ dossierId }: TaskProgressWidgetProps) {
         .from("kanban_tasks")
         .select("*", { count: "exact", head: true })
         .eq("dossier_id", dossierId)
-        .eq("status", "DONE");
+        .eq("status", "AFGEROND");
 
       setTotalTasks(total || 0);
       setCompletedTasks(completed || 0);

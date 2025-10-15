@@ -169,7 +169,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
         .from("kanban_tasks")
         .select("*", { count: "exact", head: true })
         .eq("dossier_id", dossierId)
-        .neq("status", "DONE");
+        .neq("status", "AFGEROND");
 
       setOpenTasks(count || 0);
       setCanProgress(count === 0 && !blockData?.blocked);

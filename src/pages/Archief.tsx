@@ -87,7 +87,7 @@ const Archief = () => {
             assigned_fd_org_id
           )
         `)
-        .eq("status", "DONE")
+        .eq("status", "AFGEROND")
         .not("archived_at", "is", null)
         .not("dossier_id", "is", null)
         .eq("dossier.assigned_fd_org_id", organizationId)
@@ -123,7 +123,7 @@ const Archief = () => {
       const { data: looseTasksData, error: looseTasksError } = await supabase
         .from("kanban_tasks")
         .select("*")
-        .eq("status", "DONE")
+        .eq("status", "AFGEROND")
         .not("archived_at", "is", null)
         .is("dossier_id", null)
         .order("archived_at", { ascending: false });

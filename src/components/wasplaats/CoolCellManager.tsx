@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit2, AlertCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -33,6 +34,7 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
   const [editingCell, setEditingCell] = useState<CoolCell | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchCells();
@@ -71,8 +73,8 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
       setCells((data as any) || []);
     } catch (error: any) {
       toast({
-        title: "Fout",
-        description: "Koelcellen konden niet worden geladen",
+        title: t("tasks.error"),
+        description: t("wasplaats.errorLoadCells"),
         variant: "destructive"
       });
     } finally {
@@ -100,8 +102,8 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
         if (error) throw error;
 
         toast({
-          title: "Koelcel bijgewerkt",
-          description: `${formData.label} is succesvol bijgewerkt`
+          title: t("wasplaats.cellUpdated"),
+          description: t("wasplaats.cellUpdatedDesc", { label: formData.label })
         });
       } else {
         // Create
@@ -117,8 +119,8 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
         if (error) throw error;
 
         toast({
-          title: "Koelcel toegevoegd",
-          description: `${formData.label} is succesvol toegevoegd`
+          title: t("wasplaats.cellAdded"),
+          description: t("wasplaats.cellAddedDesc", { label: formData.label })
         });
       }
 
@@ -126,7 +128,7 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
       setEditingCell(null);
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("tasks.error"),
         description: error.message,
         variant: "destructive"
       });
@@ -134,7 +136,7 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
   };
 
   const handleDeleteCell = async (cellId: string) => {
-    if (!confirm("Weet u zeker dat u deze koelcel wilt verwijderen?")) return;
+    if (!confirm(t("wasplaats.deleteCoolCell"))) return;
 
     try {
       const { error } = await supabase
@@ -145,12 +147,12 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
       if (error) throw error;
 
       toast({
-        title: "Koelcel verwijderd",
-        description: "De koelcel is succesvol verwijderd"
+        title: t("wasplaats.cellDeleted"),
+        description: t("wasplaats.cellDeletedDesc")
       });
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("tasks.error"),
         description: error.message,
         variant: "destructive"
       });
@@ -173,13 +175,13 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
   };
 
   const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-      FREE: 'Vrij',
-      RESERVED: 'Gereserveerd',
-      OCCUPIED: 'Bezet',
-      OUT_OF_SERVICE: 'Buiten gebruik'
+    const statusMap: Record<string, string> = {
+      FREE: 'wasplaats.statusFree',
+      RESERVED: 'wasplaats.statusReserved',
+      OCCUPIED: 'wasplaats.statusOccupied',
+      OUT_OF_SERVICE: 'wasplaats.statusOutOfService'
     };
-    return labels[status] || status;
+    return t(statusMap[status] || status);
   };
 
   if (loading) {
@@ -193,12 +195,12 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Koelcellen</h2>
+        <h2 className="text-2xl font-bold">{t("wasplaats.coolCells")}</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => setEditingCell(null)}>
               <Plus className="h-4 w-4 mr-2" />
-              Koelcel toevoegen
+              {t("wasplaats.addCoolCell")}
             </Button>
           </DialogTrigger>
           <CoolCellDialog
@@ -242,14 +244,14 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
                   className="flex-1"
                 >
                   <Edit2 className="h-4 w-4 mr-2" />
-                  Bewerken
+                  {t("wasplaats.edit")}
                 </Button>
                 <Button
                   variant="destructive"
                   size="sm"
                   onClick={() => handleDeleteCell(cell.id)}
                 >
-                  Verwijderen
+                  {t("wasplaats.delete")}
                 </Button>
               </div>
             </CardContent>
@@ -260,7 +262,7 @@ export function CoolCellManager({ facilityOrgId }: { facilityOrgId: string }) {
       {cells.length === 0 && (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            <p>Nog geen koelcellen geconfigureerd</p>
+            <p>{t("wasplaats.noCellsConfigured")}</p>
           </CardContent>
         </Card>
       )}
@@ -277,6 +279,7 @@ function CoolCellDialog({
   onSave: (data: any) => void;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<{
     label: string;
     status: 'FREE' | 'RESERVED' | 'OCCUPIED' | 'OUT_OF_SERVICE';
@@ -291,22 +294,22 @@ function CoolCellDialog({
     <DialogContent>
       <DialogHeader>
         <DialogTitle>
-          {cell ? 'Koelcel bewerken' : 'Koelcel toevoegen'}
+          {cell ? t("wasplaats.editCoolCell") : t("wasplaats.addCoolCell")}
         </DialogTitle>
       </DialogHeader>
       
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label>Label</Label>
+          <Label>{t("wasplaats.label")}</Label>
           <Input
             value={formData.label}
             onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-            placeholder="bijv. Koelcel A"
+            placeholder={t("wasplaats.labelPlaceholder")}
           />
         </div>
 
         <div className="space-y-2">
-          <Label>Status</Label>
+          <Label>{t("tasks.status")}</Label>
           <Select
             value={formData.status}
             onValueChange={(value: any) => setFormData({ ...formData, status: value })}
@@ -315,21 +318,21 @@ function CoolCellDialog({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="FREE">Vrij</SelectItem>
-              <SelectItem value="RESERVED">Gereserveerd</SelectItem>
-              <SelectItem value="OCCUPIED">Bezet</SelectItem>
-              <SelectItem value="OUT_OF_SERVICE">Buiten gebruik</SelectItem>
+              <SelectItem value="FREE">{t("wasplaats.statusFree")}</SelectItem>
+              <SelectItem value="RESERVED">{t("wasplaats.statusReserved")}</SelectItem>
+              <SelectItem value="OCCUPIED">{t("wasplaats.statusOccupied")}</SelectItem>
+              <SelectItem value="OUT_OF_SERVICE">{t("wasplaats.statusOutOfService")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {formData.status === 'OUT_OF_SERVICE' && (
           <div className="space-y-2">
-            <Label>Reden buiten gebruik</Label>
+            <Label>{t("wasplaats.outOfServiceReason")}</Label>
             <Textarea
               value={formData.out_of_service_note}
               onChange={(e) => setFormData({ ...formData, out_of_service_note: e.target.value })}
-              placeholder="Beschrijf waarom deze koelcel buiten gebruik is..."
+              placeholder={t("wasplaats.outOfServicePlaceholder")}
               rows={3}
             />
           </div>
@@ -338,10 +341,10 @@ function CoolCellDialog({
 
       <DialogFooter>
         <Button variant="outline" onClick={onClose}>
-          Annuleren
+          {t("wasplaats.cancel")}
         </Button>
         <Button onClick={() => onSave(formData)} disabled={!formData.label}>
-          Opslaan
+          {t("wasplaats.save")}
         </Button>
       </DialogFooter>
     </DialogContent>

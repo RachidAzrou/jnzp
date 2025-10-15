@@ -10,6 +10,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { useTranslation } from "react-i18next";
 
 type CoolCell = {
   id: string;
@@ -56,21 +57,15 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case "FREE":
-      return "Vrij";
-    case "PENDING":
-      return "In afwachting";
-    case "CONFIRMED":
-      return "Bevestigd";
-    case "OCCUPIED":
-      return "Bezet";
-    case "OUT_OF_SERVICE":
-      return "Buiten dienst";
-    default:
-      return status;
-  }
+const getStatusLabel = (status: string, t: any) => {
+  const statusMap: Record<string, string> = {
+    FREE: 'wasplaats.statusFree',
+    PENDING: 'wasplaats.statusPending',
+    CONFIRMED: 'wasplaats.statusConfirmed',
+    OCCUPIED: 'wasplaats.statusOccupied',
+    OUT_OF_SERVICE: 'wasplaats.statusOutOfService'
+  };
+  return t(statusMap[status] || status);
 };
 
 export function WasplaatsWeekView({
@@ -79,6 +74,7 @@ export function WasplaatsWeekView({
   dayBlocks,
   currentWeek,
 }: WeekViewProps) {
+  const { t } = useTranslation();
   const [selectedReservationId, setSelectedReservationId] = useState<string | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
@@ -135,7 +131,7 @@ export function WasplaatsWeekView({
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-medium">Weekoverzicht</CardTitle>
+        <CardTitle className="text-lg font-medium">{t("wasplaats.weekOverview")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
@@ -143,7 +139,7 @@ export function WasplaatsWeekView({
             <thead>
               <tr>
                 <th className="border border-border p-3 bg-muted/50 font-medium text-sm text-left min-w-[100px] rounded-tl-lg">
-                  Koelcel
+                  {t("wasplaats.label")}
                 </th>
                 {weekDays.map((day, index) => {
                   const dayStr = format(day, "yyyy-MM-dd");
@@ -170,11 +166,11 @@ export function WasplaatsWeekView({
                             <HoverCardTrigger>
                               <Badge variant="destructive" className="text-xs gap-1">
                                 <Ban className="h-3 w-3" />
-                                Geblokkeerd
+                                {t("wasplaats.blocked")}
                               </Badge>
                             </HoverCardTrigger>
                             <HoverCardContent className="w-auto">
-                              <p className="text-sm font-medium">Reden</p>
+                              <p className="text-sm font-medium">{t("wasplaats.reason")}</p>
                               <p className="text-xs text-muted-foreground">
                                 {blockReason}
                               </p>
@@ -219,7 +215,7 @@ export function WasplaatsWeekView({
                           {status === "BLOCKED" ? (
                             <div className="flex flex-col items-center gap-1">
                               <Badge variant="destructive" className="text-xs">
-                                Geblokkeerd
+                                {t("wasplaats.blocked")}
                               </Badge>
                             </div>
                           ) : reservation ? (
@@ -232,7 +228,7 @@ export function WasplaatsWeekView({
                                 status === "OUT_OF_SERVICE" ? "bg-gray-600 hover:bg-gray-700 text-white border-0" :
                                 "bg-gray-600 hover:bg-gray-700 text-white border-0"
                               }`}>
-                                {getStatusLabel(status)}
+                                {getStatusLabel(status, t)}
                               </Badge>
                               <div className="text-xs font-medium bg-background/80 px-2 py-1 rounded">
                                 {format(new Date(reservation.start_at), "HH:mm")}
@@ -248,7 +244,7 @@ export function WasplaatsWeekView({
                                 status === "OUT_OF_SERVICE" ? "bg-gray-600 hover:bg-gray-700 text-white border-0" :
                                 "bg-gray-600 hover:bg-gray-700 text-white border-0"
                               }`}>
-                                {getStatusLabel(status)}
+                                {getStatusLabel(status, t)}
                               </Badge>
                             </div>
                           )}

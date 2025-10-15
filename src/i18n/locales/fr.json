@@ -51,7 +51,7 @@
     "facturatie": "Facturation",
     "feedback": "Retour",
     "settings": "Paramètres",
-    "archiveLink": "Archive",
+    "archiveLink": "Archives",
     "chat": "Chat",
     "fdBeoordelingen": "Avis FD",
     "reservations": "Réservations",
@@ -94,7 +94,7 @@
     "claims": "Réclamations",
     "reporting": "Rapports",
     "publicScreen": "Écran public",
-    "teamManagement": "Gestion d'équipe",
+    "teamManagement": "Gestion de l'équipe",
     "adHocIntake": "Admission ad-hoc",
     "invoicing": "Facturation",
     "logout": "Déconnexion"

@@ -326,7 +326,65 @@
     "title": "Change Status",
     "currentStatus": "Current status",
     "newStatus": "New status",
-    "reason": "Reason for change"
+    "reason": "Reason for change",
+    "reasonLabel": "Reason for change (optional)",
+    "blockedReason": "Reason",
+    "blockedAuthority": "Authority",
+    "blockedContact": "Contact",
+    "openTasksWarning": "There are still {{count}} open tasks for the current status. Complete these first before the dossier can move to the next phase.",
+    "allTasksComplete": "All tasks are completed. The dossier can move to the next phase.",
+    "noChangesAllowed": "No status changes allowed from this status. Contact an admin if needed."
+  },
+  "forms": {
+    "placeholders": {
+      "statusChangeReason": "E.g. 'All documents approved' or 'Family has confirmed'"
+    }
+  },
+  "statusLabels": {
+    "fd": {
+      "created": {
+        "label": "New dossier",
+        "description": "Dossier created, intake started"
+      },
+      "inProgress": {
+        "label": "In progress",
+        "description": "Actively working on the funeral"
+      },
+      "underReview": {
+        "label": "Under review",
+        "description": "Review and approval of documents"
+      },
+      "completed": {
+        "label": "Operationally completed",
+        "description": "All operational tasks completed"
+      },
+      "closed": {
+        "label": "Archived",
+        "description": "Dossier is closed and archived"
+      }
+    },
+    "admin": {
+      "created": {
+        "label": "Created",
+        "description": "Dossier has been created"
+      },
+      "inProgress": {
+        "label": "In progress",
+        "description": "Dossier is being processed"
+      },
+      "underReview": {
+        "label": "Under review",
+        "description": "Review and verification"
+      },
+      "completed": {
+        "label": "Completed",
+        "description": "All tasks completed"
+      },
+      "closed": {
+        "label": "Closed",
+        "description": "Dossier closed"
+      }
+    }
   },
   "auditLog": {
     "title": "Audit Log",

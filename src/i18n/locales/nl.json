@@ -174,7 +174,65 @@
     "title": "Status Wijzigen",
     "currentStatus": "Huidige status",
     "newStatus": "Nieuwe status",
-    "reason": "Reden voor wijziging"
+    "reason": "Reden voor wijziging",
+    "reasonLabel": "Reden voor wijziging (optioneel)",
+    "blockedReason": "Reden",
+    "blockedAuthority": "Autoriteit",
+    "blockedContact": "Contact",
+    "openTasksWarning": "Er zijn nog {{count}} open taken voor de huidige status. Rond deze eerst af voordat het dossier naar de volgende fase kan.",
+    "allTasksComplete": "Alle taken zijn voltooid. Het dossier kan naar de volgende fase.",
+    "noChangesAllowed": "Geen statuswijzigingen toegestaan vanuit deze status. Neem contact op met een admin indien nodig."
+  },
+  "forms": {
+    "placeholders": {
+      "statusChangeReason": "Bijv. 'Alle documenten goedgekeurd' of 'Familie heeft bevestigd'"
+    }
+  },
+  "statusLabels": {
+    "fd": {
+      "created": {
+        "label": "Nieuw dossier",
+        "description": "Dossier aangemaakt, intake gestart"
+      },
+      "inProgress": {
+        "label": "In behandeling",
+        "description": "Actief bezig met regelen van de uitvaart"
+      },
+      "underReview": {
+        "label": "In controle",
+        "description": "Controle en goedkeuring documenten"
+      },
+      "completed": {
+        "label": "Operationeel afgerond",
+        "description": "Alle operationele taken afgerond"
+      },
+      "closed": {
+        "label": "Gearchiveerd",
+        "description": "Dossier is afgesloten en gearchiveerd"
+      }
+    },
+    "admin": {
+      "created": {
+        "label": "Aangemaakt",
+        "description": "Dossier is aangemaakt"
+      },
+      "inProgress": {
+        "label": "In behandeling",
+        "description": "Dossier wordt verwerkt"
+      },
+      "underReview": {
+        "label": "In controle",
+        "description": "Controle en verificatie"
+      },
+      "completed": {
+        "label": "Voltooid",
+        "description": "Alle taken voltooid"
+      },
+      "closed": {
+        "label": "Gesloten",
+        "description": "Dossier gesloten"
+      }
+    }
   },
   "auditLog": {
     "title": "Audit Log",

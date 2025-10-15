@@ -321,7 +321,65 @@
     "title": "Changer le statut",
     "currentStatus": "Statut actuel",
     "newStatus": "Nouveau statut",
-    "reason": "Raison du changement"
+    "reason": "Raison du changement",
+    "reasonLabel": "Raison du changement (optionnel)",
+    "blockedReason": "Raison",
+    "blockedAuthority": "Autorité",
+    "blockedContact": "Contact",
+    "openTasksWarning": "Il y a encore {{count}} tâches ouvertes pour le statut actuel. Terminez-les d'abord avant que le dossier puisse passer à la phase suivante.",
+    "allTasksComplete": "Toutes les tâches sont terminées. Le dossier peut passer à la phase suivante.",
+    "noChangesAllowed": "Aucun changement de statut autorisé depuis ce statut. Contactez un administrateur si nécessaire."
+  },
+  "forms": {
+    "placeholders": {
+      "statusChangeReason": "Par ex. 'Tous les documents approuvés' ou 'La famille a confirmé'"
+    }
+  },
+  "statusLabels": {
+    "fd": {
+      "created": {
+        "label": "Nouveau dossier",
+        "description": "Dossier créé, prise en charge démarrée"
+      },
+      "inProgress": {
+        "label": "En cours",
+        "description": "Travail actif sur les funérailles"
+      },
+      "underReview": {
+        "label": "En révision",
+        "description": "Révision et approbation des documents"
+      },
+      "completed": {
+        "label": "Terminé opérationnellement",
+        "description": "Toutes les tâches opérationnelles terminées"
+      },
+      "closed": {
+        "label": "Archivé",
+        "description": "Dossier fermé et archivé"
+      }
+    },
+    "admin": {
+      "created": {
+        "label": "Créé",
+        "description": "Le dossier a été créé"
+      },
+      "inProgress": {
+        "label": "En cours",
+        "description": "Le dossier est en cours de traitement"
+      },
+      "underReview": {
+        "label": "En révision",
+        "description": "Révision et vérification"
+      },
+      "completed": {
+        "label": "Terminé",
+        "description": "Toutes les tâches terminées"
+      },
+      "closed": {
+        "label": "Fermé",
+        "description": "Dossier fermé"
+      }
+    }
   },
   "auditLog": {
     "title": "Journal d'audit",

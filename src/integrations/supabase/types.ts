@@ -3802,6 +3802,10 @@ export type Database = {
         Args: { p_dossier_id: string }
         Returns: Json
       }
+      check_organization_admin: {
+        Args: { org_id: string }
+        Returns: boolean
+      }
       check_password_reset_rate_limit: {
         Args: { p_email: string }
         Returns: Json
@@ -3982,6 +3986,12 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_platform_admin_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+        }[]
+      }
       get_user_data_export: {
         Args: { p_user_id: string }
         Returns: Json
@@ -3993,6 +4003,17 @@ export type Database = {
         }
         Returns: {
           organization_id: string
+        }[]
+      }
+      get_user_organization_roles: {
+        Args: { target_user_id?: string }
+        Returns: {
+          is_admin: boolean
+          organization_id: string
+          organization_name: string
+          organization_type: string
+          role: string
+          user_id: string
         }[]
       }
       get_user_roles: {
@@ -4019,6 +4040,10 @@ export type Database = {
           _roles: Database["public"]["Enums"]["app_role"][]
           _user_id: string
         }
+        Returns: boolean
+      }
+      has_platform_admin_role: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
       has_role: {

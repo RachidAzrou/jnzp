@@ -230,7 +230,7 @@ const Instellingen = () => {
                     <Shield className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium">Configuratie</p>
+                    <p className="text-sm text-muted-foreground font-medium">{t("settings.configuration")}</p>
                     <h1 className="text-2xl font-bold tracking-tight">{t("settings.title")}</h1>
                   </div>
                 </div>

@@ -54,8 +54,8 @@ export const GDPRRequestPanel = () => {
     } catch (error: any) {
       console.error('Error fetching GDPR requests:', error);
       toast({
-        title: 'Fout',
-        description: 'Kon GDPR verzoeken niet laden',
+        title: t("common.error"),
+        description: t("gdpr.errorLoadingRequests"),
         variant: 'destructive',
       });
     } finally {
@@ -73,7 +73,7 @@ export const GDPRRequestPanel = () => {
       const result = data as any;
       if (result?.success) {
         toast({
-          title: 'Verzoek ingediend',
+          title: t("gdpr.requestSubmitted"),
           description: result.message,
         });
         fetchRequests();
@@ -83,8 +83,8 @@ export const GDPRRequestPanel = () => {
     } catch (error: any) {
       console.error('Error requesting data export:', error);
       toast({
-        title: 'Fout',
-        description: error.message || 'Kon data export niet aanvragen',
+        title: t("common.error"),
+        description: error.message || t("gdpr.errorRequestingExport"),
         variant: 'destructive',
       });
     } finally {
@@ -95,8 +95,8 @@ export const GDPRRequestPanel = () => {
   const handleDataDeletion = async () => {
     if (!deletionReason.trim()) {
       toast({
-        title: 'Reden vereist',
-        description: 'Geef een reden voor het verwijderen van uw gegevens',
+        title: t("gdpr.deletionReasonRequired"),
+        description: t("gdpr.deletionReasonRequiredDesc"),
         variant: 'destructive',
       });
       return;
@@ -113,7 +113,7 @@ export const GDPRRequestPanel = () => {
       const result = data as any;
       if (result?.success) {
         toast({
-          title: 'Verzoek ingediend',
+          title: t("gdpr.requestSubmitted"),
           description: result.message,
         });
         setDeletionReason('');
@@ -124,8 +124,8 @@ export const GDPRRequestPanel = () => {
     } catch (error: any) {
       console.error('Error requesting data deletion:', error);
       toast({
-        title: 'Fout',
-        description: error.message || 'Kon data verwijdering niet aanvragen',
+        title: t("common.error"),
+        description: error.message || t("gdpr.errorRequestingDeletion"),
         variant: 'destructive',
       });
     } finally {
@@ -136,52 +136,52 @@ export const GDPRRequestPanel = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return <Badge className="bg-green-600">Voltooid</Badge>;
+        return <Badge className="bg-green-600">{t("gdpr.statusCompleted")}</Badge>;
       case 'PROCESSING':
-        return <Badge variant="secondary">In behandeling</Badge>;
+        return <Badge variant="secondary">{t("gdpr.statusProcessing")}</Badge>;
       case 'REJECTED':
-        return <Badge variant="destructive">Afgewezen</Badge>;
+        return <Badge variant="destructive">{t("gdpr.statusRejected")}</Badge>;
       case 'PENDING':
       default:
-        return <Badge variant="outline">In afwachting</Badge>;
+        return <Badge variant="outline">{t("gdpr.statusPending")}</Badge>;
     }
   };
 
   const getRequestTypeLabel = (type: string) => {
     switch (type) {
       case 'DATA_EXPORT':
-        return 'Data Export';
+        return t("gdpr.requestTypeExport");
       case 'DATA_DELETION':
-        return 'Data Verwijdering';
+        return t("gdpr.requestTypeDeletion");
       case 'DATA_ACCESS':
-        return 'Data Inzage';
+        return t("gdpr.requestTypeAccess");
       case 'DATA_PORTABILITY':
-        return 'Data Overdraagbaarheid';
+        return t("gdpr.requestTypePortability");
       default:
         return type;
     }
   };
 
   if (loading) {
-    return <div>Laden...</div>;
+    return <div>{t("common.loading")}</div>;
   }
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Privacy & Gegevens</CardTitle>
+          <CardTitle>{t("gdpr.title")}</CardTitle>
           <CardDescription>
-            Beheer uw persoonlijke gegevens en privacy instellingen conform de AVG/GDPR
+            {t("gdpr.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Data Export</CardTitle>
+                <CardTitle className="text-lg">{t("gdpr.dataExport")}</CardTitle>
                 <CardDescription>
-                  Download al uw gegevens in een gestructureerd formaat
+                  {t("gdpr.dataExportDesc")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -191,10 +191,10 @@ export const GDPRRequestPanel = () => {
                   className="w-full"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Verzoek Data Export
+                  {t("gdpr.requestDataExport")}
                 </Button>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Uw gegevens worden binnen 30 dagen verwerkt
+                  {t("gdpr.processingTime")}
                 </p>
               </CardContent>
             </Card>
@@ -202,10 +202,10 @@ export const GDPRRequestPanel = () => {
             <Card className="border-destructive/50">
               <CardHeader>
                 <CardTitle className="text-lg text-destructive">
-                  Data Verwijdering
+                  {t("gdpr.dataDeletion")}
                 </CardTitle>
                 <CardDescription>
-                  Verzoek om al uw gegevens te laten verwijderen
+                  {t("gdpr.dataDeletionDesc")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -213,20 +213,19 @@ export const GDPRRequestPanel = () => {
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full" disabled={requesting}>
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Verzoek Data Verwijdering
+                      {t("gdpr.requestDataDeletion")}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Data verwijdering aanvragen</AlertDialogTitle>
+                      <AlertDialogTitle>{t("gdpr.deletionDialogTitle")}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Deze actie kan niet ongedaan worden gemaakt. Al uw gegevens worden permanent
-                        verwijderd na goedkeuring van dit verzoek.
+                        {t("gdpr.deletionDialogDesc")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="space-y-2 py-4">
                       <Label htmlFor="deletion-reason">
-                        Reden voor verwijdering <span className="text-destructive">*</span>
+                        {t("gdpr.deletionReasonLabel")} <span className="text-destructive">*</span>
                       </Label>
                       <Textarea
                         id="deletion-reason"
@@ -237,18 +236,18 @@ export const GDPRRequestPanel = () => {
                       />
                     </div>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                      <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDataDeletion}
                         className="bg-destructive hover:bg-destructive/90"
                       >
-                        Verzoek Indienen
+                        {t("gdpr.submitRequest")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Let op: Dit verwijdert al uw gegevens permanent
+                  {t("gdpr.deletionWarning")}
                 </p>
               </CardContent>
             </Card>
@@ -259,8 +258,8 @@ export const GDPRRequestPanel = () => {
       {requests.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Mijn Verzoeken</CardTitle>
-            <CardDescription>Overzicht van uw GDPR verzoeken</CardDescription>
+            <CardTitle>{t("gdpr.myRequests")}</CardTitle>
+            <CardDescription>{t("gdpr.myRequestsDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -278,12 +277,12 @@ export const GDPRRequestPanel = () => {
                       {getStatusBadge(request.status)}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Aangevraagd op:{' '}
+                      {t("gdpr.requestedOn")}{' '}
                       {new Date(request.requested_at).toLocaleDateString('nl-NL')}
                     </p>
                     {request.processed_at && (
                       <p className="text-sm text-muted-foreground">
-                        Verwerkt op:{' '}
+                        {t("gdpr.processedOn")}{' '}
                         {new Date(request.processed_at).toLocaleDateString('nl-NL')}
                       </p>
                     )}
@@ -298,7 +297,7 @@ export const GDPRRequestPanel = () => {
                     <Button variant="outline" asChild>
                       <a href={request.export_url} download>
                         <Download className="h-4 w-4 mr-2" />
-                        Download
+                        {t("common.download")}
                       </a>
                     </Button>
                   )}

@@ -202,14 +202,14 @@ const Archief = () => {
     let csvContent = "";
     
     if (activeTab === "dossiers") {
-      csvContent = "Display ID,Overleden,Flow,Afgesloten op\n";
+      csvContent = `${t("archive.displayId")},${t("archive.deceased")},${t("archive.flow")},${t("archive.closedOn")}\n`;
       filteredItems.forEach((item) => {
         csvContent += `${item.display_id || ""},${item.deceased_name || ""},${item.flow || ""},${formatDate(item.updated_at)}\n`;
       });
     } else {
-      csvContent = "Taak,Dossier ID,Overleden,Afgesloten op,Toegewezen aan\n";
+      csvContent = `${t("archive.task")},${t("archive.dossierId")},${t("archive.deceased")},${t("archive.completedOn")},${t("archive.assignedTo")}\n`;
       filteredItems.forEach((item) => {
-        csvContent += `${item.title || ""},${item.dossier?.display_id || "N/A"},${item.dossier?.deceased_name || "N/A"},${formatDate(item.completed_at)},${item.assignee?.display_name || "Niet toegewezen"}\n`;
+        csvContent += `${item.title || ""},${item.dossier?.display_id || "N/A"},${item.dossier?.deceased_name || "N/A"},${formatDate(item.completed_at)},${item.assignee?.display_name || t("archive.notAssigned")}\n`;
       });
     }
 
@@ -242,9 +242,9 @@ const Archief = () => {
 
   const getFlowLabel = (flow: string) => {
     const flowMap: Record<string, string> = {
-      'LOC': 'Lokale uitvaart',
-      'REP': 'Repatriëring',
-      'UNSET': 'Niet ingesteld',
+      'LOC': t("archive.localFuneral"),
+      'REP': t("archive.repatriation"),
+      'UNSET': t("archive.notSet"),
     };
     return flowMap[flow] || flow;
   };
@@ -352,9 +352,9 @@ const Archief = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Display ID</TableHead>
-                      <TableHead>Overleden</TableHead>
-                      <TableHead>Flow</TableHead>
+                      <TableHead>{t("archive.displayId")}</TableHead>
+                      <TableHead>{t("archive.deceased")}</TableHead>
+                      <TableHead>{t("archive.flow")}</TableHead>
                       <TableHead>{t("archive.closedOn")}</TableHead>
                       <TableHead>{t("archive.actions")}</TableHead>
                     </TableRow>
@@ -429,9 +429,9 @@ const Archief = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>{t("archive.task")}</TableHead>
-                      <TableHead>Dossier</TableHead>
-                      <TableHead>Overleden</TableHead>
-                      <TableHead>Flow</TableHead>
+                      <TableHead>{t("common.dossier")}</TableHead>
+                      <TableHead>{t("archive.deceased")}</TableHead>
+                      <TableHead>{t("archive.flow")}</TableHead>
                       <TableHead>{t("archive.priority")}</TableHead>
                       <TableHead>{t("archive.closedOn")}</TableHead>
                       <TableHead>{t("archive.assignedTo")}</TableHead>
@@ -441,7 +441,7 @@ const Archief = () => {
                     {currentItems.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                          {t("archive.noClosedTasks")}
+                          {t("archive.noTasksFound")}
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -458,7 +458,7 @@ const Archief = () => {
                             {formatDate(task.completed_at)}
                           </TableCell>
                           <TableCell className="text-sm">
-                            {task.assignee?.display_name || "Niet toegewezen"}
+                            {task.assignee?.display_name || t("archive.notAssigned")}
                           </TableCell>
                         </TableRow>
                       ))
@@ -470,7 +470,7 @@ const Archief = () => {
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between mt-6 pt-6 border-t">
                     <p className="text-sm text-muted-foreground">
-                      Pagina {currentPage} van {totalPages} ({filteredItems.length} resultaten)
+                      {t("archive.page")} {currentPage} {t("archive.of")} {totalPages} ({filteredItems.length} {t("archive.results")})
                     </p>
                     <div className="flex items-center gap-2">
                       <Button
@@ -502,17 +502,17 @@ const Archief = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Taak</TableHead>
-                      <TableHead>Prioriteit</TableHead>
-                      <TableHead>Afgesloten op</TableHead>
-                      <TableHead>Toegewezen aan</TableHead>
+                      <TableHead>{t("archive.task")}</TableHead>
+                      <TableHead>{t("archive.priority")}</TableHead>
+                      <TableHead>{t("archive.completedOn")}</TableHead>
+                      <TableHead>{t("archive.assignedTo")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {currentItems.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                          Geen losse taken gevonden
+                          {t("archive.noLooseTasksFound")}
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -524,7 +524,7 @@ const Archief = () => {
                             {formatDate(task.completed_at)}
                           </TableCell>
                           <TableCell className="text-sm">
-                            {task.assignee?.display_name || "Niet toegewezen"}
+                            {task.assignee?.display_name || t("archive.notAssigned")}
                           </TableCell>
                         </TableRow>
                       ))
@@ -536,7 +536,7 @@ const Archief = () => {
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between mt-6 pt-6 border-t">
                     <p className="text-sm text-muted-foreground">
-                      Pagina {currentPage} van {totalPages} ({filteredItems.length} resultaten)
+                      {t("archive.page")} {currentPage} {t("archive.of")} {totalPages} ({filteredItems.length} {t("archive.results")})
                     </p>
                     <div className="flex items-center gap-2">
                       <Button

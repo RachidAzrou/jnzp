@@ -309,6 +309,66 @@
     "completed": "Terminé",
     "failed": "Échoué"
   },
+  "holdDialog": {
+    "trigger": "Mettre en attente",
+    "title": "Mettre le dossier en attente",
+    "description": "Mettre temporairement ce dossier en attente",
+    "reason": "Raison de la mise en attente",
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
+  },
+  "statusChanger": {
+    "title": "Changer le statut",
+    "currentStatus": "Statut actuel",
+    "newStatus": "Nouveau statut",
+    "reason": "Raison du changement"
+  },
+  "auditLog": {
+    "title": "Journal d'audit",
+    "timestamp": "Horodatage",
+    "user": "Utilisateur",
+    "role": "Rôle",
+    "action": "Action",
+    "details": "Détails",
+    "roleFuneralDirector": "Directeur funéraire",
+    "roleAdmin": "Administrateur",
+    "roleFamily": "Famille",
+    "roleInsurer": "Assureur",
+    "dossierStatusOverride": "Remplacement du statut du dossier",
+    "statusChanged": "Statut modifié"
+  },
+  "obituary": {
+    "title": "Avis de décès",
+    "edit": "Modifier",
+    "editDescription": "Modifier les détails de l'avis de décès",
+    "noObituary": "Aucun avis de décès créé"
+  },
+  "service": {
+    "edit": "Modifier",
+    "status": "Statut",
+    "dateTime": "Date et heure",
+    "location": "Lieu",
+    "notScheduled": "Pas encore prévu",
+    "planned": "Planifié"
+  },
+  "internalNotes": {
+    "title": "Notes internes",
+    "visibilityNote": "Visible uniquement par les employés de votre organisation",
+    "addNotes": "Ajouter des notes...",
+    "edit": "Modifier"
+  },
+  "timeline": {
+    "title": "Chronologie",
+    "description": "Aperçu chronologique de tous les événements",
+    "eventTaskCreated": "Tâche créée",
+    "eventStatusChanged": "Statut modifié",
+    "system": "Système",
+    "typeEvent": "Événement",
+    "daysAgo": "jours passés"
+  },
+  "documentUpload": {
+    "trigger": "Téléverser un document"
+  },
   "kpi": {
     "runningDossiers": "Dossiers en cours",
     "packageComplete": "Paquet complet",

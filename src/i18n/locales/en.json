@@ -314,6 +314,66 @@
     "completed": "Completed",
     "failed": "Failed"
   },
+  "holdDialog": {
+    "trigger": "Place Hold",
+    "title": "Place Dossier On-Hold",
+    "description": "Place this dossier temporarily on-hold",
+    "reason": "Reason for hold",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "statusChanger": {
+    "title": "Change Status",
+    "currentStatus": "Current status",
+    "newStatus": "New status",
+    "reason": "Reason for change"
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "timestamp": "Timestamp",
+    "user": "User",
+    "role": "Role",
+    "action": "Action",
+    "details": "Details",
+    "roleFuneralDirector": "Funeral Director",
+    "roleAdmin": "Administrator",
+    "roleFamily": "Family",
+    "roleInsurer": "Insurer",
+    "dossierStatusOverride": "Dossier status override",
+    "statusChanged": "Status changed"
+  },
+  "obituary": {
+    "title": "Obituary",
+    "edit": "Edit",
+    "editDescription": "Edit obituary details",
+    "noObituary": "No obituary created yet"
+  },
+  "service": {
+    "edit": "Edit",
+    "status": "Status",
+    "dateTime": "Date & Time",
+    "location": "Location",
+    "notScheduled": "Not scheduled yet",
+    "planned": "Planned"
+  },
+  "internalNotes": {
+    "title": "Internal Notes",
+    "visibilityNote": "Only visible to employees of your organization",
+    "addNotes": "Add notes...",
+    "edit": "Edit"
+  },
+  "timeline": {
+    "title": "Timeline",
+    "description": "Chronological overview of all events",
+    "eventTaskCreated": "Task created",
+    "eventStatusChanged": "Status changed",
+    "system": "System",
+    "typeEvent": "Event",
+    "daysAgo": "days ago"
+  },
+  "documentUpload": {
+    "trigger": "Upload Document"
+  },
   "forms": {
     "requiredField": "This field is required",
     "invalidEmail": "Invalid email address",

@@ -162,6 +162,66 @@
     "completed": "Voltooid",
     "failed": "Mislukt"
   },
+  "holdDialog": {
+    "trigger": "Hold Plaatsen",
+    "title": "Dossier On-Hold Plaatsen",
+    "description": "Plaats dit dossier tijdelijk on-hold",
+    "reason": "Reden voor hold",
+    "cancel": "Annuleren",
+    "confirm": "Bevestigen"
+  },
+  "statusChanger": {
+    "title": "Status Wijzigen",
+    "currentStatus": "Huidige status",
+    "newStatus": "Nieuwe status",
+    "reason": "Reden voor wijziging"
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "timestamp": "Tijdstempel",
+    "user": "Gebruiker",
+    "role": "Rol",
+    "action": "Actie",
+    "details": "Details",
+    "roleFuneralDirector": "Uitvaartondernemer",
+    "roleAdmin": "Beheerder",
+    "roleFamily": "Familie",
+    "roleInsurer": "Verzekeraar",
+    "dossierStatusOverride": "Dossier status overschrijven",
+    "statusChanged": "Status gewijzigd"
+  },
+  "obituary": {
+    "title": "Rouwbericht",
+    "edit": "Bewerken",
+    "editDescription": "Bewerk rouwbericht details",
+    "noObituary": "Nog geen rouwbericht opgesteld"
+  },
+  "service": {
+    "edit": "Bewerken",
+    "status": "Status",
+    "dateTime": "Datum & Tijd",
+    "location": "Locatie",
+    "notScheduled": "Nog niet ingepland",
+    "planned": "Gepland"
+  },
+  "internalNotes": {
+    "title": "Interne Notities",
+    "visibilityNote": "Alleen zichtbaar voor medewerkers van uw organisatie",
+    "addNotes": "Voeg notities toe...",
+    "edit": "Bewerken"
+  },
+  "timeline": {
+    "title": "Tijdlijn",
+    "description": "Chronologisch overzicht van alle gebeurtenissen",
+    "eventTaskCreated": "Taak aangemaakt",
+    "eventStatusChanged": "Status gewijzigd",
+    "system": "Systeem",
+    "typeEvent": "Gebeurtenis",
+    "daysAgo": "dagen geleden"
+  },
+  "documentUpload": {
+    "trigger": "Document Uploaden"
+  },
   "placeholders": {
     "searchNameDossierID": "Zoek op naam of dossier ID",
     "unexpectedCircumstances": "Bijv. onverwachte omstandigheden",

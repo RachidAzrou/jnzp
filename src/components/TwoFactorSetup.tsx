@@ -245,21 +245,21 @@ export const TwoFactorSetup = () => {
     return (
       <div className="space-y-6">
         <div className="text-center space-y-4">
-          <h3 className="font-semibold text-lg">Stap 1: Download een authenticator app</h3>
+          <h3 className="font-semibold text-lg">{t("2fa.setup.step1Title")}</h3>
           <p className="text-sm text-muted-foreground">
-            Download één van deze apps op uw telefoon:
+            {t("2fa.setup.step1Description")}
           </p>
           <ul className="text-sm space-y-1 text-left max-w-xs mx-auto">
-            <li>• <strong>Google Authenticator</strong> (iOS/Android)</li>
-            <li>• <strong>Microsoft Authenticator</strong> (iOS/Android)</li>
-            <li>• <strong>Authy</strong> (iOS/Android/Desktop)</li>
+            <li>• <strong>{t("2fa.setup.googleAuth")}</strong> (iOS/Android)</li>
+            <li>• <strong>{t("2fa.setup.microsoftAuth")}</strong> (iOS/Android)</li>
+            <li>• <strong>{t("2fa.setup.authy")}</strong> (iOS/Android/Desktop)</li>
           </ul>
         </div>
 
         <div className="text-center space-y-4">
-          <h3 className="font-semibold text-lg">Stap 2: Scan de QR code</h3>
+          <h3 className="font-semibold text-lg">{t("2fa.setup.step2Title")}</h3>
           <p className="text-sm text-muted-foreground">
-            Open de app en scan deze QR code
+            {t("2fa.setup.step2Description")}
           </p>
           {qrCode && (
             <div className="flex justify-center">
@@ -269,24 +269,24 @@ export const TwoFactorSetup = () => {
         </div>
 
         <div className="space-y-2">
-          <h3 className="font-semibold text-center">Stap 3: Voer de code in</h3>
-          <Label htmlFor="verificationCode">Verificatiecode uit de app</Label>
+          <h3 className="font-semibold text-center">{t("2fa.setup.step3Title")}</h3>
+          <Label htmlFor="verificationCode">{t("2fa.setup.verificationCodeLabel")}</Label>
           <Input
             id="verificationCode"
-            placeholder="000000"
+            placeholder={t("2fa.setup.verificationCodePlaceholder")}
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
             maxLength={6}
           />
           <p className="text-xs text-muted-foreground">
-            Voer de 6-cijferige code in uit uw authenticator app
+            {t("2fa.setup.verificationCodeHint")}
           </p>
         </div>
 
         <div className="space-y-4 p-4 bg-muted rounded-lg">
-          <h4 className="font-semibold text-sm">Recovery Codes</h4>
+          <h4 className="font-semibold text-sm">{t("2fa.setup.recoveryCodesTitle")}</h4>
           <p className="text-xs text-muted-foreground">
-            Bewaar deze codes op een veilige plek. U kunt ze gebruiken als u geen toegang heeft tot uw authenticator app.
+            {t("2fa.setup.recoveryCodesDescription")}
           </p>
           <div className="grid grid-cols-2 gap-2 font-mono text-sm">
             {recoveryCodes.map((code, i) => (
@@ -298,11 +298,11 @@ export const TwoFactorSetup = () => {
           <div className="flex gap-2">
             <Button size="sm" variant="outline" onClick={copyRecoveryCodes}>
               <Copy className="h-4 w-4 mr-2" />
-              Kopiëren
+              {t("2fa.setup.copy")}
             </Button>
             <Button size="sm" variant="outline" onClick={downloadRecoveryCodes}>
               <Download className="h-4 w-4 mr-2" />
-              Downloaden
+              {t("2fa.setup.download")}
             </Button>
           </div>
         </div>
@@ -310,10 +310,10 @@ export const TwoFactorSetup = () => {
         <div className="flex gap-2">
           <Button onClick={handleVerifyAndEnable} disabled={saving || verificationCode.length !== 6}>
             {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Verifiëren en inschakelen
+            {t("2fa.setup.verifyAndEnable")}
           </Button>
           <Button variant="outline" onClick={() => setSetupMode(false)}>
-            Annuleren
+            {t("2fa.setup.cancel")}
           </Button>
         </div>
       </div>
@@ -326,34 +326,33 @@ export const TwoFactorSetup = () => {
         <div className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-primary" />
           <div>
-            <p className="font-medium">Status</p>
+            <p className="font-medium">{t("2fa.setup.statusLabel")}</p>
             <p className="text-sm text-muted-foreground">
-              {enabled ? "2FA is ingeschakeld" : "2FA is uitgeschakeld"}
+              {enabled ? t("2fa.setup.enabled") : t("2fa.setup.disabled")}
             </p>
           </div>
         </div>
         <div className={`px-3 py-1 rounded-full text-sm ${
           enabled ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
         }`}>
-          {enabled ? "Actief" : "Inactief"}
+          {enabled ? t("2fa.setup.active") : t("2fa.setup.inactive")}
         </div>
       </div>
 
       {!enabled ? (
         <div className="space-y-4 pt-4">
           <p className="text-sm text-muted-foreground">
-            Tweefactorauthenticatie voegt een extra beveiligingslaag toe aan uw account.
-            Bij het inloggen heeft u naast uw wachtwoord ook een verificatiecode nodig.
+            {t("2fa.setup.description")}
           </p>
           <Button onClick={generateSecret} disabled={saving}>
             {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            2FA inschakelen
+            {t("2fa.setup.enable")}
           </Button>
         </div>
       ) : (
         <div className="space-y-4 pt-4">
           <p className="text-sm text-muted-foreground">
-            Uw account is beveiligd met tweefactorauthenticatie.
+            {t("2fa.setup.enabledDescription")}
           </p>
           <Button 
             variant="destructive" 
@@ -361,7 +360,7 @@ export const TwoFactorSetup = () => {
             disabled={saving}
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            2FA uitschakelen
+            {t("2fa.setup.disable")}
           </Button>
         </div>
       )}

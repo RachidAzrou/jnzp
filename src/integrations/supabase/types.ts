@@ -2312,6 +2312,53 @@ export type Database = {
           },
         ]
       }
+      org_verifications: {
+        Row: {
+          business_number: string
+          comparison_result: Json | null
+          created_at: string | null
+          id: string
+          kbo_data: Json | null
+          organization_id: string | null
+          status: string
+          user_input: Json | null
+          verification_source: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          business_number: string
+          comparison_result?: Json | null
+          created_at?: string | null
+          id?: string
+          kbo_data?: Json | null
+          organization_id?: string | null
+          status: string
+          user_input?: Json | null
+          verification_source?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          business_number?: string
+          comparison_result?: Json | null
+          created_at?: string | null
+          id?: string
+          kbo_data?: Json | null
+          organization_id?: string | null
+          status?: string
+          user_input?: Json | null
+          verification_source?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_verifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_contacts: {
         Row: {
           created_at: string | null

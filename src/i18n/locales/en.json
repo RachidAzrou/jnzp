@@ -190,6 +190,8 @@
     "city": "City",
     "nextStep": "Next step",
     "backToOrganization": "Back to organization",
+    "kboVerification": "CBE Verification",
+    "kboVerificationDescription": "We verify your enterprise number and details with the Crossroads Bank for Enterprises",
     "contactPerson": "Contact person",
     "phone": "Phone number",
     "createAccount": "Create account",

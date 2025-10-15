@@ -136,6 +136,8 @@
     "city": "Stad",
     "nextStep": "Volgende stap",
     "backToOrganization": "Terug naar organisatie",
+    "kboVerification": "KBO Verificatie",
+    "kboVerificationDescription": "We verifiëren uw ondernemingsnummer en gegevens met de Kruispuntbank van Ondernemingen",
     "contactPerson": "Contactpersoon",
     "phone": "Telefoonnummer",
     "createAccount": "Account aanmaken",

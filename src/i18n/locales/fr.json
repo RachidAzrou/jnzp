@@ -1299,6 +1299,8 @@
     "city": "Ville",
     "nextStep": "Étape suivante",
     "backToOrganization": "Retour à l'organisation",
+    "kboVerification": "Vérification BCE",
+    "kboVerificationDescription": "Nous vérifions votre numéro d'entreprise et vos données avec la Banque-Carrefour des Entreprises",
     "contactPerson": "Personne de contact",
     "phone": "Numéro de téléphone",
     "createAccount": "Créer un compte",

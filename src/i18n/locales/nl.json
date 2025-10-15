@@ -562,5 +562,5 @@
       "description": "Activeer twee-factor authenticatie voor extra beveiliging",
       "enable": "2FA Activeren"
     }
-  },
+  }
 }

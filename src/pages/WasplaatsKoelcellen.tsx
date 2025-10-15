@@ -6,6 +6,7 @@ import { Plus, Trash2, XCircle, CheckCircle2, Unlock, Refrigerator } from "lucid
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -40,6 +41,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function WasplaatsKoelcellen() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [coolCells, setCoolCells] = useState<CoolCell[]>([]);
@@ -254,7 +256,7 @@ export default function WasplaatsKoelcellen() {
                     </DialogHeader>
 ...
                     <DialogFooter>
-                      <Button onClick={addCoolCell}>Toevoegen</Button>
+                      <Button onClick={addCoolCell}>{t("common.add")}</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>

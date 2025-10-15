@@ -8,8 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Calendar } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function WasplaatsReservaties() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [dossierId, setDossierId] = useState("");
@@ -141,7 +143,7 @@ export default function WasplaatsReservaties() {
 
             <div className="flex gap-2">
               <Button type="submit" disabled={loading}>
-                {loading ? "Opslaan..." : "Reservering Opslaan"}
+                {loading ? t("common.loading") : t("common.save")}
               </Button>
               <Button
                 type="button"

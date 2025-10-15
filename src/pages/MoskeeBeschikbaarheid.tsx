@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format, startOfWeek, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTranslation } from "react-i18next";
 import { Textarea } from "@/components/ui/textarea";
 import { X, Calendar } from "lucide-react";
 import {
@@ -35,6 +36,7 @@ type DayBlock = {
 };
 
 export default function MoskeeBeschikbaarheid() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [availability, setAvailability] = useState<Record<number, WeeklyAvailability>>({});
@@ -320,7 +322,7 @@ export default function MoskeeBeschikbaarheid() {
         <CardHeader className="pb-4">
           <div className="flex justify-between items-center">
             <CardTitle className="text-lg font-medium">Standaard beschikbaarheid</CardTitle>
-            <Button onClick={handleSave} size="sm">Opslaan</Button>
+            <Button onClick={handleSave} size="sm">{t("common.save")}</Button>
           </div>
         </CardHeader>
         <CardContent>

@@ -363,13 +363,13 @@ export default function MortuariumFacturatie() {
               variant="outline"
               onClick={() => setPaidDialogOpen(false)}
             >
-              Annuleren
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={confirmPaid}
               disabled={paidMutation.isPending}
             >
-              {paidMutation.isPending ? "Opslaan..." : "Markeer als betaald"}
+              {paidMutation.isPending ? t("common.loading") : t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>

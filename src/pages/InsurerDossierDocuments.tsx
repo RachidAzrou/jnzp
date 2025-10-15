@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "react-i18next";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { FileText } from "lucide-react";
@@ -22,6 +23,7 @@ const getCurrentDate = () => {
 };
 
 export default function InsurerDossierDocuments() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -261,7 +263,7 @@ export default function InsurerDossierDocuments() {
                       onClick={handleReview}
                       disabled={reviewAction === "none" || updateDocumentMutation.isPending}
                     >
-                      Opslaan beoordeling
+                      {t("common.save")}
                     </Button>
                     <Button 
                       variant="outline" 

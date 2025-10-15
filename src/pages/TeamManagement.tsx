@@ -329,7 +329,7 @@ const TeamManagement = () => {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground pl-15">
-                  Beheer teamleden en uitnodigingen voor uw organisatie
+                  {t("team.subtitle")}
                 </p>
               </div>
             </div>
@@ -340,22 +340,22 @@ const TeamManagement = () => {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-lg font-medium">Teamleden</CardTitle>
+                <CardTitle className="text-lg font-medium">{t("team.members")}</CardTitle>
                 <CardDescription className="text-sm">
-                  Beheer teamleden binnen uw organisatie
+                  {t("team.membersDescription")}
                 </CardDescription>
               </div>
               <Button onClick={() => setShowInviteDialog(true)} size="sm">
                 <UserPlus className="mr-2 h-4 w-4" />
-                Teamlid uitnodigen
+                {t("team.inviteMember")}
               </Button>
             </div>
           </CardHeader>
           <CardContent>
             {teamMembers.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                <p className="text-sm">Nog geen teamleden.</p>
-                <p className="text-xs mt-1">Nodig collega's uit via hun e-mail.</p>
+                <p className="text-sm">{t("team.noMembers")}</p>
+                <p className="text-xs mt-1">{t("team.inviteColleagues")}</p>
               </div>
             ) : (
               <Table>
@@ -418,15 +418,15 @@ const TeamManagement = () => {
 
         <Card className="shadow-md bg-card/50 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Actieve uitnodigingen</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("team.activeInvitations")}</CardTitle>
             <CardDescription className="text-sm">
-              Uitnodigingen die nog niet zijn geaccepteerd
+              {t("team.activeInvitationsDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {invitations.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">
-                Geen actieve uitnodigingen
+                {t("team.noActiveInvitations")}
               </p>
             ) : (
               <Table>
@@ -511,7 +511,7 @@ const TeamManagement = () => {
                 className="rounded border-gray-300"
               />
               <Label htmlFor="isAdmin" className="cursor-pointer">
-                Admin rechten (kan teamleden beheren)
+                {t("team.adminRights")}
               </Label>
             </div>
           </div>

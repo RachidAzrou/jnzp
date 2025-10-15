@@ -563,13 +563,13 @@ export default function FDFacturatie() {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground pl-15">
-                  Beheer verzonden en ontvangen facturen
+                  {t("invoicing.subtitle")}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <Button onClick={() => setShowGenerator(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Nieuwe Factuur
+                  {t("invoicing.newInvoice")}
                 </Button>
               </div>
             </div>
@@ -580,10 +580,10 @@ export default function FDFacturatie() {
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "sent" | "received")} className="space-y-6">
           <TabsList className="bg-card border shadow-sm">
             <TabsTrigger value="sent" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Verzonden facturen
+              {t("invoicing.sentInvoices")}
             </TabsTrigger>
             <TabsTrigger value="received" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Ontvangen facturen
+              {t("invoicing.receivedInvoices")}
             </TabsTrigger>
           </TabsList>
 

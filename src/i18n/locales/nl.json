@@ -192,6 +192,72 @@
       "statusChangeReason": "Bijv. 'Alle documenten goedgekeurd' of 'Familie heeft bevestigd'"
     }
   },
+  "mortuariumReservation": {
+    "title": "Nieuwe mortuarium reservering",
+    "dossier": "Dossier",
+    "mortuarium": "Mortuarium",
+    "date": "Datum",
+    "from": "Van",
+    "to": "Tot",
+    "note": "Notitie (optioneel)",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
+  },
+  "moskeeService": {
+    "title": "Nieuwe Moskee Afspraak",
+    "description": "Plan een Janāza-gebed in bij een moskee",
+    "dossier": "Dossier",
+    "mosque": "Moskee",
+    "date": "Datum",
+    "prayer": "Gebed",
+    "location": "Locatie (optioneel)",
+    "cancel": "Annuleren",
+    "create": "Aanmaken"
+  },
+  "flightPlanning": {
+    "title": "Vluchtplanning voorkeuren",
+    "dossierRepatriation": "Dossier (Repatriëring)",
+    "departureGeneral": "Vertrek (algemeen voor alle reizigers)",
+    "country": "Land",
+    "city": "Stad",
+    "airportCode": "Luchthaven code",
+    "destinationGeneral": "Bestemming (algemeen voor alle reizigers)",
+    "passengers": "Medereizigers",
+    "addPassenger": "Toevoegen",
+    "passengerName": "Naam passagier",
+    "cancel": "Annuleren",
+    "savePreferences": "Voorkeuren opslaan"
+  },
+  "invoicing": {
+    "title": "Facturatie",
+    "subtitle": "Beheer verzonden en ontvangen facturen",
+    "newInvoice": "Nieuwe Factuur",
+    "sentInvoices": "Verzonden facturen",
+    "receivedInvoices": "Ontvangen facturen",
+    "filters": "Filters",
+    "invoicesOverview": "Facturen Overzicht",
+    "allStatuses": "Alle statussen",
+    "noInvoicesReceived": "Geen facturen ontvangen",
+    "mortuariumInvoicesDescription": "Mortuarium facturen gericht aan uw organisatie"
+  },
+  "team": {
+    "title": "Teambeheer",
+    "subtitle": "Beheer teamleden en uitnodigingen voor uw organisatie",
+    "members": "Teamleden",
+    "membersDescription": "Beheer teamleden binnen uw organisatie",
+    "inviteMember": "Teamlid uitnodigen",
+    "noMembers": "Nog geen teamleden.",
+    "inviteColleagues": "Nodig collega's uit via hun e-mail.",
+    "activeInvitations": "Actieve uitnodigingen",
+    "activeInvitationsDescription": "Uitnodigingen die nog niet zijn geaccepteerd",
+    "noActiveInvitations": "Geen actieve uitnodigingen",
+    "inviteMemberTitle": "Teamlid uitnodigen",
+    "inviteMemberDescription": "De uitgenodigde ontvangt een e-mail met activatielink (48u geldig).",
+    "email": "E-mail",
+    "adminRights": "Admin rechten (kan teamleden beheren)",
+    "cancel": "Annuler",
+    "invite": "Uitnodigen"
+  },
   "statusLabels": {
     "fd": {
       "created": {
@@ -546,7 +612,9 @@
   },
   "documents": {
     "title": "Documenten",
-    "subtitle": "Beheer documenten en uploads"
+    "subtitle": "Beheer documenten en uploads",
+    "noDocuments": "Nog geen documenten",
+    "noResults": "Geen resultaten"
   },
   "planning": {
     "organization": "Organisatie",

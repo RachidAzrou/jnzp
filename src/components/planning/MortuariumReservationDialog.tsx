@@ -181,14 +181,14 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle>Nieuwe mortuarium reservering</DialogTitle>
+          <DialogTitle>{t("mortuariumReservation.title")}</DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="max-h-[60vh] pr-4">
           <div className="space-y-4">
             {/* Dossier selectie */}
             <div className="space-y-2">
-              <Label>Dossier</Label>
+              <Label>{t("mortuariumReservation.dossier")}</Label>
               <Select value={selectedDossier} onValueChange={setSelectedDossier}>
                 <SelectTrigger>
                   <SelectValue placeholder={t("placeholders.selectDossier2")} />
@@ -205,7 +205,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
 
             {/* Mortuarium selectie */}
             <div className="space-y-2">
-              <Label>Mortuarium</Label>
+              <Label>{t("mortuariumReservation.mortuarium")}</Label>
               <Select value={selectedMortuarium} onValueChange={setSelectedMortuarium}>
                 <SelectTrigger>
                   <SelectValue placeholder={t("placeholders.selectMortuarium")} />
@@ -222,7 +222,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
 
             {/* Datum selectie */}
             <div className="space-y-2">
-              <Label>Datum</Label>
+              <Label>{t("mortuariumReservation.date")}</Label>
               <Calendar
                 mode="single"
                 selected={selectedDate}

@@ -346,7 +346,7 @@ const Documenten = () => {
                     <TableRow>
                       <TableCell colSpan={7} className="text-center py-8">
                         <p className="text-sm text-muted-foreground">
-                          {documents.length === 0 ? "Nog geen documenten" : "Geen resultaten"}
+                          {documents.length === 0 ? t("documents.noDocuments") : t("documents.noResults")}
                         </p>
                       </TableCell>
                     </TableRow>

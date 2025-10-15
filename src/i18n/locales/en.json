@@ -1025,6 +1025,39 @@
     }
   },
   "gdpr": {
+    "title": "Privacy & Data",
+    "description": "Manage your personal data and privacy settings in accordance with GDPR",
+    "dataExport": "Data Export",
+    "dataExportDesc": "Download all your data in a structured format",
+    "requestDataExport": "Request Data Export",
+    "processingTime": "Your data will be processed within 30 days",
+    "dataDeletion": "Data Deletion",
+    "dataDeletionDesc": "Request deletion of all your data",
+    "requestDataDeletion": "Request Data Deletion",
+    "deletionWarning": "Warning: This will permanently delete all your data",
+    "deletionDialogTitle": "Request Data Deletion",
+    "deletionDialogDesc": "This action cannot be undone. All your data will be permanently deleted after approval of this request.",
+    "deletionReasonLabel": "Reason for deletion",
+    "deletionReasonRequired": "Reason required",
+    "deletionReasonRequiredDesc": "Please provide a reason for deleting your data",
+    "submitRequest": "Submit Request",
+    "myRequests": "My Requests",
+    "myRequestsDesc": "Overview of your GDPR requests",
+    "requestedOn": "Requested on:",
+    "processedOn": "Processed on:",
+    "requestSubmitted": "Request submitted",
+    "requestFailed": "Request failed",
+    "errorLoadingRequests": "Could not load GDPR requests",
+    "errorRequestingExport": "Could not request data export",
+    "errorRequestingDeletion": "Could not request data deletion",
+    "statusCompleted": "Completed",
+    "statusProcessing": "Processing",
+    "statusRejected": "Rejected",
+    "statusPending": "Pending",
+    "requestTypeExport": "Data Export",
+    "requestTypeDeletion": "Data Deletion",
+    "requestTypeAccess": "Data Access",
+    "requestTypePortability": "Data Portability",
     "notesPlaceholder": "Add any notes...",
     "rejectionReasonPlaceholder": "For example: Data cannot be deleted due to ongoing investigation...",
     "internalNotesPlaceholder": "Internal notes..."
@@ -1103,6 +1136,10 @@
       "enable": "Enable 2FA",
       "enabledDescription": "Your account is secured with two-factor authentication.",
       "disable": "Disable 2FA"
+    },
+    "recoveryCodes": {
+      "title": "JanazApp Recovery Codes",
+      "saveSecurely": "Save these codes in a safe place."
     }
   },
   "statusLabels": {

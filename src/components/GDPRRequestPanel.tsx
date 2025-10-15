@@ -78,7 +78,7 @@ export const GDPRRequestPanel = () => {
         });
         fetchRequests();
       } else {
-        throw new Error(result?.error || 'Verzoek mislukt');
+        throw new Error(result?.error || t("gdpr.requestFailed"));
       }
     } catch (error: any) {
       console.error('Error requesting data export:', error);
@@ -119,7 +119,7 @@ export const GDPRRequestPanel = () => {
         setDeletionReason('');
         fetchRequests();
       } else {
-        throw new Error(result?.error || 'Verzoek mislukt');
+        throw new Error(result?.error || t("gdpr.requestFailed"));
       }
     } catch (error: any) {
       console.error('Error requesting data deletion:', error);

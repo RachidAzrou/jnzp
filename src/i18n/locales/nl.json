@@ -941,6 +941,7 @@
     "requestedOn": "Aangevraagd op:",
     "processedOn": "Verwerkt op:",
     "requestSubmitted": "Verzoek ingediend",
+    "requestFailed": "Verzoek mislukt",
     "errorLoadingRequests": "Kon GDPR verzoeken niet laden",
     "errorRequestingExport": "Kon data export niet aanvragen",
     "errorRequestingDeletion": "Kon data verwijdering niet aanvragen",
@@ -1003,12 +1004,46 @@
     }
   },
   "2fa": {
+    "title": "Twee-factor authenticatie",
+    "enterCode": "Voer de 6-cijferige code uit uw authenticator-app in",
+    "enterRecoveryCode": "Voer een herstelcode in",
+    "verificationCode": "Verificatiecode",
+    "recoveryCode": "Herstelcode",
+    "trustDevice": "Vertrouw dit apparaat voor 30 dagen",
+    "verify": "Verifiëren",
+    "useAuthApp": "Gebruik authenticator-app",
+    "useRecoveryCode": "Gebruik herstelcode",
     "setup": {
-      "statusLabel": "2FA Status",
-      "disabled": "Uitgeschakeld",
+      "step1Title": "Stap 1: Download een authenticator-app",
+      "step1Description": "Download een van deze apps op uw telefoon:",
+      "googleAuth": "Google Authenticator",
+      "microsoftAuth": "Microsoft Authenticator",
+      "authy": "Authy",
+      "step2Title": "Stap 2: Scan de QR-code",
+      "step2Description": "Open de app en scan deze QR-code",
+      "step3Title": "Stap 3: Voer de code in",
+      "verificationCodeLabel": "Verificatiecode uit de app",
+      "verificationCodePlaceholder": "000000",
+      "verificationCodeHint": "Voer de 6-cijferige code uit uw authenticator-app in",
+      "recoveryCodesTitle": "Herstelcodes",
+      "recoveryCodesDescription": "Bewaar deze codes op een veilige plek. U kunt ze gebruiken als u geen toegang heeft tot uw authenticator-app.",
+      "copy": "Kopiëren",
+      "download": "Downloaden",
+      "verifyAndEnable": "Verifiëren en inschakelen",
+      "cancel": "Annuleren",
+      "statusLabel": "Status",
+      "enabled": "2FA is ingeschakeld",
+      "disabled": "2FA is uitgeschakeld",
+      "active": "Actief",
       "inactive": "Niet actief",
-      "description": "Activeer twee-factor authenticatie voor extra beveiliging",
-      "enable": "2FA Activeren"
+      "description": "Twee-factor authenticatie voegt een extra beveiligingslaag toe aan uw account. Bij het inloggen heeft u naast uw wachtwoord ook een verificatiecode nodig.",
+      "enable": "2FA Activeren",
+      "enabledDescription": "Uw account is beveiligd met twee-factor authenticatie.",
+      "disable": "2FA Uitschakelen"
+    },
+    "recoveryCodes": {
+      "title": "JanazApp Herstelcodes",
+      "saveSecurely": "Bewaar deze codes op een veilige plek."
     }
   },
   "notifications": {

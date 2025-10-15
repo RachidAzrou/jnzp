@@ -215,7 +215,7 @@ export const TwoFactorSetup = () => {
   };
 
   const downloadRecoveryCodes = () => {
-    const text = `JanazApp Recovery Codes\n\nBewaar deze codes op een veilige plek.\n\n${recoveryCodes.join('\n')}`;
+    const text = `${t("2fa.recoveryCodes.title")}\n\n${t("2fa.recoveryCodes.saveSecurely")}\n\n${recoveryCodes.join('\n')}`;
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

@@ -237,6 +237,7 @@
     "loginButton": "Log in",
     "alreadyHaveAccount": "Already have an account?",
     "loginHere": "Log in here",
+    "verificationSuccessful": "Verification successful",
     "passwordRequirements": "Password requirements",
     "minLength": "Minimum 12 characters",
     "minCharacters": "Minimum 12 characters required",

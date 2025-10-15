@@ -29,6 +29,10 @@ interface Notification {
     document_name?: string;
     fd_name?: string;
     document_type?: string;
+    org_name?: string;
+    name?: string;
+    dossier_ref?: string;
+    insurer_name?: string;
   };
   is_read: boolean;
   created_at: string;
@@ -214,6 +218,33 @@ export function NotificationBell() {
         return t("notifications.insurerNewDocuments", { deceased_name: notification.meta.deceased_name || '' });
       case 'INSURER_DOSSIER_COMPLETED':
         return t("notifications.insurerDossierCompleted", { deceased_name: notification.meta.deceased_name || '' });
+      
+      // Platform Admin notifications
+      case 'ADMIN_NEW_ORG_REGISTRATION':
+        return t("notifications.adminNewOrgRegistration", { org_name: notification.meta.org_name || '' });
+      case 'ADMIN_NEW_USER_NO_ORG':
+        return t("notifications.adminNewUserNoOrg", { name: notification.meta.name || '' });
+      case 'ADMIN_ORG_PENDING_APPROVAL':
+        return t("notifications.adminOrgPendingApproval", { org_name: notification.meta.org_name || '' });
+      case 'ADMIN_DOSSIER_STAGNATION':
+        return t("notifications.adminDossierStagnation", { dossier_ref: notification.meta.dossier_ref || '' });
+      case 'ADMIN_FD_REJECTED_DOSSIER':
+        return t("notifications.adminFdRejectedDossier", { 
+          fd_name: notification.meta.fd_name || '',
+          dossier_ref: notification.meta.dossier_ref || ''
+        });
+      case 'ADMIN_NO_FD_AVAILABLE':
+        return t("notifications.adminNoFdAvailable", { dossier_ref: notification.meta.dossier_ref || '' });
+      case 'ADMIN_INSURANCE_REJECTED':
+        return t("notifications.adminInsuranceRejected", { 
+          insurer_name: notification.meta.insurer_name || '',
+          deceased_name: notification.meta.deceased_name || ''
+        });
+      case 'ADMIN_MORTUARIUM_REJECTED':
+        return t("notifications.adminMortuariumRejected", { 
+          mortuarium_name: notification.meta.mortuarium_name || '',
+          deceased_name: notification.meta.deceased_name || ''
+        });
       
       default:
         return t("notifications.newNotification");

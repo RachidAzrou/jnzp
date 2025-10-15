@@ -955,6 +955,14 @@
     "insurerNewDossier": "Er is een nieuw dossier voor {{deceased_name}}. Controleer de polisgegevens",
     "insurerVerificationRequested": "{{fd_name}} vraagt bevestiging van de polis voor {{deceased_name}}",
     "insurerNewDocuments": "Er zijn nieuwe documenten toegevoegd aan het dossier van {{deceased_name}}",
-    "insurerDossierCompleted": "Het dossier van {{deceased_name}} is afgesloten"
+    "insurerDossierCompleted": "Het dossier van {{deceased_name}} is afgesloten",
+    "adminNewOrgRegistration": "{{org_name}} heeft zich geregistreerd. Wacht op validatie",
+    "adminNewUserNoOrg": "{{name}} heeft een account aangemaakt. Controleer organisatiekoppeling",
+    "adminOrgPendingApproval": "{{org_name}} wacht op verificatie",
+    "adminDossierStagnation": "Dossier {{dossier_ref}} is al meer dan 48u onbewerkt",
+    "adminFdRejectedDossier": "{{fd_name}} heeft dossier {{dossier_ref}} geweigerd",
+    "adminNoFdAvailable": "Er is geen FD beschikbaar voor dossier {{dossier_ref}}",
+    "adminInsuranceRejected": "Verzekeraar {{insurer_name}} weigerde de polis voor {{deceased_name}}",
+    "adminMortuariumRejected": "{{mortuarium_name}} kon reservatie niet bevestigen voor {{deceased_name}}"
   }
 }

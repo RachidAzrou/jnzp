@@ -2143,6 +2143,14 @@
     "insurerNewDossier": "Un nouveau dossier a été reçu pour {{deceased_name}}. Vérifiez les détails de la police",
     "insurerVerificationRequested": "{{fd_name}} demande confirmation de la police pour {{deceased_name}}",
     "insurerNewDocuments": "De nouveaux documents ont été ajoutés au dossier de {{deceased_name}}",
-    "insurerDossierCompleted": "Le dossier de {{deceased_name}} a été clôturé"
+    "insurerDossierCompleted": "Le dossier de {{deceased_name}} a été clôturé",
+    "adminNewOrgRegistration": "{{org_name}} s'est inscrit. En attente de validation",
+    "adminNewUserNoOrg": "{{name}} a créé un compte. Vérifiez le lien avec l'organisation",
+    "adminOrgPendingApproval": "{{org_name}} est en attente de vérification",
+    "adminDossierStagnation": "Le dossier {{dossier_ref}} n'a pas été traité depuis plus de 48 heures",
+    "adminFdRejectedDossier": "{{fd_name}} a refusé le dossier {{dossier_ref}}",
+    "adminNoFdAvailable": "Aucun directeur de funérailles disponible pour le dossier {{dossier_ref}}",
+    "adminInsuranceRejected": "L'assureur {{insurer_name}} a refusé la police pour {{deceased_name}}",
+    "adminMortuariumRejected": "{{mortuarium_name}} n'a pas pu confirmer la réservation pour {{deceased_name}}"
   }
 }

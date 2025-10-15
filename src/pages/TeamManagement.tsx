@@ -172,7 +172,7 @@ const TeamManagement = () => {
     if (!organizationId || !inviteEmail) {
       toast({
         title: t("team.incompleteData"),
-        description: "Vul alle velden in",
+        description: t("team.fillAllFields"),
         variant: "destructive",
       });
       return;
@@ -192,8 +192,8 @@ const TeamManagement = () => {
       if (response.error) throw response.error;
 
       toast({
-        title: "Uitnodiging verzonden",
-        description: `Uitnodiging verzonden naar ${inviteEmail}`,
+        title: t("team.invitationSent"),
+        description: t("team.invitationSentTo", { email: inviteEmail }),
       });
 
       fetchInvitations(organizationId);
@@ -221,8 +221,8 @@ const TeamManagement = () => {
       if (error) throw error;
 
       toast({
-        title: !currentStatus ? "Geactiveerd" : "Gedeactiveerd",
-        description: `Teamlid is ${!currentStatus ? "geactiveerd" : "gedeactiveerd"}`,
+        title: !currentStatus ? t("team.activated") : t("team.deactivated"),
+        description: t("team.memberStatusChanged", { status: !currentStatus ? t("team.activated").toLowerCase() : t("team.deactivated").toLowerCase() }),
       });
 
       if (organizationId) fetchTeamMembers(organizationId);
@@ -245,8 +245,8 @@ const TeamManagement = () => {
       if (error) throw error;
 
       toast({
-        title: "Verwijderd",
-        description: "Teamlid is verwijderd uit de organisatie",
+        title: t("team.removed"),
+        description: t("team.memberRemoved"),
       });
 
       if (organizationId) fetchTeamMembers(organizationId);
@@ -270,8 +270,8 @@ const TeamManagement = () => {
       if (error) throw error;
 
       toast({
-        title: "Geannuleerd",
-        description: "Uitnodiging is geannuleerd",
+        title: t("team.cancelled"),
+        description: t("team.invitationCancelled"),
       });
 
       if (organizationId) fetchInvitations(organizationId);
@@ -290,17 +290,18 @@ const TeamManagement = () => {
     setCopiedCode(token);
     setTimeout(() => setCopiedCode(null), 2000);
     toast({
-      title: "Link gekopieerd",
-      description: "Uitnodigingslink is gekopieerd",
+      title: t("team.linkCopied"),
+      description: t("team.invitationLinkCopied"),
     });
   };
 
   const getRoleBadge = (role: string, isAdmin: boolean) => {
-    if (role === "funeral_director") return <Badge variant="outline">Uitvaartondernemer {isAdmin && "(Admin)"}</Badge>;
-    if (role === "mosque") return <Badge variant="outline">Moskee {isAdmin && "(Admin)"}</Badge>;
-    if (role === "wasplaats") return <Badge variant="outline">Wasplaats {isAdmin && "(Admin)"}</Badge>;
-    if (role === "insurer") return <Badge variant="outline">Verzekeraar {isAdmin && "(Admin)"}</Badge>;
-    return <Badge variant="outline">{role} {isAdmin && "(Admin)"}</Badge>;
+    const adminText = isAdmin ? ` (${t("team.admin")})` : "";
+    if (role === "funeral_director") return <Badge variant="outline">{t("rolePortals.funeral_director")}{adminText}</Badge>;
+    if (role === "mosque") return <Badge variant="outline">{t("rolePortals.mosque")}{adminText}</Badge>;
+    if (role === "wasplaats") return <Badge variant="outline">{t("rolePortals.wasplaats")}{adminText}</Badge>;
+    if (role === "insurer") return <Badge variant="outline">{t("rolePortals.insurer")}{adminText}</Badge>;
+    return <Badge variant="outline">{role}{adminText}</Badge>;
   };
 
   if (loading) {
@@ -324,8 +325,8 @@ const TeamManagement = () => {
                     <UserPlus className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium">Organisatie</p>
-                    <h1 className="text-2xl font-bold tracking-tight">Teambeheer</h1>
+                    <p className="text-sm text-muted-foreground font-medium">{t("team.organization")}</p>
+                    <h1 className="text-2xl font-bold tracking-tight">{t("team.teamManagement")}</h1>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground pl-15">
@@ -361,11 +362,11 @@ const TeamManagement = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="font-medium text-sm">Naam</TableHead>
-                    <TableHead className="font-medium text-sm">E-mail</TableHead>
-                    <TableHead className="font-medium text-sm">Rol</TableHead>
-                    <TableHead className="font-medium text-sm">Status</TableHead>
-                    <TableHead className="font-medium text-sm">Acties</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.name")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.email")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.role")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.status")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -378,7 +379,7 @@ const TeamManagement = () => {
                       <TableCell>{getRoleBadge(member.role, member.is_admin)}</TableCell>
                       <TableCell>
                         <Badge variant={member.is_active ? "default" : "secondary"}>
-                          {member.is_active ? "Actief" : "Gedeactiveerd"}
+                          {member.is_active ? t("team.active") : t("team.deactivated")}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -432,18 +433,18 @@ const TeamManagement = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="font-medium text-sm">E-mail</TableHead>
-                    <TableHead className="font-medium text-sm">Rol</TableHead>
-                    <TableHead className="font-medium text-sm">Uitgenodigd op</TableHead>
-                    <TableHead className="font-medium text-sm">Verloopt op</TableHead>
-                    <TableHead className="font-medium text-sm">Acties</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.email")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.role")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.invitedOn")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.expiresOn")}</TableHead>
+                    <TableHead className="font-medium text-sm">{t("team.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {invitations.map((invite) => (
                     <TableRow key={invite.id} className="hover:bg-muted/30">
                       <TableCell className="text-sm">{invite.email}</TableCell>
-                      <TableCell><Badge variant="outline">Teamlid</Badge></TableCell>
+                      <TableCell><Badge variant="outline">{t("team.teamMember")}</Badge></TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {new Date(invite.created_at).toLocaleDateString("nl-NL")}
                       </TableCell>
@@ -484,15 +485,15 @@ const TeamManagement = () => {
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Teamlid uitnodigen</DialogTitle>
+            <DialogTitle>{t("team.inviteMember")}</DialogTitle>
             <DialogDescription>
-              De uitgenodigde ontvangt een e-mail met activatielink (48u geldig).
+              {t("team.inviteDescription")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">{t("team.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -522,7 +523,7 @@ const TeamManagement = () => {
             </Button>
             <Button onClick={sendInvitation} disabled={generating || !inviteEmail}>
               {generating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Uitnodigen
+              {t("team.sendInvite")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -534,10 +535,9 @@ const TeamManagement = () => {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Teamlid verwijderen</AlertDialogTitle>
+            <AlertDialogTitle>{t("team.removeMember")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Weet je zeker dat je {deleteConfirm?.name} wilt verwijderen uit deze organisatie?
-              Dit kan niet ongedaan worden gemaakt.
+              {t("team.removeMemberConfirm", { name: deleteConfirm?.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

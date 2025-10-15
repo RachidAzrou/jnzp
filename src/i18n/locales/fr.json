@@ -2109,5 +2109,21 @@
     "organizationData": "Données d'Organisation",
     "organizationName": "Nom de l'organisation",
     "type": "Type"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Tout marquer comme lu",
+    "noNotifications": "Aucune notification",
+    "commentMention": "Vous avez été mentionné dans un commentaire",
+    "commentReply": "Quelqu'un a répondu à votre commentaire",
+    "dossierComment": "Nouveau commentaire dans le dossier {{ref}}",
+    "newNotification": "Nouvelle notification",
+    "fdAssigned": "Vous avez été sélectionné comme directeur funéraire pour {{deceased_name}}",
+    "insuranceApproved": "La couverture a été approuvée pour {{deceased_name}}",
+    "insuranceRejected": "La couverture a été refusée – contactez la famille",
+    "mortuariumConfirmed": "{{mortuarium_name}} a confirmé la réservation",
+    "mortuariumRejected": "{{mortuarium_name}} n'a pas pu confirmer la réservation",
+    "documentUploaded": "La famille a téléchargé un nouveau document pour {{deceased_name}}",
+    "newMessage": "{{sender_name}}: \"{{message_preview}}\""
   }
 }

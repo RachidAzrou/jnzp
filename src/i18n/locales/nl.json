@@ -921,5 +921,21 @@
       "description": "Activeer twee-factor authenticatie voor extra beveiliging",
       "enable": "2FA Activeren"
     }
+  },
+  "notifications": {
+    "title": "Notificaties",
+    "markAllRead": "Markeer alles als gelezen",
+    "noNotifications": "Geen notificaties",
+    "commentMention": "Je bent genoemd in een opmerking",
+    "commentReply": "Iemand reageerde op je opmerking",
+    "dossierComment": "Nieuwe opmerking in dossier {{ref}}",
+    "newNotification": "Nieuwe notificatie",
+    "fdAssigned": "Je bent gekozen als uitvaartverzorger voor {{deceased_name}}",
+    "insuranceApproved": "Dekking is goedgekeurd voor {{deceased_name}}",
+    "insuranceRejected": "Dekking werd geweigerd – contacteer de familie",
+    "mortuariumConfirmed": "{{mortuarium_name}} heeft de reservatie bevestigd",
+    "mortuariumRejected": "{{mortuarium_name}} kon de reservatie niet bevestigen",
+    "documentUploaded": "Familie uploadde een nieuw document voor {{deceased_name}}",
+    "newMessage": "{{sender_name}}: \"{{message_preview}}\""
   }
 }

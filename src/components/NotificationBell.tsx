@@ -20,6 +20,13 @@ interface Notification {
     dossier_id?: string;
     comment_id?: string;
     ref?: string;
+    deceased_name?: string;
+    mortuarium_name?: string;
+    sender_name?: string;
+    message_preview?: string;
+    thread_id?: string;
+    message_id?: string;
+    document_name?: string;
   };
   is_read: boolean;
   created_at: string;
@@ -130,6 +137,23 @@ export function NotificationBell() {
         return t("notifications.commentReply");
       case 'DOSSIER_COMMENT':
         return t("notifications.dossierComment", { ref: notification.meta.ref || '' });
+      case 'FD_ASSIGNED':
+        return t("notifications.fdAssigned", { deceased_name: notification.meta.deceased_name || '' });
+      case 'INSURANCE_APPROVED':
+        return t("notifications.insuranceApproved", { deceased_name: notification.meta.deceased_name || '' });
+      case 'INSURANCE_REJECTED':
+        return t("notifications.insuranceRejected");
+      case 'MORTUARIUM_CONFIRMED':
+        return t("notifications.mortuariumConfirmed", { mortuarium_name: notification.meta.mortuarium_name || '' });
+      case 'MORTUARIUM_REJECTED':
+        return t("notifications.mortuariumRejected", { mortuarium_name: notification.meta.mortuarium_name || '' });
+      case 'DOCUMENT_UPLOADED':
+        return t("notifications.documentUploaded", { deceased_name: notification.meta.deceased_name || '' });
+      case 'NEW_MESSAGE':
+        return t("notifications.newMessage", { 
+          sender_name: notification.meta.sender_name || '',
+          message_preview: notification.meta.message_preview || ''
+        });
       default:
         return t("notifications.newNotification");
     }

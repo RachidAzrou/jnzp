@@ -70,9 +70,9 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
 
   // Columns are fixed, no need to fetch
   const fixedColumns = [
-    { id: 'TE_DOEN', label: 'Te doen' },
-    { id: 'BEZIG', label: 'Bezig' },
-    { id: 'AFGEROND', label: 'Afgerond' },
+    { id: 'TE_DOEN', label: t("tasks.toDo") },
+    { id: 'BEZIG', label: t("tasks.inProgress") },
+    { id: 'AFGEROND', label: t("tasks.done") },
   ];
 
   const fetchDossiers = async () => {
@@ -123,7 +123,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
         const profile = r.profiles;
         const name = profile?.first_name && profile?.last_name 
           ? `${profile.first_name} ${profile.last_name}`
-          : profile?.email || 'Onbekend';
+          : profile?.email || t("tasks.unknown");
         
         return {
           id: r.user_id,
@@ -166,8 +166,8 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
   const handleSubmit = async () => {
     if (!formData.title.trim()) {
       toast({
-        title: "Titel vereist",
-        description: "Voer een titel in voor de taak",
+        title: t("tasks.titleRequired"),
+        description: t("tasks.titleRequiredDesc"),
         variant: "destructive"
       });
       return;
@@ -214,8 +214,8 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
         });
 
         toast({
-          title: "Taak bijgewerkt",
-          description: "De taak is succesvol bijgewerkt"
+          title: t("tasks.taskUpdated"),
+          description: t("tasks.taskUpdatedDesc")
         });
       } else {
         // Get or create board for the organization
@@ -297,8 +297,8 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
         }
 
         toast({
-          title: "Taak aangemaakt",
-          description: "De taak is succesvol aangemaakt"
+          title: t("tasks.taskCreated"),
+          description: t("tasks.taskCreatedDesc")
         });
       }
 
@@ -307,7 +307,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
       resetForm();
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("tasks.error"),
         description: error.message,
         variant: "destructive"
       });
@@ -320,12 +320,12 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{task ? 'Taak bewerken' : 'Nieuwe taak'}</DialogTitle>
+          <DialogTitle>{task ? t("tasks.editTask") : t("tasks.newTask")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Titel *</Label>
+            <Label>{t("tasks.title")} *</Label>
             <Input
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -334,7 +334,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           </div>
 
           <div className="space-y-2">
-            <Label>Beschrijving</Label>
+            <Label>{t("tasks.description")}</Label>
             <Textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -344,16 +344,16 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           </div>
 
           <div className="space-y-2">
-            <Label>Dossier (optioneel)</Label>
+            <Label>{t("tasks.dossier")}</Label>
             <Select
               value={formData.dossier_id || "none"}
               onValueChange={(value) => setFormData({ ...formData, dossier_id: value === "none" ? "" : value })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecteer een dossier (optioneel)" />
+                <SelectValue placeholder={t("tasks.selectDossier")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">Geen dossier</SelectItem>
+                <SelectItem value="none">{t("tasks.noDossier")}</SelectItem>
                 {dossiers.map((dossier) => (
                   <SelectItem key={dossier.id} value={dossier.id}>
                     {dossier.display_id || dossier.ref_number} - {dossier.deceased_name}
@@ -364,19 +364,19 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
           </div>
 
           <div className="space-y-2">
-            <Label>Toegewezen aan</Label>
+            <Label>{t("tasks.assignedTo")}</Label>
             <Select
               value={formData.assignee_id || "none"}
               onValueChange={(value) => setFormData({ ...formData, assignee_id: value === "none" ? "" : value })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecteer teamlid" />
+                <SelectValue placeholder={t("tasks.selectTeamMember")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">Niet toegewezen</SelectItem>
+                <SelectItem value="none">{t("tasks.notAssigned")}</SelectItem>
                 {teamMembers.map((member: any) => (
                   <SelectItem key={member.id} value={member.id}>
-                    {member.isCurrentUser ? `${member.name} (jij)` : member.name}
+                    {member.isCurrentUser ? `${member.name} (${t("tasks.you")})` : member.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -385,7 +385,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{t("tasks.status")}</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => setFormData({ ...formData, status: value })}
@@ -404,7 +404,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
             </div>
 
             <div className="space-y-2">
-              <Label>Prioriteit</Label>
+              <Label>{t("tasks.priority")}</Label>
               <Select
                 value={formData.priority}
                 onValueChange={(value: any) => setFormData({ ...formData, priority: value })}
@@ -413,17 +413,17 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="LOW">Laag</SelectItem>
-                  <SelectItem value="MEDIUM">Normaal</SelectItem>
-                  <SelectItem value="HIGH">Hoog</SelectItem>
-                  <SelectItem value="URGENT">Urgent</SelectItem>
+                  <SelectItem value="LOW">{t("tasks.low")}</SelectItem>
+                  <SelectItem value="MEDIUM">{t("tasks.medium")}</SelectItem>
+                  <SelectItem value="HIGH">{t("tasks.high")}</SelectItem>
+                  <SelectItem value="URGENT">{t("tasks.critical")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Deadline</Label>
+            <Label>{t("tasks.deadline")}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left">
@@ -431,7 +431,7 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
                   {formData.due_date ? (
                     format(formData.due_date, "PPP", { locale: nl })
                   ) : (
-                    <span>Selecteer een datum</span>
+                    <span>{t("tasks.selectDate")}</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -449,10 +449,10 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Annuleren
+            {t("tasks.cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? 'Bezig...' : task ? 'Bijwerken' : 'Aanmaken'}
+            {loading ? t("tasks.updating") : task ? t("tasks.update") : t("tasks.create")}
           </Button>
         </DialogFooter>
       </DialogContent>

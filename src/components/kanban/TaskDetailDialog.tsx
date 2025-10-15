@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 interface Task {
   id: string;
@@ -95,18 +96,10 @@ interface TaskDetailDialogProps {
   onUpdate?: () => void;
 }
 
-const getPriorityLabel = (priority: string): string => {
-  const labels: Record<string, string> = {
-    LOW: 'Laag',
-    MEDIUM: 'Normaal',
-    HIGH: 'Hoog',
-    CRITICAL: 'Kritisch',
-  };
-  return labels[priority] || priority;
-};
 
 export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDetailDialogProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -281,7 +274,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
     if (data) {
       setTeamMembers(data.map((r: any) => ({
         id: r.user_id,
-        name: r.profiles?.full_name || r.profiles?.email || 'Onbekend',
+        name: r.profiles?.full_name || r.profiles?.email || t("tasks.unknown"),
       })));
     }
   };
@@ -315,8 +308,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
       if (error) {
         toast({
-          title: "Fout",
-          description: "Kon commentaar niet toevoegen",
+          title: t("tasks.error"),
+          description: t("tasks.cannotAddComment"),
           variant: "destructive",
         });
       } else {
@@ -332,8 +325,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
     
     if (formData.is_deferred && !formData.deferred_reason.trim()) {
       toast({
-        title: "Reden verplicht",
-        description: "Geef een reden op voor het uitstellen van de taak",
+        title: t("tasks.reasonRequired"),
+        description: t("tasks.reasonRequiredDesc"),
         variant: "destructive",
       });
       return;
@@ -358,13 +351,13 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
     if (error) {
       toast({
-        title: "Fout",
-        description: "Kon taak niet bijwerken",
+        title: t("tasks.error"),
+        description: t("tasks.cannotUpdate"),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Taak bijgewerkt",
+        title: t("tasks.taskUpdated"),
       });
       setEditMode(false);
       onUpdate?.();
@@ -383,8 +376,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
     if (!doneColumn) {
       toast({
-        title: "Fout",
-        description: "Kan 'Afgerond' kolom niet vinden",
+        title: t("tasks.error"),
+        description: t("tasks.cannotFindDoneColumn"),
         variant: "destructive",
       });
       return;
@@ -397,13 +390,13 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
     if (error) {
       toast({
-        title: "Fout",
-        description: "Kon taak niet afronden",
+        title: t("tasks.error"),
+        description: t("tasks.cannotComplete"),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Taak afgerond",
+        title: t("tasks.taskCompleted"),
       });
       onUpdate?.();
       onOpenChange(false);
@@ -413,7 +406,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
   const handleDeleteTask = async () => {
     if (!task) return;
     
-    if (!confirm('Weet je zeker dat je deze taak wilt verwijderen?')) {
+    if (!confirm(t("tasks.confirmDelete"))) {
       return;
     }
 
@@ -428,13 +421,13 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
     if (error) {
       toast({
-        title: "Fout",
-        description: "Kon taak niet verwijderen",
+        title: t("tasks.error"),
+        description: t("tasks.cannotDelete"),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Taak verwijderd",
+        title: t("tasks.taskDeleted"),
       });
       onUpdate?.();
       onOpenChange(false);
@@ -460,7 +453,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
     if (uploadError) {
       toast({
-        title: "Upload fout",
+        title: t("tasks.uploadError"),
         description: uploadError.message,
         variant: "destructive",
       });
@@ -485,8 +478,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
       if (dbError) {
         toast({
-          title: "Fout",
-          description: "Kon bijlage niet opslaan",
+          title: t("tasks.error"),
+          description: t("tasks.cannotSaveAttachment"),
           variant: "destructive",
         });
       }
@@ -505,8 +498,8 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
       if (error) {
         toast({
-          title: "Fout",
-          description: "Kon bijlage niet verwijderen",
+          title: t("tasks.error"),
+          description: t("tasks.cannotDelete"),
           variant: "destructive",
         });
       }
@@ -556,7 +549,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
         <DialogHeader className="px-6 pt-6 pb-4 border-b bg-gradient-to-r from-background to-muted/20">
           <DialogTitle className="flex flex-col gap-3">
             <div className="flex items-start justify-between gap-4">
-              <span className="flex-1 text-2xl font-bold">{editMode ? "Taak bewerken" : task.title}</span>
+              <span className="flex-1 text-2xl font-bold">{editMode ? t("tasks.editTask") : task.title}</span>
               <div className="flex items-center gap-2">
                 {task.priority && (
                   <Badge 
@@ -567,7 +560,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                       'secondary'
                     }
                   >
-                    {getPriorityLabel(task.priority)}
+                    {t(`tasks.${task.priority.toLowerCase()}`)}
                   </Badge>
                 )}
               </div>
@@ -606,15 +599,15 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
         <Tabs defaultValue="details" className="flex-1 overflow-hidden flex flex-col">
           <TabsList className="grid w-full grid-cols-4 mt-4 mx-6">
-            <TabsTrigger value="details">Details</TabsTrigger>
+            <TabsTrigger value="details">{t("tasks.details")}</TabsTrigger>
             <TabsTrigger value="activity">
-              Activiteit ({activities.length})
+              {t("tasks.activity")} ({activities.length})
             </TabsTrigger>
             <TabsTrigger value="comments">
-              Commentaar ({comments.length})
+              {t("tasks.comments")} ({comments.length})
             </TabsTrigger>
             <TabsTrigger value="attachments">
-              Bestanden ({attachments.length})
+              {t("tasks.attachments")} ({attachments.length})
             </TabsTrigger>
           </TabsList>
 
@@ -623,18 +616,18 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
             <div className="space-y-6">
               {/* Beschrijving - meest prominent */}
               <div className="space-y-2 p-4 rounded-lg bg-muted/30 border">
-                <Label className="text-sm font-medium text-muted-foreground">Beschrijving</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t("tasks.descriptionLabel")}</Label>
                 {editMode ? (
                   <Textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
                     className="mt-1 text-base"
-                    placeholder="Voeg een beschrijving toe..."
+                    placeholder={t("tasks.addDescription")}
                   />
                 ) : (
                   <p className="text-base leading-relaxed whitespace-pre-wrap">
-                    {task.description || "Geen beschrijving"}
+                    {task.description || t("tasks.noDescription")}
                   </p>
                 )}
               </div>
@@ -642,7 +635,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
               {/* Grid met belangrijke details */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2 p-4 rounded-lg border bg-card">
-                  <Label className="text-sm font-medium text-muted-foreground">Titel</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t("tasks.titleLabel")}</Label>
                   {editMode ? (
                     <Input
                       value={formData.title}
@@ -655,25 +648,25 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                 </div>
 
                 <div className="space-y-2 p-4 rounded-lg border bg-card">
-                  <Label className="text-sm font-medium text-muted-foreground">Status</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t("tasks.statusLabel")}</Label>
                   <Badge className="text-sm w-fit" variant={task.is_blocked ? "destructive" : "outline"}>
-                    {task.is_blocked ? "Geblokkeerd" : "Actief"}
+                    {task.is_blocked ? t("tasks.blocked") : t("tasks.active")}
                   </Badge>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-base font-semibold">Toegewezen aan</Label>
+                <Label className="text-base font-semibold">{t("tasks.assignedTo")}</Label>
                 {editMode ? (
                   <Select
                     value={formData.assignee_id || "none"}
                     onValueChange={(value) => setFormData({ ...formData, assignee_id: value === "none" ? "" : value })}
                   >
                     <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Selecteer teamlid" />
+                      <SelectValue placeholder={t("tasks.selectTeamMemberPlaceholder")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">Niet toegewezen</SelectItem>
+                      <SelectItem value="none">{t("tasks.notAssigned")}</SelectItem>
                       {teamMembers.map((member) => (
                         <SelectItem key={member.id} value={member.id}>
                           {member.name}
@@ -683,13 +676,13 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                   </Select>
                 ) : (
                   <p className="text-sm font-medium">
-                    {assignedUser ? (assignedUser.full_name || assignedUser.email) : "Niet toegewezen"}
+                    {assignedUser ? (assignedUser.full_name || assignedUser.email) : t("tasks.notAssigned")}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label className="text-base font-semibold">Prioriteit</Label>
+                <Label className="text-base font-semibold">{t("tasks.priorityLabel")}</Label>
                 {editMode ? (
                   <Select
                     value={formData.priority}
@@ -699,10 +692,10 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="LOW">Laag</SelectItem>
-                      <SelectItem value="MEDIUM">Normaal</SelectItem>
-                      <SelectItem value="HIGH">Hoog</SelectItem>
-                      <SelectItem value="CRITICAL">Kritisch</SelectItem>
+                      <SelectItem value="LOW">{t("tasks.low")}</SelectItem>
+                      <SelectItem value="MEDIUM">{t("tasks.medium")}</SelectItem>
+                      <SelectItem value="HIGH">{t("tasks.high")}</SelectItem>
+                      <SelectItem value="CRITICAL">{t("tasks.critical")}</SelectItem>
                     </SelectContent>
                   </Select>
                 ) : (
@@ -712,14 +705,14 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                       task.priority === 'HIGH' ? 'default' : 
                       'secondary'
                     }>
-                      {getPriorityLabel(task.priority || 'MEDIUM')}
+                      {t(`tasks.${(task.priority || 'MEDIUM').toLowerCase()}`)}
                     </Badge>
                   </div>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label className="text-base font-semibold">Vervaldatum</Label>
+                <Label className="text-base font-semibold">{t("tasks.dueDate")}</Label>
                 {editMode ? (
                   <Input
                     type="date"
@@ -731,7 +724,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                   <p className="text-sm font-medium">
                     {task.due_date
                       ? format(new Date(task.due_date), "PPP", { locale: nl })
-                      : "Geen deadline"}
+                      : t("tasks.noDeadline")}
                   </p>
                 )}
               </div>
@@ -745,12 +738,12 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                       onCheckedChange={(checked) => setFormData({ ...formData, is_deferred: checked })}
                     />
                     <Label htmlFor="deferred" className="cursor-pointer">
-                      Taak uitstellen
+                      {t("tasks.deferTask")}
                     </Label>
                   </div>
                   {formData.is_deferred && (
                     <Textarea
-                      placeholder="Reden voor uitstel (verplicht) - bijv. wachten op externe partij, ontbrekende documentatie, etc."
+                      placeholder={t("tasks.reasonForDefer")}
                       value={formData.deferred_reason}
                       onChange={(e) => setFormData({ ...formData, deferred_reason: e.target.value })}
                       className="min-h-[80px]"
@@ -762,7 +755,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
               {!editMode && task.is_deferred && (
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Taak uitgesteld</AlertTitle>
+                  <AlertTitle>{t("tasks.taskDeferred")}</AlertTitle>
                   <AlertDescription>{task.deferred_reason}</AlertDescription>
                 </Alert>
               )}
@@ -780,16 +773,16 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                 <>
                   <Button onClick={handleUpdateTask} disabled={loading}>
                     <Save className="h-4 w-4 mr-2" />
-                    Opslaan
+                    {t("tasks.save")}
                   </Button>
                   <Button variant="outline" onClick={() => setEditMode(false)}>
-                    Annuleren
+                    {t("tasks.cancel")}
                   </Button>
                 </>
               ) : (
                 <>
                   <Button onClick={() => setEditMode(true)}>
-                    Bewerken
+                    {t("tasks.edit")}
                   </Button>
                   <Button 
                     onClick={handleMarkAsDone} 
@@ -797,7 +790,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
                     disabled={task.is_blocked}
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    Markeer als afgerond
+                    {t("tasks.markAsDone")}
                   </Button>
                   {!task.metadata?.auto && (
                     <Button 

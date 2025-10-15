@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -20,6 +21,7 @@ type MoskeeServiceSchedulerProps = {
 
 export function MoskeeServiceScheduler({ dossierId, onSuccess }: MoskeeServiceSchedulerProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [selectedMosque, setSelectedMosque] = useState<string>("");
@@ -99,8 +101,8 @@ export function MoskeeServiceScheduler({ dossierId, onSuccess }: MoskeeServiceSc
   const handleSchedule = () => {
     if (!selectedMosque || !selectedDate) {
       toast({
-        title: "Incomplete",
-        description: "Selecteer een moskee en datum",
+        title: t("planning.mosque.incomplete"),
+        description: t("planning.mosque.incompleteDesc"),
         variant: "destructive",
       });
       return;

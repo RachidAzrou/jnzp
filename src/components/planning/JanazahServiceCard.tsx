@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -26,6 +27,7 @@ interface JanazahServiceCardProps {
 
 export function JanazahServiceCard({ dossierId, service, onUpdate }: JanazahServiceCardProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(!service);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     service?.scheduled_at ? new Date(service.scheduled_at) : undefined
@@ -40,8 +42,8 @@ export function JanazahServiceCard({ dossierId, service, onUpdate }: JanazahServ
   const handleSave = async () => {
     if (!selectedDate || !time || !location.trim()) {
       toast({
-        title: "Vul alle velden in",
-        description: "Datum, tijd en locatie zijn verplicht",
+        title: t("planning.janazah.fieldsRequired"),
+        description: t("planning.janazah.fieldsRequiredDesc"),
         variant: "destructive",
       });
       return;

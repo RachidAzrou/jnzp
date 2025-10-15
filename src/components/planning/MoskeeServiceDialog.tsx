@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -21,6 +22,7 @@ type MoskeeServiceDialogProps = {
 
 export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeServiceDialogProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedDossier, setSelectedDossier] = useState<string>("");
   const [selectedMosque, setSelectedMosque] = useState<string>("");
@@ -153,8 +155,8 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
   const handleCreate = () => {
     if (!selectedDossier || !selectedMosque || !selectedDate) {
       toast({
-        title: "Incomplete gegevens",
-        description: "Selecteer een dossier, moskee en datum",
+        title: t("planning.mosque.incomplete"),
+        description: t("planning.mosque.incompleteDesc"),
         variant: "destructive",
       });
       return;

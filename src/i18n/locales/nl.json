@@ -152,7 +152,8 @@
     "remove": "Verwijderen",
     "update": "Bijwerken",
     "view": "Bekijken",
-    "price": "Prijs"
+    "price": "Prijs",
+    "dossier": "Dossier"
   },
   "placeholders": {
     "searchNameDossierID": "Zoek op naam of dossier ID",

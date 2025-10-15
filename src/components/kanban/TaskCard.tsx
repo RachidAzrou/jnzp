@@ -158,7 +158,7 @@ export function TaskCard({
               )}
               {task.dossier_id && (
                 <div className="flex items-center gap-1.5 mt-2 text-xs text-primary">
-                  <span>Dossier: {task.dossier_id.substring(0, 8)}</span>
+                  <span>{t("common.dossier")}: {task.dossier_id.substring(0, 8)}</span>
                 </div>
               )}
               {task.is_deferred && (

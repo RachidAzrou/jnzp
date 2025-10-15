@@ -235,7 +235,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
             {/* Tijd selectie */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Van</Label>
+                <Label>{t("mortuariumReservation.from")}</Label>
                 <Select value={startTime} onValueChange={setStartTime}>
                   <SelectTrigger>
                     <SelectValue />
@@ -253,7 +253,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Tot</Label>
+                <Label>{t("mortuariumReservation.to")}</Label>
                 <Select value={endTime} onValueChange={setEndTime}>
                   <SelectTrigger>
                     <SelectValue />
@@ -275,7 +275,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
             {/* Koelcel selectie */}
             {coolCells.length > 0 && (
               <div className="space-y-2">
-                <Label>Koelcel</Label>
+                <Label>{t("mortuariumReservation.coolCell")}</Label>
                 <div className="grid grid-cols-3 gap-2">
                   {coolCells.map(cell => (
                     <Button
@@ -299,7 +299,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
 
             {/* Notitie */}
             <div className="space-y-2">
-              <Label>Notitie (optioneel)</Label>
+              <Label>{t("mortuariumReservation.note")}</Label>
               <Textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}

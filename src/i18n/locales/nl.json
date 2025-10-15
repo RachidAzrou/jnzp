@@ -200,9 +200,10 @@
     "date": "Datum",
     "from": "Van",
     "to": "Tot",
+    "coolCell": "Koelcel",
     "note": "Notitie (optioneel)",
-    "cancel": "Annuler",
-    "save": "Enregistrer"
+    "cancel": "Annuleren",
+    "save": "Opslaan"
   },
   "moskeeService": {
     "title": "Nieuwe Moskee Afspraak",
@@ -213,7 +214,10 @@
     "prayer": "Gebed",
     "location": "Locatie (optioneel)",
     "cancel": "Annuleren",
-    "create": "Aanmaken"
+    "create": "Aanmaken",
+    "errorSelectAll": "Selecteer een dossier, moskee en datum",
+    "created": "Moskee afspraak aangemaakt",
+    "createdDesc": "De afspraak is succesvol ingepland"
   },
   "flightPlanning": {
     "title": "Vluchtplanning voorkeuren",

@@ -676,15 +676,15 @@ export default function FDFacturatie() {
           <TabsContent value="received" className="mt-0 space-y-6">
             <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
               <CardHeader>
-                <CardTitle>Ontvangen facturen</CardTitle>
+                <CardTitle>{t("invoicing.receivedInvoices")}</CardTitle>
                 <CardDescription>
-                  Mortuarium facturen gericht aan uw organisatie
+                  {t("invoicing.mortuariumInvoicesDescription")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {!receivedInvoices || receivedInvoices.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">
-                    Geen facturen ontvangen
+                    {t("invoicing.noInvoicesReceived")}
                   </p>
                 ) : (
                   <Table>

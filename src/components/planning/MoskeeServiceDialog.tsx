@@ -97,7 +97,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
   const createMutation = useMutation({
     mutationFn: async () => {
       if (!selectedDossier || !selectedMosque || !selectedDate) {
-        throw new Error("Selecteer een dossier, moskee en datum");
+        throw new Error(t("moskeeService.errorSelectAll"));
       }
 
       const scheduledAt = new Date(selectedDate);
@@ -128,8 +128,8 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["case-events"] });
       toast({
-        title: "Moskee afspraak aangemaakt",
-        description: "De afspraak is succesvol ingepland.",
+        title: t("moskeeService.created"),
+        description: t("moskeeService.createdDesc"),
       });
       onOpenChange(false);
       resetForm();
@@ -137,7 +137,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
     },
     onError: (error) => {
       toast({
-        title: "Fout bij aanmaken afspraak",
+        title: t("common.error"),
         description: String(error),
         variant: "destructive",
       });
@@ -155,8 +155,8 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
   const handleCreate = () => {
     if (!selectedDossier || !selectedMosque || !selectedDate) {
       toast({
-        title: t("planning.mosque.incomplete"),
-        description: t("planning.mosque.incompleteDesc"),
+        title: t("common.error"),
+        description: t("moskeeService.errorSelectAll"),
         variant: "destructive",
       });
       return;
@@ -168,14 +168,14 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Nieuwe Moskee Afspraak</DialogTitle>
+          <DialogTitle>{t("moskeeService.title")}</DialogTitle>
           <DialogDescription>
-            Plan een Janāza-gebed in bij een moskee
+            {t("moskeeService.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label>Dossier</Label>
+            <Label>{t("moskeeService.dossier")}</Label>
             <Select value={selectedDossier} onValueChange={setSelectedDossier}>
               <SelectTrigger>
                 <SelectValue placeholder={t("placeholders.selectDossierEllipsis")} />
@@ -191,7 +191,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
           </div>
 
           <div>
-            <Label>Moskee</Label>
+            <Label>{t("moskeeService.mosque")}</Label>
             <Select value={selectedMosque} onValueChange={setSelectedMosque}>
               <SelectTrigger>
                 <SelectValue placeholder={t("placeholders.selectMosque")} />
@@ -207,12 +207,12 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
           </div>
 
           <div>
-            <Label>Datum</Label>
+            <Label>{t("moskeeService.date")}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "PPP", { locale: nl }) : "Kies datum"}
+                  {selectedDate ? format(selectedDate, "PPP", { locale: nl }) : t("placeholders.selectDate")}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -227,7 +227,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
           </div>
 
           <div>
-            <Label>Gebed</Label>
+            <Label>{t("moskeeService.prayer")}</Label>
             <Select value={selectedPrayer} onValueChange={setSelectedPrayer}>
               <SelectTrigger>
                 <SelectValue placeholder={t("placeholders.selectPrayer")} />
@@ -243,7 +243,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
           </div>
 
           <div>
-            <Label>Locatie (optioneel)</Label>
+            <Label>{t("moskeeService.location")}</Label>
             <Input
               value={location}
               onChange={(e) => setLocation(e.target.value)}
@@ -253,14 +253,14 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
 
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
-              Annuleren
+              {t("moskeeService.cancel")}
             </Button>
             <Button
               onClick={handleCreate}
               disabled={!selectedDossier || !selectedMosque || !selectedDate || createMutation.isPending}
               className="flex-1"
             >
-              {createMutation.isPending ? "Bezig..." : "Aanmaken"}
+              {createMutation.isPending ? t("common.loading") : t("moskeeService.create")}
             </Button>
           </div>
         </div>

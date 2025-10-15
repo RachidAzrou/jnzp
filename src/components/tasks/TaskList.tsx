@@ -17,6 +17,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface Task {
   id: string;
@@ -36,6 +37,7 @@ interface Task {
 }
 
 export function TaskList() {
+  const { t } = useTranslation();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('pending');
@@ -97,8 +99,8 @@ export function TaskList() {
       setTasks(data as any || []);
     } catch (error: any) {
       toast({
-        title: "Fout",
-        description: "Taken konden niet worden geladen",
+        title: t("tasks.error"),
+        description: t("tasks.loadError"),
         variant: "destructive"
       });
     } finally {
@@ -121,12 +123,12 @@ export function TaskList() {
       if (error) throw error;
 
       toast({
-        title: "Taak bijgewerkt",
-        description: `Status gewijzigd naar ${getStatusLabel(newStatus)}`
+        title: t("tasks.updated"),
+        description: `${t("tasks.statusChanged")} ${getStatusLabel(newStatus)}`
       });
     } catch (error: any) {
       toast({
-        title: "Fout",
+        title: t("tasks.error"),
         description: error.message,
         variant: "destructive"
       });
@@ -161,23 +163,23 @@ export function TaskList() {
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      PENDING: 'Te doen',
-      IN_PROGRESS: 'Bezig',
-      COMPLETED: 'Voltooid',
-      CANCELLED: 'Geannuleerd'
+      PENDING: t("tasks.statusPending"),
+      IN_PROGRESS: t("tasks.statusInProgress"),
+      COMPLETED: t("tasks.statusCompleted"),
+      CANCELLED: t("tasks.statusCancelled")
     };
     return labels[status] || status;
   };
 
   const getTaskTypeLabel = (taskType: string) => {
     const labels: Record<string, string> = {
-      DOC_REVIEW: 'Document beoordelen',
-      DOC_REUPLOAD_REQUEST: 'Document opnieuw uploaden',
-      INTAKE_COMPLETE: 'Intake afronden',
-      MOSQUE_CONFIRM: 'Moskee bevestigen',
-      WASH_START: 'Wassplaats starten',
-      FLIGHT_REGISTER: 'Vlucht registreren',
-      LEGAL_HOLD_FOLLOW_UP: 'Legal hold opvolgen'
+      DOC_REVIEW: t("tasks.typeDocReview"),
+      DOC_REUPLOAD_REQUEST: t("tasks.typeDocReupload"),
+      INTAKE_COMPLETE: t("tasks.typeIntakeComplete"),
+      MOSQUE_CONFIRM: t("tasks.typeMosqueConfirm"),
+      WASH_START: t("tasks.typeWashStart"),
+      FLIGHT_REGISTER: t("tasks.typeFlightRegister"),
+      LEGAL_HOLD_FOLLOW_UP: t("tasks.typeLegalHoldFollowUp")
     };
     return labels[taskType] || taskType.replace(/_/g, ' ');
   };
@@ -198,28 +200,28 @@ export function TaskList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Taken</h2>
+        <h2 className="text-2xl font-bold">{t("tasks.title")}</h2>
         <div className="flex gap-2">
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('all')}
           >
-            Alle
+            {t("tasks.filterAll")}
           </Button>
           <Button
             variant={filter === 'pending' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('pending')}
           >
-            Lopend
+            {t("tasks.filterPending")}
           </Button>
           <Button
             variant={filter === 'completed' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('completed')}
           >
-            Voltooid
+            {t("tasks.filterCompleted")}
           </Button>
         </div>
       </div>
@@ -228,7 +230,7 @@ export function TaskList() {
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
             <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Geen taken gevonden</p>
+            <p>{t("tasks.noTasks")}</p>
           </CardContent>
         </Card>
       ) : (
@@ -267,7 +269,7 @@ export function TaskList() {
                           {isOverdue(task) && (
                             <Badge variant="destructive" className="text-xs">
                               <AlertCircle className="h-3 w-3 mr-1" />
-                              Te laat
+                              {t("tasks.overdue")}
                             </Badge>
                           )}
                         </div>
@@ -288,7 +290,7 @@ export function TaskList() {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Clock className="h-4 w-4" />
                         <span>
-                          Deadline: {formatDistanceToNow(new Date(task.due_at), {
+                          {t("tasks.deadline")}: {formatDistanceToNow(new Date(task.due_at), {
                             addSuffix: true,
                             locale: nl
                           })}

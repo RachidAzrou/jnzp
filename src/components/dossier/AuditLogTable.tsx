@@ -6,12 +6,14 @@ import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useTranslation } from "react-i18next";
 
 interface AuditLogTableProps {
   dossierId: string;
 }
 
 export function AuditLogTable({ dossierId }: AuditLogTableProps) {
+  const { t } = useTranslation();
   const { roles } = useUserRole();
   const isPlatformAdmin = roles.includes("platform_admin");
 
@@ -55,7 +57,7 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Auditlog</h2>
+        <h2 className="text-xl font-semibold">{t("auditLog.title")}</h2>
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-12 w-full" />
@@ -68,8 +70,8 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
   if (!auditEvents || auditEvents.length === 0) {
     return (
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Auditlog</h2>
-        <p className="text-sm text-muted-foreground">Geen audit events gevonden voor dit dossier.</p>
+        <h2 className="text-xl font-semibold">{t("auditLog.title")}</h2>
+        <p className="text-sm text-muted-foreground">{t("auditLog.noEvents")}</p>
       </div>
     );
   }
@@ -100,14 +102,14 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
 
   const formatRoleName = (role: string) => {
     const roleMap: Record<string, string> = {
-      platform_admin: "Platform Admin",
-      admin: "Admin",
-      funeral_director: "Uitvaartleider",
-      insurer: "Verzekeraar",
-      mortuarium: "Mortuarium",
-      mosque: "Moskee",
-      org_admin: "Org Admin",
-      family: "Familie",
+      platform_admin: t("auditLog.rolePlatformAdmin"),
+      admin: t("auditLog.roleAdmin"),
+      funeral_director: t("auditLog.roleFuneralDirector"),
+      insurer: t("auditLog.roleInsurer"),
+      mortuarium: t("auditLog.roleMortuarium"),
+      mosque: t("auditLog.roleMosque"),
+      org_admin: t("auditLog.roleOrgAdmin"),
+      family: t("auditLog.roleFamily"),
     };
     return roleMap[role] || role;
   };
@@ -137,9 +139,9 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Auditlog</h2>
+        <h2 className="text-xl font-semibold">{t("auditLog.title")}</h2>
         {isPlatformAdmin && (
-          <Badge variant="outline">Platform Admin - Alle organisaties zichtbaar</Badge>
+          <Badge variant="outline">{t("auditLog.platformAdminBadge")}</Badge>
         )}
       </div>
 
@@ -147,11 +149,11 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[140px]">Tijd</TableHead>
-              <TableHead>Gebruiker</TableHead>
-              <TableHead>Rol</TableHead>
-              <TableHead>Wat</TableHead>
-              <TableHead>Details</TableHead>
+              <TableHead className="w-[140px]">{t("auditLog.timestamp")}</TableHead>
+              <TableHead>{t("auditLog.user")}</TableHead>
+              <TableHead>{t("auditLog.role")}</TableHead>
+              <TableHead>{t("auditLog.action")}</TableHead>
+              <TableHead>{t("auditLog.details")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -169,12 +171,12 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
                       </div>
                     ) : (
                       <div>
-                        <div className="font-medium">Gebruiker</div>
+                        <div className="font-medium">{t("auditLog.userLabel")}</div>
                         <div className="text-xs text-muted-foreground">{event.user_id.slice(0, 8)}...</div>
                       </div>
                     )
                   ) : (
-                    <span className="text-muted-foreground">Systeem</span>
+                    <span className="text-muted-foreground">{t("auditLog.system")}</span>
                   )}
                 </TableCell>
                 <TableCell>
@@ -194,7 +196,7 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
                     <p>{event.description}</p>
                     {event.reason && (
                       <p className="text-xs text-muted-foreground">
-                        <span className="font-semibold">Reden:</span> {event.reason}
+                        <span className="font-semibold">{t("auditLog.reason")}:</span> {event.reason}
                       </p>
                     )}
                   </div>

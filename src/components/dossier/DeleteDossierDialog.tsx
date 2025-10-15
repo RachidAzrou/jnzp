@@ -164,7 +164,7 @@ export function DeleteDossierDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>
-            {cannotDeleteReason ? t("deleteDossier.close") : t("deleteDossier.cancel")}
+            {cannotDeleteReason ? t("common.close") : t("common.cancel")}
           </AlertDialogCancel>
           {!cannotDeleteReason && (
             <AlertDialogAction
@@ -175,7 +175,7 @@ export function DeleteDossierDialog({
               disabled={isDeleting || !deleteReason.trim()}
               className="bg-destructive hover:bg-destructive/90"
             >
-              {isDeleting ? t("deleteDossier.deleting") : t("deleteDossier.confirm")}
+              {isDeleting ? t("common.loading") : t("common.confirm")}
             </AlertDialogAction>
           )}
         </AlertDialogFooter>

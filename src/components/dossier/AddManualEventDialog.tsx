@@ -108,10 +108,10 @@ export function AddManualEventDialog({ dossierId, onEventAdded }: AddManualEvent
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            {t("addManualEvent.cancel")}
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleAdd} disabled={saving}>
-            {saving ? t("addManualEvent.submitting") : t("addManualEvent.submit")}
+            {saving ? t("common.loading") : t("common.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

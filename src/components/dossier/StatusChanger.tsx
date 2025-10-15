@@ -412,13 +412,13 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              {t("statusChanger.cancel")}
+              {t("common.cancel")}
             </Button>
             <Button 
               onClick={handleStatusChange}
               disabled={!newStatus || newStatus === currentStatus}
             >
-              {t("statusChanger.submit")}
+              {t("common.submit")}
             </Button>
           </DialogFooter>
         </DialogContent>

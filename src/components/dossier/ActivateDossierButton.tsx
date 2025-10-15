@@ -139,14 +139,14 @@ export function ActivateDossierButton({
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Annuleren
+              {t("common.cancel")}
             </Button>
             <Button 
               onClick={handleActivate} 
               disabled={activating}
               className="bg-green-600 hover:bg-green-700"
             >
-              {activating ? "Activeren..." : "Bevestig Activering"}
+              {activating ? t("common.loading") : t("common.confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

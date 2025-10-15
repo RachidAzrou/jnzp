@@ -167,11 +167,11 @@ export function ClaimDossierDialog({ open, onOpenChange, dossier, onClaimed }: C
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
-            {t("claimDossier.cancel")}
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleClaim} disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {t("claimDossier.submit")}
+            {t("common.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -61,12 +61,12 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
 
       if (error) {
         console.error('❌ Edge Function error:', error);
-        throw new Error(error.message || 'Kon FD niet aanmaken');
+        throw new Error(error.message || t("mortuarium.newFD.createError"));
       }
 
       if (!data?.success) {
         console.error('❌ Registration failed:', data);
-        throw new Error(data?.error || 'Kon FD niet aanmaken');
+        throw new Error(data?.error || t("mortuarium.newFD.createError"));
       }
 
       const orgId = data.organizationId;
@@ -77,7 +77,7 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
       queryClient.invalidateQueries({ queryKey: ['organizations'] });
       toast({
         title: t("common.success"),
-        description: "Nieuwe FD succesvol aangemaakt",
+        description: t("mortuarium.newFD.fdCreated"),
       });
       handleClose();
       onFDCreated(orgId);
@@ -128,62 +128,61 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Nieuwe voorlopige FD aanmaken</DialogTitle>
+            <DialogTitle>{t("mortuarium.newFD.title")}</DialogTitle>
             <DialogDescription>
-              Maak een voorlopige uitvaartonderneming aan. Deze kan later door de admin
-              geverifieerd worden.
+              {t("mortuarium.newFD.description")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="fd-name">
-                Naam uitvaartonderneming <span className="text-destructive">*</span>
+                {t("mortuarium.newFD.fdName")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="fd-name"
                 value={fdName}
                 onChange={(e) => setFdName(e.target.value)}
-                placeholder="Bijv. Uitvaart De Vos"
+                placeholder={t("mortuarium.newFD.fdNamePlaceholder")}
                 required
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="contact-name">
-                Naam contactpersoon <span className="text-destructive">*</span>
+                {t("mortuarium.newFD.contactName")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="contact-name"
                 value={contactName}
                 onChange={(e) => setContactName(e.target.value)}
-                placeholder="Voor- en achternaam"
+                placeholder={t("mortuarium.newFD.contactNamePlaceholder")}
                 required
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="contact-email">
-                E-mail contactpersoon <span className="text-destructive">*</span>
+                {t("mortuarium.newFD.contactEmail")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="contact-email"
                 type="email"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
-                placeholder="naam@bedrijf.nl"
+                placeholder={t("mortuarium.newFD.contactEmailPlaceholder")}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="contact-phone">Telefoonnummer</Label>
+              <Label htmlFor="contact-phone">{t("mortuarium.newFD.contactPhone")}</Label>
               <Input
                 id="contact-phone"
                 type="tel"
                 value={contactPhone}
                 onChange={(e) => setContactPhone(e.target.value)}
-                placeholder="+32 ..."
+                placeholder={t("mortuarium.newFD.contactPhonePlaceholder")}
               />
             </div>
           </div>
@@ -195,11 +194,11 @@ export function NewFDDialog({ open, onOpenChange, onFDCreated }: NewFDDialogProp
               onClick={handleClose}
               disabled={createFDMutation.isPending}
             >
-              Annuleren
+              {t("mortuarium.newFD.cancel")}
             </Button>
             <Button type="submit" disabled={createFDMutation.isPending}>
               {createFDMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Aanmaken
+              {t("mortuarium.newFD.create")}
             </Button>
           </DialogFooter>
         </form>

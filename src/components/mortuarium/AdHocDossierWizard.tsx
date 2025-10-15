@@ -173,7 +173,7 @@ export function AdHocDossierWizard() {
     onSuccess: (dossierId) => {
       toast({
         title: t("common.success"),
-        description: "Ad-hoc dossier succesvol aangemaakt",
+        description: t("mortuarium.adHocWizard.dossierCreated"),
       });
       queryClient.invalidateQueries({ queryKey: ["mortuarium-dossiers"] });
       queryClient.invalidateQueries({ queryKey: ["cool-cells"] });
@@ -227,7 +227,7 @@ export function AdHocDossierWizard() {
           )}>
             {step > 1 ? <CheckCircle className="h-5 w-5" /> : "1"}
           </div>
-          <span className="text-sm font-medium">Basis informatie</span>
+          <span className="text-sm font-medium">{t("mortuarium.adHocWizard.basicInfo")}</span>
         </div>
         <div className="flex-1 h-0.5 bg-muted mx-4" />
         <div className="flex items-center space-x-2">
@@ -237,7 +237,7 @@ export function AdHocDossierWizard() {
           )}>
             {step > 2 ? <CheckCircle className="h-5 w-5" /> : "2"}
           </div>
-          <span className="text-sm font-medium">Koelcel</span>
+          <span className="text-sm font-medium">{t("mortuarium.adHocWizard.coolCell")}</span>
         </div>
         <div className="flex-1 h-0.5 bg-muted mx-4" />
         <div className="flex items-center space-x-2">
@@ -247,7 +247,7 @@ export function AdHocDossierWizard() {
           )}>
             3
           </div>
-          <span className="text-sm font-medium">FD Toewijzing</span>
+          <span className="text-sm font-medium">{t("mortuarium.adHocWizard.fdAssignment")}</span>
         </div>
       </div>
 
@@ -255,34 +255,34 @@ export function AdHocDossierWizard() {
       {step === 1 && (
         <Card>
           <CardHeader>
-            <CardTitle>Basis informatie</CardTitle>
+            <CardTitle>{t("mortuarium.adHocWizard.basicInfoTitle")}</CardTitle>
             <CardDescription>
-              Voer de basisgegevens in van de overledene
+              {t("mortuarium.adHocWizard.basicInfoDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="deceased-name">
-                Naam overledene <span className="text-destructive">*</span>
+                {t("mortuarium.adHocWizard.deceasedName")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="deceased-name"
                 value={deceasedName}
                 onChange={(e) => setDeceasedName(e.target.value)}
-                placeholder="Volledige naam (min. 3 karakters)"
+                placeholder={t("mortuarium.adHocWizard.fullNamePlaceholder")}
                 required
                 minLength={3}
               />
               {deceasedName.length > 0 && deceasedName.length < 3 && (
                 <p className="text-sm text-destructive">
-                  Voer minimaal 3 karakters in
+                  {t("mortuarium.adHocWizard.min3Chars")}
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label>
-                Ontvangst datum/tijd <span className="text-destructive">*</span>
+                {t("mortuarium.adHocWizard.receivedDateTime")} <span className="text-destructive">*</span>
               </Label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -294,7 +294,7 @@ export function AdHocDossierWizard() {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {receivedAt ? format(receivedAt, "PPP HH:mm", { locale: nl }) : "Selecteer datum"}
+                    {receivedAt ? format(receivedAt, "PPP HH:mm", { locale: nl }) : t("mortuarium.adHocWizard.selectDate")}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -321,12 +321,12 @@ export function AdHocDossierWizard() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="note">Notities</Label>
+              <Label htmlFor="note">{t("mortuarium.adHocWizard.notes")}</Label>
               <Textarea
                 id="note"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Aanvullende informatie, bijzonderheden, etc."
+                placeholder={t("mortuarium.adHocWizard.notesPlaceholder")}
                 rows={4}
               />
             </div>
@@ -336,7 +336,7 @@ export function AdHocDossierWizard() {
               onClick={handleNext}
               disabled={!canProceedStep1}
             >
-              Volgende
+              {t("mortuarium.adHocWizard.next")}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardFooter>
@@ -347,9 +347,9 @@ export function AdHocDossierWizard() {
       {step === 2 && (
         <Card>
           <CardHeader>
-            <CardTitle>Koelcel reservering</CardTitle>
+            <CardTitle>{t("mortuarium.adHocWizard.coolCellTitle")}</CardTitle>
             <CardDescription>
-              Reserveer optioneel direct een koelcel
+              {t("mortuarium.adHocWizard.coolCellDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -360,7 +360,7 @@ export function AdHocDossierWizard() {
                 onCheckedChange={(checked) => setReserveCoolCell(checked as boolean)}
               />
               <Label htmlFor="reserve-cell" className="font-normal cursor-pointer">
-                Reserveer koelcel
+                {t("mortuarium.adHocWizard.reserveCell")}
               </Label>
             </div>
 
@@ -368,11 +368,11 @@ export function AdHocDossierWizard() {
               <>
                 <div className="space-y-2">
                   <Label htmlFor="cool-cell">
-                    Koelcel <span className="text-destructive">*</span>
+                    {t("mortuarium.adHocWizard.coolCell")} <span className="text-destructive">*</span>
                   </Label>
                   <Select value={selectedCoolCellId} onValueChange={setSelectedCoolCellId}>
                     <SelectTrigger id="cool-cell">
-                      <SelectValue placeholder="Selecteer een koelcel" />
+                      <SelectValue placeholder={t("mortuarium.adHocWizard.selectCoolCell")} />
                     </SelectTrigger>
                     <SelectContent>
                       {coolCells?.map((cell) => (
@@ -384,14 +384,14 @@ export function AdHocDossierWizard() {
                   </Select>
                   {coolCells?.length === 0 && (
                     <p className="text-sm text-muted-foreground">
-                      Geen vrije koelcellen beschikbaar
+                      {t("mortuarium.adHocWizard.noFreeCells")}
                     </p>
                   )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Start datum/tijd</Label>
+                    <Label>{t("mortuarium.adHocWizard.startDateTime")}</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full justify-start">
@@ -423,7 +423,7 @@ export function AdHocDossierWizard() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Eind datum/tijd</Label>
+                    <Label>{t("mortuarium.adHocWizard.endDateTime")}</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full justify-start">
@@ -460,10 +460,10 @@ export function AdHocDossierWizard() {
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={handleBack}>
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Vorige
+              {t("mortuarium.adHocWizard.previous")}
             </Button>
             <Button onClick={handleNext} disabled={!canProceedStep2}>
-              Volgende
+              {t("mortuarium.adHocWizard.next")}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardFooter>
@@ -474,9 +474,9 @@ export function AdHocDossierWizard() {
       {step === 3 && (
         <Card>
           <CardHeader>
-            <CardTitle>FD Toewijzing</CardTitle>
+            <CardTitle>{t("mortuarium.adHocWizard.fdAssignmentTitle")}</CardTitle>
             <CardDescription>
-              Wijs optioneel direct een uitvaartondernemer toe
+              {t("mortuarium.adHocWizard.fdAssignmentDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -487,24 +487,24 @@ export function AdHocDossierWizard() {
                 onCheckedChange={(checked) => setAssignFD(checked as boolean)}
               />
               <Label htmlFor="assign-fd" className="font-normal cursor-pointer">
-                Wijs FD toe
+                {t("mortuarium.adHocWizard.assignFD")}
               </Label>
             </div>
 
             {assignFD && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="fd-org">Uitvaartondernemer</Label>
+                  <Label htmlFor="fd-org">{t("mortuarium.adHocWizard.funeralDirector")}</Label>
                   <div className="flex gap-2">
                     <Select value={selectedFDOrgId} onValueChange={setSelectedFDOrgId}>
                       <SelectTrigger id="fd-org" className="flex-1">
-                        <SelectValue placeholder="Selecteer een FD" />
+                        <SelectValue placeholder={t("mortuarium.adHocWizard.selectFD")} />
                       </SelectTrigger>
                       <SelectContent>
                         {fdOrganizations?.map((org) => (
                           <SelectItem key={org.id} value={org.id}>
                             {org.name}
-                            {org.provisional && " (Voorlopig)"}
+                            {org.provisional && ` (${t("mortuarium.adHocWizard.provisional")})`}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -521,7 +521,7 @@ export function AdHocDossierWizard() {
                     <Alert>
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription>
-                        Geen FD-organisaties gevonden. Maak een nieuwe aan.
+                        {t("mortuarium.adHocWizard.noFDsFound")}
                       </AlertDescription>
                     </Alert>
                   )}
@@ -531,7 +531,7 @@ export function AdHocDossierWizard() {
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      Deze FD is voorlopig en moet nog geverifieerd worden door een admin.
+                      {t("mortuarium.adHocWizard.provisionalAlert")}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -541,7 +541,7 @@ export function AdHocDossierWizard() {
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={handleBack}>
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Vorige
+              {t("mortuarium.adHocWizard.previous")}
             </Button>
             <Button
               onClick={handleSubmit}
@@ -550,10 +550,10 @@ export function AdHocDossierWizard() {
               {createDossierMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Bezig...
+                  {t("mortuarium.adHocWizard.creating")}
                 </>
               ) : (
-                "Dossier aanmaken"
+                t("mortuarium.adHocWizard.createDossier")
               )}
             </Button>
           </CardFooter>

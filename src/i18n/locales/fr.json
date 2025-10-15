@@ -1693,7 +1693,25 @@
     "deceased": "Défunt",
     "type": "Type",
     "status": "Statut",
-    "lastUpdate": "Dernière mise à jour"
+    "lastUpdate": "Dernière mise à jour",
+    "actions": "Actions"
+  },
+  "createDossier": {
+    "button": "Nouveau dossier",
+    "title": "Créer un nouveau dossier",
+    "description": "Remplissez les détails ci-dessous pour créer un nouveau dossier",
+    "notifications": {
+      "error": "Erreur lors de la création du dossier",
+      "errorDescription": "Une erreur s'est produite lors de la création du dossier"
+    }
+  },
+  "documentUploadDialog": {
+    "uploadButton": "Téléverser document",
+    "title": "Téléverser document",
+    "description": "Téléverser un document pour un dossier",
+    "uploadSuccess": "Document téléversé",
+    "uploadSuccessDesc": "Le document a été téléversé avec succès",
+    "uploadFailed": "Échec du téléversement"
   },
   "fdChatOverview": {
     "communication": "Communication",

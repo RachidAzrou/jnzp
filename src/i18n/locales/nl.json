@@ -305,7 +305,25 @@
     "deceased": "Overleden",
     "type": "Type",
     "status": "Status",
-    "lastUpdate": "Laatste update"
+    "lastUpdate": "Laatste update",
+    "actions": "Acties"
+  },
+  "createDossier": {
+    "button": "Nieuw dossier",
+    "title": "Nieuw dossier aanmaken",
+    "description": "Vul de onderstaande gegevens in om een nieuw dossier aan te maken",
+    "notifications": {
+      "error": "Fout bij aanmaken dossier",
+      "errorDescription": "Er is een fout opgetreden bij het aanmaken van het dossier"
+    }
+  },
+  "documentUploadDialog": {
+    "uploadButton": "Document uploaden",
+    "title": "Document uploaden",
+    "description": "Upload een document voor een dossier",
+    "uploadSuccess": "Document geüpload",
+    "uploadSuccessDesc": "Het document is succesvol geüpload",
+    "uploadFailed": "Upload mislukt"
   },
   "fdChatOverview": {
     "communication": "Communicatie",

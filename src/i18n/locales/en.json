@@ -1241,7 +1241,25 @@
     "deceased": "Deceased",
     "type": "Type",
     "status": "Status",
-    "lastUpdate": "Last update"
+    "lastUpdate": "Last update",
+    "actions": "Actions"
+  },
+  "createDossier": {
+    "button": "New dossier",
+    "title": "Create new dossier",
+    "description": "Fill in the details below to create a new dossier",
+    "notifications": {
+      "error": "Error creating dossier",
+      "errorDescription": "An error occurred while creating the dossier"
+    }
+  },
+  "documentUploadDialog": {
+    "uploadButton": "Upload document",
+    "title": "Upload document",
+    "description": "Upload a document for a dossier",
+    "uploadSuccess": "Document uploaded",
+    "uploadSuccessDesc": "The document was successfully uploaded",
+    "uploadFailed": "Upload failed"
   },
   "fdChatOverview": {
     "communication": "Communication",

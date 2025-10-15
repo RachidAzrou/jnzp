@@ -27,6 +27,8 @@ interface Notification {
     thread_id?: string;
     message_id?: string;
     document_name?: string;
+    fd_name?: string;
+    document_type?: string;
   };
   is_read: boolean;
   created_at: string;
@@ -154,6 +156,30 @@ export function NotificationBell() {
           sender_name: notification.meta.sender_name || '',
           message_preview: notification.meta.message_preview || ''
         });
+      // Family notifications
+      case 'FAMILY_FD_ACCEPTED':
+        return t("notifications.familyFdAccepted", { fd_name: notification.meta.fd_name || '' });
+      case 'FAMILY_FD_REJECTED':
+        return t("notifications.familyFdRejected", { fd_name: notification.meta.fd_name || '' });
+      case 'FAMILY_FD_CLAIMED':
+        return t("notifications.familyFdClaimed", { fd_name: notification.meta.fd_name || '' });
+      case 'FAMILY_INSURANCE_APPROVED':
+        return t("notifications.familyInsuranceApproved", { deceased_name: notification.meta.deceased_name || '' });
+      case 'FAMILY_INSURANCE_REJECTED':
+        return t("notifications.familyInsuranceRejected");
+      case 'FAMILY_MORTUARIUM_CONFIRMED':
+        return t("notifications.familyMortuariumConfirmed", { mortuarium_name: notification.meta.mortuarium_name || '' });
+      case 'FAMILY_MORTUARIUM_REJECTED':
+        return t("notifications.familyMortuariumRejected", { mortuarium_name: notification.meta.mortuarium_name || '' });
+      case 'FAMILY_DOCUMENT_REQUESTED':
+        return t("notifications.familyDocumentRequested", { 
+          fd_name: notification.meta.fd_name || '',
+          deceased_name: notification.meta.deceased_name || ''
+        });
+      case 'FAMILY_DOCUMENT_AVAILABLE':
+        return t("notifications.familyDocumentAvailable");
+      case 'FAMILY_DOSSIER_COMPLETED':
+        return t("notifications.familyDossierCompleted", { deceased_name: notification.meta.deceased_name || '' });
       default:
         return t("notifications.newNotification");
     }

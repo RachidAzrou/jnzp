@@ -3966,6 +3966,12 @@ export type Database = {
         Args: { p_profile_id: string }
         Returns: string
       }
+      get_family_users_for_dossier: {
+        Args: { p_dossier_id: string }
+        Returns: {
+          user_id: string
+        }[]
+      }
       get_ip_prefix: {
         Args: { p_ip: string }
         Returns: unknown

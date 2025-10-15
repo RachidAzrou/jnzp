@@ -936,6 +936,16 @@
     "mortuariumConfirmed": "{{mortuarium_name}} heeft de reservatie bevestigd",
     "mortuariumRejected": "{{mortuarium_name}} kon de reservatie niet bevestigen",
     "documentUploaded": "Familie uploadde een nieuw document voor {{deceased_name}}",
-    "newMessage": "{{sender_name}}: \"{{message_preview}}\""
+    "newMessage": "{{sender_name}}: \"{{message_preview}}\"",
+    "familyFdAccepted": "{{fd_name}} heeft het dossier aanvaard en neemt de uitvaart op zich",
+    "familyFdRejected": "{{fd_name}} kon het dossier niet aanvaarden. Kies een andere uitvaartverzorger",
+    "familyFdClaimed": "{{fd_name}} heeft het dossier opgepakt als uitvaartverzorger",
+    "familyInsuranceApproved": "Dekking is goedgekeurd voor {{deceased_name}}",
+    "familyInsuranceRejected": "Dekking werd geweigerd. Neem contact op met uw verzekeraar",
+    "familyMortuariumConfirmed": "{{mortuarium_name}} heeft de reservatie bevestigd",
+    "familyMortuariumRejected": "{{mortuarium_name}} kon de reservatie niet bevestigen",
+    "familyDocumentRequested": "{{fd_name}} vraagt om een document op te laden voor {{deceased_name}}",
+    "familyDocumentAvailable": "Er is een nieuw document toegevoegd aan het dossier",
+    "familyDossierCompleted": "Het dossier van {{deceased_name}} is afgerond"
   }
 }

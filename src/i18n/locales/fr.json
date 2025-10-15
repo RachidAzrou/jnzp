@@ -2124,6 +2124,16 @@
     "mortuariumConfirmed": "{{mortuarium_name}} a confirmé la réservation",
     "mortuariumRejected": "{{mortuarium_name}} n'a pas pu confirmer la réservation",
     "documentUploaded": "La famille a téléchargé un nouveau document pour {{deceased_name}}",
-    "newMessage": "{{sender_name}}: \"{{message_preview}}\""
+    "newMessage": "{{sender_name}}: \"{{message_preview}}\"",
+    "familyFdAccepted": "{{fd_name}} a accepté le dossier et s'occupera des funérailles",
+    "familyFdRejected": "{{fd_name}} n'a pas pu accepter le dossier. Veuillez choisir un autre directeur funéraire",
+    "familyFdClaimed": "{{fd_name}} a pris en charge le dossier en tant que directeur funéraire",
+    "familyInsuranceApproved": "La couverture a été approuvée pour {{deceased_name}}",
+    "familyInsuranceRejected": "La couverture a été refusée. Veuillez contacter votre assureur",
+    "familyMortuariumConfirmed": "{{mortuarium_name}} a confirmé la réservation",
+    "familyMortuariumRejected": "{{mortuarium_name}} n'a pas pu confirmer la réservation",
+    "familyDocumentRequested": "{{fd_name}} vous demande de télécharger un document pour {{deceased_name}}",
+    "familyDocumentAvailable": "Un nouveau document a été ajouté au dossier",
+    "familyDossierCompleted": "Le dossier de {{deceased_name}} a été finalisé"
   }
 }

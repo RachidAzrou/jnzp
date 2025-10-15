@@ -99,6 +99,12 @@
     "invoicing": "Facturatie",
     "logout": "Uitloggen"
   },
+  "rolePortals": {
+    "funeral_director": "Uitvaartondernemer Portaal",
+    "mosque": "Moskee Portaal",
+    "mortuarium": "Mortuarium Portaal",
+    "insurer": "Verzekeraar Portaal"
+  },
   "common": {
     "loading": "Laden...",
     "save": "Opslaan",

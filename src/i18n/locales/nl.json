@@ -153,7 +153,14 @@
     "update": "Bijwerken",
     "view": "Bekijken",
     "price": "Prijs",
-    "dossier": "Dossier"
+    "dossier": "Dossier",
+    "reset": "Resetten"
+  },
+  "status": {
+    "pending": "In afwachting",
+    "confirmed": "Bevestigd",
+    "completed": "Voltooid",
+    "failed": "Mislukt"
   },
   "placeholders": {
     "searchNameDossierID": "Zoek op naam of dossier ID",
@@ -392,11 +399,27 @@
     "searchPlaceholder": "Zoek op naam of locatie...",
     "mortuariumPlanning": "Mortuarium Planning",
     "mosquePlanning": "Moskee Planning",
+    "flightPlanning": "Vlucht Planning",
     "newAppointment": "Nieuwe afspraak",
+    "newFlight": "Nieuwe vlucht",
+    "noMortuariumAppointments": "Geen mortuarium afspraken gevonden",
+    "noMosqueAppointments": "Geen moskee afspraken gevonden",
+    "noFlights": "Geen vluchten gevonden",
+    "notSpecified": "Niet gespecificeerd",
+    "notPlanned": "Niet gepland",
+    "error": "Fout bij ophalen van planning gegevens",
     "columns": {
       "dossier": "Dossier",
       "name": "Naam",
       "location": "Locatie",
+      "from": "Van",
+      "to": "Tot",
+      "coolCell": "Koelcel",
+      "status": "Status",
+      "actions": "Acties",
+      "scheduledAt": "Gepland op",
+      "destination": "Bestemming",
+      "created": "Aangemaakt",
       "flightTime": "Vlucht tijd"
     }
   },

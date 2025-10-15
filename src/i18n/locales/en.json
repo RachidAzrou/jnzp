@@ -308,6 +308,12 @@
     "priority": "Priority",
     "price": "Price"
   },
+  "status": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "completed": "Completed",
+    "failed": "Failed"
+  },
   "forms": {
     "requiredField": "This field is required",
     "invalidEmail": "Invalid email address",
@@ -1327,11 +1333,27 @@
     "searchPlaceholder": "Search by name or location...",
     "mortuariumPlanning": "Mortuary Planning",
     "mosquePlanning": "Mosque Planning",
+    "flightPlanning": "Flight Planning",
     "newAppointment": "New appointment",
+    "newFlight": "New flight",
+    "noMortuariumAppointments": "No mortuary appointments found",
+    "noMosqueAppointments": "No mosque appointments found",
+    "noFlights": "No flights found",
+    "notSpecified": "Not specified",
+    "notPlanned": "Not planned",
+    "error": "Error loading planning data",
     "columns": {
       "dossier": "Dossier",
       "name": "Name",
       "location": "Location",
+      "from": "From",
+      "to": "To",
+      "coolCell": "Cool Cell",
+      "status": "Status",
+      "actions": "Actions",
+      "scheduledAt": "Scheduled at",
+      "destination": "Destination",
+      "created": "Created",
       "flightTime": "Flight time"
     }
   },

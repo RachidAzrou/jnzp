@@ -303,6 +303,12 @@
     "skip": "Passer",
     "or": "ou"
   },
+  "status": {
+    "pending": "En attente",
+    "confirmed": "Confirmé",
+    "completed": "Terminé",
+    "failed": "Échoué"
+  },
   "kpi": {
     "runningDossiers": "Dossiers en cours",
     "packageComplete": "Paquet complet",
@@ -1781,11 +1787,27 @@
     "searchPlaceholder": "Rechercher par nom ou lieu...",
     "mortuariumPlanning": "Planification Mortuaire",
     "mosquePlanning": "Planification Mosquée",
+    "flightPlanning": "Planification des vols",
     "newAppointment": "Nouveau rendez-vous",
+    "newFlight": "Nouveau vol",
+    "noMortuariumAppointments": "Aucun rendez-vous mortuaire trouvé",
+    "noMosqueAppointments": "Aucun rendez-vous mosquée trouvé",
+    "noFlights": "Aucun vol trouvé",
+    "notSpecified": "Non spécifié",
+    "notPlanned": "Non planifié",
+    "error": "Erreur lors du chargement des données de planification",
     "columns": {
       "dossier": "Dossier",
       "name": "Nom",
       "location": "Lieu",
+      "from": "De",
+      "to": "À",
+      "coolCell": "Cellule froide",
+      "status": "Statut",
+      "actions": "Actions",
+      "scheduledAt": "Prévu à",
+      "destination": "Destination",
+      "created": "Créé",
       "flightTime": "Heure de vol"
     }
   },

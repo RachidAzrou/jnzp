@@ -526,11 +526,11 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
       case 'BLOCKED':
         return `${userName} heeft deze taak geblokkeerd`;
       case 'UNBLOCKED':
-        return `${userName} heeft de blokkering opgeheven`;
+        return `${userName} ${t("tasks.blockingLifted")}`;
       case 'COMPLETED':
-        return `${userName} heeft deze taak afgerond`;
+        return `${userName} ${t("tasks.taskCompleted")}`;
       case 'REOPENED':
-        return `${userName} heeft deze taak heropend`;
+        return `${userName} ${t("tasks.taskReopened")}`;
       case 'UPDATED':
         const changes = activity.metadata?.changes || 'details bijgewerkt';
         return `${userName} heeft ${changes}`;

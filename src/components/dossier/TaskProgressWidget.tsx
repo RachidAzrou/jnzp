@@ -4,12 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, TrendingUp, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 interface TaskProgressWidgetProps {
   dossierId: string;
 }
 
 export function TaskProgressWidget({ dossierId }: TaskProgressWidgetProps) {
+  const { t } = useTranslation();
   const [totalTasks, setTotalTasks] = useState(0);
   const [completedTasks, setCompletedTasks] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -119,7 +121,7 @@ export function TaskProgressWidget({ dossierId }: TaskProgressWidgetProps) {
           {/* Completion message */}
           {progressPercentage === 100 && (
             <div className="text-xs text-center text-muted-foreground py-1 px-3 bg-muted/50 rounded-md">
-              ✅ Alle taken afgerond
+              ✅ {t("tasks.allTasksComplete")}
             </div>
           )}
         </div>

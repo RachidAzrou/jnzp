@@ -127,10 +127,10 @@ export function AutoProgressionAlert({ dossierId, currentStatus }: AutoProgressi
         <CheckCircle2 className="h-4 w-4 text-green-600" />
         <AlertDescription className="flex items-center justify-between">
           <div>
-            <strong className="text-green-700 dark:text-green-400">Alle taken zijn afgerond!</strong>
+            <strong className="text-green-700 dark:text-green-400">{t("tasks.allTasksComplete")}</strong>
             <br />
             <span className="text-sm text-muted-foreground">
-              Het dossier kan automatisch naar de volgende fase.
+              {t("statusChanger.allTasksComplete")}
             </span>
           </div>
           <Button
@@ -139,7 +139,7 @@ export function AutoProgressionAlert({ dossierId, currentStatus }: AutoProgressi
             disabled={isProgressing}
             className="ml-4"
           >
-            {isProgressing ? "Bezig..." : "Naar volgende fase"}
+            {isProgressing ? t("tasks.progressing") : t("tasks.moveToNextPhase")}
           </Button>
         </AlertDescription>
       </Alert>

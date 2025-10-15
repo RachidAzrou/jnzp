@@ -26,6 +26,19 @@ i18n
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
     },
+    react: {
+      useSuspense: false,
+    },
   });
+
+// Debug: log when language changes
+i18n.on('languageChanged', (lng) => {
+  console.log('[i18n] Language changed to:', lng);
+  console.log('[i18n] Sample translations:', {
+    archiveLink: i18n.t('navigation.archiveLink'),
+    facturatie: i18n.t('navigation.facturatie'),
+    teamManagement: i18n.t('navigation.teamManagement'),
+  });
+});
 
 export default i18n;

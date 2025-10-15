@@ -250,7 +250,7 @@ export default function InsurerDossierDocuments() {
                       <Label htmlFor="reason">Reden bij afwijzing</Label>
                       <Textarea
                         id="reason"
-                        placeholder="Geef een duidelijke reden voor afwijzing (minimaal 8 tekens)..."
+                        placeholder={t("placeholders.detailedReason")}
                         value={rejectionReason}
                         onChange={(e) => setRejectionReason(e.target.value)}
                         rows={4}

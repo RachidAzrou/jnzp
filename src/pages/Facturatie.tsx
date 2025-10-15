@@ -528,7 +528,7 @@ export default function Facturatie() {
                       <Label htmlFor="dossier">Dossier</Label>
                       <Select value={selectedDossierId} onValueChange={setSelectedDossierId}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecteer dossier" />
+                          <SelectValue placeholder={t("placeholders.selectDossier")} />
                         </SelectTrigger>
                         <SelectContent>
                           {dossiers.map((dossier) => (
@@ -634,7 +634,7 @@ export default function Facturatie() {
                       <div className="flex items-center gap-2">
                         <Search className="h-4 w-4 text-muted-foreground" />
                         <Input
-                          placeholder="Zoek op code of naam..."
+                          placeholder={t("placeholders.searchCodeOrName")}
                           value={catalogSearch}
                           onChange={(e) => setCatalogSearch(e.target.value)}
                         />
@@ -692,12 +692,12 @@ export default function Facturatie() {
                       {selectedInvoice.status === "DRAFT" && (
                         <div className="grid grid-cols-5 gap-2">
                           <Input
-                            placeholder="Code"
+                            placeholder={t("placeholders.customCode")}
                             value={newItem.code}
                             onChange={(e) => setNewItem({ ...newItem, code: e.target.value })}
                           />
                           <Input
-                            placeholder="Omschrijving"
+                            placeholder={t("placeholders.serviceDescription")}
                             value={newItem.description}
                             onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
                           />
@@ -710,7 +710,7 @@ export default function Facturatie() {
                           <Input
                             type="number"
                             step="0.01"
-                            placeholder="Prijs"
+                            placeholder={t("common.price")}
                             value={newItem.unit_price}
                             onChange={(e) => setNewItem({ ...newItem, unit_price: Number(e.target.value) })}
                           />
@@ -798,8 +798,8 @@ export default function Facturatie() {
                                   <DatePicker
                                     date={paymentDate}
                                     onSelect={setPaymentDate}
-                                    placeholder="Selecteer betaaldatum"
-                                    disabled={(date) => date > new Date()}
+                                   placeholder={t("placeholders.selectPaymentDate")}
+                                   disabled={(date) => date > new Date()}
                                   />
                                 </div>
                                 <Button onClick={() => markAsPaid(selectedInvoice.id)}>

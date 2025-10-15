@@ -357,7 +357,7 @@ const Instellingen = () => {
                     id="orgCity"
                     value={organization.city}
                     onChange={(e) => setOrganization({ ...organization, city: e.target.value })}
-                    placeholder="Brussel"
+                    placeholder={t("placeholders.city")}
                   />
                 </div>
               </div>
@@ -368,7 +368,7 @@ const Instellingen = () => {
                   id="orgCountry"
                   value={organization.country}
                   onChange={(e) => setOrganization({ ...organization, country: e.target.value })}
-                  placeholder="België"
+                  placeholder={t("placeholders.country")}
                 />
               </div>
 
@@ -380,7 +380,7 @@ const Instellingen = () => {
                     type="email"
                     value={organization.contactEmail}
                     onChange={(e) => setOrganization({ ...organization, contactEmail: e.target.value })}
-                    placeholder="info@organisatie.be"
+                    placeholder={t("placeholders.emailOrganization")}
                   />
                 </div>
                 <div className="space-y-2">
@@ -401,7 +401,7 @@ const Instellingen = () => {
                   id="orgVat"
                   value={organization.vatNumber}
                   onChange={(e) => setOrganization({ ...organization, vatNumber: e.target.value })}
-                  placeholder="BE0123456789"
+                  placeholder={t("placeholders.businessNumber")}
                 />
               </div>
 

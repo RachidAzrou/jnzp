@@ -597,7 +597,7 @@ export default function FDFacturatie() {
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Zoeken op nummer, dossier, overledene..."
+                    placeholder={t("placeholders.searchInvoiceNumber")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -763,7 +763,7 @@ export default function FDFacturatie() {
                 <Label>Dossier *</Label>
                 <Select value={selectedDossier} onValueChange={setSelectedDossier}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecteer dossier" />
+                    <SelectValue placeholder={t("placeholders.selectDossier")} />
                   </SelectTrigger>
                   <SelectContent>
                     {dossiers.map((dossier) => (
@@ -785,7 +785,7 @@ export default function FDFacturatie() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      placeholder="Zoek in catalogus..."
+                      placeholder={t("placeholders.searchCatalog")}
                       value={catalogSearch}
                       onChange={(e) => setCatalogSearch(e.target.value)}
                       className="pl-10"
@@ -832,7 +832,7 @@ export default function FDFacturatie() {
                       <Input
                         value={customCode}
                         onChange={(e) => setCustomCode(e.target.value)}
-                        placeholder="Bijv. CUSTOM_001"
+                        placeholder={t("placeholders.customCode")}
                       />
                     </div>
                     <div>
@@ -840,7 +840,7 @@ export default function FDFacturatie() {
                       <Input
                         value={customDescription}
                         onChange={(e) => setCustomDescription(e.target.value)}
-                        placeholder="Beschrijving van dienst"
+                        placeholder={t("placeholders.serviceDescription")}
                       />
                     </div>
                     <div>

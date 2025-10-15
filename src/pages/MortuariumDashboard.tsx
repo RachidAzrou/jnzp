@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ type PendingRequest = {
   } | null;
 };
 export default function MortuariumDashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const {
     toast
@@ -356,7 +358,7 @@ export default function MortuariumDashboard() {
                               </AlertDialogHeader>
                               <div className="space-y-2 py-4">
                                 <Label htmlFor="reason">Reden *</Label>
-                                <Textarea id="reason" value={cancelReason} onChange={e => setCancelReason(e.target.value)} placeholder="Bijv. Geen beschikbaarheid, verkeerde datum..." rows={3} />
+                                <Textarea id="reason" value={cancelReason} onChange={e => setCancelReason(e.target.value)} placeholder={t("placeholders.cancelReason")} rows={3} />
                               </div>
                               <AlertDialogFooter>
                                 <AlertDialogCancel onClick={() => {

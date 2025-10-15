@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +24,7 @@ const getCurrentDate = () => {
 };
 
 export default function InsurerDossierOverview() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -617,7 +619,7 @@ export default function InsurerDossierOverview() {
                             <Label htmlFor="unblock-reason">Reden voor opheffen blokkering (verplicht)</Label>
                             <Textarea
                               id="unblock-reason"
-                              placeholder="Leg uit waarom je de blokkering opheft..."
+                              placeholder={t("placeholders.explainRequiredInfo")}
                               value={blockReason}
                               onChange={(e) => setBlockReason(e.target.value)}
                               rows={3}
@@ -645,7 +647,7 @@ export default function InsurerDossierOverview() {
                             <Label htmlFor="override-reason">Reden voor override (verplicht)</Label>
                             <Textarea
                               id="override-reason"
-                              placeholder="Leg uit waarom je de claim handmatig goedkeurt of afwijst..."
+                              placeholder={t("placeholders.explainRequiredInfo")}
                               value={overrideReason}
                               onChange={(e) => setOverrideReason(e.target.value)}
                               rows={3}
@@ -670,7 +672,7 @@ export default function InsurerDossierOverview() {
                             <Label htmlFor="block-reason">Reden voor blokkering (optioneel)</Label>
                             <Textarea
                               id="block-reason"
-                              placeholder="Leg uit waarom je de claim blokkeert (bijv. fraude, onvolledige documenten)..."
+                              placeholder={t("placeholders.detailedReason")}
                               value={blockReason}
                               onChange={(e) => setBlockReason(e.target.value)}
                               rows={2}

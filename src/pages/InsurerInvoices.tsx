@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function InsurerInvoices() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
@@ -371,7 +373,7 @@ export default function InsurerInvoices() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Zoeken op dossier, factuurnummer, overledene..."
+                placeholder={t("placeholders.searchDossierInvoiceDeceased")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -547,7 +549,7 @@ export default function InsurerInvoices() {
                         <div className="space-y-2">
                           <Label>Meer informatie nodig (verplichte reden)</Label>
                           <Textarea
-                            placeholder="Leg uit welke informatie nodig is..."
+                            placeholder={t("placeholders.explainRequiredInfo")}
                             value={needsInfoReason}
                             onChange={(e) => setNeedsInfoReason(e.target.value)}
                             rows={3}
@@ -572,14 +574,14 @@ export default function InsurerInvoices() {
                             <DatePicker
                               date={paymentDate}
                               onSelect={setPaymentDate}
-                              placeholder="Selecteer betaaldatum"
+                              placeholder={t("placeholders.selectPaymentDate")}
                               disabled={(date) => date > new Date()}
                             />
                           </div>
                           <div className="space-y-2">
                             <Label>Betalingsreferentie *</Label>
                             <Input
-                              placeholder="Bv. SEPA-12345"
+                              placeholder={t("placeholders.paymentReference")}
                               value={paymentRef}
                               onChange={(e) => setPaymentRef(e.target.value)}
                             />

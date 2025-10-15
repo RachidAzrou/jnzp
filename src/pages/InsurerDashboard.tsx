@@ -247,7 +247,7 @@ export default function InsurerDashboard() {
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Zoeken in dossiers..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-8" />
+                <Input placeholder={t("placeholders.searchDossiers")} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-8" />
               </div>
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>

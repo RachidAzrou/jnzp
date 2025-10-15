@@ -1030,7 +1030,7 @@ const Auth = () => {
               <Input
                 id="reset-email"
                 type="email"
-                placeholder="naam@voorbeeld.nl"
+                placeholder={t("placeholders.emailExample")}
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
                 required

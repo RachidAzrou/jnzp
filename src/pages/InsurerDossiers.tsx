@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +24,7 @@ const getCurrentDate = () => {
 };
 
 export default function InsurerDossiers() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
@@ -198,7 +200,7 @@ export default function InsurerDossiers() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Zoek op naam, referentie of dossier ID..."
+              placeholder={t("placeholders.searchDossiers")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"
@@ -332,7 +334,7 @@ export default function InsurerDossiers() {
                   </Label>
                   <Textarea
                     id="block-reason"
-                    placeholder="Geef een gedetailleerde reden op voor de blokkering..."
+                    placeholder={t("placeholders.detailedReason")}
                     value={blockReason}
                     onChange={(e) => setBlockReason(e.target.value)}
                     rows={4}

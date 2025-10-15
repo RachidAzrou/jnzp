@@ -35,6 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "react-i18next";
 
 type Invoice = {
   id: string;
@@ -99,6 +100,7 @@ const statusLabels: Record<string, string> = {
 export default function Facturatie() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [dossiers, setDossiers] = useState<Dossier[]>([]);
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([]);

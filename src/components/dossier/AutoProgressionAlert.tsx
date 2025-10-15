@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface AutoProgressionAlertProps {
   dossierId: string;
@@ -10,6 +11,7 @@ interface AutoProgressionAlertProps {
 }
 
 export function AutoProgressionAlert({ dossierId, currentStatus }: AutoProgressionAlertProps) {
+  const { t } = useTranslation();
   const [canProgress, setCanProgress] = useState(false);
   const [blockInfo, setBlockInfo] = useState<any>(null);
   const [openTasks, setOpenTasks] = useState(0);
@@ -112,8 +114,7 @@ export function AutoProgressionAlert({ dossierId, currentStatus }: AutoProgressi
       <Alert className="mb-4">
         <Clock className="h-4 w-4" />
         <AlertDescription>
-          Er zijn nog <strong>{openTasks} open taken</strong> voor de huidige status.
-          Rond deze eerst af voordat het dossier naar de volgende fase kan.
+          {t("statusChanger.openTasksWarning", { count: openTasks })}
         </AlertDescription>
       </Alert>
     );

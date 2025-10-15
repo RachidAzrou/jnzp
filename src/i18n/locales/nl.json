@@ -183,6 +183,10 @@
     "allTasksComplete": "Alle taken zijn voltooid. Het dossier kan naar de volgende fase.",
     "noChangesAllowed": "Geen statuswijzigingen toegestaan vanuit deze status. Neem contact op met een admin indien nodig."
   },
+  "manualEvent": {
+    "title": "Handmatige gebeurtenis toevoegen",
+    "description": "Voeg een gebeurtenis toe aan de tijdlijn"
+  },
   "forms": {
     "placeholders": {
       "statusChangeReason": "Bijv. 'Alle documenten goedgekeurd' of 'Familie heeft bevestigd'"

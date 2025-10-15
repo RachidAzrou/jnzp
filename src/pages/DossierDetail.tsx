@@ -1170,8 +1170,8 @@ const DossierDetail = () => {
           
           <Card className="animate-fade-in">
             <CardHeader>
-              <CardTitle className="text-lg">Handmatige gebeurtenis toevoegen</CardTitle>
-              <CardDescription>Voeg een gebeurtenis toe aan de tijdlijn</CardDescription>
+              <CardTitle className="text-lg">{t("manualEvent.title")}</CardTitle>
+              <CardDescription>{t("manualEvent.description")}</CardDescription>
             </CardHeader>
             <CardContent>
               <AddManualEventDialog 

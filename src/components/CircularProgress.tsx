@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 interface CircularProgressProps {
   value: number;
   size?: number;
@@ -5,6 +7,7 @@ interface CircularProgressProps {
 }
 
 export function CircularProgress({ value, size = 200, strokeWidth = 12 }: CircularProgressProps) {
+  const { t } = useTranslation();
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (value / 100) * circumference;
@@ -42,7 +45,7 @@ export function CircularProgress({ value, size = 200, strokeWidth = 12 }: Circul
       {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-5xl font-bold">{Math.round(value)}%</span>
-        <span className="text-sm text-muted-foreground mt-1">Complete</span>
+        <span className="text-sm text-muted-foreground mt-1">{t('circularProgress.complete')}</span>
       </div>
     </div>
   );

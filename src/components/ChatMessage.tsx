@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { MessageSquare, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from 'react-i18next';
 
 type MessageChannel = "PORTAL";
 
@@ -30,6 +31,7 @@ function containsPII(text: string): boolean {
 }
 
 export function ChatMessage({ message, channel, senderRole, timestamp, isCurrentUser }: ChatMessageProps) {
+  const { t } = useTranslation();
   const config = channelConfig[channel];
   const hasPII = containsPII(message);
 
@@ -61,7 +63,7 @@ export function ChatMessage({ message, channel, senderRole, timestamp, isCurrent
         <Alert variant="destructive" className="text-xs py-2">
           <AlertTriangle className="h-3 w-3" aria-hidden="true" />
           <AlertDescription className="text-xs">
-            ⚠️ Dit bericht bevat mogelijk gevoelige informatie (BSN/NIS/Polis). Deel dit niet via onbeveiligde kanalen.
+            {t('chatMessage.piiWarning')}
           </AlertDescription>
         </Alert>
       )}

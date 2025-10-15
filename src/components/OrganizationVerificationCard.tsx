@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { CheckCircle, XCircle, Ban, RotateCcw, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,6 +42,7 @@ export const OrganizationVerificationCard = ({
   onUpdate,
 }: OrganizationVerificationCardProps) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [notes, setNotes] = useState('');
   const [deactivationReason, setDeactivationReason] = useState('');
@@ -58,19 +60,19 @@ export const OrganizationVerificationCard = ({
       const result = data as any;
       if (result?.success) {
         toast({
-          title: 'Organisatie geverifieerd',
-          description: 'De organisatie is succesvol geverifieerd',
+          title: t('organizationVerification.successVerified'),
+          description: t('organizationVerification.successVerifiedDesc'),
         });
         setNotes('');
         onUpdate();
       } else {
-        throw new Error(result?.error || 'Verificatie mislukt');
+        throw new Error(result?.error || t('organizationVerification.errorVerifyDesc'));
       }
     } catch (error: any) {
       console.error('Error verifying organization:', error);
       toast({
-        title: 'Fout',
-        description: error.message || 'Kon organisatie niet verifiëren',
+        title: t('organizationVerification.errorVerify'),
+        description: error.message || t('organizationVerification.errorVerifyDesc'),
         variant: 'destructive',
       });
     } finally {

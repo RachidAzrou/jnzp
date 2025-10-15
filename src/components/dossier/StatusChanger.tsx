@@ -53,63 +53,65 @@ const ALLOWED_TRANSITIONS: Record<string, string[]> = {
   CLOSED: []
 };
 
+
 // Labels voor FD
-export const STATUS_LABELS_FD = {
+export const getStatusLabelsFD = (t: any) => ({
   CREATED: {
-    label: "Nieuw dossier",
+    label: t("statusLabels.fd.created.label"),
     color: "yellow",
-    description: "Dossier aangemaakt, nog niet gestart",
+    description: t("statusLabels.fd.created.description"),
   },
   IN_PROGRESS: {
-    label: "In behandeling",
+    label: t("statusLabels.fd.inProgress.label"),
     color: "green",
-    description: "Intake, documenten of planning bezig",
+    description: t("statusLabels.fd.inProgress.description"),
   },
   UNDER_REVIEW: {
-    label: "In controle",
+    label: t("statusLabels.fd.underReview.label"),
     color: "emerald",
-    description: "Verzekeraar controleert de polis",
+    description: t("statusLabels.fd.underReview.description"),
   },
   COMPLETED: {
-    label: "Operationeel afgerond",
+    label: t("statusLabels.fd.completed.label"),
     color: "cyan",
-    description: "Uitvoering afgerond, klaar voor afsluiting",
+    description: t("statusLabels.fd.completed.description"),
   },
   CLOSED: {
-    label: "Gearchiveerd",
+    label: t("statusLabels.fd.closed.label"),
     color: "gray",
-    description: "Financieel afgerond en afgesloten",
+    description: t("statusLabels.fd.closed.description"),
   }
-};
+});
+
 
 // Labels voor admins (uitgebreider)
-export const STATUS_LABELS_ADMIN = {
+export const getStatusLabelsAdmin = (t: any) => ({
   CREATED: {
-    label: "Nieuw dossier aangemaakt",
+    label: t("statusLabels.admin.created.label"),
     color: "yellow",
-    description: "Dossier is aangemaakt maar nog niet gestart",
+    description: t("statusLabels.admin.created.description"),
   },
   IN_PROGRESS: {
-    label: "In behandeling",
+    label: t("statusLabels.admin.inProgress.label"),
     color: "green",
-    description: "Intake, documenten, planning of uitvoering bezig",
+    description: t("statusLabels.admin.inProgress.description"),
   },
   UNDER_REVIEW: {
-    label: "In controle (API check)",
+    label: t("statusLabels.admin.underReview.label"),
     color: "emerald",
-    description: "Automatische poliscontrole bij verzekeraar loopt",
+    description: t("statusLabels.admin.underReview.description"),
   },
   COMPLETED: {
-    label: "Operationeel afgerond",
+    label: t("statusLabels.admin.completed.label"),
     color: "cyan",
-    description: "Uitvoering afgerond, klaar voor financiële afsluiting",
+    description: t("statusLabels.admin.completed.description"),
   },
   CLOSED: {
-    label: "Gearchiveerd",
+    label: t("statusLabels.admin.closed.label"),
     color: "gray",
-    description: "Volledig afgesloten en gearchiveerd",
+    description: t("statusLabels.admin.closed.description"),
   }
-};
+});
 
 export const STATUS_BADGES: Record<string, any> = {
   CREATED: "secondary",
@@ -120,14 +122,18 @@ export const STATUS_BADGES: Record<string, any> = {
 };
 
 // Helper function to get the right labels based on user role
-export const getStatusLabels = (isAdmin: boolean) => {
-  return isAdmin ? STATUS_LABELS_ADMIN : STATUS_LABELS_FD;
+export const getStatusLabels = (isAdmin: boolean, t: any) => {
+  return isAdmin ? getStatusLabelsAdmin(t) : getStatusLabelsFD(t);
 };
 
-// Backward compatibility - simple label mapping
-const STATUS_LABELS: Record<string, string> = Object.fromEntries(
-  Object.entries(STATUS_LABELS_FD).map(([key, value]) => [key, value.label])
-);
+// Backward compatibility - simple label mapping (for non-i18n usage)
+export const STATUS_LABELS_FD_LEGACY: Record<string, string> = {
+  CREATED: "Nieuw dossier",
+  IN_PROGRESS: "In behandeling",
+  UNDER_REVIEW: "In controle",
+  COMPLETED: "Operationeel afgerond",
+  CLOSED: "Gearchiveerd"
+};
 
 export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdmin = false }: StatusChangerProps) {
   const { toast } = useToast();
@@ -139,7 +145,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
   const [openTasks, setOpenTasks] = useState(0);
   const [canProgress, setCanProgress] = useState(false);
 
-  const statusLabels = getStatusLabels(isAdmin);
+  const statusLabels = getStatusLabels(isAdmin, t);
   const allowedNextStatuses = ALLOWED_TRANSITIONS[currentStatus] || [];
 
   // Check blokkades en open taken bij openen

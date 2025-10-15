@@ -985,6 +985,91 @@
       "disabledDescription": "Activez l'authentification à deux facteurs pour une sécurité supplémentaire"
     }
   },
+  "statusLabels": {
+    "fd": {
+      "created": {
+        "label": "Nouveau dossier",
+        "description": "Dossier créé, pas encore commencé"
+      },
+      "inProgress": {
+        "label": "En cours",
+        "description": "Admission, documents ou planification en cours"
+      },
+      "underReview": {
+        "label": "En contrôle",
+        "description": "L'assureur vérifie la police"
+      },
+      "completed": {
+        "label": "Opérationnellement terminé",
+        "description": "Exécution terminée, prêt pour la clôture"
+      },
+      "closed": {
+        "label": "Archivé",
+        "description": "Financièrement terminé et clôturé"
+      }
+    },
+    "admin": {
+      "created": {
+        "label": "Nouveau dossier créé",
+        "description": "Le dossier est créé mais pas encore commencé"
+      },
+      "inProgress": {
+        "label": "En cours",
+        "description": "Admission, documents, planification ou exécution en cours"
+      },
+      "underReview": {
+        "label": "En contrôle (vérification API)",
+        "description": "Vérification automatique de la police d'assurance en cours"
+      },
+      "completed": {
+        "label": "Opérationnellement terminé",
+        "description": "Exécution terminée, prêt pour la clôture financière"
+      },
+      "closed": {
+        "label": "Archivé",
+        "description": "Complètement clôturé et archivé"
+      }
+    }
+  },
+  "auditLog": {
+    "title": "Journal d'audit",
+    "noEvents": "Aucun événement d'audit trouvé",
+    "platformAdminBadge": "Vue Admin Plateforme",
+    "timestamp": "Heure",
+    "user": "Utilisateur",
+    "role": "Rôle",
+    "action": "Action",
+    "details": "Détails",
+    "reason": "Raison",
+    "userLabel": "Utilisateur",
+    "system": "Système",
+    "rolePlatformAdmin": "Admin Plateforme",
+    "roleAdmin": "Admin",
+    "roleFuneralDirector": "Directeur de funérailles",
+    "roleInsurer": "Assureur",
+    "roleMortuarium": "Mortuaire",
+    "roleMosque": "Mosquée",
+    "roleOrgAdmin": "Admin Organisation",
+    "roleFamily": "Famille",
+    "actions": {
+      "statusChanged": "Statut modifié",
+      "documentUploaded": "Document téléversé",
+      "documentApproved": "Document approuvé",
+      "documentRejected": "Document rejeté",
+      "dossierCreated": "Dossier créé",
+      "dossierUpdated": "Dossier mis à jour",
+      "dossierDeleted": "Dossier supprimé",
+      "fdRelease": "Directeur de funérailles libéré",
+      "familyRelease": "Famille libérée du directeur",
+      "claimApproved": "Réclamation approuvée",
+      "claimRejected": "Réclamation rejetée",
+      "userCreated": "Utilisateur créé",
+      "userUpdated": "Utilisateur mis à jour",
+      "passwordChanged": "Mot de passe modifié",
+      "holdSet": "Blocage défini",
+      "holdLifted": "Blocage levé"
+    }
+  },
   "coolCell": {
     "status": "Statut",
     "period": "Période",

@@ -526,6 +526,91 @@
       "disable": "Disable 2FA"
     }
   },
+  "statusLabels": {
+    "fd": {
+      "created": {
+        "label": "New dossier",
+        "description": "Dossier created, not yet started"
+      },
+      "inProgress": {
+        "label": "In progress",
+        "description": "Intake, documents or planning ongoing"
+      },
+      "underReview": {
+        "label": "Under review",
+        "description": "Insurer checking policy"
+      },
+      "completed": {
+        "label": "Operationally completed",
+        "description": "Execution completed, ready for closure"
+      },
+      "closed": {
+        "label": "Archived",
+        "description": "Financially completed and closed"
+      }
+    },
+    "admin": {
+      "created": {
+        "label": "New dossier created",
+        "description": "Dossier is created but not yet started"
+      },
+      "inProgress": {
+        "label": "In progress",
+        "description": "Intake, documents, planning or execution ongoing"
+      },
+      "underReview": {
+        "label": "Under review (API check)",
+        "description": "Automatic policy check with insurer running"
+      },
+      "completed": {
+        "label": "Operationally completed",
+        "description": "Execution completed, ready for financial closure"
+      },
+      "closed": {
+        "label": "Archived",
+        "description": "Fully closed and archived"
+      }
+    }
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "noEvents": "No audit events found",
+    "platformAdminBadge": "Platform Admin View",
+    "timestamp": "Time",
+    "user": "User",
+    "role": "Role",
+    "action": "Action",
+    "details": "Details",
+    "reason": "Reason",
+    "userLabel": "User",
+    "system": "System",
+    "rolePlatformAdmin": "Platform Admin",
+    "roleAdmin": "Admin",
+    "roleFuneralDirector": "Funeral Director",
+    "roleInsurer": "Insurer",
+    "roleMortuarium": "Mortuary",
+    "roleMosque": "Mosque",
+    "roleOrgAdmin": "Organization Admin",
+    "roleFamily": "Family",
+    "actions": {
+      "statusChanged": "Status changed",
+      "documentUploaded": "Document uploaded",
+      "documentApproved": "Document approved",
+      "documentRejected": "Document rejected",
+      "dossierCreated": "Dossier created",
+      "dossierUpdated": "Dossier updated",
+      "dossierDeleted": "Dossier deleted",
+      "fdRelease": "Funeral director released",
+      "familyRelease": "Family released funeral director",
+      "claimApproved": "Claim approved",
+      "claimRejected": "Claim rejected",
+      "userCreated": "User created",
+      "userUpdated": "User updated",
+      "passwordChanged": "Password changed",
+      "holdSet": "Hold set",
+      "holdLifted": "Hold lifted"
+    }
+  },
   "coolCell": {
     "status": "Status",
     "period": "Period",

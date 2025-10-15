@@ -483,6 +483,91 @@
       "disable": "2FA uitschakelen"
     }
   },
+  "statusLabels": {
+    "fd": {
+      "created": {
+        "label": "Nieuw dossier",
+        "description": "Dossier aangemaakt, nog niet gestart"
+      },
+      "inProgress": {
+        "label": "In behandeling",
+        "description": "Intake, documenten of planning bezig"
+      },
+      "underReview": {
+        "label": "In controle",
+        "description": "Verzekeraar controleert de polis"
+      },
+      "completed": {
+        "label": "Operationeel afgerond",
+        "description": "Uitvoering afgerond, klaar voor afsluiting"
+      },
+      "closed": {
+        "label": "Gearchiveerd",
+        "description": "Financieel afgerond en afgesloten"
+      }
+    },
+    "admin": {
+      "created": {
+        "label": "Nieuw dossier aangemaakt",
+        "description": "Dossier is aangemaakt maar nog niet gestart"
+      },
+      "inProgress": {
+        "label": "In behandeling",
+        "description": "Intake, documenten, planning of uitvoering bezig"
+      },
+      "underReview": {
+        "label": "In controle (API check)",
+        "description": "Automatische poliscontrole bij verzekeraar loopt"
+      },
+      "completed": {
+        "label": "Operationeel afgerond",
+        "description": "Uitvoering afgerond, klaar voor financiële afsluiting"
+      },
+      "closed": {
+        "label": "Gearchiveerd",
+        "description": "Volledig afgesloten en gearchiveerd"
+      }
+    }
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "noEvents": "Geen audit events gevonden",
+    "platformAdminBadge": "Platform Admin View",
+    "timestamp": "Tijd",
+    "user": "Gebruiker",
+    "role": "Rol",
+    "action": "Actie",
+    "details": "Details",
+    "reason": "Reden",
+    "userLabel": "Gebruiker",
+    "system": "Systeem",
+    "rolePlatformAdmin": "Platform Admin",
+    "roleAdmin": "Admin",
+    "roleFuneralDirector": "Uitvaartverzorger",
+    "roleInsurer": "Verzekeraar",
+    "roleMortuarium": "Mortuarium",
+    "roleMosque": "Moskee",
+    "roleOrgAdmin": "Organisatie Admin",
+    "roleFamily": "Familie",
+    "actions": {
+      "statusChanged": "Status gewijzigd",
+      "documentUploaded": "Document geüpload",
+      "documentApproved": "Document goedgekeurd",
+      "documentRejected": "Document afgekeurd",
+      "dossierCreated": "Dossier aangemaakt",
+      "dossierUpdated": "Dossier bijgewerkt",
+      "dossierDeleted": "Dossier verwijderd",
+      "fdRelease": "FD vrijgegeven",
+      "familyRelease": "Familie vrijgegeven FD",
+      "claimApproved": "Claim goedgekeurd",
+      "claimRejected": "Claim afgewezen",
+      "userCreated": "Gebruiker aangemaakt",
+      "userUpdated": "Gebruiker bijgewerkt",
+      "passwordChanged": "Wachtwoord gewijzigd",
+      "holdSet": "Blokkering ingesteld",
+      "holdLifted": "Blokkering opgeheven"
+    }
+  },
   "coolCell": {
     "status": "Status",
     "period": "Periode",
@@ -545,6 +630,49 @@
     "currentStatus": "Huidige status",
     "lastUpdated": "Laatst bijgewerkt",
     "requiredDocumentation": "Vereiste Documentatie"
+  },
+  "planning": {
+    "flight": {
+      "errorFetch": "Fout bij ophalen vlucht",
+      "updated": "Vlucht bijgewerkt",
+      "updatedDesc": "De wijzigingen zijn opgeslagen",
+      "deleted": "Vlucht verwijderd",
+      "deletedDesc": "De vlucht is succesvol verwijderd",
+      "fieldsRequired": "Vul de verplichte velden in",
+      "fieldsRequiredDesc": "Vertrek en bestemming zijn verplicht",
+      "preferencesSaved": "Vluchtvoorkeuren opgeslagen"
+    },
+    "mortuarium": {
+      "errorFetch": "Fout bij ophalen reservering",
+      "updated": "Reservering bijgewerkt",
+      "updatedDesc": "De wijzigingen zijn opgeslagen",
+      "deleted": "Reservering verwijderd",
+      "deletedDesc": "De reservering is succesvol verwijderd",
+      "created": "Reservering aangemaakt",
+      "createdDesc": "Het mortuarium ontvangt een melding",
+      "fieldsRequired": "Vul alle velden in"
+    },
+    "janazah": {
+      "fieldsRequired": "Vul alle velden in",
+      "fieldsRequiredDesc": "Datum, tijd en locatie zijn verplicht",
+      "saved": "Opgeslagen",
+      "savedDesc": "Janazah service is bijgewerkt",
+      "statusUpdated": "Status bijgewerkt",
+      "obituaryWarning": "Waarschuwing",
+      "obituaryWarningDesc": "Overlijdensbericht kon niet automatisch worden gegenereerd.",
+      "obituaryCreated": "Overlijdensbericht aangemaakt",
+      "obituaryCreatedDesc": "NL en AR versies zijn toegevoegd aan documenten."
+    },
+    "mosque": {
+      "created": "Moskee afspraak aangemaakt",
+      "createdDesc": "De afspraak is succesvol ingepland.",
+      "errorCreate": "Fout bij aanmaken afspraak",
+      "incomplete": "Incomplete gegevens",
+      "incompleteDesc": "Selecteer een dossier, moskee en datum",
+      "scheduled": "Janazah ingepland",
+      "scheduledDesc": "De janazah is succesvol ingepland en de moskee is op de hoogte gesteld.",
+      "errorSchedule": "Fout bij inplannen"
+    }
   },
   "toasts": {
     "success": {

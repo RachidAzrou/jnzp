@@ -116,22 +116,22 @@ export function AuditLogTable({ dossierId }: AuditLogTableProps) {
 
   const formatActionName = (eventType: string) => {
     const actionMap: Record<string, string> = {
-      STATUS_CHANGED: "Status gewijzigd",
-      DOCUMENT_UPLOADED: "Document geüpload",
-      DOCUMENT_APPROVED: "Document goedgekeurd",
-      DOCUMENT_REJECTED: "Document afgekeurd",
-      DOSSIER_CREATED: "Dossier aangemaakt",
-      DOSSIER_UPDATED: "Dossier bijgewerkt",
-      DOSSIER_DELETED: "Dossier verwijderd",
-      FD_RELEASE: "FD vrijgegeven",
-      FAMILY_RELEASE: "Familie vrijgegeven FD",
-      CLAIM_APPROVED: "Claim goedgekeurd",
-      CLAIM_REJECTED: "Claim afgewezen",
-      USER_CREATED: "Gebruiker aangemaakt",
-      USER_UPDATED: "Gebruiker bijgewerkt",
-      PASSWORD_CHANGED: "Wachtwoord gewijzigd",
-      HOLD_SET: "Blokkering ingesteld",
-      HOLD_LIFTED: "Blokkering opgeheven",
+      STATUS_CHANGED: t("auditLog.actions.statusChanged"),
+      DOCUMENT_UPLOADED: t("auditLog.actions.documentUploaded"),
+      DOCUMENT_APPROVED: t("auditLog.actions.documentApproved"),
+      DOCUMENT_REJECTED: t("auditLog.actions.documentRejected"),
+      DOSSIER_CREATED: t("auditLog.actions.dossierCreated"),
+      DOSSIER_UPDATED: t("auditLog.actions.dossierUpdated"),
+      DOSSIER_DELETED: t("auditLog.actions.dossierDeleted"),
+      FD_RELEASE: t("auditLog.actions.fdRelease"),
+      FAMILY_RELEASE: t("auditLog.actions.familyRelease"),
+      CLAIM_APPROVED: t("auditLog.actions.claimApproved"),
+      CLAIM_REJECTED: t("auditLog.actions.claimRejected"),
+      USER_CREATED: t("auditLog.actions.userCreated"),
+      USER_UPDATED: t("auditLog.actions.userUpdated"),
+      PASSWORD_CHANGED: t("auditLog.actions.passwordChanged"),
+      HOLD_SET: t("auditLog.actions.holdSet"),
+      HOLD_LIFTED: t("auditLog.actions.holdLifted"),
     };
     return actionMap[eventType] || eventType.replace(/_/g, " ").toLowerCase();
   };

@@ -208,6 +208,9 @@ export function AppSidebar() {
                   ? location.pathname === "/" 
                   : location.pathname.startsWith(item.url);
                 
+                const translatedTitle = t(item.titleKey);
+                console.log(`[Sidebar] Translating ${item.titleKey} to:`, translatedTitle);
+                
                 return (
                   <SidebarMenuItem key={item.titleKey}>
                     <SidebarMenuButton asChild>
@@ -220,7 +223,7 @@ export function AppSidebar() {
                         } ${isCollapsed ? 'justify-center' : ''}`}
                       >
                         <item.icon className="h-5 w-5 sm:h-5 sm:w-5 flex-shrink-0" />
-                        {!isCollapsed && <span className="text-sm sm:text-sm">{t(item.titleKey)}</span>}
+                        {!isCollapsed && <span className="text-sm sm:text-sm">{translatedTitle}</span>}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

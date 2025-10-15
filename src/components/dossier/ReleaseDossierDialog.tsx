@@ -17,11 +17,11 @@ interface ReleaseDossierDialogProps {
 }
 
 const RELEASE_REASONS = [
-  { value: "no_capacity", label: "Geen capaciteit" },
-  { value: "geographical", label: "Geografisch niet haalbaar" },
-  { value: "family_request", label: "Familie verzoek" },
-  { value: "service_mismatch", label: "Dienstverlening komt niet overeen" },
-  { value: "other", label: "Andere reden" },
+  { value: "no_capacity", label_key: "releaseDialog.reasonNoCapacity" },
+  { value: "geographical", label_key: "releaseDialog.reasonGeographical" },
+  { value: "family_request", label_key: "releaseDialog.reasonFamilyRequest" },
+  { value: "service_mismatch", label_key: "releaseDialog.reasonServiceMismatch" },
+  { value: "other", label_key: "releaseDialog.reasonOther" },
 ];
 
 export default function ReleaseDossierDialog({
@@ -41,18 +41,18 @@ export default function ReleaseDossierDialog({
     if (!reason) {
       toast({
         title: t("toasts.errors.reasonRequired"),
-        description: "Selecteer een reden",
+        description: t("releaseDialog.reasonRequiredDesc"),
         variant: "destructive",
       });
       return;
     }
 
-    const finalReason = reason === "other" ? customReason : RELEASE_REASONS.find(r => r.value === reason)?.label || "";
+    const finalReason = reason === "other" ? customReason : t(RELEASE_REASONS.find(r => r.value === reason)?.label_key || "");
     
     if (!finalReason.trim()) {
       toast({
         title: t("toasts.errors.reasonRequired"),
-        description: "Voer een reden in",
+        description: t("releaseDialog.enterReasonDesc"),
         variant: "destructive",
       });
       return;
@@ -72,14 +72,14 @@ export default function ReleaseDossierDialog({
       if (result?.success) {
         toast({
           title: t("common.success"),
-          description: "Dossier vrijgegeven. Familie is op de hoogte gebracht.",
+          description: t("releaseDialog.successDesc"),
         });
         onOpenChange(false);
         onSuccess?.();
       } else {
         toast({
           title: t("common.error"),
-          description: result?.error || "Fout bij vrijgeven",
+          description: result?.error || t("releaseDialog.errorDesc"),
           variant: "destructive",
         });
       }
@@ -87,7 +87,7 @@ export default function ReleaseDossierDialog({
       console.error("Release error:", err);
       toast({
         title: t("common.error"),
-        description: "Fout bij vrijgeven: " + err.message,
+        description: t("releaseDialog.errorDesc") + ": " + err.message,
         variant: "destructive",
       });
     } finally {
@@ -99,24 +99,23 @@ export default function ReleaseDossierDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Dossier vrijgeven</DialogTitle>
+          <DialogTitle>{t("releaseDialog.title")}</DialogTitle>
           <DialogDescription>
-            U staat op het punt dossier {dossierDisplayId} vrij te geven. 
-            Het dossier wordt beschikbaar voor andere uitvaartondernemingen en de familie wordt geïnformeerd.
+            {t("releaseDialog.description", { dossierDisplayId })}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="reason">Reden *</Label>
+            <Label htmlFor="reason">{t("releaseDialog.reasonLabel")} *</Label>
             <Select value={reason} onValueChange={setReason}>
               <SelectTrigger id="reason">
-                <SelectValue placeholder="Selecteer een reden" />
+                <SelectValue placeholder={t("releaseDialog.reasonPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {RELEASE_REASONS.map((r) => (
                   <SelectItem key={r.value} value={r.value}>
-                    {r.label}
+                    {t(r.label_key)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -125,7 +124,7 @@ export default function ReleaseDossierDialog({
 
           {reason === "other" && (
             <div className="space-y-2">
-              <Label htmlFor="customReason">Andere reden *</Label>
+              <Label htmlFor="customReason">{t("releaseDialog.customReasonLabel")} *</Label>
               <Textarea
                 id="customReason"
                 placeholder={t("forms.placeholders.releaseDescription")}
@@ -139,10 +138,10 @@ export default function ReleaseDossierDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Annuleren
+            {t("common.cancel")}
           </Button>
           <Button variant="destructive" onClick={handleRelease} disabled={releasing}>
-            {releasing ? "Vrijgeven..." : "Dossier vrijgeven"}
+            {releasing ? t("releaseDialog.releasing") : t("releaseDialog.release")}
           </Button>
         </DialogFooter>
       </DialogContent>

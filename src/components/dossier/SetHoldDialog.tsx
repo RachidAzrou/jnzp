@@ -105,21 +105,21 @@ export function SetHoldDialog({
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           <AlertTriangle className="h-4 w-4 mr-2" />
-          Blokkade zetten
+          {t("holdDialog.trigger")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Dossier blokkeren</DialogTitle>
+          <DialogTitle>{t("holdDialog.title")}</DialogTitle>
           <DialogDescription>
-            Zet een blokkade op dit dossier om bepaalde acties te beperken
+            {t("holdDialog.description")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           {canSetLegal && canSetInsurer && (
             <div>
-              <Label>Type blokkade</Label>
+              <Label>{t("holdDialog.typeLabel")}</Label>
               <RadioGroup
                 value={holdType}
                 onValueChange={(val) => setHoldType(val as "LEGAL" | "INSURER")}
@@ -129,14 +129,14 @@ export function SetHoldDialog({
                   <RadioGroupItem value="LEGAL" id="legal" />
                   <Label htmlFor="legal" className="cursor-pointer flex items-center gap-2">
                     <Shield className="h-4 w-4 text-red-600" />
-                    Juridische blokkade (alle acties)
+                    {t("holdDialog.typeLegal")}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="INSURER" id="insurer" />
                   <Label htmlFor="insurer" className="cursor-pointer flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-orange-600" />
-                    Verzekeraar-blokkade (financiële acties)
+                    {t("holdDialog.typeInsurer")}
                   </Label>
                 </div>
               </RadioGroup>
@@ -144,7 +144,7 @@ export function SetHoldDialog({
           )}
 
           <div>
-            <Label htmlFor="reason">Reden *</Label>
+            <Label htmlFor="reason">{t("holdDialog.reasonLabel")} *</Label>
             <Textarea
               id="reason"
               value={reason}
@@ -156,7 +156,7 @@ export function SetHoldDialog({
 
           <div>
             <Label htmlFor="contact">
-              {holdType === "LEGAL" ? "Autoriteit/Parket" : "Contactpersoon"}
+              {holdType === "LEGAL" ? t("holdDialog.contactLabelLegal") : t("holdDialog.contactLabel")}
             </Label>
             <Input
               id="contact"
@@ -164,8 +164,8 @@ export function SetHoldDialog({
               onChange={(e) => setContactPerson(e.target.value)}
               placeholder={
                 holdType === "LEGAL"
-                  ? "Naam van parket of autoriteit"
-                  : "Naam contactpersoon verzekeraar"
+                  ? t("holdDialog.contactPlaceholderLegal")
+                  : t("holdDialog.contactPlaceholder")
               }
               className="mt-2"
             />
@@ -173,14 +173,14 @@ export function SetHoldDialog({
 
           <div>
             <Label htmlFor="reference">
-              {holdType === "LEGAL" ? "Zaaknummer" : "Referentienummer"}
+              {holdType === "LEGAL" ? t("holdDialog.referenceLabelLegal") : t("holdDialog.referenceLabel")}
             </Label>
             <Input
               id="reference"
               value={reference}
               onChange={(e) => setReference(e.target.value)}
               placeholder={
-                holdType === "LEGAL" ? "PV-nummer of zaaknummer" : "Referentie verzekeraar"
+                holdType === "LEGAL" ? t("holdDialog.referencePlaceholderLegal") : t("holdDialog.referencePlaceholder")
               }
               className="mt-2"
             />
@@ -189,10 +189,10 @@ export function SetHoldDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
-            Annuleren
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? "Bezig..." : "Blokkade activeren"}
+            {isSubmitting ? t("holdDialog.activating") : t("holdDialog.activate")}
           </Button>
         </DialogFooter>
       </DialogContent>

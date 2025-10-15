@@ -278,10 +278,10 @@ export default function InsurerDashboard() {
 
         {/* KPIs */}
         <div className="grid gap-6 md:grid-cols-4">
-          <KPICard title="Lopende dossiers" value={totalDossiers.toString()} icon={FolderOpen} />
-          <KPICard title="Pakket compleet" value={`${completeDocs} (${totalDossiers > 0 ? Math.round(completeDocs / totalDossiers * 100) : 0}%)`} icon={CheckCircle} />
-          <KPICard title="Afgewezen (7d)" value={recentRejections.toString()} icon={XCircle} />
-          <KPICard title="Gem. doorlooptijd" value="11u" icon={Clock} />
+          <KPICard title={t("kpi.runningDossiers")} value={totalDossiers.toString()} icon={FolderOpen} />
+          <KPICard title={t("kpi.packageComplete")} value={`${completeDocs} (${totalDossiers > 0 ? Math.round(completeDocs / totalDossiers * 100) : 0}%)`} icon={CheckCircle} />
+          <KPICard title={t("kpi.rejected7d")} value={recentRejections.toString()} icon={XCircle} />
+          <KPICard title={t("kpi.avgThroughput")} value="11u" icon={Clock} />
         </div>
 
         {/* Charts Row */}

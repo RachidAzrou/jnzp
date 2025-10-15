@@ -343,22 +343,22 @@ export default function InsurerInvoices() {
       {/* KPIs */}
       <div className="grid gap-6 md:grid-cols-4">
           <KPICard
-            title="Totaal Facturen"
+            title={t("kpi.totalInvoices")}
             value={totalInvoices.toString()}
             icon={FileText}
           />
           <KPICard
-            title="Te Accorderen"
+            title={t("kpi.toApprove")}
             value={pendingApproval.toString()}
             icon={Clock}
           />
           <KPICard
-            title="Betaald"
+            title={t("kpi.paid")}
             value={`${paidInvoices} (${totalInvoices > 0 ? Math.round((paidInvoices / totalInvoices) * 100) : 0}%)`}
             icon={CheckCircle}
           />
           <KPICard
-            title="Openstaand Bedrag"
+            title={t("kpi.outstandingAmount")}
             value={`€${outstandingAmount.toFixed(2)}`}
             icon={Euro}
           />

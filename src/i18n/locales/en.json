@@ -165,6 +165,22 @@
     "invalidCredentials": "Invalid credentials",
     "invalidCredentialsDesc": "Email or password is incorrect"
   },
+  "kpi": {
+    "runningDossiers": "Running dossiers",
+    "packageComplete": "Package complete",
+    "rejected7d": "Rejected (7d)",
+    "avgThroughput": "Avg. throughput",
+    "totalInvoices": "Total Invoices",
+    "toApprove": "To Approve",
+    "paid": "Paid",
+    "outstandingAmount": "Outstanding Amount"
+  },
+  "services": {
+    "janazahDetails": "Janazah Details",
+    "janazahDescription": "Planning and location information",
+    "wassingDetails": "Washing Details",
+    "wassingDescription": "Planning and facility information"
+  },
   "common": {
     "cancel": "Cancel",
     "submit": "Submit",

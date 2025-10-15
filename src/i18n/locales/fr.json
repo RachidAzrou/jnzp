@@ -164,6 +164,22 @@
     "skip": "Passer",
     "or": "ou"
   },
+  "kpi": {
+    "runningDossiers": "Dossiers en cours",
+    "packageComplete": "Paquet complet",
+    "rejected7d": "Rejeté (7j)",
+    "avgThroughput": "Délai moyen",
+    "totalInvoices": "Total Factures",
+    "toApprove": "À Approuver",
+    "paid": "Payé",
+    "outstandingAmount": "Montant en souffrance"
+  },
+  "services": {
+    "janazahDetails": "Détails Janazah",
+    "janazahDescription": "Informations de planification et d'emplacement",
+    "wassingDetails": "Détails du lavage",
+    "wassingDescription": "Informations de planification et d'installation"
+  },
   "forms": {
     "save": "Enregistrer",
     "cancel": "Annuler",

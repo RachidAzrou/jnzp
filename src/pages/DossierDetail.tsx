@@ -1061,8 +1061,8 @@ const DossierDetail = () => {
                 <div className="pl-6">
                   <EditableServiceCard
                     event={mosqueeService}
-                    title="Janazah Details"
-                    description="Planning en locatie informatie"
+                    title={t("services.janazahDetails")}
+                    description={t("services.janazahDescription")}
                     onUpdate={fetchDossierData}
                   />
                 </div>
@@ -1079,8 +1079,8 @@ const DossierDetail = () => {
                 <div className="pl-6">
                   <EditableServiceCard
                     event={mortuariumService}
-                    title="Wassing Details"
-                    description="Planning en faciliteit informatie"
+                    title={t("services.wassingDetails")}
+                    description={t("services.wassingDescription")}
                     onUpdate={fetchDossierData}
                   />
                 </div>

@@ -165,6 +165,22 @@
     "hourPlaceholder": "00",
     "minutePlaceholder": "00"
   },
+  "kpi": {
+    "runningDossiers": "Lopende dossiers",
+    "packageComplete": "Pakket compleet",
+    "rejected7d": "Afgewezen (7d)",
+    "avgThroughput": "Gem. doorlooptijd",
+    "totalInvoices": "Totaal Facturen",
+    "toApprove": "Te Accorderen",
+    "paid": "Betaald",
+    "outstandingAmount": "Openstaand Bedrag"
+  },
+  "services": {
+    "janazahDetails": "Janazah Details",
+    "janazahDescription": "Planning en locatie informatie",
+    "wassingDetails": "Wassing Details",
+    "wassingDescription": "Planning en faciliteit informatie"
+  },
 
   "dashboard": "Dashboard",
   "dossiers": "Dossiers",

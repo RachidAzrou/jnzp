@@ -715,6 +715,28 @@
     "reason": "Reason",
     "blocked": "Blocked"
   },
+  "qr": {
+    "generateQRCode": "Generate QR Code",
+    "qrCodeFor": "QR Code for dossier",
+    "qrDescription": "Generate a secure QR code for this dossier with configurable access rights",
+    "maxScans": "Maximum number of scans (optional)",
+    "unlimited": "Unlimited",
+    "accessTo": "Access to:",
+    "basicInfo": "Basic information (name, status)",
+    "documents": "Documents",
+    "timeline": "Timeline",
+    "generating": "Generating...",
+    "generateButton": "Generate QR Code",
+    "qrCodeUrl": "QR Code URL",
+    "download": "Download",
+    "close": "Close",
+    "qrGenerated": "QR Code generated",
+    "expiresOn": "Expires on",
+    "authError": "Not authenticated",
+    "error": "Error",
+    "errorDesc": "An error occurred while generating the QR code",
+    "noDataError": "No QR data received"
+  },
   "planning": {
     "flight": {
       "errorFetch": "Error fetching flight",

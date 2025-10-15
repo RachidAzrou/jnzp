@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
 import { QrCode, Download } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface QRCodeGeneratorProps {
   dossierId: string;
@@ -15,6 +16,7 @@ interface QRCodeGeneratorProps {
 }
 
 export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [qrData, setQrData] = useState<{ token: string; url: string } | null>(null);
@@ -30,7 +32,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
     setGenerating(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      if (!user) throw new Error(t("qr.authError"));
 
       // Use RPC endpoint to generate QR token
       const { data, error } = await supabase.rpc('generate_qr_token_rpc', {
@@ -41,7 +43,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
       });
 
       if (error) throw error;
-      if (!data) throw new Error('Geen QR data ontvangen');
+      if (!data) throw new Error(t("qr.noDataError"));
 
       // Type the RPC response properly
       const result = data as { 
@@ -61,14 +63,14 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
       });
 
       toast({
-        title: "QR Code gegenereerd",
-        description: `Verloopt op ${new Date(result.expires_at).toLocaleDateString('nl-NL')}`,
+        title: t("qr.qrGenerated"),
+        description: `${t("qr.expiresOn")} ${new Date(result.expires_at).toLocaleDateString()}`,
       });
     } catch (error: any) {
       console.error('QR generation error:', error);
       toast({
-        title: "Fout",
-        description: error.message || 'Er is een fout opgetreden bij het genereren van de QR code',
+        title: t("qr.error"),
+        description: error.message || t("qr.errorDesc"),
         variant: "destructive"
       });
     } finally {
@@ -109,19 +111,19 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>QR Code voor dossier {displayId}</DialogTitle>
+          <DialogTitle>{t("qr.qrCodeFor")} {displayId}</DialogTitle>
           <DialogDescription>
-            Genereer een veilige QR code voor dit dossier met configureerbare toegangsrechten
+            {t("qr.qrDescription")}
           </DialogDescription>
         </DialogHeader>
         
         {!qrData ? (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Maximaal aantal scans (optioneel)</Label>
+              <Label>{t("qr.maxScans")}</Label>
               <Input
                 type="number"
-                placeholder="Onbeperkt"
+                placeholder={t("qr.unlimited")}
                 value={maxScans || ''}
                 onChange={(e) => setMaxScans(e.target.value ? parseInt(e.target.value) : null)}
                 min={1}
@@ -129,7 +131,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
             </div>
 
             <div className="space-y-3">
-              <Label>Toegang tot:</Label>
+              <Label>{t("qr.accessTo")}</Label>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -140,7 +142,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
                     }
                   />
                   <label htmlFor="basic_info" className="text-sm">
-                    Basis informatie (naam, status)
+                    {t("qr.basicInfo")}
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -152,7 +154,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
                     }
                   />
                   <label htmlFor="documents" className="text-sm">
-                    Documenten
+                    {t("qr.documents")}
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -164,7 +166,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
                     }
                   />
                   <label htmlFor="timeline" className="text-sm">
-                    Tijdlijn
+                    {t("qr.timeline")}
                   </label>
                 </div>
               </div>
@@ -175,7 +177,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
               disabled={generating}
               className="w-full"
             >
-              {generating ? "Genereren..." : "QR Code genereren"}
+              {generating ? t("qr.generating") : t("qr.generateButton")}
             </Button>
           </div>
         ) : (
@@ -191,7 +193,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
             </div>
 
             <div className="space-y-2">
-              <Label>QR Code URL</Label>
+              <Label>{t("qr.qrCodeUrl")}</Label>
               <Input
                 value={qrData.url}
                 readOnly
@@ -202,7 +204,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
             <div className="flex gap-2">
               <Button onClick={downloadQRCode} className="flex-1">
                 <Download className="h-4 w-4 mr-2" />
-                Download
+                {t("qr.download")}
               </Button>
               <Button 
                 variant="outline" 
@@ -211,7 +213,7 @@ export function QRCodeGenerator({ dossierId, displayId }: QRCodeGeneratorProps) 
                   setOpen(false);
                 }}
               >
-                Sluiten
+                {t("qr.close")}
               </Button>
             </div>
           </div>

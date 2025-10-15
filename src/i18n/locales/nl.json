@@ -366,6 +366,28 @@
     "copiedToClipboard": "Gekopieerd",
     "copiedToClipboardDesc": "QR code URL is gekopieerd naar klembord"
   },
+  "qr": {
+    "generateQRCode": "Genereer QR Code",
+    "qrCodeFor": "QR Code voor dossier",
+    "qrDescription": "Genereer een veilige QR code voor dit dossier met configureerbare toegangsrechten",
+    "maxScans": "Maximaal aantal scans (optioneel)",
+    "unlimited": "Onbeperkt",
+    "accessTo": "Toegang tot:",
+    "basicInfo": "Basis informatie (naam, status)",
+    "documents": "Documenten",
+    "timeline": "Tijdlijn",
+    "generating": "Genereren...",
+    "generateButton": "QR Code genereren",
+    "qrCodeUrl": "QR Code URL",
+    "download": "Download",
+    "close": "Sluiten",
+    "qrGenerated": "QR Code gegenereerd",
+    "expiresOn": "Verloopt op",
+    "authError": "Niet geauthenticeerd",
+    "error": "Fout",
+    "errorDesc": "Er is een fout opgetreden bij het genereren van de QR code",
+    "noDataError": "Geen QR data ontvangen"
+  },
   "onboarding": {
     "welcomeTitle": "Welkom bij JanazApp",
     "completeSteps": "Voltooi de volgende stappen om je organisatie in te stellen",

@@ -1174,6 +1174,28 @@
     "reason": "Raison",
     "blocked": "Bloqué"
   },
+  "qr": {
+    "generateQRCode": "Générer Code QR",
+    "qrCodeFor": "Code QR pour dossier",
+    "qrDescription": "Générer un code QR sécurisé pour ce dossier avec des droits d'accès configurables",
+    "maxScans": "Nombre maximum de scans (optionnel)",
+    "unlimited": "Illimité",
+    "accessTo": "Accès à :",
+    "basicInfo": "Informations de base (nom, statut)",
+    "documents": "Documents",
+    "timeline": "Chronologie",
+    "generating": "Génération...",
+    "generateButton": "Générer code QR",
+    "qrCodeUrl": "URL du code QR",
+    "download": "Télécharger",
+    "close": "Fermer",
+    "qrGenerated": "Code QR généré",
+    "expiresOn": "Expire le",
+    "authError": "Non authentifié",
+    "error": "Erreur",
+    "errorDesc": "Une erreur s'est produite lors de la génération du code QR",
+    "noDataError": "Aucune donnée QR reçue"
+  },
   "planning": {
     "flight": {
       "errorFetch": "Erreur lors de la récupération du vol",

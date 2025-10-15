@@ -15,9 +15,7 @@ interface DossierData {
   status: string;
 }
 const Dashboard = () => {
-  const {
-    t
-  } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [dossiers, setDossiers] = useState<DossierData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -123,7 +121,6 @@ const Dashboard = () => {
         </div>;
   }
   const getCurrentDate = () => {
-    const { i18n } = useTranslation();
     const locale = i18n.language || 'nl';
     const localeMap: { [key: string]: string } = {
       'nl': 'nl-NL',

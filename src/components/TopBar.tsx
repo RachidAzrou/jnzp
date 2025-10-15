@@ -55,11 +55,11 @@ export function TopBar() {
   // Determine user type based on role
   useEffect(() => {
     if (role === 'platform_admin' || isAdmin) {
-      setUserType('Admin');
+      setUserType(t("roles.admin"));
     } else if (role) {
-      setUserType('Medewerker');
+      setUserType(t("roles.employee"));
     }
-  }, [role, isAdmin]);
+  }, [role, isAdmin, t]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();

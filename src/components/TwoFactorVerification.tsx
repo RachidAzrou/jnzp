@@ -260,18 +260,18 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
         <div className="flex justify-center mb-4">
           <TbAuth2Fa className="h-12 w-12 text-primary" />
         </div>
-        <CardTitle>Tweefactorauthenticatie</CardTitle>
+        <CardTitle>{t("2fa.title")}</CardTitle>
         <CardDescription>
           {isRecoveryMode 
-            ? "Voer een recovery code in"
-            : "Voer de 6-cijferige code in uit uw authenticator app"
+            ? t("2fa.enterRecoveryCode")
+            : t("2fa.enterCode")
           }
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="2faCode">
-            {isRecoveryMode ? "Recovery Code" : "Verificatiecode"}
+            {isRecoveryMode ? t("2fa.recoveryCode") : t("2fa.verificationCode")}
           </Label>
           <Input
             id="2faCode"
@@ -298,7 +298,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
             htmlFor="trust-device"
             className="text-sm font-normal cursor-pointer"
           >
-            Vertrouw dit apparaat voor 30 dagen
+            {t("2fa.trustDevice")}
           </Label>
         </div>
 
@@ -316,7 +316,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
             type="button"
           >
             {verifying ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Verifiëren
+            {t("2fa.verify")}
           </Button>
           
           <Button 
@@ -324,7 +324,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
             onClick={() => setIsRecoveryMode(!isRecoveryMode)}
             className="w-full"
           >
-            {isRecoveryMode ? "Gebruik authenticator app" : "Gebruik recovery code"}
+            {isRecoveryMode ? t("2fa.useAuthApp") : t("2fa.useRecoveryCode")}
           </Button>
 
           <Button 
@@ -332,7 +332,7 @@ export const TwoFactorVerification = ({ onVerified, onCancel, nonce, userId }: T
             onClick={onCancel}
             className="w-full"
           >
-            Annuleren
+            {t("common.cancel")}
           </Button>
         </div>
       </CardContent>

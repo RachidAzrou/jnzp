@@ -1248,6 +1248,29 @@
       "createError": "Impossible de créer l'EF"
     }
   },
+  "externalInvoice": {
+    "uploadButton": "Télécharger Facture Externe",
+    "title": "Télécharger Facture Externe",
+    "fileLabel": "Fichier",
+    "descriptionLabel": "Description",
+    "amountLabel": "Montant (optionnel, TTC)",
+    "statusLabel": "Statut",
+    "statusDraft": "Brouillon",
+    "statusIssued": "Émise",
+    "statusPaid": "Payée",
+    "cancel": "Annuler",
+    "upload": "Télécharger",
+    "uploading": "Téléchargement...",
+    "selectFile": "Sélectionner un fichier",
+    "notLoggedIn": "Non connecté",
+    "noOrganization": "Aucune organisation trouvée",
+    "success": "Succès",
+    "successDesc": "Facture externe ajoutée",
+    "error": "Erreur"
+  },
+  "createDossier": {
+    "eventDescription": "Dossier créé manuellement"
+  },
   "planning": {
     "flight": {
       "errorFetch": "Erreur lors de la récupération du vol",

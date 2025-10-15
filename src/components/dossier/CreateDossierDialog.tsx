@@ -236,7 +236,7 @@ export function CreateDossierDialog() {
         event_type: "DOSSIER_CREATED",
         target_type: "Dossier",
         target_id: dossier.id,
-        description: "Dossier handmatig aangemaakt",
+        description: t("createDossier.eventDescription"),
         metadata: {
           source: "MANUAL",
           flow: validatedData.flow,

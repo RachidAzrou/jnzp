@@ -789,6 +789,29 @@
       "createError": "Could not create FD"
     }
   },
+  "externalInvoice": {
+    "uploadButton": "Upload External Invoice",
+    "title": "Upload External Invoice",
+    "fileLabel": "File",
+    "descriptionLabel": "Description",
+    "amountLabel": "Amount (optional, incl. VAT)",
+    "statusLabel": "Status",
+    "statusDraft": "Draft",
+    "statusIssued": "Issued",
+    "statusPaid": "Paid",
+    "cancel": "Cancel",
+    "upload": "Upload",
+    "uploading": "Uploading...",
+    "selectFile": "Select a file",
+    "notLoggedIn": "Not logged in",
+    "noOrganization": "No organization found",
+    "success": "Success",
+    "successDesc": "External invoice added",
+    "error": "Error"
+  },
+  "createDossier": {
+    "eventDescription": "Dossier created manually"
+  },
   "planning": {
     "flight": {
       "errorFetch": "Error fetching flight",

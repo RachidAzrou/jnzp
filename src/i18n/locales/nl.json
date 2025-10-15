@@ -440,6 +440,29 @@
       "createError": "Kon FD niet aanmaken"
     }
   },
+  "externalInvoice": {
+    "uploadButton": "Externe Factuur Uploaden",
+    "title": "Externe Factuur Uploaden",
+    "fileLabel": "Bestand",
+    "descriptionLabel": "Omschrijving",
+    "amountLabel": "Bedrag (optioneel, incl. BTW)",
+    "statusLabel": "Status",
+    "statusDraft": "Concept",
+    "statusIssued": "Uitgegeven",
+    "statusPaid": "Betaald",
+    "cancel": "Annuleren",
+    "upload": "Uploaden",
+    "uploading": "Uploaden...",
+    "selectFile": "Selecteer een bestand",
+    "notLoggedIn": "Niet ingelogd",
+    "noOrganization": "Geen organisatie gevonden",
+    "success": "Succes",
+    "successDesc": "Externe factuur toegevoegd",
+    "error": "Fout"
+  },
+  "createDossier": {
+    "eventDescription": "Dossier handmatig aangemaakt"
+  },
   "onboarding": {
     "welcomeTitle": "Welkom bij JanazApp",
     "completeSteps": "Voltooi de volgende stappen om je organisatie in te stellen",

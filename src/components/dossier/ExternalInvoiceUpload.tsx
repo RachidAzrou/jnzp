@@ -28,8 +28,8 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
   const handleSubmit = async () => {
     if (!file) {
       toast({
-        title: "Fout",
-        description: "Selecteer een bestand",
+        title: t("externalInvoice.error"),
+        description: t("externalInvoice.selectFile"),
         variant: "destructive",
       });
       return;
@@ -38,7 +38,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Niet ingelogd");
+      if (!user) throw new Error(t("externalInvoice.notLoggedIn"));
 
       const { data: userRole } = await supabase
         .from("user_roles")
@@ -47,7 +47,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
         .eq("role", "funeral_director")
         .single();
 
-      if (!userRole?.organization_id) throw new Error("Geen organisatie gevonden");
+      if (!userRole?.organization_id) throw new Error(t("externalInvoice.noOrganization"));
 
       // Upload file to storage
       const fileExt = file.name.split('.').pop();
@@ -83,8 +83,8 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
       if (insertError) throw insertError;
 
       toast({
-        title: "Succes",
-        description: "Externe factuur toegevoegd",
+        title: t("externalInvoice.success"),
+        description: t("externalInvoice.successDesc"),
       });
 
       setOpen(false);
@@ -96,7 +96,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
     } catch (error: any) {
       console.error("Error uploading invoice:", error);
       toast({
-        title: "Fout",
+        title: t("externalInvoice.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -110,16 +110,16 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
       <DialogTrigger asChild>
         <Button variant="outline">
           <Upload className="h-4 w-4 mr-2" />
-          Externe Factuur Uploaden
+          {t("externalInvoice.uploadButton")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Externe Factuur Uploaden</DialogTitle>
+          <DialogTitle>{t("externalInvoice.title")}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-4">
+          <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="file">Bestand</Label>
+            <Label htmlFor="file">{t("externalInvoice.fileLabel")}</Label>
             <Input
               id="file"
               type="file"
@@ -128,7 +128,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">Omschrijving</Label>
+            <Label htmlFor="description">{t("externalInvoice.descriptionLabel")}</Label>
             <Textarea
               id="description"
               placeholder={t("forms.placeholders.invoiceDescription")}
@@ -137,7 +137,7 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="amount">Bedrag (optioneel, incl. BTW)</Label>
+            <Label htmlFor="amount">{t("externalInvoice.amountLabel")}</Label>
             <Input
               id="amount"
               type="number"
@@ -148,25 +148,25 @@ export function ExternalInvoiceUpload({ dossierId, onUploadComplete }: Props) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">{t("externalInvoice.statusLabel")}</Label>
             <Select value={status} onValueChange={(val) => setStatus(val as "DRAFT" | "ISSUED" | "PAID")}>
               <SelectTrigger id="status">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="DRAFT">Concept</SelectItem>
-                <SelectItem value="ISSUED">Uitgegeven</SelectItem>
-                <SelectItem value="PAID">Betaald</SelectItem>
+                <SelectItem value="DRAFT">{t("externalInvoice.statusDraft")}</SelectItem>
+                <SelectItem value="ISSUED">{t("externalInvoice.statusIssued")}</SelectItem>
+                <SelectItem value="PAID">{t("externalInvoice.statusPaid")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Annuleren
+            {t("externalInvoice.cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? "Uploaden..." : "Uploaden"}
+            {loading ? t("externalInvoice.uploading") : t("externalInvoice.upload")}
           </Button>
         </DialogFooter>
       </DialogContent>

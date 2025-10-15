@@ -178,7 +178,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
             <Label>Dossier</Label>
             <Select value={selectedDossier} onValueChange={setSelectedDossier}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecteer dossier..." />
+                <SelectValue placeholder={t("placeholders.selectDossierEllipsis")} />
               </SelectTrigger>
               <SelectContent>
                 {dossiers?.map((dossier) => (
@@ -194,7 +194,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
             <Label>Moskee</Label>
             <Select value={selectedMosque} onValueChange={setSelectedMosque}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecteer moskee..." />
+                <SelectValue placeholder={t("placeholders.selectMosque")} />
               </SelectTrigger>
               <SelectContent>
                 {mosques?.map((mosque) => (
@@ -230,7 +230,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
             <Label>Gebed</Label>
             <Select value={selectedPrayer} onValueChange={setSelectedPrayer}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecteer gebed..." />
+                <SelectValue placeholder={t("placeholders.selectPrayer")} />
               </SelectTrigger>
               <SelectContent>
                 {prayerTimes.map((prayer) => (
@@ -247,7 +247,7 @@ export function MoskeeServiceDialog({ open, onOpenChange, onSuccess }: MoskeeSer
             <Input
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Bijv. Hoofdgebouw, zaal A"
+              placeholder={t("placeholders.locationExample")}
             />
           </div>
 

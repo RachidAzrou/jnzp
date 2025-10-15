@@ -183,7 +183,7 @@ export function EditMortuariumReservationDialog({
               <Textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Extra informatie..."
+                placeholder={t("placeholders.extraInfoMortuarium")}
                 rows={3}
               />
             </div>

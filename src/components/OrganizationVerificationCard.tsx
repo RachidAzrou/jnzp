@@ -211,7 +211,7 @@ export const OrganizationVerificationCard = ({
               <Label htmlFor="notes">Verificatie notities (optioneel)</Label>
               <Textarea
                 id="notes"
-                placeholder="Voeg notities toe over de verificatie..."
+                placeholder={t("placeholders.verificationNotes")}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
@@ -250,7 +250,7 @@ export const OrganizationVerificationCard = ({
                 </Label>
                 <Textarea
                   id="deactivation-reason"
-                  placeholder="Bijv. Inbreuk op gebruiksvoorwaarden..."
+                  placeholder={t("placeholders.rejectionReason2")}
                   value={deactivationReason}
                   onChange={(e) => setDeactivationReason(e.target.value)}
                   rows={3}
@@ -277,7 +277,7 @@ export const OrganizationVerificationCard = ({
               </Label>
               <Textarea
                 id="reactivation-notes"
-                placeholder="Voeg notities toe over de heractivatie..."
+                placeholder={t("placeholders.reactivationNotes")}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}

@@ -127,7 +127,7 @@ export function MoskeeServiceScheduler({ dossierId, onSuccess }: MoskeeServiceSc
             <Label>Moskee</Label>
             <Select value={selectedMosque} onValueChange={setSelectedMosque}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecteer moskee..." />
+                <SelectValue placeholder={t("placeholders.selectMosque")} />
               </SelectTrigger>
               <SelectContent>
                 {mosques?.map((mosque) => (
@@ -173,7 +173,7 @@ export function MoskeeServiceScheduler({ dossierId, onSuccess }: MoskeeServiceSc
             <Input
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Bijv. Hoofdgebouw, zaal A"
+              placeholder={t("placeholders.locationExample")}
             />
           </div>
 

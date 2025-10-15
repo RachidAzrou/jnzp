@@ -253,7 +253,7 @@ ${notes ? `\nExtra notities: ${notes}` : ''}`;
               <Label>Dossier (Repatriëring)</Label>
               <Select value={selectedDossier} onValueChange={setSelectedDossier}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Kies een repatriëring dossier" />
+                  <SelectValue placeholder={t("placeholders.selectRepatriation")} />
                 </SelectTrigger>
                 <SelectContent>
                   {dossiers.map(d => (
@@ -274,23 +274,23 @@ ${notes ? `\nExtra notities: ${notes}` : ''}`;
                   <Input
                     value={departureCountry}
                     onChange={(e) => setDepartureCountry(e.target.value)}
-                    placeholder="Bijv. België"
+                    placeholder={t("placeholders.countryExample")}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Stad *</Label>
+                  <Label>Stad</Label>
                   <Input
                     value={departureCity}
                     onChange={(e) => setDepartureCity(e.target.value)}
-                    placeholder="Bijv. Brussel"
+                    placeholder={t("placeholders.cityExample")}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Luchthaven</Label>
+                  <Label>Luchthaven code</Label>
                   <Input
                     value={departureAirport}
                     onChange={(e) => setDepartureAirport(e.target.value)}
-                    placeholder="Bijv. BRU"
+                    placeholder={t("placeholders.airportCodeExample")}
                   />
                 </div>
               </div>
@@ -305,23 +305,23 @@ ${notes ? `\nExtra notities: ${notes}` : ''}`;
                   <Input
                     value={destinationCountry}
                     onChange={(e) => setDestinationCountry(e.target.value)}
-                    placeholder="Bijv. Marokko"
+                    placeholder={t("placeholders.countryExampleMorocco")}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Stad *</Label>
+                  <Label>Stad</Label>
                   <Input
                     value={destinationCity}
                     onChange={(e) => setDestinationCity(e.target.value)}
-                    placeholder="Bijv. Casablanca"
+                    placeholder={t("placeholders.cityExampleCasablanca")}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Luchthaven</Label>
+                  <Label>Luchthaven code</Label>
                   <Input
                     value={destinationAirport}
                     onChange={(e) => setDestinationAirport(e.target.value)}
-                    placeholder="Bijv. CMN"
+                    placeholder={t("placeholders.airportCodeExampleCMN")}
                   />
                 </div>
               </div>
@@ -357,7 +357,7 @@ ${notes ? `\nExtra notities: ${notes}` : ''}`;
                     <Input
                       value={passenger.name}
                       onChange={(e) => updatePassenger(index, "name", e.target.value)}
-                      placeholder="Naam passagier"
+                      placeholder={t("placeholders.passengerName")}
                     />
                   </div>
                 </div>
@@ -374,17 +374,17 @@ ${notes ? `\nExtra notities: ${notes}` : ''}`;
                     <Input
                       value={coffin.departureCountry}
                       onChange={(e) => setCoffin({ ...coffin, departureCountry: e.target.value })}
-                      placeholder="Land (of algemeen)"
+                      placeholder={t("placeholders.countryGeneral")}
                     />
                     <Input
                       value={coffin.departureCity}
                       onChange={(e) => setCoffin({ ...coffin, departureCity: e.target.value })}
-                      placeholder="Stad (of algemeen)"
+                      placeholder={t("placeholders.cityGeneral")}
                     />
                     <Input
                       value={coffin.departureAirport}
                       onChange={(e) => setCoffin({ ...coffin, departureAirport: e.target.value })}
-                      placeholder="Luchthaven"
+                      placeholder={t("placeholders.airportGeneral")}
                     />
                   </div>
                 </div>
@@ -395,17 +395,17 @@ ${notes ? `\nExtra notities: ${notes}` : ''}`;
                     <Input
                       value={coffin.destinationCountry}
                       onChange={(e) => setCoffin({ ...coffin, destinationCountry: e.target.value })}
-                      placeholder="Land (of algemeen)"
+                      placeholder={t("placeholders.countryGeneral")}
                     />
                     <Input
                       value={coffin.destinationCity}
                       onChange={(e) => setCoffin({ ...coffin, destinationCity: e.target.value })}
-                      placeholder="Stad (of algemeen)"
+                      placeholder={t("placeholders.cityGeneral")}
                     />
                     <Input
                       value={coffin.destinationAirport}
                       onChange={(e) => setCoffin({ ...coffin, destinationAirport: e.target.value })}
-                      placeholder="Luchthaven"
+                      placeholder={t("placeholders.airportGeneral")}
                     />
                   </div>
                 </div>
@@ -459,7 +459,7 @@ ${notes ? `\nExtra notities: ${notes}` : ''}`;
               <Textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Speciale wensen of opmerkingen..."
+                placeholder={t("placeholders.specialRequests")}
                 rows={3}
               />
             </div>

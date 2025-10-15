@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Download, Trash2, FileText, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +32,7 @@ interface GDPRRequest {
 
 export const GDPRRequestPanel = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [requests, setRequests] = useState<GDPRRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletionReason, setDeletionReason] = useState('');
@@ -228,7 +230,7 @@ export const GDPRRequestPanel = () => {
                       </Label>
                       <Textarea
                         id="deletion-reason"
-                        placeholder="Waarom wilt u uw gegevens laten verwijderen?"
+                        placeholder={t("placeholders.gdprDeletionReason")}
                         value={deletionReason}
                         onChange={(e) => setDeletionReason(e.target.value)}
                         rows={3}

@@ -276,7 +276,7 @@ export function JanazahServiceCard({ dossierId, service, onUpdate }: JanazahServ
           <Label htmlFor="location">Locatie</Label>
           <Input
             id="location"
-            placeholder="Naam moskee, mortuarium of begraafplaats"
+            placeholder={t("placeholders.mosqueMortuariumCemetery")}
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
@@ -289,7 +289,7 @@ export function JanazahServiceCard({ dossierId, service, onUpdate }: JanazahServ
           <Label htmlFor="notes">Notities (optioneel)</Label>
           <Textarea
             id="notes"
-            placeholder="Extra informatie..."
+            placeholder={t("placeholders.extraInfoService")}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}

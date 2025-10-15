@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface SimpleCaptchaProps {
   onVerify: (token: string) => void;
@@ -11,6 +12,7 @@ interface SimpleCaptchaProps {
 }
 
 export const SimpleCaptcha = ({ onVerify, className }: SimpleCaptchaProps) => {
+  const { t } = useTranslation();
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
@@ -71,7 +73,7 @@ export const SimpleCaptcha = ({ onVerify, className }: SimpleCaptchaProps) => {
       <div className="space-y-2">
         <Input
           type="number"
-          placeholder="Uw antwoord"
+          placeholder={t("placeholders.captchaAnswer")}
           value={userAnswer}
           onChange={(e) => setUserAnswer(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleVerify()}

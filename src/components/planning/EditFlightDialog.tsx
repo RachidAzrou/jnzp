@@ -171,7 +171,7 @@ export function EditFlightDialog({
               <Input
                 value={carrier}
                 onChange={(e) => setCarrier(e.target.value)}
-                placeholder="Bijv. KLM"
+                placeholder={t("placeholders.airlineExample")}
               />
             </div>
 
@@ -180,7 +180,7 @@ export function EditFlightDialog({
               <Input
                 value={reservationRef}
                 onChange={(e) => setReservationRef(e.target.value)}
-                placeholder="Reserveringsnummer"
+                placeholder={t("placeholders.bookingNumber")}
               />
             </div>
 
@@ -189,7 +189,7 @@ export function EditFlightDialog({
               <Input
                 value={airWaybill}
                 onChange={(e) => setAirWaybill(e.target.value)}
-                placeholder="AWB nummer (optioneel)"
+                placeholder={t("placeholders.awbNumber")}
               />
             </div>
           </div>

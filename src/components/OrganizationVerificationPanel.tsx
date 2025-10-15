@@ -254,7 +254,7 @@ export function OrganizationVerificationPanel() {
                 </Label>
                 <Textarea
                   id="rejection-reason"
-                  placeholder="Geef een reden indien u deze organisatie afwijst..."
+                  placeholder={t("placeholders.orgRejectionReason")}
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   rows={3}

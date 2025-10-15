@@ -191,7 +191,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
               <Label>Dossier</Label>
               <Select value={selectedDossier} onValueChange={setSelectedDossier}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Kies een dossier" />
+                  <SelectValue placeholder={t("placeholders.selectDossier2")} />
                 </SelectTrigger>
                 <SelectContent>
                   {dossiers.map(d => (
@@ -208,7 +208,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
               <Label>Mortuarium</Label>
               <Select value={selectedMortuarium} onValueChange={setSelectedMortuarium}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Kies een mortuarium" />
+                  <SelectValue placeholder={t("placeholders.selectMortuarium")} />
                 </SelectTrigger>
                 <SelectContent>
                   {mortuariums.map(m => (
@@ -303,7 +303,7 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
               <Textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Extra informatie..."
+                placeholder={t("placeholders.extraInfoMortuarium")}
               />
             </div>
           </div>

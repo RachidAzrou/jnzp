@@ -130,7 +130,7 @@ export function ActivateDossierButton({
           <div className="space-y-2">
             <Label>Reden voor activering *</Label>
             <Textarea
-              placeholder="Bijv. 'Intakegegevens compleet, klaar voor planning'"
+              placeholder={t("placeholders.activationReason")}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={3}

@@ -245,7 +245,7 @@ export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagement
                   id="notes"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Voeg eventuele opmerkingen toe..."
+                  placeholder={t("placeholders.invoiceComments")}
                   rows={3}
                 />
               </div>

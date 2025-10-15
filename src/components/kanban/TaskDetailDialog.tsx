@@ -864,7 +864,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onUpdate }: TaskDet
 
             <div className="flex gap-2 pt-3 border-t mt-auto">
               <Input
-                placeholder="Voeg een reactie toe..."
+                placeholder={t("placeholders.addComment")}
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}

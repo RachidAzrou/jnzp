@@ -121,7 +121,7 @@ export default function MoskeeSettings() {
                 <Input
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
-                  placeholder="Bijv. Al-Fatih Moskee"
+                  placeholder={t("placeholders.mosqueName")}
                 />
               </div>
 
@@ -130,7 +130,7 @@ export default function MoskeeSettings() {
                 <Textarea
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Straat, postcode, plaats"
+                  placeholder={t("placeholders.streetPostalCity")}
                   rows={3}
                 />
               </div>
@@ -141,7 +141,7 @@ export default function MoskeeSettings() {
                   type="email"
                   value={contactEmail}
                   onChange={(e) => setContactEmail(e.target.value)}
-                  placeholder="info@moskee.nl"
+                  placeholder={t("placeholders.emailMosque")}
                 />
               </div>
 
@@ -151,7 +151,7 @@ export default function MoskeeSettings() {
                   type="tel"
                   value={contactPhone}
                   onChange={(e) => setContactPhone(e.target.value)}
-                  placeholder="+31 6 12345678"
+                  placeholder={t("placeholders.phoneNumberMosque")}
                 />
               </div>
 
@@ -160,7 +160,7 @@ export default function MoskeeSettings() {
                 <Input
                   value={imamName}
                   onChange={(e) => setImamName(e.target.value)}
-                  placeholder="Sheikh ..."
+                  placeholder={t("placeholders.imamName")}
                 />
               </div>
 

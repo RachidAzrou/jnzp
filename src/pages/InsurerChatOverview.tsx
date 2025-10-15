@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ type DossierWithMessages = {
 };
 
 export default function InsurerChatOverview() {
+  const { t } = useTranslation();
   const [dossiers, setDossiers] = useState<DossierWithMessages[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -134,7 +136,7 @@ export default function InsurerChatOverview() {
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Zoek op naam of dossier nummer..."
+          placeholder={t("placeholders.searchNameDossierNumber")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-9"

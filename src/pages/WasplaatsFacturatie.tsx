@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -60,6 +61,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function WasplaatsFacturatie() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -245,7 +247,7 @@ export default function WasplaatsFacturatie() {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Zoek op dossier ID, referentie of naam overledene..."
+                  placeholder={t("placeholders.searchDossierIDRefName")}
                   value={dossierSearchTerm}
                   onChange={(e) => {
                     setDossierSearchTerm(e.target.value);
@@ -293,7 +295,7 @@ export default function WasplaatsFacturatie() {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Zoek op naam uitvaartonderneming..."
+                  placeholder={t("placeholders.searchFDName")}
                   value={fdSearchTerm}
                   onChange={(e) => {
                     setFdSearchTerm(e.target.value);
@@ -349,7 +351,7 @@ export default function WasplaatsFacturatie() {
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Zoek op factuurnummer, dossier, overledene..."
+                placeholder={t("placeholders.searchInvoiceDossierDeceased")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"

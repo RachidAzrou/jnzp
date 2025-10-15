@@ -496,7 +496,7 @@ const TeamManagement = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="naam@voorbeeld.nl"
+                placeholder={t("placeholders.emailExample")}
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
               />

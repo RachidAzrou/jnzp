@@ -108,7 +108,7 @@ export default function WasplaatsReservaties() {
                 value={dossierId}
                 onChange={(e) => setDossierId(e.target.value)}
                 required
-                placeholder="Voer dossier ID in"
+                placeholder={t("placeholders.enterDossierID")}
               />
             </div>
 
@@ -117,7 +117,7 @@ export default function WasplaatsReservaties() {
               <DateTimePicker
                 date={startAt}
                 onSelect={setStartAt}
-                placeholder="Selecteer start"
+                placeholder={t("placeholders.selectStart")}
               />
             </div>
 
@@ -126,7 +126,7 @@ export default function WasplaatsReservaties() {
               <DateTimePicker
                 date={endAt}
                 onSelect={setEndAt}
-                placeholder="Selecteer einde"
+                placeholder={t("placeholders.selectEnd")}
                 disabled={(date) => startAt ? date < startAt : false}
               />
             </div>
@@ -137,7 +137,7 @@ export default function WasplaatsReservaties() {
                 id="note"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Extra informatie"
+                placeholder={t("placeholders.extraInfo")}
               />
             </div>
 

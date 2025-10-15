@@ -444,7 +444,7 @@ export default function MoskeeBeschikbaarheid() {
                     <Textarea
                       value={blockReason}
                       onChange={(e) => setBlockReason(e.target.value)}
-                      placeholder="bijv. Verbouwing moskee, Eid al-Fitr, enz."
+                      placeholder={t("placeholders.mosqueRenovation")}
                       rows={3}
                     />
                   </div>

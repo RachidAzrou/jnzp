@@ -160,7 +160,7 @@ export default function MoskeePlanning() {
         <CardContent>
           <div className="mb-4">
             <Input
-              placeholder="Zoek op naam of dossier-ID..."
+              placeholder={t("placeholders.searchNameDossierID")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -266,7 +266,7 @@ export default function MoskeePlanning() {
               <Textarea
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                placeholder="Bijv. onverwachte omstandigheden, dubbelboeking..."
+                placeholder={t("placeholders.unexpectedCircumstances")}
                 rows={3}
               />
             </div>

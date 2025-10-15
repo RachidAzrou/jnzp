@@ -214,7 +214,7 @@ export default function MortuariumFacturatie() {
             <CardTitle>Facturen</CardTitle>
             <Select value={filter} onValueChange={setFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter status" />
+                <SelectValue placeholder={t("placeholders.filterStatus")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">Alle</SelectItem>
@@ -315,7 +315,7 @@ export default function MortuariumFacturatie() {
                 id="message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Voeg een bericht toe..."
+                placeholder={t("placeholders.addMessage")}
                 rows={3}
               />
             </div>
@@ -353,7 +353,7 @@ export default function MortuariumFacturatie() {
                 id="note"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Betalingsreferentie, datum, etc..."
+                placeholder={t("placeholders.paymentReferenceDetails")}
                 rows={3}
               />
             </div>

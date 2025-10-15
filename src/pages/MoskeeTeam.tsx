@@ -115,7 +115,7 @@ export default function MoskeeTeam() {
                   type="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="naam@voorbeeld.nl"
+                  placeholder={t("placeholders.emailExample")}
                 />
               </div>
               <div className="flex gap-2">

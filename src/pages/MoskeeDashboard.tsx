@@ -473,7 +473,7 @@ export default function MoskeeDashboard() {
           </DialogHeader>
           <div className="space-y-4">
             <Textarea
-              placeholder="Reden voor weigering..."
+              placeholder={t("placeholders.rejectionReason")}
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               rows={4}

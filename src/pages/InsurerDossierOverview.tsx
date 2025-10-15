@@ -789,7 +789,7 @@ export default function InsurerDossierOverview() {
                       <Label htmlFor="payment-note">Betalingsnotitie (optioneel)</Label>
                       <Textarea
                         id="payment-note"
-                        placeholder="Voeg een notitie toe bij de betaling..."
+                        placeholder={t("placeholders.paymentNote")}
                         value={paymentNote}
                         onChange={(e) => setPaymentNote(e.target.value)}
                         rows={2}

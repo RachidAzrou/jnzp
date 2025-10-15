@@ -203,7 +203,7 @@ export default function Feedback() {
             <Input
               id="whatsapp"
               type="tel"
-              placeholder="+32 xxx xx xx xx"
+              placeholder={t("placeholders.phoneNumber")}
               value={whatsappPhone}
               onChange={(e) => setWhatsappPhone(e.target.value)}
             />

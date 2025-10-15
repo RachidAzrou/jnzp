@@ -162,7 +162,7 @@ export default function MortuariumTeam() {
               <Input
                 id="email"
                 type="email"
-                placeholder="naam@voorbeeld.nl"
+                placeholder={t("placeholders.emailExample")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

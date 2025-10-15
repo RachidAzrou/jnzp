@@ -201,7 +201,7 @@ export default function FDBeoordelingen() {
               </Select>
               <Select value={minRating} onValueChange={setMinRating}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Min. sterren" />
+                  <SelectValue placeholder={t("placeholders.minStars")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Alle sterren</SelectItem>

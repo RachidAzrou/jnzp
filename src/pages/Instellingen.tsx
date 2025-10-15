@@ -288,7 +288,7 @@ const Instellingen = () => {
                 type="tel"
                 value={profile.phone}
                 onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                placeholder="+32 xxx xx xx xx"
+                placeholder={t("placeholders.phoneNumber")}
               />
             </div>
 
@@ -390,7 +390,7 @@ const Instellingen = () => {
                     type="tel"
                     value={organization.contactPhone}
                     onChange={(e) => setOrganization({ ...organization, contactPhone: e.target.value })}
-                    placeholder="+32 xxx xx xx xx"
+                    placeholder={t("placeholders.phoneNumber")}
                   />
                 </div>
               </div>

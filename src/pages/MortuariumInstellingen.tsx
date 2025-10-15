@@ -270,7 +270,7 @@ export default function MortuariumInstellingen() {
               <Label htmlFor="reason">Reden (optioneel)</Label>
               <Input
                 id="reason"
-                placeholder="Bijv. feestdag, onderhoud..."
+                placeholder={t("placeholders.holidayMaintenance")}
                 value={blockReason}
                 onChange={(e) => setBlockReason(e.target.value)}
               />

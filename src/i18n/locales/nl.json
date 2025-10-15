@@ -154,7 +154,8 @@
     "view": "Bekijken",
     "price": "Prijs",
     "dossier": "Dossier",
-    "reset": "Resetten"
+    "reset": "Resetten",
+    "belgium": "België"
   },
   "status": {
     "pending": "In afwachting",

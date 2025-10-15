@@ -87,10 +87,10 @@ const Instellingen = () => {
 
         if (orgData) {
           const orgTypeLabels: Record<string, string> = {
-            FUNERAL_DIRECTOR: 'Uitvaartondernemer',
-            INSURER: 'Verzekeraar',
-            WASPLAATS: 'Mortuarium',
-            MOSQUE: 'Moskee'
+            FUNERAL_DIRECTOR: t("rolePortals.funeral_director"),
+            INSURER: t("rolePortals.insurer"),
+            WASPLAATS: t("rolePortals.mortuarium"),
+            MOSQUE: t("rolePortals.mosque")
           };
 
           setOrganization({
@@ -101,7 +101,7 @@ const Instellingen = () => {
             address: orgData.address || "",
             city: orgData.city || "",
             postalCode: orgData.postal_code || "",
-            country: orgData.country || "België",
+            country: orgData.country || t("common.belgium") || "België",
             vatNumber: orgData.vat_number || "",
             registrationNumber: orgData.registration_number || ""
           });

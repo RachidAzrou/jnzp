@@ -273,16 +273,18 @@ const Archief = () => {
         <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30">
           <CardContent className="p-6">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground font-medium">{t("common.management")}</p>
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Archive className="h-6 w-6 text-primary" />
                 </div>
                 <div>
+                  <p className="text-sm text-muted-foreground font-medium">{t("common.management")}</p>
                   <h1 className="text-2xl font-bold tracking-tight">{t("archive.title")}</h1>
-                  <p className="text-sm text-muted-foreground">{t("archive.description")}</p>
                 </div>
               </div>
+              <p className="text-sm text-muted-foreground pl-15">
+                {t("archive.description")}
+              </p>
             </div>
           </CardContent>
         </Card>

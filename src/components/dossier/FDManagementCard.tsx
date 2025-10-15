@@ -156,15 +156,15 @@ export default function FDManagementCard({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building2 className="h-5 w-5" />
-            Uitvaartonderneming
+            {t("fdManagement.title")}
           </CardTitle>
-          <CardDescription>Beheer de koppeling met uw uitvaartonderneming</CardDescription>
+          <CardDescription>{t("fdManagement.description")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {assignmentStatus === "ASSIGNED" && fdOrg && (
             <>
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Huidige uitvaartonderneming</p>
+                <p className="text-sm text-muted-foreground">{t("fdManagement.current")}</p>
                 <p className="font-medium">{fdOrg.name}</p>
               </div>
               <Button
@@ -173,7 +173,7 @@ export default function FDManagementCard({
                 onClick={() => setReleaseDialogOpen(true)}
               >
                 <UserMinus className="h-4 w-4 mr-2" />
-                Uitvaartonderneming ontkoppelen
+                {t("fdManagement.decouple")}
               </Button>
             </>
           )}
@@ -182,8 +182,7 @@ export default function FDManagementCard({
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                Dit dossier is momenteel niet gekoppeld aan een uitvaartonderneming.
-                U kunt wachten tot een uitvaartonderneming contact met u opneemt.
+                {t("fdManagement.unassigned")}
               </AlertDescription>
             </Alert>
           )}
@@ -193,7 +192,7 @@ export default function FDManagementCard({
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Er is een overnameverzoek in behandeling
+                  {t("fdManagement.pendingClaim")}
                 </AlertDescription>
               </Alert>
               
@@ -214,7 +213,7 @@ export default function FDManagementCard({
                       disabled={!!approvingClaim}
                     >
                       <CheckCircle className="h-4 w-4 mr-2" />
-                      Goedkeuren
+                      {t("fdManagement.approve")}
                     </Button>
                     <Button
                       variant="outline"
@@ -223,7 +222,7 @@ export default function FDManagementCard({
                       disabled={!!approvingClaim}
                     >
                       <XCircle className="h-4 w-4 mr-2" />
-                      Afwijzen
+                      {t("fdManagement.reject")}
                     </Button>
                   </CardContent>
                 </Card>
@@ -236,18 +235,17 @@ export default function FDManagementCard({
       <Dialog open={releaseDialogOpen} onOpenChange={setReleaseDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Uitvaartonderneming ontkoppelen</DialogTitle>
+          <DialogTitle>{t("fdManagement.decoupleTitle")}</DialogTitle>
             <DialogDescription>
-              Weet u zeker dat u de koppeling met {fdOrg?.name} wilt verbreken? 
-              De uitvaartonderneming verliest toegang tot dit dossier.
+              {t("fdManagement.decoupleConfirm", { name: fdOrg?.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setReleaseDialogOpen(false)}>
-              Annuleren
+              {t("internalNotes.cancel")}
             </Button>
             <Button variant="destructive" onClick={handleReleaseFD} disabled={releasing}>
-              {releasing ? "Ontkoppelen..." : "Ontkoppelen"}
+              {releasing ? t("fdManagement.decoupling") : t("fdManagement.decouple")}
             </Button>
           </DialogFooter>
         </DialogContent>

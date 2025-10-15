@@ -2561,6 +2561,68 @@
     "stageJanazah": "Prière Janazah",
     "stageRepatriation": "Rapatriement",
     "stageBurial": "Enterrement"
+  },
+  "internalNotes": {
+    "title": "Notes Internes",
+    "visibilityNote": "Visible uniquement pour l'équipe FD",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler",
+    "characters": "caractères",
+    "addNotes": "Cliquez pour ajouter des notes",
+    "saved": "Notes enregistrées",
+    "savedDesc": "Les notes internes ont été mises à jour",
+    "error": "Erreur",
+    "errorSaving": "Les notes n'ont pas pu être enregistrées"
+  },
+  "fdManagement": {
+    "title": "Directeur Funéraire",
+    "description": "Gérer la connexion avec votre directeur funéraire",
+    "current": "Directeur funéraire actuel",
+    "decouple": "Découpler le directeur funéraire",
+    "unassigned": "Ce dossier n'est actuellement pas lié à un directeur funéraire. Vous pouvez attendre qu'un directeur funéraire vous contacte.",
+    "pendingClaim": "Une demande de reprise est en attente",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "decoupleTitle": "Découpler le Directeur Funéraire",
+    "decoupleConfirm": "Êtes-vous sûr de vouloir rompre la connexion avec {name} ? Le directeur funéraire perdra l'accès à ce dossier.",
+    "decoupling": "Découplage..."
+  },
+  "releaseDialog": {
+    "title": "Libérer le Dossier",
+    "description": "Vous êtes sur le point de libérer le dossier {displayId}. Le dossier sera disponible pour d'autres directeurs funéraires et la famille sera informée.",
+    "reasonLabel": "Raison",
+    "reasonPlaceholder": "Sélectionnez une raison",
+    "customReasonLabel": "Autre raison",
+    "releasing": "Libération...",
+    "release": "Libérer le Dossier",
+    "successDesc": "Dossier libéré. La famille a été notifiée.",
+    "errorDesc": "Erreur lors de la libération",
+    "reasonNoCapacity": "Pas de capacité",
+    "reasonGeographical": "Géographiquement non réalisable",
+    "reasonFamilyRequest": "Demande de la famille",
+    "reasonServiceMismatch": "Le service ne correspond pas",
+    "reasonOther": "Autre raison"
+  },
+  "holdDialog": {
+    "trigger": "Définir un Blocage",
+    "title": "Bloquer le Dossier",
+    "description": "Définir un blocage sur ce dossier pour restreindre certaines actions",
+    "typeLabel": "Type de blocage",
+    "typeLegal": "Blocage légal (toutes les actions)",
+    "typeInsurer": "Blocage assureur (actions financières)",
+    "reasonLabel": "Raison",
+    "contactLabel": "Personne de contact",
+    "contactLabelLegal": "Autorité/Procureur",
+    "contactPlaceholder": "Nom de la personne de contact de l'assureur",
+    "contactPlaceholderLegal": "Nom du procureur ou de l'autorité",
+    "referenceLabel": "Numéro de référence",
+    "referenceLabelLegal": "Numéro d'affaire",
+    "referencePlaceholder": "Référence assureur",
+    "referencePlaceholderLegal": "Numéro PV ou numéro d'affaire",
+    "activating": "Traitement...",
+    "activate": "Activer le Blocage"
   }
 }
 

@@ -2549,6 +2549,68 @@
     "stageJanazah": "Janazah Prayer",
     "stageRepatriation": "Repatriation",
     "stageBurial": "Burial"
+  },
+  "internalNotes": {
+    "title": "Internal Notes",
+    "visibilityNote": "Only visible to the FD team",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "characters": "characters",
+    "addNotes": "Click to add notes",
+    "saved": "Notes saved",
+    "savedDesc": "Internal notes have been updated",
+    "error": "Error",
+    "errorSaving": "Notes could not be saved"
+  },
+  "fdManagement": {
+    "title": "Funeral Director",
+    "description": "Manage the connection with your funeral director",
+    "current": "Current funeral director",
+    "decouple": "Decouple funeral director",
+    "unassigned": "This dossier is currently not linked to a funeral director. You can wait for a funeral director to contact you.",
+    "pendingClaim": "There is a takeover request pending",
+    "approve": "Approve",
+    "reject": "Reject",
+    "decoupleTitle": "Decouple Funeral Director",
+    "decoupleConfirm": "Are you sure you want to break the connection with {name}? The funeral director will lose access to this dossier.",
+    "decoupling": "Decoupling..."
+  },
+  "releaseDialog": {
+    "title": "Release Dossier",
+    "description": "You are about to release dossier {displayId}. The dossier will be available to other funeral directors and the family will be informed.",
+    "reasonLabel": "Reason",
+    "reasonPlaceholder": "Select a reason",
+    "customReasonLabel": "Other reason",
+    "releasing": "Releasing...",
+    "release": "Release Dossier",
+    "successDesc": "Dossier released. Family has been notified.",
+    "errorDesc": "Error releasing",
+    "reasonNoCapacity": "No capacity",
+    "reasonGeographical": "Geographically not feasible",
+    "reasonFamilyRequest": "Family request",
+    "reasonServiceMismatch": "Service does not match",
+    "reasonOther": "Other reason"
+  },
+  "holdDialog": {
+    "trigger": "Set Hold",
+    "title": "Block Dossier",
+    "description": "Set a hold on this dossier to restrict certain actions",
+    "typeLabel": "Hold type",
+    "typeLegal": "Legal hold (all actions)",
+    "typeInsurer": "Insurer hold (financial actions)",
+    "reasonLabel": "Reason",
+    "contactLabel": "Contact person",
+    "contactLabelLegal": "Authority/Prosecutor",
+    "contactPlaceholder": "Name of insurer contact person",
+    "contactPlaceholderLegal": "Name of prosecutor or authority",
+    "referenceLabel": "Reference number",
+    "referenceLabelLegal": "Case number",
+    "referencePlaceholder": "Insurer reference",
+    "referencePlaceholderLegal": "PV number or case number",
+    "activating": "Processing...",
+    "activate": "Activate Hold"
   }
 }
 

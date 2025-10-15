@@ -29,8 +29,8 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
 
     if (error) {
       toast({
-        title: "Fout",
-        description: "Notities konden niet worden opgeslagen",
+        title: t("internalNotes.error"),
+        description: t("internalNotes.errorSaving"),
         variant: "destructive",
       });
       setSaving(false);
@@ -46,8 +46,8 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
     });
 
     toast({
-      title: "Notities opgeslagen",
-      description: "Interne notities zijn bijgewerkt",
+      title: t("internalNotes.saved"),
+      description: t("internalNotes.savedDesc"),
     });
 
     setSaving(false);
@@ -65,9 +65,9 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <Label className="text-base font-semibold">Interne Notities</Label>
+            <Label className="text-base font-semibold">{t("internalNotes.title")}</Label>
             <p className="text-sm text-muted-foreground mt-1">
-              Alleen zichtbaar voor het FD team
+              {t("internalNotes.visibilityNote")}
             </p>
           </div>
           {!isEditing && (
@@ -76,7 +76,7 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
               size="sm"
               onClick={() => setIsEditing(true)}
             >
-              Bewerken
+              {t("internalNotes.edit")}
             </Button>
           )}
         </div>
@@ -92,7 +92,7 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
             />
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                {notes.length} karakters
+                {notes.length} {t("internalNotes.characters")}
               </span>
               <div className="flex gap-2">
                 <Button 
@@ -100,13 +100,13 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
                   onClick={handleCancel}
                   disabled={saving}
                 >
-                  Annuleren
+                  {t("internalNotes.cancel")}
                 </Button>
                 <Button 
                   onClick={handleSave} 
                   disabled={saving || !hasChanges}
                 >
-                  {saving ? "Opslaan..." : "Opslaan"}
+                  {saving ? t("internalNotes.saving") : t("internalNotes.save")}
                 </Button>
               </div>
             </div>
@@ -125,7 +125,7 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
                   onClick={() => setIsEditing(true)}
                   className="text-muted-foreground"
                 >
-                  Klik om notities toe te voegen
+                  {t("internalNotes.addNotes")}
                 </Button>
               </div>
             )}

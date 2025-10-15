@@ -310,9 +310,9 @@ export function CreateDossierDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-background">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Nieuw dossier aanmaken</DialogTitle>
+          <DialogTitle className="text-2xl">{t("createDossier.title")}</DialogTitle>
           <DialogDescription>
-            Vul de gegevens in om een nieuw uitvaartdossier aan te maken. Verplichte velden zijn gemarkeerd met een *.
+            {t("createDossier.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -320,14 +320,14 @@ export function CreateDossierDialog() {
           {/* Section 1: Overledene */}
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold">Overledene</h3>
+              <h3 className="text-lg font-semibold">{t("createDossier.sections.deceased")}</h3>
             </div>
             <Separator />
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="first_name">
-                  Voornaam overledene <span className="text-destructive">*</span>
+                  {t("createDossier.fields.firstName")} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="first_name"

@@ -135,9 +135,9 @@ export function DocumentReviewDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Document beoordelen</DialogTitle>
+          <DialogTitle>{t("documentReview.title")}</DialogTitle>
           <DialogDescription>
-            Keur het document goed of wijs het af met een reden
+            {t("documentReview.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -145,15 +145,15 @@ export function DocumentReviewDialog({
           {/* Document Info */}
           <div className="space-y-3 p-4 bg-muted/30 rounded-lg">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Dossier:</span>
+              <span className="text-sm font-medium">{t("documentReview.dossier")}:</span>
               <span className="font-mono text-sm">{document.dossiers?.ref_number}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Type:</span>
+              <span className="text-sm font-medium">{t("documentReview.type")}:</span>
               <span className="text-sm">{document.doc_type.replace(/_/g, " ")}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Bestand:</span>
+              <span className="text-sm font-medium">{t("documentReview.file")}:</span>
               <span className="text-sm truncate max-w-[300px]">{document.file_name}</span>
             </div>
           </div>
@@ -162,17 +162,17 @@ export function DocumentReviewDialog({
           <div className="bg-muted/30 border-2 border-dashed rounded-lg p-8 text-center">
             <Eye className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
             <p className="text-sm text-muted-foreground mb-4">
-              Documentvoorbeeld (komt binnenkort)
+              {t("documentReview.previewComing")}
             </p>
             <Button variant="outline" size="sm">
               <Download className="h-4 w-4 mr-2" />
-              Download
+              {t("documentReview.download")}
             </Button>
           </div>
 
           {/* Review Decision */}
           <div className="space-y-3">
-            <Label>Beoordeling *</Label>
+            <Label>{t("documentReview.decision")} *</Label>
             <RadioGroup 
               value={reviewDecision || ""} 
               onValueChange={(val) => setReviewDecision(val as "approve" | "reject")}
@@ -181,14 +181,14 @@ export function DocumentReviewDialog({
                 <RadioGroupItem value="approve" id="approve-dialog" />
                 <Label htmlFor="approve-dialog" className="font-normal cursor-pointer flex items-center gap-2 flex-1">
                   <CheckCircle className="h-5 w-5 text-success" />
-                  Goedkeuren
+                  {t("documentReview.approve")}
                 </Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer">
                 <RadioGroupItem value="reject" id="reject-dialog" />
                 <Label htmlFor="reject-dialog" className="font-normal cursor-pointer flex items-center gap-2 flex-1">
                   <XCircle className="h-5 w-5 text-destructive" />
-                  Afkeuren
+                  {t("documentReview.reject")}
                 </Label>
               </div>
             </RadioGroup>
@@ -197,7 +197,7 @@ export function DocumentReviewDialog({
           {/* Rejection Reason (only if rejecting) */}
           {reviewDecision === "reject" && (
             <div className="space-y-2">
-              <Label htmlFor="rejection-reason">Reden voor afwijzing *</Label>
+              <Label htmlFor="rejection-reason">{t("documentReview.rejectionReason")} *</Label>
               <Textarea
                 id="rejection-reason"
                 value={rejectionReason}
@@ -210,12 +210,12 @@ export function DocumentReviewDialog({
 
           {/* Note to Family */}
           <div className="space-y-2">
-            <Label htmlFor="note-to-family">Bericht naar familie (optioneel)</Label>
+            <Label htmlFor="note-to-family">{t("documentReview.noteToFamily")}</Label>
             <Textarea
               id="note-to-family"
               value={noteToFamily}
               onChange={(e) => setNoteToFamily(e.target.value)}
-              placeholder="Voeg een bericht toe dat naar de familie wordt gestuurd..."
+              placeholder={t("documentReview.notePlaceholder")}
               rows={3}
             />
           </div>
@@ -223,10 +223,10 @@ export function DocumentReviewDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
-            Annuleren
+            {t("documentReview.cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? "Verwerken..." : "Beoordeling opslaan"}
+            {isSubmitting ? t("documentReview.processing") : t("documentReview.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { createQRToken, generateQRCodeURL, QRTokenData } from '@/utils/qrToken';
 import { Download, Copy, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface QRTokenGeneratorProps {
   dossierId: string;
@@ -16,6 +17,7 @@ interface QRTokenGeneratorProps {
 
 export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGeneratorProps) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [generatedToken, setGeneratedToken] = useState<QRTokenData | null>(null);
   const [copied, setCopied] = useState(false);
@@ -97,8 +99,8 @@ export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGenerat
     await navigator.clipboard.writeText(url);
     setCopied(true);
     toast({
-      title: 'Gekopieerd',
-      description: 'QR code URL is gekopieerd naar klembord',
+      title: t("qrToken.copied"),
+      description: t("qrToken.copiedDesc"),
     });
     setTimeout(() => setCopied(false), 2000);
   };
@@ -107,14 +109,14 @@ export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGenerat
     <div className="grid gap-6 md:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle>QR Code Genereren</CardTitle>
+          <CardTitle>{t("qrToken.title")}</CardTitle>
           <CardDescription>
-            Genereer een veilige QR code voor dit dossier
+            {t("qrToken.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="expires">Geldig voor (uren)</Label>
+            <Label htmlFor="expires">{t("qrToken.validFor")}</Label>
             <Input
               id="expires"
               type="number"
@@ -126,23 +128,23 @@ export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGenerat
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="max-scans">Maximum aantal scans (optioneel)</Label>
+            <Label htmlFor="max-scans">{t("qrToken.maxScans")}</Label>
             <Input
               id="max-scans"
               type="number"
               min="1"
-              placeholder="Onbeperkt"
+              placeholder={t("qrToken.unlimited")}
               value={maxScans || ''}
               onChange={(e) => setMaxScans(e.target.value ? parseInt(e.target.value) : undefined)}
             />
           </div>
 
           <div className="space-y-3">
-            <Label>Toegang tot informatie</Label>
+            <Label>{t("qrToken.accessInfo")}</Label>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="basic-info" className="font-normal">
-                  Basis informatie
+                  {t("qrToken.basicInfo")}
                 </Label>
                 <Switch
                   id="basic-info"
@@ -154,7 +156,7 @@ export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGenerat
               </div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="status" className="font-normal">
-                  Status informatie
+                  {t("qrToken.statusInfo")}
                 </Label>
                 <Switch
                   id="status"
@@ -166,7 +168,7 @@ export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGenerat
               </div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="documents" className="font-normal">
-                  Documenten
+                  {t("qrToken.documents")}
                 </Label>
                 <Switch
                   id="documents"
@@ -180,7 +182,7 @@ export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGenerat
           </div>
 
           <Button onClick={handleGenerate} disabled={loading} className="w-full">
-            {loading ? 'Genereren...' : 'QR Code Genereren'}
+            {loading ? t("qrToken.generating") : t("qrToken.generate")}
           </Button>
         </CardContent>
       </Card>
@@ -188,9 +190,9 @@ export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGenerat
       {generatedToken && (
         <Card>
           <CardHeader>
-            <CardTitle>Gegenereerde QR Code</CardTitle>
+            <CardTitle>{t("qrToken.generatedTitle")}</CardTitle>
             <CardDescription>
-              Scan deze code om toegang te krijgen tot dossier informatie
+              {t("qrToken.generatedDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -206,28 +208,28 @@ export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGenerat
 
             <div className="space-y-2 text-sm">
               <p className="text-muted-foreground">
-                Verloopt op:{' '}
+                {t("qrToken.expiresOn")}:{' '}
                 <span className="font-medium text-foreground">
                   {new Date(generatedToken.expires_at).toLocaleString('nl-NL')}
                 </span>
               </p>
               {generatedToken.max_scans && (
                 <p className="text-muted-foreground">
-                  Maximum scans:{' '}
+                  {t("qrToken.maxScans")}:{' '}
                   <span className="font-medium text-foreground">
                     {generatedToken.max_scans}
                   </span>
                 </p>
               )}
               <p className="text-muted-foreground">
-                Scans: <span className="font-medium text-foreground">{generatedToken.scan_count}</span>
+                {t("qrToken.scans")}: <span className="font-medium text-foreground">{generatedToken.scan_count}</span>
               </p>
             </div>
 
             <div className="flex gap-2">
               <Button onClick={handleDownload} variant="outline" className="flex-1">
                 <Download className="h-4 w-4 mr-2" />
-                Download
+                {t("qrToken.download")}
               </Button>
               <Button onClick={handleCopyUrl} variant="outline" className="flex-1">
                 {copied ? (
@@ -235,7 +237,7 @@ export const QRTokenGenerator = ({ dossierId, dossierDisplayId }: QRTokenGenerat
                 ) : (
                   <Copy className="h-4 w-4 mr-2" />
                 )}
-                {copied ? 'Gekopieerd!' : 'Kopieer URL'}
+                {copied ? t("qrToken.copied") : t("qrToken.copyUrl")}
               </Button>
             </div>
           </CardContent>

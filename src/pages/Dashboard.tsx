@@ -123,7 +123,15 @@ const Dashboard = () => {
         </div>;
   }
   const getCurrentDate = () => {
-    return new Date().toLocaleDateString('nl-NL', {
+    const { i18n } = useTranslation();
+    const locale = i18n.language || 'nl';
+    const localeMap: { [key: string]: string } = {
+      'nl': 'nl-NL',
+      'fr': 'fr-FR',
+      'en': 'en-GB'
+    };
+    
+    return new Date().toLocaleDateString(localeMap[locale] || 'nl-NL', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',

@@ -420,7 +420,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                         className="h-8"
                         onClick={() => handleEdit(comment.id)}
                       >
-                        {t("comments.save")}
+                        {t("common.save")}
                       </Button>
                       <Button
                         variant="outline"
@@ -431,7 +431,7 @@ export function DossierComments({ dossierId, organizationId }: DossierCommentsPr
                           setEditText("");
                         }}
                       >
-                        {t("comments.cancel")}
+                        {t("common.cancel")}
                       </Button>
                     </div>
                   </div>

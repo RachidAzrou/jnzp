@@ -254,10 +254,10 @@ export function InvoiceManagementCard({ dossierId, userRole }: InvoiceManagement
 
           <DialogFooter>
             <Button variant="outline" onClick={() => { setActionType(null); setSelectedInvoice(null); }}>
-              Annuleren
+              {t("common.cancel")}
             </Button>
             <Button onClick={confirmAction} disabled={updateInvoiceMutation.isPending}>
-              {updateInvoiceMutation.isPending ? 'Bezig...' : 'Bevestigen'}
+              {updateInvoiceMutation.isPending ? t("common.loading") : t("common.confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

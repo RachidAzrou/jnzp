@@ -76,7 +76,7 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
               size="sm"
               onClick={() => setIsEditing(true)}
             >
-              {t("internalNotes.edit")}
+              {t("common.edit")}
             </Button>
           )}
         </div>
@@ -100,13 +100,13 @@ export function InternalNotesCard({ dossierId, initialNotes, onNotesSaved }: Int
                   onClick={handleCancel}
                   disabled={saving}
                 >
-                  {t("internalNotes.cancel")}
+                  {t("common.cancel")}
                 </Button>
                 <Button 
                   onClick={handleSave} 
                   disabled={saving || !hasChanges}
                 >
-                  {saving ? t("internalNotes.saving") : t("internalNotes.save")}
+                  {saving ? t("common.loading") : t("common.save")}
                 </Button>
               </div>
             </div>

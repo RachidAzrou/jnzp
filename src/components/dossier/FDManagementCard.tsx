@@ -242,10 +242,10 @@ export default function FDManagementCard({
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setReleaseDialogOpen(false)}>
-              {t("internalNotes.cancel")}
+              {t("common.cancel")}
             </Button>
             <Button variant="destructive" onClick={handleReleaseFD} disabled={releasing}>
-              {releasing ? t("fdManagement.decoupling") : t("fdManagement.decouple")}
+              {releasing ? t("common.loading") : t("fdManagement.decouple")}
             </Button>
           </DialogFooter>
         </DialogContent>

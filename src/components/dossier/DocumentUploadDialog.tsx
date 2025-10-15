@@ -27,8 +27,8 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
     // Validation
     if (!file || !docType.trim()) {
       toast({
-        title: "Ontbrekende gegevens",
-        description: "Vul documenttype in en selecteer een bestand",
+        title: t("documentUpload.missingData"),
+        description: t("documentUpload.missingDataDesc"),
         variant: "destructive",
       });
       return;
@@ -37,8 +37,8 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
     // Document type length check
     if (docType.trim().length > 100) {
       toast({
-        title: "Documenttype te lang",
-        description: "Maximaal 100 karakters toegestaan",
+        title: t("documentUpload.typeTooLong"),
+        description: t("documentUpload.typeTooLongDesc"),
         variant: "destructive",
       });
       return;
@@ -50,8 +50,8 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
     
     if (file.size > MAX_FILE_SIZE) {
       toast({
-        title: "Bestand te groot",
-        description: "Het bestand mag maximaal 10MB zijn",
+        title: t("documentUpload.fileTooLarge"),
+        description: t("documentUpload.fileTooLargeDesc"),
         variant: "destructive",
       });
       return;
@@ -59,8 +59,8 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       toast({
-        title: "Ongeldig bestandstype",
-        description: "Alleen PDF, JPG, PNG, DOC en DOCX bestanden zijn toegestaan",
+        title: t("documentUpload.invalidType"),
+        description: t("documentUpload.invalidTypeDesc"),
         variant: "destructive",
       });
       return;
@@ -79,7 +79,7 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
 
     if (uploadError) {
       toast({
-        title: "Upload fout",
+        title: t("documentUpload.uploadError"),
         description: uploadError.message,
         variant: "destructive",
       });
@@ -99,7 +99,7 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
 
     if (dbError) {
       toast({
-        title: "Database fout",
+        title: t("documentUpload.dbError"),
         description: dbError.message,
         variant: "destructive",
       });
@@ -117,8 +117,8 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
     });
 
     toast({
-      title: "Document geüpload",
-      description: "Het document is geüpload en wordt beoordeeld",
+      title: t("documentUpload.success"),
+      description: t("documentUpload.successDesc"),
     });
 
     setOpen(false);
@@ -133,19 +133,19 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
       <DialogTrigger asChild>
         <Button>
           <Upload className="mr-2 h-4 w-4" />
-          Upload Document
+          {t("documentUpload.trigger")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Document uploaden</DialogTitle>
+          <DialogTitle>{t("documentUpload.title")}</DialogTitle>
           <DialogDescription>
-            Upload een document voor dit dossier
+            {t("documentUpload.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="docType">Documenttype</Label>
+            <Label htmlFor="docType">{t("documentUpload.typeLabel")}</Label>
             <Input
               id="docType"
               placeholder={t("forms.placeholders.documentType")}
@@ -154,11 +154,11 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
               required
             />
             <p className="text-xs text-muted-foreground">
-              Geef een duidelijke naam voor het document
+              {t("documentUpload.typeHint")}
             </p>
           </div>
           <div>
-            <Label>Bestand</Label>
+            <Label>{t("documentUpload.fileLabel")}</Label>
             <Input
               type="file"
               accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
@@ -168,10 +168,10 @@ export function DocumentUploadDialog({ dossierId, onDocumentUploaded }: Document
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Annuleren
+            {t("documentUpload.cancel")}
           </Button>
           <Button onClick={handleUpload} disabled={uploading}>
-            {uploading ? "Uploaden..." : "Upload"}
+            {uploading ? t("documentUpload.uploading") : t("documentUpload.upload")}
           </Button>
         </DialogFooter>
       </DialogContent>

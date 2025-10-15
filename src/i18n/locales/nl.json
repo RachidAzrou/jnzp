@@ -326,5 +326,123 @@
     "undo": "Ongedaan maken",
     "onboardingComplete": "Onboarding voltooid",
     "fullySetup": "Je organisatie is volledig ingesteld en klaar voor gebruik"
+  },
+  "statusChanger": {
+    "title": "Status wijzigen",
+    "openTasksWarning": "Er zijn nog {count} open taken voor deze status. Rond deze eerst af voordat u de status wijzigt.",
+    "allTasksComplete": "Alle taken zijn afgerond. Het dossier kan automatisch naar de volgende fase.",
+    "currentStatus": "Huidig:",
+    "newStatus": "Nieuwe status",
+    "noChangesAllowed": "Geen statuswijzigingen mogelijk.",
+    "reasonLabel": "Reden (optioneel)",
+    "cancel": "Annuleren",
+    "submit": "Status wijzigen",
+    "blockedReason": "Reden",
+    "blockedAuthority": "Autoriteit",
+    "blockedContact": "Contact"
+  },
+  "documentUpload": {
+    "trigger": "Upload Document",
+    "title": "Document uploaden",
+    "description": "Upload een document voor dit dossier",
+    "typeLabel": "Documenttype",
+    "typeHint": "Geef een duidelijke naam voor het document",
+    "fileLabel": "Bestand",
+    "cancel": "Annuleren",
+    "upload": "Upload",
+    "uploading": "Uploaden...",
+    "missingData": "Ontbrekende gegevens",
+    "missingDataDesc": "Vul documenttype in en selecteer een bestand",
+    "typeTooLong": "Documenttype te lang",
+    "typeTooLongDesc": "Maximaal 100 karakters toegestaan",
+    "fileTooLarge": "Bestand te groot",
+    "fileTooLargeDesc": "Het bestand mag maximaal 10MB zijn",
+    "invalidType": "Ongeldig bestandstype",
+    "invalidTypeDesc": "Alleen PDF, JPG, PNG, DOC en DOCX bestanden zijn toegestaan",
+    "uploadError": "Upload fout",
+    "dbError": "Database fout",
+    "success": "Document geüpload",
+    "successDesc": "Het document is geüpload en wordt beoordeeld"
+  },
+  "notifications": {
+    "title": "Meldingen",
+    "markAllRead": "Alles markeren als gelezen",
+    "noNotifications": "Geen meldingen",
+    "commentMention": "Je bent genoemd in een opmerking",
+    "commentReply": "Antwoord op jouw opmerking",
+    "dossierComment": "Nieuw commentaar op dossier {ref}",
+    "newNotification": "Nieuwe melding"
+  },
+  "policyVerification": {
+    "apiVerified": "API Geverifieerd",
+    "manualVerified": "Handmatig Geverifieerd",
+    "pending": "In afwachting"
+  },
+  "errors": {
+    "noChange": "Geen wijziging",
+    "selectDifferentStatus": "Selecteer een andere status",
+    "dossierBlocked": "Dossier geblokkeerd",
+    "dossierBlockedDescription": "Dit dossier is geblokkeerd en kan niet worden bewerkt",
+    "tasksNotCompleted": "Taken niet afgerond",
+    "tasksNotCompletedDescription": "Er zijn nog {count} open taken. Rond deze eerst af.",
+    "notAllowed": "Niet toegestaan",
+    "notAllowedDescription": "Deze statuswijziging is niet toegestaan"
+  },
+  "toasts": {
+    "success": {
+      "statusUpdated": "Status bijgewerkt",
+      "statusUpdatedDesc": "Status is gewijzigd naar {status}",
+      "documentApproved": "Document goedgekeurd",
+      "documentApprovedDesc": "Document {type} is goedgekeurd",
+      "documentRejected": "Document afgewezen",
+      "documentRejectedDesc": "Document {type} is afgewezen",
+      "dossierDeleted": "Dossier verwijderd",
+      "dossierDeletedDesc": "Dossier {displayId} is verwijderd"
+    },
+    "errors": {
+      "error": "Fout",
+      "couldNotChangeStatus": "Status kon niet worden gewijzigd",
+      "selectDecision": "Selecteer een beslissing",
+      "selectDecisionDesc": "Kies of je het document wilt goedkeuren of afkeuren",
+      "reasonRequired": "Reden vereist",
+      "rejectReasonRequired": "Voer een reden in voor de afwijzing",
+      "documentReviewError": "Fout bij beoordelen van document",
+      "deleteReasonRequired": "Reden vereist",
+      "deleteReasonRequiredDesc": "Voer een reden in voor het verwijderen",
+      "deleteError": "Fout bij verwijderen",
+      "deleteErrorDesc": "Er is een fout opgetreden bij het verwijderen"
+    }
+  },
+  "forms": {
+    "placeholders": {
+      "firstName": "Bijv. Mohamed",
+      "lastName": "Bijv. Ahmed",
+      "address": "Bijv. Hoofdstraat 1, 1000 Brussel",
+      "contactName": "Naam van de contactpersoon",
+      "selectRelation": "Selecteer een relatie",
+      "phone": "Bijv. +32 123 45 67 89",
+      "email": "Bijv. naam@voorbeeld.be",
+      "policyNumber": "Bijv. POL-123456",
+      "destination": "Bijv. Marokko",
+      "mosque": "Bijv. Grote Moskee",
+      "cemetery": "Bijv. Islamitische begraafplaats",
+      "notes": "Voeg hier aanvullende informatie toe...",
+      "eventTitle": "Bijv. Documenten ontvangen",
+      "eventDescription": "Optionele beschrijving...",
+      "rejectionReason": "Waarom wordt dit document afgewezen?",
+      "documentType": "Bijv. Overlijdensakte, Paspoort, etc.",
+      "statusChangeReason": "Waarom wordt de status gewijzigd?"
+    },
+    "errors": {
+      "firstNameRequired": "Voornaam is verplicht",
+      "firstNameTooLong": "Voornaam mag maximaal 100 tekens zijn",
+      "lastNameRequired": "Achternaam is verplicht",
+      "lastNameTooLong": "Achternaam mag maximaal 100 tekens zijn",
+      "addressRequired": "Adres is verplicht",
+      "contactNameRequired": "Contactpersoon naam is verplicht",
+      "phoneRequired": "Telefoonnummer is verplicht",
+      "invalidEmail": "Ongeldig e-mailadres",
+      "relationshipRequired": "Relatie is verplicht"
+    }
   }
 }

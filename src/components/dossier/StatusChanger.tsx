@@ -316,8 +316,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
               <Alert>
                 <Clock className="h-4 w-4" />
                 <AlertDescription>
-                  Er zijn nog <strong>{openTasks} open taken</strong> voor deze status.
-                  Rond deze eerst af voordat u de status wijzigt.
+                  {t("statusChanger.openTasksWarning", { count: openTasks })}
                 </AlertDescription>
               </Alert>
             )}
@@ -327,14 +326,14 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
               <Alert>
                 <CheckCircle2 className="h-4 w-4" />
                 <AlertDescription>
-                  Alle taken zijn afgerond. Het dossier kan automatisch naar de volgende fase.
+                  {t("statusChanger.allTasksComplete")}
                 </AlertDescription>
               </Alert>
             )}
 
             {/* Current Status */}
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-muted-foreground">Huidig:</span>
+              <span className="text-muted-foreground">{t("statusChanger.currentStatus")}</span>
               <Badge variant={STATUS_BADGES[currentStatus] as any}>
                 {statusLabels[currentStatus]?.label}
               </Badge>
@@ -348,13 +347,13 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
 
             {/* New Status Selection */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Nieuwe status</Label>
+              <Label className="text-sm font-medium">{t("statusChanger.newStatus")}</Label>
               
               {allowedNextStatuses.length === 0 && !isAdmin ? (
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Geen statuswijzigingen mogelijk.
+                    {t("statusChanger.noChangesAllowed")}
                   </AlertDescription>
                 </Alert>
               ) : (
@@ -393,7 +392,7 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
 
             {/* Reason (optional) */}
             <div className="space-y-1.5">
-              <Label htmlFor="reason" className="text-sm">Reden (optioneel)</Label>
+              <Label htmlFor="reason" className="text-sm">{t("statusChanger.reasonLabel")}</Label>
             <Textarea
               id="reason"
               placeholder={t("forms.placeholders.statusChangeReason")}
@@ -407,13 +406,13 @@ export function StatusChanger({ dossierId, currentStatus, onStatusChanged, isAdm
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Annuleren
+              {t("statusChanger.cancel")}
             </Button>
             <Button 
               onClick={handleStatusChange}
               disabled={!newStatus || newStatus === currentStatus}
             >
-              Status wijzigen
+              {t("statusChanger.submit")}
             </Button>
           </DialogFooter>
         </DialogContent>

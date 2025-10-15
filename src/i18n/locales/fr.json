@@ -2552,6 +2552,15 @@
     "deletedDesc": "Le commentaire a été masqué.",
     "confirmDelete": "Êtes-vous sûr de vouloir masquer ce commentaire ?",
     "error": "Erreur"
+  },
+  "progress": {
+    "title": "Progression du Dossier",
+    "completed": "Dossier Terminé",
+    "stageIntake": "Admission",
+    "stageWash": "Lavage rituel",
+    "stageJanazah": "Prière Janazah",
+    "stageRepatriation": "Rapatriement",
+    "stageBurial": "Enterrement"
   }
 }
 

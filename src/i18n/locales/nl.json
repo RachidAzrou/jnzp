@@ -827,5 +827,14 @@
     "deletedDesc": "De opmerking is verborgen.",
     "confirmDelete": "Weet u zeker dat u deze opmerking wilt verbergen?",
     "error": "Fout"
+  },
+  "progress": {
+    "title": "Voortgang dossier",
+    "completed": "Dossier afgerond",
+    "stageIntake": "Intake",
+    "stageWash": "Rituele wassplaats",
+    "stageJanazah": "Janaza gebed",
+    "stageRepatriation": "Repatriëring",
+    "stageBurial": "Begrafenis"
   }
 }

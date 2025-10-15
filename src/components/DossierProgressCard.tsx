@@ -3,6 +3,7 @@ import { LuFilePen } from "react-icons/lu";
 import { MdOutlineShower } from "react-icons/md";
 import { PiMosque, PiFlowerTulip } from "react-icons/pi";
 import { TbPlaneDeparture } from "react-icons/tb";
+import { useTranslation } from "react-i18next";
 
 interface DossierProgressCardProps {
   dossierId: string;
@@ -21,6 +22,7 @@ export function DossierProgressCard({
   currentMainKey,
   events = [],
 }: DossierProgressCardProps) {
+  const { t } = useTranslation();
 
   const getStageStatus = (stageKey: string, currentKey?: string) => {
     if (!currentKey) return 'todo';
@@ -43,11 +45,11 @@ export function DossierProgressCard({
 
   const getStageLabel = (stageKey: string) => {
     const labels: Record<string, string> = {
-      'INTAKE': 'Intake',
-      'RITUELE_WASSPLAATS': 'Rituele wassplaats',
-      'JANAZA_GEBED': 'Janaza gebed',
-      'REPATRIERING': 'Repatriëring',
-      'BEGRAFENIS': 'Begrafenis',
+      'INTAKE': t("progress.stageIntake"),
+      'RITUELE_WASSPLAATS': t("progress.stageWash"),
+      'JANAZA_GEBED': t("progress.stageJanazah"),
+      'REPATRIERING': t("progress.stageRepatriation"),
+      'BEGRAFENIS': t("progress.stageBurial"),
     };
     return labels[stageKey] || stageKey;
   };
@@ -88,7 +90,7 @@ export function DossierProgressCard({
     <div className="space-y-3">
       {/* Progress percentage */}
       <div className="flex items-center justify-between text-sm">
-        <span className="font-medium">Voortgang dossier</span>
+        <span className="font-medium">{t("progress.title")}</span>
         <span className="text-muted-foreground">{progressPct}%</span>
       </div>
 
@@ -153,7 +155,7 @@ export function DossierProgressCard({
         <div className="flex justify-center pt-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
             <Check className="w-3.5 h-3.5" />
-            Dossier afgerond
+            {t("progress.completed")}
           </div>
         </div>
       )}

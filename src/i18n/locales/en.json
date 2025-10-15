@@ -2540,6 +2540,15 @@
     "deletedDesc": "The comment has been hidden.",
     "confirmDelete": "Are you sure you want to hide this comment?",
     "error": "Error"
+  },
+  "progress": {
+    "title": "Dossier Progress",
+    "completed": "Dossier Completed",
+    "stageIntake": "Intake",
+    "stageWash": "Ritual Washing",
+    "stageJanazah": "Janazah Prayer",
+    "stageRepatriation": "Repatriation",
+    "stageBurial": "Burial"
   }
 }
 

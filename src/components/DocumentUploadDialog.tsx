@@ -86,8 +86,8 @@ export function DocumentUploadDialog({
   const handleUpload = async () => {
     if (!file || !selectedDossier || !docType.trim()) {
       toast({
-        title: "Velden vereist",
-        description: "Selecteer een dossier, vul een document type in en selecteer een bestand.",
+        title: t("documentUploadDialog.fieldsRequired"),
+        description: t("documentUploadDialog.fieldsRequiredDesc"),
         variant: "destructive",
       });
       return;
@@ -99,8 +99,8 @@ export function DocumentUploadDialog({
     
     if (file.size > MAX_FILE_SIZE) {
       toast({
-        title: "Bestand te groot",
-        description: "Het bestand mag maximaal 10MB zijn",
+        title: t("documentUploadDialog.fileTooLarge"),
+        description: t("documentUploadDialog.fileTooLargeDesc"),
         variant: "destructive",
       });
       return;
@@ -108,8 +108,8 @@ export function DocumentUploadDialog({
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       toast({
-        title: "Ongeldig bestandstype",
-        description: "Alleen PDF, JPG, PNG, DOC en DOCX bestanden zijn toegestaan",
+        title: t("documentUploadDialog.invalidFileType"),
+        description: t("documentUploadDialog.invalidFileTypeDesc"),
         variant: "destructive",
       });
       return;
@@ -141,8 +141,8 @@ export function DocumentUploadDialog({
       if (dbError) throw dbError;
 
       toast({
-        title: "Document geüpload",
-        description: "Het document is succesvol toegevoegd aan het dossier.",
+        title: t("documentUploadDialog.uploadSuccess"),
+        description: t("documentUploadDialog.uploadSuccessDesc"),
       });
 
       setOpen(false);
@@ -152,7 +152,7 @@ export function DocumentUploadDialog({
       onUploadComplete();
     } catch (error: any) {
       toast({
-        title: "Upload mislukt",
+        title: t("documentUploadDialog.uploadFailed"),
         description: error.message,
         variant: "destructive",
       });
@@ -167,15 +167,15 @@ export function DocumentUploadDialog({
         <DialogTrigger asChild>
           <Button>
             <Upload className="mr-2 h-4 w-4" />
-            Document uploaden
+            {t("documentUploadDialog.uploadButton")}
           </Button>
         </DialogTrigger>
       )}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Document uploaden</DialogTitle>
+          <DialogTitle>{t("documentUploadDialog.title")}</DialogTitle>
           <DialogDescription>
-            Upload een document voor een dossier
+            {t("documentUploadDialog.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
@@ -202,21 +202,21 @@ export function DocumentUploadDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type">Document type</Label>
+            <Label htmlFor="type">{t("documentUploadDialog.documentType")}</Label>
             <Input
               id="type"
-              placeholder="Bijv. Medisch attest, Overlijdensakte, Transportvergunning..."
+              placeholder={t("documentUploadDialog.documentTypePlaceholder")}
               value={docType}
               onChange={(e) => setDocType(e.target.value)}
               maxLength={100}
             />
             <p className="text-xs text-muted-foreground">
-              Vul het type document in (max. 100 karakters)
+              {t("documentUploadDialog.documentTypeHint")}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="file">Bestand</Label>
+            <Label htmlFor="file">{t("documentUploadDialog.file")}</Label>
             <Input
               id="file"
               type="file"
@@ -230,10 +230,10 @@ export function DocumentUploadDialog({
           {uploading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploaden...
+              {t("documentUploadDialog.uploading")}
             </>
           ) : (
-            "Uploaden"
+            t("documentUploadDialog.upload")
           )}
         </Button>
       </DialogContent>

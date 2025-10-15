@@ -25,11 +25,11 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      CREATED: "Nieuw dossier",
-      IN_PROGRESS: "In behandeling",
-      UNDER_REVIEW: "In controle",
-      COMPLETED: "Operationeel afgerond",
-      CLOSED: "Gearchiveerd",
+      CREATED: t("claimDossier.statusCreated"),
+      IN_PROGRESS: t("claimDossier.statusInProgress"),
+      UNDER_REVIEW: t("claimDossier.statusUnderReview"),
+      COMPLETED: t("claimDossier.statusCompleted"),
+      CLOSED: t("claimDossier.statusClosed"),
     };
     return labels[status.toUpperCase()] || status.replace(/_/g, " ");
   };
@@ -59,10 +59,10 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader>
           <div className="flex items-start justify-between">
-            <div>
-              <SheetTitle className="text-2xl">Dossier {dossier.ref_number}</SheetTitle>
-              <SheetDescription>{dossier.deceased_name}</SheetDescription>
-            </div>
+          <div>
+            <SheetTitle className="text-2xl">{t("common.dossier")} {dossier.ref_number}</SheetTitle>
+            <SheetDescription>{dossier.deceased_name}</SheetDescription>
+          </div>
             <Badge 
               variant={getStatusColor(dossier.status)}
               className={`min-w-[120px] justify-center ${
@@ -80,9 +80,11 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
             <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
               <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
               <div>
-                <h4 className="font-semibold text-destructive">Legal Hold Actief</h4>
+                <h4 className="font-semibold text-destructive">{t("dossierDetail.legalHoldActive")}</h4>
                 <p className="text-sm text-destructive/80 mt-1">
-                  Dit dossier is geblokkeerd vanwege {dossier.require_doc_ref || "ontbrekende documentatie"}
+                  {t("dossierDetail.legalHoldMessage", { 
+                    reason: dossier.require_doc_ref || t("dossierDetail.legalHoldDefault")
+                  })}
                 </p>
               </div>
             </div>
@@ -154,23 +156,23 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
           <div>
             <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Status Overzicht
+              {t("dossierDetail.statusOverview")}
             </h3>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <div className={`h-2 w-2 rounded-full ${dossier.legal_hold ? 'bg-destructive' : 'bg-success'}`} />
                 <span className="text-sm">
-                  {dossier.legal_hold ? 'Legal hold actief' : 'Geen blokkades'}
+                  {dossier.legal_hold ? t("dossierDetail.legalHoldActive") : t("dossierDetail.noBlocks")}
                 </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="h-2 w-2 rounded-full bg-primary" />
-                <span className="text-sm">Huidige status: {getStatusLabel(dossier.status)}</span>
+                <span className="text-sm">{t("dossierDetail.currentStatus")}: {getStatusLabel(dossier.status)}</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="h-2 w-2 rounded-full bg-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  Laatst bijgewerkt: {formatDate(dossier.updated_at)}
+                  {t("dossierDetail.lastUpdated")}: {formatDate(dossier.updated_at)}
                 </span>
               </div>
             </div>
@@ -181,7 +183,7 @@ export function DossierDetailSheet({ dossier, open, onOpenChange }: DossierDetai
             <>
               <Separator />
               <div>
-                <h3 className="font-semibold text-lg mb-3">Vereiste Documentatie</h3>
+                <h3 className="font-semibold text-lg mb-3">{t("dossierDetail.requiredDocumentation")}</h3>
                 <p className="text-sm text-muted-foreground">{dossier.require_doc_ref}</p>
               </div>
             </>

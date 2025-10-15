@@ -98,11 +98,11 @@ export function CoolCellReservationSheet({
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "PENDING":
-        return "In afwachting";
+        return t("coolCell.statusPending");
       case "CONFIRMED":
-        return "Bevestigd";
+        return t("coolCell.statusConfirmed");
       case "OCCUPIED":
-        return "Bezet";
+        return t("coolCell.statusOccupied");
       default:
         return status;
     }
@@ -112,7 +112,7 @@ export function CoolCellReservationSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Reserveringsdetails</SheetTitle>
+          <SheetTitle>{t("coolCell.reservationDetails")}</SheetTitle>
         </SheetHeader>
 
         {loading ? (

@@ -306,7 +306,9 @@
     "type": "Type",
     "status": "Status",
     "lastUpdate": "Laatste update",
-    "actions": "Acties"
+    "actions": "Acties",
+    "dossier": "dossier",
+    "dossiers": "dossiers"
   },
   "createDossier": {
     "button": "Nieuw dossier",

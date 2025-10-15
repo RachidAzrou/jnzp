@@ -1239,6 +1239,8 @@
     "searchPlaceholder": "Search by name, reference or dossier ID...",
     "caseId": "Case ID",
     "deceased": "Deceased",
+    "dossier": "dossier",
+    "dossiers": "dossiers",
     "type": "Type",
     "status": "Status",
     "lastUpdate": "Last update",

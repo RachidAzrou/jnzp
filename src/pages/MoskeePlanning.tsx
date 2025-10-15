@@ -235,7 +235,7 @@ export default function MoskeePlanning() {
                       size="sm"
                       onClick={() => handleCancelClick(service)}
                     >
-                      Annuleren
+                      {t("common.cancel")}
                     </Button>
                   )}
                 </div>
@@ -272,14 +272,14 @@ export default function MoskeePlanning() {
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setCancelDialogOpen(false)}>
-                Terug
+                {t("common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleCancelSubmit}
                 disabled={!cancelReason.trim() || cancelMutation.isPending}
               >
-                {cancelMutation.isPending ? "Bezig..." : "Annuleren"}
+                {cancelMutation.isPending ? t("common.loading") : t("common.cancel")}
               </Button>
             </div>
           </div>

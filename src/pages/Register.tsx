@@ -17,11 +17,11 @@ import authBackground from "@/assets/auth-background.jpg";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useBusinessNumberValidation } from "@/hooks/useBusinessNumberValidation";
-import { KBOVerificationStatus } from "@/components/KBOVerificationStatus";
+// KBOVerificationStatus removed
 
 type UserRole = "funeral_director" | "mosque" | "wasplaats" | "insurer";
 type RegistrationStep = "role" | "details";
-type DetailsSubStep = "organization" | "contact" | "kbo-verification";
+type DetailsSubStep = "organization" | "contact";
 
 const Register = () => {
   const { t } = useTranslation();
@@ -56,14 +56,7 @@ const Register = () => {
   const [language, setLanguage] = useState("nl");
   const [invitationCode, setInvitationCode] = useState<string>("");
   
-  // KBO verification state
-  const [kboVerification, setKboVerification] = useState<{
-    decision: 'pass' | 'warn' | 'block';
-    comparison?: any;
-    kboData?: any;
-    verified: boolean;
-  } | null>(null);
-  const [isVerifyingKBO, setIsVerifyingKBO] = useState(false);
+  // KBO verification removed - will be added in later version
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -223,73 +216,9 @@ const Register = () => {
     }
   };
 
-  const handleKBOVerification = async () => {
-    setIsVerifyingKBO(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-kbo', {
-        body: {
-          businessNumber: businessNumber.trim(),
-          companyName: companyName.trim(),
-          addressStreet: addressStreet.trim(),
-          addressPostcode: addressPostcode.trim(),
-          addressCity: addressCity.trim()
-        }
-      });
+  // KBO verification removed - will be added in later version
 
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Verificatie mislukt",
-          description: error.message || "Kon KBO niet verifiëren"
-        });
-        return;
-      }
-
-      if (!data?.ok) {
-        toast({
-          variant: "destructive",
-          title: "Verificatie mislukt",
-          description: data?.error || "Kon KBO niet verifiëren"
-        });
-        return;
-      }
-
-      setKboVerification({
-        decision: data.decision,
-        comparison: data.comparison,
-        kboData: data.kbo,
-        verified: true
-      });
-      
-      setDetailsSubStep("kbo-verification");
-    } catch (error: any) {
-      console.error('KBO verification error:', error);
-      toast({
-        variant: "destructive",
-        title: "Verificatie mislukt",
-        description: "Er is een fout opgetreden bij de verificatie"
-      });
-    } finally {
-      setIsVerifyingKBO(false);
-    }
-  };
-
-  const handleContinueAfterKBO = () => {
-    if (kboVerification?.decision === 'block') {
-      toast({
-        variant: "destructive",
-        title: "Kan niet doorgaan",
-        description: "Corrigeer eerst de gegevens"
-      });
-      return;
-    }
-    setDetailsSubStep("contact");
-  };
-
-  const handleCorrectKBOData = () => {
-    setKboVerification(null);
-    setDetailsSubStep("organization");
-  };
+  // KBO handlers removed
 
   return (
     <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 md:p-6 relative">
@@ -584,76 +513,26 @@ const Register = () => {
                   </div>
 
                   <Button
-                    onClick={() => {
-                      if (selectedRole === "mosque" || !businessNumber) {
-                        setDetailsSubStep("contact");
-                      } else {
-                        handleKBOVerification();
-                      }
-                    }}
+                    onClick={() => setDetailsSubStep("contact")}
                     disabled={
                       !companyName || 
                       !addressStreet || 
                       !addressCity || 
                       !addressPostcode ||
-                      (selectedRole !== "mosque" && !businessNumber) ||
-                      isVerifyingKBO
+                      (selectedRole !== "mosque" && !businessNumber)
                     }
                     className="w-full h-10 mt-4"
                   >
-                    {isVerifyingKBO ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        KBO verifiëren...
-                      </>
-                    ) : (
-                      t('register.nextStep')
-                    )}
+                    {t('register.nextStep')}
                   </Button>
                  </div>
-              ) : detailsSubStep === "kbo-verification" ? (
-                <div className="space-y-4">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setDetailsSubStep("organization")}
-                    className="mb-2"
-                  >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    {t('register.back')}
-                  </Button>
-
-                  <div className="text-center pb-3">
-                    <h3 className="text-lg font-semibold">{t('register.kboVerification')}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t('register.kboVerificationDescription')}
-                    </p>
-                  </div>
-
-                  {kboVerification && (
-                    <KBOVerificationStatus
-                      decision={kboVerification.decision}
-                      comparison={kboVerification.comparison}
-                      kboData={kboVerification.kboData}
-                      onContinue={handleContinueAfterKBO}
-                      onCorrect={handleCorrectKBOData}
-                    />
-                  )}
-                </div>
               ) : (
                 <form onSubmit={handleProfessionalSignup} className="space-y-4">
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => {
-                      if (kboVerification) {
-                        setDetailsSubStep("kbo-verification");
-                      } else {
-                        setDetailsSubStep("organization");
-                      }
-                    }}
+                    onClick={() => setDetailsSubStep("organization")}
                     className="mb-2"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />

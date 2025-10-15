@@ -78,18 +78,19 @@ const statusColors: Record<string, string> = {
   CANCELLED: "bg-destructive text-destructive-foreground",
 };
 
-const statusLabels: Record<string, string> = {
-  DRAFT: "Concept",
-  ISSUED: "Te accorderen",
-  NEEDS_INFO: "Info nodig",
-  APPROVED: "Goedgekeurd",
-  PAID: "Betaald",
-  CANCELLED: "Geannuleerd",
-};
 
 export default function FDFacturatie() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  
+  const statusLabels: Record<string, string> = {
+    DRAFT: t("invoicing.statusDraft"),
+    ISSUED: t("invoicing.statusToApprove"),
+    NEEDS_INFO: t("invoicing.statusNeedsInfo"),
+    APPROVED: t("invoicing.statusApproved"),
+    PAID: t("invoicing.statusPaid"),
+    CANCELLED: t("invoicing.statusCancelled"),
+  };
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
@@ -122,7 +123,7 @@ export default function FDFacturatie() {
   const fetchData = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Niet ingelogd");
+      if (!user) throw new Error(t("common.notLoggedIn"));
 
       const { data: userRole } = await supabase
         .from("user_roles")
@@ -131,7 +132,7 @@ export default function FDFacturatie() {
         .eq("role", "funeral_director")
         .single();
 
-      if (!userRole?.organization_id) throw new Error("Geen organisatie gevonden");
+      if (!userRole?.organization_id) throw new Error(t("common.noOrganizationFound"));
 
       // Fetch invoices
       const { data: invoicesData, error: invoicesError } = await supabase
@@ -174,7 +175,7 @@ export default function FDFacturatie() {
     } catch (error: any) {
       console.error("Error fetching data:", error);
       toast({
-        title: "Fout",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -232,7 +233,7 @@ export default function FDFacturatie() {
     onSuccess: () => {
       toast({
         title: t("common.success"),
-        description: "Ontvangst bevestigd",
+        description: t("invoicing.receiptConfirmed"),
       });
       queryClient.invalidateQueries({ queryKey: ["fd-received-invoices"] });
     },
@@ -259,8 +260,8 @@ export default function FDFacturatie() {
   const addCustomLine = () => {
     if (!customCode || !customDescription) {
       toast({
-        title: "Fout",
-        description: "Code en omschrijving zijn verplicht",
+        title: t("common.error"),
+        description: t("invoicing.codeDescriptionRequired"),
         variant: "destructive",
       });
       return;
@@ -342,7 +343,7 @@ export default function FDFacturatie() {
       dossier: {
         display_id: dossier.display_id || "",
         deceased_name: dossier.deceased_name,
-        flow_type: dossier.flow === "REP" ? "Repatriëring" : "Lokaal",
+        flow_type: dossier.flow === "REP" ? t("common.repatriation") : t("common.local"),
         policy_ref: dossier.ref_number,
       },
       items: invoiceLines.map(line => ({
@@ -364,8 +365,8 @@ export default function FDFacturatie() {
       const invoiceData = await generateInvoiceData();
       if (!invoiceData) {
         toast({
-          title: "Fout",
-          description: "Kon factuurgegevens niet ophalen",
+          title: t("common.error"),
+          description: t("invoicing.couldNotFetchInvoiceData"),
           variant: "destructive",
         });
         return;
@@ -374,7 +375,7 @@ export default function FDFacturatie() {
       const validation = validateInvoiceData(invoiceData);
       if (!validation.valid) {
         toast({
-          title: "Validatiefout",
+          title: t("invoicing.validationError"),
           description: validation.errors.join(", "),
           variant: "destructive",
         });
@@ -390,14 +391,14 @@ export default function FDFacturatie() {
       URL.revokeObjectURL(url);
 
       toast({
-        title: "Succes",
-        description: "PDF gegenereerd en gedownload",
+        title: t("common.success"),
+        description: t("invoicing.pdfGeneratedDownloaded"),
       });
     } catch (error) {
       console.error("Error generating PDF:", error);
       toast({
-        title: "Fout",
-        description: "Kon PDF niet genereren",
+        title: t("common.error"),
+        description: t("invoicing.couldNotGeneratePDF"),
         variant: "destructive",
       });
     }
@@ -406,8 +407,8 @@ export default function FDFacturatie() {
   const saveInvoice = async (asDraft: boolean) => {
     if (!selectedDossier) {
       toast({
-        title: "Fout",
-        description: "Selecteer een dossier",
+        title: t("common.error"),
+        description: t("invoicing.selectDossier"),
         variant: "destructive",
       });
       return;
@@ -415,8 +416,8 @@ export default function FDFacturatie() {
 
     if (invoiceLines.length === 0) {
       toast({
-        title: "Fout",
-        description: "Voeg minimaal één factuurregel toe",
+        title: t("common.error"),
+        description: t("invoicing.addAtLeastOneInvoiceLine"),
         variant: "destructive",
       });
       return;
@@ -424,7 +425,7 @@ export default function FDFacturatie() {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Niet ingelogd");
+      if (!user) throw new Error(t("common.notLoggedIn"));
 
       const { data: userRole } = await supabase
         .from("user_roles")
@@ -433,13 +434,13 @@ export default function FDFacturatie() {
         .eq("role", "funeral_director")
         .single();
 
-      if (!userRole?.organization_id) throw new Error("Geen organisatie gevonden");
+      if (!userRole?.organization_id) throw new Error(t("common.noOrganizationFound"));
 
       const dossier = dossiers.find(d => d.id === selectedDossier);
       if (!dossier?.insurer_org_id) {
         toast({
-          title: "Fout",
-          description: "Dit dossier heeft geen verzekeraar",
+          title: t("common.error"),
+          description: t("invoicing.dossierNoInsurer"),
           variant: "destructive",
         });
         return;
@@ -482,8 +483,8 @@ export default function FDFacturatie() {
       if (itemsError) throw itemsError;
 
       toast({
-        title: "Succes",
-        description: asDraft ? "Factuur opgeslagen als concept" : "Factuur uitgegeven",
+        title: t("common.success"),
+        description: asDraft ? t("invoicing.invoiceSavedDraft") : t("invoicing.invoiceIssued"),
       });
 
       setShowGenerator(false);
@@ -493,7 +494,7 @@ export default function FDFacturatie() {
     } catch (error: any) {
       console.error("Error saving invoice:", error);
       toast({
-        title: "Fout",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -558,8 +559,8 @@ export default function FDFacturatie() {
                     <FileText className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium">Financieel</p>
-                    <h1 className="text-2xl font-bold tracking-tight">Facturatie</h1>
+                    <p className="text-sm text-muted-foreground font-medium">{t("invoicing.financial")}</p>
+                    <h1 className="text-2xl font-bold tracking-tight">{t("invoicing.title")}</h1>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground pl-15">
@@ -591,7 +592,7 @@ export default function FDFacturatie() {
             {/* Filters */}
             <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
               <CardHeader>
-                <CardTitle>Filters</CardTitle>
+                <CardTitle>{t("common.filters")}</CardTitle>
               </CardHeader>
               <CardContent className="flex gap-4">
                 <div className="flex-1 relative">
@@ -605,15 +606,15 @@ export default function FDFacturatie() {
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Status" />
+                    <SelectValue placeholder={t("common.status")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Alle statussen</SelectItem>
-                    <SelectItem value="DRAFT">Concept</SelectItem>
-                    <SelectItem value="ISSUED">Te accorderen</SelectItem>
-                    <SelectItem value="NEEDS_INFO">Info nodig</SelectItem>
-                    <SelectItem value="APPROVED">Goedgekeurd</SelectItem>
-                    <SelectItem value="PAID">Betaald</SelectItem>
+                    <SelectItem value="all">{t("invoicing.allStatuses")}</SelectItem>
+                    <SelectItem value="DRAFT">{t("invoicing.statusDraft")}</SelectItem>
+                    <SelectItem value="ISSUED">{t("invoicing.statusToApprove")}</SelectItem>
+                    <SelectItem value="NEEDS_INFO">{t("invoicing.statusNeedsInfo")}</SelectItem>
+                    <SelectItem value="APPROVED">{t("invoicing.statusApproved")}</SelectItem>
+                    <SelectItem value="PAID">{t("invoicing.statusPaid")}</SelectItem>
                   </SelectContent>
                 </Select>
               </CardContent>
@@ -622,19 +623,19 @@ export default function FDFacturatie() {
             {/* Invoices Table */}
             <Card className="border-0 shadow-md bg-card/50 backdrop-blur-sm animate-fade-in">
               <CardHeader>
-                <CardTitle>Facturen Overzicht</CardTitle>
+                <CardTitle>{t("invoicing.invoicesOverview")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Nr</TableHead>
-                      <TableHead>Dossier</TableHead>
-                      <TableHead>Overledene</TableHead>
-                      <TableHead>Datum</TableHead>
-                      <TableHead className="text-right">Bedrag</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actie</TableHead>
+                      <TableHead>{t("invoicing.number")}</TableHead>
+                      <TableHead>{t("common.dossier")}</TableHead>
+                      <TableHead>{t("invoicing.deceased")}</TableHead>
+                      <TableHead>{t("common.date")}</TableHead>
+                      <TableHead className="text-right">{t("invoicing.amount")}</TableHead>
+                      <TableHead>{t("common.status")}</TableHead>
+                      <TableHead>{t("invoicing.action")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -655,7 +656,7 @@ export default function FDFacturatie() {
                         <TableCell>
                           <Button size="sm" variant="ghost">
                             <FileText className="h-4 w-4 mr-1" />
-                            Bekijken
+                            {t("invoicing.view")}
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -663,7 +664,7 @@ export default function FDFacturatie() {
                     {filteredInvoices.length === 0 && (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                          Geen facturen gevonden
+                          {t("invoicing.noInvoicesFound")}
                         </TableCell>
                       </TableRow>
                     )}
@@ -690,13 +691,13 @@ export default function FDFacturatie() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Nummer</TableHead>
-                        <TableHead>Mortuarium</TableHead>
-                        <TableHead>Dossier</TableHead>
-                        <TableHead>Bedrag</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Datum</TableHead>
-                        <TableHead className="text-right">Acties</TableHead>
+                        <TableHead>{t("invoicing.number")}</TableHead>
+                        <TableHead>{t("invoicing.mortuarium")}</TableHead>
+                        <TableHead>{t("common.dossier")}</TableHead>
+                        <TableHead>{t("invoicing.amount")}</TableHead>
+                        <TableHead>{t("common.status")}</TableHead>
+                        <TableHead>{t("common.date")}</TableHead>
+                        <TableHead className="text-right">{t("invoicing.actions")}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -736,7 +737,7 @@ export default function FDFacturatie() {
                                 disabled={acknowledgeMutation.isPending}
                               >
                                 <CheckCircle className="h-4 w-4 mr-1" />
-                                Bevestig
+                                {t("invoicing.confirm")}
                               </Button>
                             )}
                           </TableCell>
@@ -754,13 +755,13 @@ export default function FDFacturatie() {
       <Dialog open={showGenerator} onOpenChange={setShowGenerator}>
           <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Factuur Generator</DialogTitle>
+              <DialogTitle>{t("invoicing.invoiceGenerator")}</DialogTitle>
             </DialogHeader>
 
             <div className="space-y-6">
               {/* Dossier Selection */}
               <div className="space-y-2">
-                <Label>Dossier *</Label>
+                <Label>{t("common.dossier")} *</Label>
                 <Select value={selectedDossier} onValueChange={setSelectedDossier}>
                   <SelectTrigger>
                     <SelectValue placeholder={t("placeholders.selectDossier")} />
@@ -777,8 +778,8 @@ export default function FDFacturatie() {
 
               <Tabs defaultValue="catalog">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="catalog">Catalogus</TabsTrigger>
-                  <TabsTrigger value="custom">Custom Regel</TabsTrigger>
+                  <TabsTrigger value="catalog">{t("invoicing.catalog")}</TabsTrigger>
+                  <TabsTrigger value="custom">{t("invoicing.customLine")}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="catalog" className="space-y-4">
@@ -796,10 +797,10 @@ export default function FDFacturatie() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Code</TableHead>
-                          <TableHead>Omschrijving</TableHead>
-                          <TableHead className="text-right">Prijs</TableHead>
-                          <TableHead>Actie</TableHead>
+                          <TableHead>{t("invoicing.code")}</TableHead>
+                          <TableHead>{t("invoicing.description")}</TableHead>
+                          <TableHead className="text-right">{t("common.price")}</TableHead>
+                          <TableHead>{t("invoicing.action")}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -815,7 +816,7 @@ export default function FDFacturatie() {
                                 onClick={() => addCatalogItemToInvoice(item)}
                               >
                                 <Plus className="h-4 w-4 mr-1" />
-                                Toevoegen
+                                {t("invoicing.add")}
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -828,7 +829,7 @@ export default function FDFacturatie() {
                 <TabsContent value="custom" className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label>Code *</Label>
+                      <Label>{t("invoicing.code")} *</Label>
                       <Input
                         value={customCode}
                         onChange={(e) => setCustomCode(e.target.value)}
@@ -836,7 +837,7 @@ export default function FDFacturatie() {
                       />
                     </div>
                     <div>
-                      <Label>Omschrijving *</Label>
+                      <Label>{t("invoicing.description")} *</Label>
                       <Input
                         value={customDescription}
                         onChange={(e) => setCustomDescription(e.target.value)}
@@ -844,7 +845,7 @@ export default function FDFacturatie() {
                       />
                     </div>
                     <div>
-                      <Label>Aantal</Label>
+                      <Label>{t("invoicing.quantity")}</Label>
                       <Input
                         type="number"
                         min="1"
@@ -853,7 +854,7 @@ export default function FDFacturatie() {
                       />
                     </div>
                     <div>
-                      <Label>Prijs per stuk</Label>
+                      <Label>{t("invoicing.pricePerUnit")}</Label>
                       <Input
                         type="number"
                         min="0"
@@ -865,7 +866,7 @@ export default function FDFacturatie() {
                   </div>
                   <Button onClick={addCustomLine}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Voeg toe aan factuur
+                    {t("invoicing.addToInvoice")}
                   </Button>
                 </TabsContent>
               </Tabs>

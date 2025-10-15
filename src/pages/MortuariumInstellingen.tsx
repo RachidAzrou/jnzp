@@ -12,8 +12,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { CalendarOff, Plus, Trash2, Building2 } from "lucide-react";
 import { nl } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 export default function MortuariumInstellingen() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date>();
@@ -231,7 +233,7 @@ export default function MortuariumInstellingen() {
             </div>
 
             <Button type="submit" disabled={updateOrgMutation.isPending}>
-              {updateOrgMutation.isPending ? "Opslaan..." : "Opslaan"}
+              {updateOrgMutation.isPending ? t("common.loading") : t("common.save")}
             </Button>
           </form>
         </CardContent>
@@ -280,7 +282,7 @@ export default function MortuariumInstellingen() {
               className="w-full"
             >
               <Plus className="mr-2 h-4 w-4" />
-              {addBlockMutation.isPending ? "Toevoegen..." : "Sluitingsdag toevoegen"}
+              {addBlockMutation.isPending ? t("common.loading") : t("common.add")}
             </Button>
           </CardContent>
         </Card>

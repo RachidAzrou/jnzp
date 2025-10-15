@@ -166,7 +166,7 @@ export default function MoskeeSettings() {
 
               <Button onClick={() => updateMutation.mutate()} disabled={updateMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" />
-                {updateMutation.isPending ? "Opslaan..." : "Opslaan"}
+                {updateMutation.isPending ? t("common.loading") : t("common.save")}
               </Button>
             </>
           )}

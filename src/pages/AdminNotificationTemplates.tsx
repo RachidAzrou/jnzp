@@ -362,9 +362,9 @@ export default function AdminNotificationTemplates() {
                 setEditingTemplate(null);
               }}
             >
-              Annuleren
+              {t("common.cancel")}
             </Button>
-            <Button onClick={handleSave}>Opslaan</Button>
+            <Button onClick={handleSave}>{t("common.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

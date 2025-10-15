@@ -88,19 +88,19 @@ const statusColors: Record<string, string> = {
   CANCELLED: "bg-destructive text-destructive-foreground",
 };
 
-const statusLabels: Record<string, string> = {
-  DRAFT: "Concept",
-  ISSUED: "Uitgegeven",
-  NEEDS_INFO: "Info nodig",
-  APPROVED: "Geaccordeerd",
-  PAID: "Betaald",
-  CANCELLED: "Geannuleerd",
-};
-
 export default function Facturatie() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
+  
+  const statusLabels: Record<string, string> = {
+    DRAFT: t("invoicing.statusDraft"),
+    ISSUED: t("invoicing.statusIssued"),
+    NEEDS_INFO: t("invoicing.statusNeedsInfo"),
+    APPROVED: t("invoicing.statusApproved"),
+    PAID: t("invoicing.statusPaid"),
+    CANCELLED: t("invoicing.statusCancelled"),
+  };
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [dossiers, setDossiers] = useState<Dossier[]>([]);
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([]);
@@ -145,8 +145,8 @@ export default function Facturatie() {
     } catch (error) {
       console.error("Error fetching invoices:", error);
       toast({
-        title: "Fout",
-        description: "Kon facturen niet laden",
+        title: t("common.error"),
+        description: t("invoicing.errorLoadingInvoices"),
         variant: "destructive",
       });
     } finally {
@@ -212,8 +212,8 @@ export default function Facturatie() {
   const createInvoice = async () => {
     if (!selectedDossierId) {
       toast({
-        title: "Fout",
-        description: "Selecteer een dossier",
+        title: t("common.error"),
+        description: t("invoicing.selectDossier"),
         variant: "destructive",
       });
       return;
@@ -221,7 +221,7 @@ export default function Facturatie() {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Niet ingelogd");
+      if (!user) throw new Error(t("common.notLoggedIn"));
 
       const { data: userRole } = await supabase
         .from("user_roles")
@@ -230,7 +230,7 @@ export default function Facturatie() {
         .eq("role", "mortuarium")
         .single();
 
-      if (!userRole?.organization_id) throw new Error("Geen organisatie gevonden");
+      if (!userRole?.organization_id) throw new Error(t("common.noOrganizationFound"));
 
       const { data: dossier } = await supabase
         .from("dossiers")
@@ -253,8 +253,8 @@ export default function Facturatie() {
       if (error) throw error;
 
       toast({
-        title: "Succes",
-        description: "Factuur aangemaakt",
+        title: t("common.success"),
+        description: t("invoicing.invoiceCreated"),
       });
 
       setIsNewInvoiceOpen(false);
@@ -263,8 +263,8 @@ export default function Facturatie() {
     } catch (error) {
       console.error("Error creating invoice:", error);
       toast({
-        title: "Fout",
-        description: "Kon factuur niet aanmaken",
+        title: t("common.error"),
+        description: t("invoicing.errorCreatingInvoice"),
         variant: "destructive",
       });
     }
@@ -290,16 +290,16 @@ export default function Facturatie() {
       await recalculateInvoice(invoiceId);
 
       toast({
-        title: "Succes",
-        description: "Item toegevoegd aan factuur",
+        title: t("common.success"),
+        description: t("invoicing.itemAdded"),
       });
 
       fetchInvoiceItems(invoiceId);
     } catch (error) {
       console.error("Error adding catalog item:", error);
       toast({
-        title: "Fout",
-        description: "Kon item niet toevoegen",
+        title: t("common.error"),
+        description: t("invoicing.errorAddingItem"),
         variant: "destructive",
       });
     }
@@ -308,8 +308,8 @@ export default function Facturatie() {
   const addInvoiceItem = async (invoiceId: string) => {
     if (!newItem.code || !newItem.description) {
       toast({
-        title: "Fout",
-        description: "Vul alle velden in",
+        title: t("common.error"),
+        description: t("invoicing.fillAllFields"),
         variant: "destructive",
       });
       return;
@@ -334,8 +334,8 @@ export default function Facturatie() {
       await recalculateInvoice(invoiceId);
 
       toast({
-        title: "Succes",
-        description: "Factuurlijn toegevoegd",
+        title: t("common.success"),
+        description: t("invoicing.invoiceLineAdded"),
       });
 
       setNewItem({ code: "", description: "", qty: 1, unit_price: 0 });
@@ -343,8 +343,8 @@ export default function Facturatie() {
     } catch (error) {
       console.error("Error adding invoice item:", error);
       toast({
-        title: "Fout",
-        description: "Kon factuurlijn niet toevoegen",
+        title: t("common.error"),
+        description: t("invoicing.errorAddingInvoiceLine"),
         variant: "destructive",
       });
     }
@@ -363,14 +363,14 @@ export default function Facturatie() {
       fetchInvoiceItems(invoiceId);
 
       toast({
-        title: "Succes",
-        description: "Factuurlijn verwijderd",
+        title: t("common.success"),
+        description: t("invoicing.invoiceLineDeleted"),
       });
     } catch (error) {
       console.error("Error deleting invoice item:", error);
       toast({
-        title: "Fout",
-        description: "Kon factuurlijn niet verwijderen",
+        title: t("common.error"),
+        description: t("invoicing.errorDeletingInvoiceLine"),
         variant: "destructive",
       });
     }
@@ -414,8 +414,8 @@ export default function Facturatie() {
       if (error) throw error;
 
       toast({
-        title: "Succes",
-        description: "Status bijgewerkt",
+        title: t("common.success"),
+        description: t("invoicing.statusUpdated"),
       });
 
       fetchInvoices();
@@ -426,8 +426,8 @@ export default function Facturatie() {
     } catch (error) {
       console.error("Error updating invoice status:", error);
       toast({
-        title: "Fout",
-        description: "Kon status niet bijwerken",
+        title: t("common.error"),
+        description: t("invoicing.errorUpdatingStatus"),
         variant: "destructive",
       });
     }
@@ -436,8 +436,8 @@ export default function Facturatie() {
   const markAsPaid = async (invoiceId: string) => {
     if (!paymentDate) {
       toast({
-        title: "Fout",
-        description: "Selecteer een betaaldatum",
+        title: t("common.error"),
+        description: t("invoicing.selectPaymentDate"),
         variant: "destructive",
       });
       return;
@@ -455,8 +455,8 @@ export default function Facturatie() {
       if (error) throw error;
 
       toast({
-        title: "Succes",
-        description: "Factuur gemarkeerd als betaald",
+        title: t("common.success"),
+        description: t("invoicing.markedAsPaid"),
       });
 
       setPaymentDate(new Date());
@@ -465,8 +465,8 @@ export default function Facturatie() {
     } catch (error) {
       console.error("Error marking invoice as paid:", error);
       toast({
-        title: "Fout",
-        description: "Kon factuur niet markeren als betaald",
+        title: t("common.error"),
+        description: t("invoicing.errorMarkingPaid"),
         variant: "destructive",
       });
     }
@@ -479,7 +479,7 @@ export default function Facturatie() {
   };
 
   if (loading) {
-    return <div className="p-6">Laden...</div>;
+    return <div className="p-6">{t("common.loading")}</div>;
   }
 
   return (
@@ -494,12 +494,12 @@ export default function Facturatie() {
                   <FileText className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Financieel</p>
-                  <h1 className="text-2xl font-bold tracking-tight">Facturatie</h1>
+                  <p className="text-sm text-muted-foreground font-medium">{t("invoicing.financial")}</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t("invoicing.title")}</h1>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground pl-15">
-                Beheer en genereer facturen voor dossiers
+                {t("invoicing.subtitle")}
               </p>
             </div>
           </CardContent>
@@ -513,19 +513,19 @@ export default function Facturatie() {
                 <DialogTrigger asChild>
                   <Button variant="outline">
                     <Plus className="h-4 w-4 mr-2" />
-                    Nieuwe Factuur
+                    {t("invoicing.newInvoice")}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Nieuwe Factuur</DialogTitle>
+                    <DialogTitle>{t("invoicing.newInvoice")}</DialogTitle>
                     <DialogDescription>
-                      Maak een nieuwe factuur aan voor een dossier.
+                      {t("invoicing.newInvoiceDescription")}
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label htmlFor="dossier">Dossier</Label>
+                      <Label htmlFor="dossier">{t("common.dossier")}</Label>
                       <Select value={selectedDossierId} onValueChange={setSelectedDossierId}>
                         <SelectTrigger>
                           <SelectValue placeholder={t("placeholders.selectDossier")} />
@@ -542,9 +542,9 @@ export default function Facturatie() {
                   </div>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setIsNewInvoiceOpen(false)}>
-                      Annuleren
+                      {t("common.cancel")}
                     </Button>
-                    <Button onClick={createInvoice}>Aanmaken</Button>
+                    <Button onClick={createInvoice}>{t("invoicing.create")}</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -555,19 +555,19 @@ export default function Facturatie() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Facturen Overzicht</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("invoicing.invoicesOverview")}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="hidden md:block">
             <Table>
               <TableHeader>
                 <TableRow className="border-b">
-                  <TableHead className="font-medium text-sm">Dossier</TableHead>
-                  <TableHead className="font-medium text-sm">Overledene</TableHead>
-                  <TableHead className="font-medium text-sm">Datum</TableHead>
-                  <TableHead className="font-medium text-sm">Bedrag</TableHead>
-                  <TableHead className="font-medium text-sm">Status</TableHead>
-                  <TableHead className="font-medium text-sm">Actie</TableHead>
+                  <TableHead className="font-medium text-sm">{t("common.dossier")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("invoicing.deceased")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("common.date")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("invoicing.amount")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("common.status")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("invoicing.action")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -593,7 +593,7 @@ export default function Facturatie() {
                         variant="outline"
                         onClick={() => openInvoiceDetail(invoice)}
                       >
-                        Openen
+                        {t("invoicing.open")}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -608,7 +608,7 @@ export default function Facturatie() {
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              Factuur {selectedInvoice?.invoice_number} - {selectedInvoice?.dossiers.ref_number}
+              {t("invoicing.invoice")} {selectedInvoice?.invoice_number} - {selectedInvoice?.dossiers.ref_number}
             </DialogTitle>
           </DialogHeader>
 
@@ -616,9 +616,9 @@ export default function Facturatie() {
             <div className="space-y-6">
               <Tabs defaultValue="items" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="items">Factuurlijnen</TabsTrigger>
+                  <TabsTrigger value="items">{t("invoicing.invoiceLines")}</TabsTrigger>
                   <TabsTrigger value="catalog" disabled={selectedInvoice.status !== "DRAFT"}>
-                    Catalogus
+                    {t("invoicing.catalog")}
                   </TabsTrigger>
                 </TabsList>
 
@@ -627,7 +627,7 @@ export default function Facturatie() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Package className="h-5 w-5" />
-                        Catalogus
+                        {t("invoicing.catalog")}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -642,11 +642,11 @@ export default function Facturatie() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Code</TableHead>
-                            <TableHead>Naam</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Prijs</TableHead>
-                            <TableHead>Actie</TableHead>
+                            <TableHead>{t("invoicing.code")}</TableHead>
+                            <TableHead>{t("invoicing.name")}</TableHead>
+                            <TableHead>{t("invoicing.type")}</TableHead>
+                            <TableHead>{t("common.price")}</TableHead>
+                            <TableHead>{t("invoicing.action")}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -662,7 +662,7 @@ export default function Facturatie() {
                                 <TableCell>{item.name}</TableCell>
                                 <TableCell>
                                   <Badge variant={item.type === 'SERVICE' ? 'default' : 'secondary'}>
-                                    {item.type === 'SERVICE' ? 'Dienst' : 'Goed'}
+                                    {item.type === 'SERVICE' ? t("invoicing.service") : t("invoicing.product")}
                                   </Badge>
                                 </TableCell>
                                 <TableCell>€{Number(item.default_price).toFixed(2)}</TableCell>
@@ -672,7 +672,7 @@ export default function Facturatie() {
                                     onClick={() => addCatalogItemToInvoice(item, selectedInvoice.id)}
                                   >
                                     <Plus className="h-4 w-4 mr-1" />
-                                    Toevoegen
+                                    {t("invoicing.add")}
                                   </Button>
                                 </TableCell>
                               </TableRow>
@@ -686,7 +686,7 @@ export default function Facturatie() {
                 <TabsContent value="items" className="space-y-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Factuurlijnen</CardTitle>
+                      <CardTitle>{t("invoicing.invoiceLines")}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {selectedInvoice.status === "DRAFT" && (
@@ -715,7 +715,7 @@ export default function Facturatie() {
                             onChange={(e) => setNewItem({ ...newItem, unit_price: Number(e.target.value) })}
                           />
                           <Button onClick={() => addInvoiceItem(selectedInvoice.id)}>
-                            Toevoegen
+                            {t("invoicing.add")}
                           </Button>
                         </div>
                       )}
@@ -723,12 +723,12 @@ export default function Facturatie() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Code</TableHead>
-                            <TableHead>Omschrijving</TableHead>
-                            <TableHead>Qty</TableHead>
-                            <TableHead>Prijs</TableHead>
-                            <TableHead>Bedrag</TableHead>
-                            {selectedInvoice.status === "DRAFT" && <TableHead>Actie</TableHead>}
+                            <TableHead>{t("invoicing.code")}</TableHead>
+                            <TableHead>{t("invoicing.description")}</TableHead>
+                            <TableHead>{t("invoicing.quantity")}</TableHead>
+                            <TableHead>{t("common.price")}</TableHead>
+                            <TableHead>{t("invoicing.amount")}</TableHead>
+                            {selectedInvoice.status === "DRAFT" && <TableHead>{t("invoicing.action")}</TableHead>}
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -746,7 +746,7 @@ export default function Facturatie() {
                                      variant="ghost"
                                      onClick={() => deleteInvoiceItem(item.id, selectedInvoice.id)}
                                    >
-                                     Verwijder
+                                     {t("invoicing.delete")}
                                    </Button>
                                  </TableCell>
                                )}
@@ -757,15 +757,15 @@ export default function Facturatie() {
 
                        <div className="border-t pt-4 space-y-2">
                          <div className="flex justify-between">
-                           <span>Subtotaal:</span>
+                           <span>{t("invoicing.subtotal")}:</span>
                            <span>€{Number(selectedInvoice.subtotal).toFixed(2)}</span>
                          </div>
                          <div className="flex justify-between">
-                           <span>BTW (21%):</span>
+                           <span>{t("invoicing.vat")} (21%):</span>
                            <span>€{Number(selectedInvoice.vat).toFixed(2)}</span>
                          </div>
                          <div className="flex justify-between font-bold text-lg">
-                           <span>Totaal:</span>
+                           <span>{t("invoicing.total")}:</span>
                            <span>€{Number(selectedInvoice.total).toFixed(2)}</span>
                          </div>
                        </div>
@@ -774,11 +774,11 @@ export default function Facturatie() {
 
                    <Card>
                      <CardHeader>
-                       <CardTitle>Status & Acties</CardTitle>
+                       <CardTitle>{t("invoicing.statusAndActions")}</CardTitle>
                      </CardHeader>
                      <CardContent className="space-y-4">
                        <div className="flex items-center gap-2">
-                         <span>Huidige status:</span>
+                         <span>{t("invoicing.currentStatus")}:</span>
                          <Badge className={statusColors[selectedInvoice.status]}>
                            {statusLabels[selectedInvoice.status]}
                          </Badge>
@@ -787,14 +787,14 @@ export default function Facturatie() {
                        <div className="flex gap-2">
                          {selectedInvoice.status === "DRAFT" && (
                            <Button onClick={() => updateInvoiceStatus(selectedInvoice.id, "ISSUED")}>
-                             Uitgeven
+                             {t("invoicing.issue")}
                            </Button>
                          )}
                          {selectedInvoice.status === "ISSUED" && (
                            <>
                               <div className="flex gap-2 items-end">
                                 <div className="space-y-2 flex-1">
-                                  <Label>Betaaldatum</Label>
+                                  <Label>{t("invoicing.paymentDate")}</Label>
                                   <DatePicker
                                     date={paymentDate}
                                     onSelect={setPaymentDate}
@@ -803,7 +803,7 @@ export default function Facturatie() {
                                   />
                                 </div>
                                 <Button onClick={() => markAsPaid(selectedInvoice.id)}>
-                                  Markeer als Betaald
+                                  {t("invoicing.markAsPaid")}
                                 </Button>
                               </div>
                            </>
@@ -813,7 +813,7 @@ export default function Facturatie() {
                              variant="destructive"
                              onClick={() => updateInvoiceStatus(selectedInvoice.id, "CANCELLED")}
                            >
-                             Annuleren
+                             {t("common.cancel")}
                            </Button>
                          )}
                        </div>

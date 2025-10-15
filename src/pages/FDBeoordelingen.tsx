@@ -185,7 +185,7 @@ export default function FDBeoordelingen() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Input
-                placeholder="Zoeken op familie of dossier..."
+                placeholder={t("placeholders.searchFamilyDossier")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />

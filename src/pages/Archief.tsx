@@ -332,7 +332,7 @@ const Archief = () => {
                 {activeTab !== "tasks-loose" && (
                   <Select value={flowFilter} onValueChange={setFlowFilter}>
                     <SelectTrigger className="w-[200px] bg-background">
-                      <SelectValue placeholder="Flow filter" />
+                      <SelectValue placeholder={t("placeholders.flowFilter")} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t("archive.allFlows")}</SelectItem>

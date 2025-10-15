@@ -224,7 +224,7 @@ export default function AdminWebhooks() {
                 <Input
                   value={newWebhook.name}
                   onChange={(e) => setNewWebhook({ ...newWebhook, name: e.target.value })}
-                  placeholder="My Integration"
+                  placeholder={t("webhooks.namePlaceholder")}
                 />
               </div>
               <div>
@@ -232,7 +232,7 @@ export default function AdminWebhooks() {
                 <Input
                   value={newWebhook.url}
                   onChange={(e) => setNewWebhook({ ...newWebhook, url: e.target.value })}
-                  placeholder="https://api.example.com/webhook"
+                  placeholder={t("webhooks.urlPlaceholder")}
                 />
               </div>
               <div>

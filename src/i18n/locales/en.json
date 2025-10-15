@@ -1,4 +1,33 @@
 {
+  "placeholders": {
+    "flowFilter": "Flow filter",
+    "emailExample": "name@example.com",
+    "searchDossierNameFile": "Search by dossier/name/file...",
+    "fullName": "Full name",
+    "placeOfDeath": "Place of death",
+    "dossierOrRepReference": "LOC-000001 or REP-000001",
+    "reasonForTakeover": "Why do you want to take over this dossier?",
+    "reasonRelease": "e.g. Too busy with other dossiers, no capacity...",
+    "searchFamilyDossier": "Search by family or dossier...",
+    "searchInvoiceNumber": "Search by number, dossier, deceased...",
+    "selectDossier": "Select dossier",
+    "searchCatalog": "Search in catalog...",
+    "customCode": "E.g. CUSTOM_001",
+    "serviceDescription": "Service description",
+    "searchCodeOrName": "Search by code or name...",
+    "selectPaymentDate": "Select payment date",
+    "city": "Brussels",
+    "country": "Belgium",
+    "emailOrganization": "info@organization.com",
+    "businessNumber": "BE0123456789",
+    "searchDossiers": "Search by name, reference or dossier ID...",
+    "detailedReason": "Provide a detailed reason for blocking...",
+    "searchDossierInvoiceDeceased": "Search by dossier, invoice number, deceased...",
+    "explainRequiredInfo": "Explain what information is needed...",
+    "paymentReference": "E.g. SEPA-12345",
+    "cancelReason": "E.g. No availability, wrong date...",
+    "specialInstructions": "E.g. Cooling required, fast transit required..."
+  },
   "navigation": {
     "title": "Navigation",
     "dashboard": "Dashboard",
@@ -483,7 +512,21 @@
     "commentMention": "You were mentioned in a comment",
     "commentReply": "Reply to your comment",
     "dossierComment": "New comment on dossier {ref}",
-    "newNotification": "New notification"
+    "newNotification": "New notification",
+    "templates": {
+      "title": "Notification Templates",
+      "subtitle": "Manage templates for automated messages",
+      "triggerPlaceholder": "STATUS_DOCS_VERIFIED"
+    }
+  },
+  "gdpr": {
+    "notesPlaceholder": "Add any notes...",
+    "rejectionReasonPlaceholder": "For example: Data cannot be deleted due to ongoing investigation...",
+    "internalNotesPlaceholder": "Internal notes..."
+  },
+  "webhooks": {
+    "namePlaceholder": "My Integration",
+    "urlPlaceholder": "https://api.example.com/webhook"
   },
   "policyVerification": {
     "apiVerified": "API Verified",

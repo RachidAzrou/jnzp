@@ -1039,7 +1039,7 @@ const Dossiers = () => {
               <Label htmlFor="reason">Reden</Label>
               <Textarea
                 id="reason"
-                placeholder="bijv. Te druk met andere dossiers, geen capaciteit..."
+                placeholder={t("placeholders.reasonRelease")}
                 value={declineReason}
                 onChange={(e) => setDeclineReason(e.target.value)}
                 rows={4}

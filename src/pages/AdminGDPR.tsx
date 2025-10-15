@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AppSidebar } from "@/components/AppSidebar";
 import { TopBar } from "@/components/TopBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -34,6 +35,7 @@ interface GDPRRequest {
 }
 
 export default function AdminGDPR() {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState<GDPRRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState<GDPRRequest | null>(null);
@@ -397,7 +399,7 @@ export default function AdminGDPR() {
               <Textarea
                 value={actionNotes}
                 onChange={(e) => setActionNotes(e.target.value)}
-                placeholder="Voeg eventuele notities toe..."
+                placeholder={t("gdpr.notesPlaceholder")}
                 className="mt-1"
               />
             </div>
@@ -426,7 +428,7 @@ export default function AdminGDPR() {
               <Textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Bijvoorbeeld: Data kan niet worden verwijderd vanwege lopend onderzoek..."
+                placeholder={t("gdpr.rejectionReasonPlaceholder")}
                 className="mt-1"
                 required
               />
@@ -436,7 +438,7 @@ export default function AdminGDPR() {
               <Textarea
                 value={actionNotes}
                 onChange={(e) => setActionNotes(e.target.value)}
-                placeholder="Interne notities..."
+                placeholder={t("gdpr.internalNotesPlaceholder")}
                 className="mt-1"
               />
             </div>

@@ -147,7 +147,7 @@ export default function DossierZoeken() {
           <CardContent className="space-y-4">
             <div className="flex gap-2">
               <Input
-                placeholder="LOC-000001 of REP-000001"
+                placeholder={t("placeholders.dossierOrRepReference")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value.toUpperCase())}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -242,7 +242,7 @@ export default function DossierZoeken() {
                 Motivering (optioneel)
               </label>
               <Textarea
-                placeholder="Waarom wilt u dit dossier overnemen?"
+                placeholder={t("placeholders.reasonForTakeover")}
                 value={claimReason}
                 onChange={(e) => setClaimReason(e.target.value)}
                 rows={3}

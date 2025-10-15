@@ -1,4 +1,33 @@
 {
+  "placeholders": {
+    "flowFilter": "Filtre de flux",
+    "emailExample": "nom@exemple.fr",
+    "searchDossierNameFile": "Rechercher par dossier/nom/fichier...",
+    "fullName": "Nom complet",
+    "placeOfDeath": "Lieu de décès",
+    "dossierOrRepReference": "LOC-000001 ou REP-000001",
+    "reasonForTakeover": "Pourquoi souhaitez-vous reprendre ce dossier ?",
+    "reasonRelease": "par ex. Trop occupé avec d'autres dossiers, pas de capacité...",
+    "searchFamilyDossier": "Rechercher par famille ou dossier...",
+    "searchInvoiceNumber": "Rechercher par numéro, dossier, défunt...",
+    "selectDossier": "Sélectionner un dossier",
+    "searchCatalog": "Rechercher dans le catalogue...",
+    "customCode": "Par ex. CUSTOM_001",
+    "serviceDescription": "Description du service",
+    "searchCodeOrName": "Rechercher par code ou nom...",
+    "selectPaymentDate": "Sélectionner la date de paiement",
+    "city": "Bruxelles",
+    "country": "Belgique",
+    "emailOrganization": "info@organisation.be",
+    "businessNumber": "BE0123456789",
+    "searchDossiers": "Rechercher par nom, référence ou ID dossier...",
+    "detailedReason": "Fournir une raison détaillée pour le blocage...",
+    "searchDossierInvoiceDeceased": "Rechercher par dossier, numéro de facture, défunt...",
+    "explainRequiredInfo": "Expliquer quelles informations sont nécessaires...",
+    "paymentReference": "Par ex. SEPA-12345",
+    "cancelReason": "Par ex. Pas de disponibilité, mauvaise date...",
+    "specialInstructions": "Par ex. Réfrigération requise, transit rapide requis..."
+  },
   "auth": {
     "login": "Connexion",
     "register": "S'inscrire",
@@ -1001,6 +1030,20 @@
     "verifiedTooltip": "Police vérifiée",
     "pendingTooltip": "Vérification en attente",
     "failedTooltip": "Échec de la vérification"
+  },
+  "notifications": {
+    "templates": {
+      "triggerPlaceholder": "STATUS_DOCS_VERIFIED"
+    }
+  },
+  "gdpr": {
+    "notesPlaceholder": "Ajouter des notes...",
+    "rejectionReasonPlaceholder": "Par exemple : Les données ne peuvent pas être supprimées en raison d'une enquête en cours...",
+    "internalNotesPlaceholder": "Notes internes..."
+  },
+  "webhooks": {
+    "namePlaceholder": "Mon Intégration",
+    "urlPlaceholder": "https://api.exemple.com/webhook"
   },
   "errors": {
     "generic": "Une erreur s'est produite",

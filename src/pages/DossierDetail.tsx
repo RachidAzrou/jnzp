@@ -740,7 +740,7 @@ const DossierDetail = () => {
                         <Input
                           value={editedDossier?.deceased_name || ''}
                           onChange={(e) => setEditedDossier({ ...editedDossier, deceased_name: e.target.value })}
-                          placeholder="Volledige naam"
+                          placeholder={t("placeholders.fullName")}
                           className="h-9"
                         />
                       ) : (
@@ -803,7 +803,7 @@ const DossierDetail = () => {
                         <Input
                           value={editedDossier?.place_of_death || ''}
                           onChange={(e) => setEditedDossier({ ...editedDossier, place_of_death: e.target.value })}
-                          placeholder="Plaats van overlijden"
+                          placeholder={t("placeholders.placeOfDeath")}
                           className="h-9"
                         />
                       ) : (

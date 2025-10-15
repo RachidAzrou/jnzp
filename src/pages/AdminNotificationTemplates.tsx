@@ -225,7 +225,7 @@ export default function AdminNotificationTemplates() {
                       trigger_event: e.target.value,
                     })
                   }
-                  placeholder="STATUS_DOCS_VERIFIED"
+                  placeholder={t("notifications.templates.triggerPlaceholder")}
                 />
               </div>
 

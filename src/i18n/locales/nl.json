@@ -1,4 +1,33 @@
 {
+  "placeholders": {
+    "flowFilter": "Flow filter",
+    "emailExample": "naam@voorbeeld.nl",
+    "searchDossierNameFile": "Zoek op dossier/naam/bestand...",
+    "fullName": "Volledige naam",
+    "placeOfDeath": "Plaats van overlijden",
+    "dossierOrRepReference": "LOC-000001 of REP-000001",
+    "reasonForTakeover": "Waarom wilt u dit dossier overnemen?",
+    "reasonRelease": "bijv. Te druk met andere dossiers, geen capaciteit...",
+    "searchFamilyDossier": "Zoeken op familie of dossier...",
+    "searchInvoiceNumber": "Zoeken op nummer, dossier, overledene...",
+    "selectDossier": "Selecteer dossier",
+    "searchCatalog": "Zoek in catalogus...",
+    "customCode": "Bijv. CUSTOM_001",
+    "serviceDescription": "Beschrijving van dienst",
+    "searchCodeOrName": "Zoek op code of naam...",
+    "selectPaymentDate": "Selecteer betaaldatum",
+    "city": "Brussel",
+    "country": "België",
+    "emailOrganization": "info@organisatie.be",
+    "businessNumber": "BE0123456789",
+    "searchDossiers": "Zoek op naam, referentie of dossier ID...",
+    "detailedReason": "Geef een gedetailleerde reden op voor de blokkering...",
+    "searchDossierInvoiceDeceased": "Zoeken op dossier, factuurnummer, overledene...",
+    "explainRequiredInfo": "Leg uit welke informatie nodig is...",
+    "paymentReference": "Bv. SEPA-12345",
+    "cancelReason": "Bijv. Geen beschikbaarheid, verkeerde datum...",
+    "specialInstructions": "Bijv. Koeling noodzakelijk, snelle doorgang vereist..."
+  },
   "navigation": {
     "title": "Navigatie",
     "dashboard": "Dashboard",
@@ -555,7 +584,21 @@
     "commentMention": "Je bent genoemd in een opmerking",
     "commentReply": "Antwoord op jouw opmerking",
     "dossierComment": "Nieuw commentaar op dossier {ref}",
-    "newNotification": "Nieuwe melding"
+    "newNotification": "Nieuwe melding",
+    "templates": {
+      "title": "Notificatie Templates",
+      "subtitle": "Beheer sjablonen voor geautomatiseerde berichten",
+      "triggerPlaceholder": "STATUS_DOCS_VERIFIED"
+    }
+  },
+  "gdpr": {
+    "notesPlaceholder": "Voeg eventuele notities toe...",
+    "rejectionReasonPlaceholder": "Bijvoorbeeld: Data kan niet worden verwijderd vanwege lopend onderzoek...",
+    "internalNotesPlaceholder": "Interne notities..."
+  },
+  "webhooks": {
+    "namePlaceholder": "Mijn Integratie",
+    "urlPlaceholder": "https://api.voorbeeld.com/webhook"
   },
   "policyVerification": {
     "apiVerified": "API Geverifieerd",

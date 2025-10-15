@@ -1724,5 +1724,69 @@
     "results": "résultats",
     "view": "Voir",
     "actions": "Actions"
+  },
+  "dossiers": {
+    "management": "Gestion",
+    "title": "Dossiers",
+    "subtitle": "Aperçu et gestion de tous les dossiers",
+    "myDossiers": "Mes dossiers",
+    "allDossiers": "Tous les dossiers",
+    "incomingRequests": "Demandes entrantes",
+    "searchPlaceholder": "Rechercher par nom, référence ou ID de dossier...",
+    "caseId": "ID du dossier",
+    "deceased": "Défunt",
+    "type": "Type",
+    "status": "Statut",
+    "lastUpdate": "Dernière mise à jour"
+  },
+  "fdChatOverview": {
+    "communication": "Communication",
+    "title": "Chat",
+    "description": "Communiquer avec les familles sur les dossiers",
+    "searchPlaceholder": "Rechercher par nom ou dossier...",
+    "dossierChats": "Chats de dossier",
+    "selectDossier": "Sélectionnez un dossier pour chatter"
+  },
+  "tasks": {
+    "projectManagement": "Gestion de Projet",
+    "title": "Tâches",
+    "subtitle": "Gérer et suivre toutes les tâches",
+    "newTask": "Nouvelle tâche",
+    "searchPlaceholder": "Rechercher des tâches...",
+    "allPriorities": "Toutes les priorités",
+    "everyone": "Tout le monde",
+    "dragTasksHere": "Glissez les tâches ici",
+    "movedToArchiveAt24h": "Archivé automatiquement après 24 heures"
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Gérer les documents et les téléchargements"
+  },
+  "planning": {
+    "organization": "Organisation",
+    "title": "Planification",
+    "subtitle": "Gérer les rendez-vous et la planification",
+    "searchPlaceholder": "Rechercher par nom ou lieu...",
+    "mortuariumPlanning": "Planification Mortuaire",
+    "mosquePlanning": "Planification Mosquée",
+    "newAppointment": "Nouveau rendez-vous",
+    "columns": {
+      "dossier": "Dossier",
+      "name": "Nom",
+      "location": "Lieu",
+      "flightTime": "Heure de vol"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "manageSettings": "Gérer vos paramètres",
+    "profileData": "Données de Profil",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "organizationData": "Données d'Organisation",
+    "organizationName": "Nom de l'organisation",
+    "type": "Type"
   }
 }

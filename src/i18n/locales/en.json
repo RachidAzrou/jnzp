@@ -1227,5 +1227,69 @@
     "results": "results",
     "view": "View",
     "actions": "Actions"
+  },
+  "dossiers": {
+    "management": "Management",
+    "title": "Dossiers",
+    "subtitle": "Overview and management of all dossiers",
+    "myDossiers": "My dossiers",
+    "allDossiers": "All dossiers",
+    "incomingRequests": "Incoming requests",
+    "searchPlaceholder": "Search by name, reference or dossier ID...",
+    "caseId": "Case ID",
+    "deceased": "Deceased",
+    "type": "Type",
+    "status": "Status",
+    "lastUpdate": "Last update"
+  },
+  "fdChatOverview": {
+    "communication": "Communication",
+    "title": "Chat",
+    "description": "Communicate with families about dossiers",
+    "searchPlaceholder": "Search by name or dossier...",
+    "dossierChats": "Dossier Chats",
+    "selectDossier": "Select a dossier to chat"
+  },
+  "tasks": {
+    "projectManagement": "Project Management",
+    "title": "Tasks",
+    "subtitle": "Manage and track all tasks",
+    "newTask": "New task",
+    "searchPlaceholder": "Search tasks...",
+    "allPriorities": "All priorities",
+    "everyone": "Everyone",
+    "dragTasksHere": "Drag tasks here",
+    "movedToArchiveAt24h": "Automatically archived after 24 hours"
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Manage documents and uploads"
+  },
+  "planning": {
+    "organization": "Organization",
+    "title": "Planning",
+    "subtitle": "Manage appointments and planning",
+    "searchPlaceholder": "Search by name or location...",
+    "mortuariumPlanning": "Mortuary Planning",
+    "mosquePlanning": "Mosque Planning",
+    "newAppointment": "New appointment",
+    "columns": {
+      "dossier": "Dossier",
+      "name": "Name",
+      "location": "Location",
+      "flightTime": "Flight time"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "manageSettings": "Manage your settings",
+    "profileData": "Profile Data",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "organizationData": "Organization Data",
+    "organizationName": "Organization name",
+    "type": "Type"
   }
 }

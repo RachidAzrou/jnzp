@@ -291,5 +291,69 @@
     "results": "resultaten",
     "view": "Bekijk",
     "actions": "Acties"
+  },
+  "dossiers": {
+    "management": "Beheer",
+    "title": "Dossiers",
+    "subtitle": "Overzicht en beheer van alle dossiers",
+    "myDossiers": "Mijn dossiers",
+    "allDossiers": "Alle dossiers",
+    "incomingRequests": "Inkomende verzoeken",
+    "searchPlaceholder": "Zoek op naam, referentie of dossier ID...",
+    "caseId": "Zaak ID",
+    "deceased": "Overleden",
+    "type": "Type",
+    "status": "Status",
+    "lastUpdate": "Laatste update"
+  },
+  "fdChatOverview": {
+    "communication": "Communicatie",
+    "title": "Chat",
+    "description": "Communiceer met families over dossiers",
+    "searchPlaceholder": "Zoek op naam of dossier...",
+    "dossierChats": "Dossier Chats",
+    "selectDossier": "Selecteer een dossier om te chatten"
+  },
+  "tasks": {
+    "projectManagement": "Projectbeheer",
+    "title": "Taken",
+    "subtitle": "Beheer en volg alle taken",
+    "newTask": "Nieuwe taak",
+    "searchPlaceholder": "Zoek taken...",
+    "allPriorities": "Alle prioriteiten",
+    "everyone": "Iedereen",
+    "dragTasksHere": "Sleep taken hierheen",
+    "movedToArchiveAt24h": "Wordt automatisch gearchiveerd na 24 uur"
+  },
+  "documents": {
+    "title": "Documenten",
+    "subtitle": "Beheer documenten en uploads"
+  },
+  "planning": {
+    "organization": "Organisatie",
+    "title": "Planning",
+    "subtitle": "Beheer afspraken en planning",
+    "searchPlaceholder": "Zoek op naam of locatie...",
+    "mortuariumPlanning": "Mortuarium Planning",
+    "mosquePlanning": "Moskee Planning",
+    "newAppointment": "Nieuwe afspraak",
+    "columns": {
+      "dossier": "Dossier",
+      "name": "Naam",
+      "location": "Locatie",
+      "flightTime": "Vlucht tijd"
+    }
+  },
+  "settings": {
+    "title": "Instellingen",
+    "manageSettings": "Beheer uw instellingen",
+    "profileData": "Profielgegevens",
+    "firstName": "Voornaam",
+    "lastName": "Achternaam",
+    "email": "E-mail",
+    "phone": "Telefoon",
+    "organizationData": "Organisatiegegevens",
+    "organizationName": "Organisatienaam",
+    "type": "Type"
   }
 }

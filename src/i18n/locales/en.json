@@ -611,6 +611,49 @@
       "holdLifted": "Hold lifted"
     }
   },
+  "planning": {
+    "flight": {
+      "errorFetch": "Error fetching flight",
+      "updated": "Flight updated",
+      "updatedDesc": "Changes have been saved",
+      "deleted": "Flight deleted",
+      "deletedDesc": "The flight has been successfully deleted",
+      "fieldsRequired": "Fill in required fields",
+      "fieldsRequiredDesc": "Departure and destination are required",
+      "preferencesSaved": "Flight preferences saved"
+    },
+    "mortuarium": {
+      "errorFetch": "Error fetching reservation",
+      "updated": "Reservation updated",
+      "updatedDesc": "Changes have been saved",
+      "deleted": "Reservation deleted",
+      "deletedDesc": "The reservation has been successfully deleted",
+      "created": "Reservation created",
+      "createdDesc": "The mortuary receives a notification",
+      "fieldsRequired": "Fill in all fields"
+    },
+    "janazah": {
+      "fieldsRequired": "Fill in all fields",
+      "fieldsRequiredDesc": "Date, time and location are required",
+      "saved": "Saved",
+      "savedDesc": "Janazah service has been updated",
+      "statusUpdated": "Status updated",
+      "obituaryWarning": "Warning",
+      "obituaryWarningDesc": "Obituary could not be generated automatically.",
+      "obituaryCreated": "Obituary created",
+      "obituaryCreatedDesc": "NL and AR versions have been added to documents."
+    },
+    "mosque": {
+      "created": "Mosque appointment created",
+      "createdDesc": "The appointment has been successfully scheduled.",
+      "errorCreate": "Error creating appointment",
+      "incomplete": "Incomplete data",
+      "incompleteDesc": "Select a dossier, mosque and date",
+      "scheduled": "Janazah scheduled",
+      "scheduledDesc": "The janazah has been successfully scheduled and the mosque has been notified.",
+      "errorSchedule": "Error scheduling"
+    }
+  },
   "coolCell": {
     "status": "Status",
     "period": "Period",

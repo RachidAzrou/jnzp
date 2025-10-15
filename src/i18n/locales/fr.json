@@ -1070,6 +1070,49 @@
       "holdLifted": "Blocage levé"
     }
   },
+  "planning": {
+    "flight": {
+      "errorFetch": "Erreur lors de la récupération du vol",
+      "updated": "Vol mis à jour",
+      "updatedDesc": "Les modifications ont été enregistrées",
+      "deleted": "Vol supprimé",
+      "deletedDesc": "Le vol a été supprimé avec succès",
+      "fieldsRequired": "Remplissez les champs obligatoires",
+      "fieldsRequiredDesc": "Le départ et la destination sont obligatoires",
+      "preferencesSaved": "Préférences de vol enregistrées"
+    },
+    "mortuarium": {
+      "errorFetch": "Erreur lors de la récupération de la réservation",
+      "updated": "Réservation mise à jour",
+      "updatedDesc": "Les modifications ont été enregistrées",
+      "deleted": "Réservation supprimée",
+      "deletedDesc": "La réservation a été supprimée avec succès",
+      "created": "Réservation créée",
+      "createdDesc": "Le mortuaire reçoit une notification",
+      "fieldsRequired": "Remplissez tous les champs"
+    },
+    "janazah": {
+      "fieldsRequired": "Remplissez tous les champs",
+      "fieldsRequiredDesc": "La date, l'heure et le lieu sont obligatoires",
+      "saved": "Enregistré",
+      "savedDesc": "Le service Janazah a été mis à jour",
+      "statusUpdated": "Statut mis à jour",
+      "obituaryWarning": "Avertissement",
+      "obituaryWarningDesc": "L'avis de décès n'a pas pu être généré automatiquement.",
+      "obituaryCreated": "Avis de décès créé",
+      "obituaryCreatedDesc": "Les versions NL et AR ont été ajoutées aux documents."
+    },
+    "mosque": {
+      "created": "Rendez-vous mosquée créé",
+      "createdDesc": "Le rendez-vous a été programmé avec succès.",
+      "errorCreate": "Erreur lors de la création du rendez-vous",
+      "incomplete": "Données incomplètes",
+      "incompleteDesc": "Sélectionnez un dossier, une mosquée et une date",
+      "scheduled": "Janazah programmée",
+      "scheduledDesc": "La janazah a été programmée avec succès et la mosquée a été informée.",
+      "errorSchedule": "Erreur lors de la programmation"
+    }
+  },
   "coolCell": {
     "status": "Statut",
     "period": "Période",

@@ -226,11 +226,5 @@
     "results": "resultaten",
     "view": "Bekijk",
     "actions": "Acties"
-  },
-  "dossiers": "Dossiers",
-  "archive": "Archief",
-  "chat": "Chat",
-  "tasks": "Taken",
-  "documents": "Documenten",
-  "settings": "Instellingen"
+  }
 }

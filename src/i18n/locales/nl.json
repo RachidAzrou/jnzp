@@ -182,7 +182,18 @@
     "wassingDescription": "Planning en faciliteit informatie"
   },
 
-  "dashboard": "Dashboard",
+  "dashboard": {
+    "welcomeBack": "Welkom terug",
+    "totalActive": "Totaal Actief",
+    "activeDossiers": "Actieve dossiers",
+    "repatriation": "Repatriëring",
+    "ongoingRepatriations": "Lopende repatriëringen",
+    "local": "Lokaal",
+    "localFunerals": "Lokale uitvaarten",
+    "activeFiles": "Actieve Dossiers",
+    "filesProgress": "Voortgang van je lopende dossiers",
+    "noActiveDossiers": "Geen actieve dossiers"
+  },
   "dossiers": "Dossiers",
   "archive": "Archief",
   "chat": "Chat",

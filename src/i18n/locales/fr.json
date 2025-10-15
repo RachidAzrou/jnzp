@@ -1658,5 +1658,17 @@
       "2faDisable": "Impossible de désactiver l'authentification à deux facteurs",
       "invalidCode": "Code invalide"
     }
+  },
+  "dashboard": {
+    "welcomeBack": "Bienvenue",
+    "totalActive": "Total Actif",
+    "activeDossiers": "Dossiers actifs",
+    "repatriation": "Rapatriement",
+    "ongoingRepatriations": "Rapatriements en cours",
+    "local": "Local",
+    "localFunerals": "Funérailles locales",
+    "activeFiles": "Dossiers Actifs",
+    "filesProgress": "Progrès de vos dossiers actifs",
+    "noActiveDossiers": "Aucun dossier actif"
   }
 }

@@ -1181,5 +1181,17 @@
       "qrGenerateError": "Failed to generate QR code",
       "qrGenerateErrorDesc": "Could not generate QR code"
     }
+  },
+  "dashboard": {
+    "welcomeBack": "Welcome back",
+    "totalActive": "Total Active",
+    "activeDossiers": "Active dossiers",
+    "repatriation": "Repatriation",
+    "ongoingRepatriations": "Ongoing repatriations",
+    "local": "Local",
+    "localFunerals": "Local funerals",
+    "activeFiles": "Active Files",
+    "filesProgress": "Progress of your active dossiers",
+    "noActiveDossiers": "No active dossiers"
   }
 }

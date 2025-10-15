@@ -88,8 +88,8 @@
     "selectMosque": "Select mosque...",
     "selectPrayer": "Select prayer...",
     "locationExample": "E.g. Main building, hall A",
-    "hourPlaceholder": "00",
-    "minutePlaceholder": "00"
+    "minutePlaceholder": "00",
+    "postalCode": "1000"
   },
   "navigation": {
     "title": "Navigation",
@@ -1751,15 +1751,40 @@
     }
   },
   "settings": {
+    "configuration": "Configuration",
     "title": "Settings",
     "manageSettings": "Manage your settings",
-    "profileData": "Profile Data",
-    "firstName": "First name",
-    "lastName": "Last name",
+    "profileData": "Profile Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "email": "Email",
     "phone": "Phone",
-    "organizationData": "Organization Data",
-    "organizationName": "Organization name",
-    "type": "Type"
+    "organizationData": "Organization Information",
+    "organizationName": "Organization Name",
+    "type": "Type",
+    "address": "Address",
+    "addressPlaceholder": "Street and house number",
+    "postalCode": "Postal Code",
+    "city": "City",
+    "country": "Country",
+    "vatNumber": "VAT Number",
+    "twoFactorAuth": "Two-Factor Authentication",
+    "must2FASetup": "You must set up two-factor authentication to continue",
+    "notifications": "Notifications",
+    "emailNotifications": "Email Notifications",
+    "emailNotificationsDesc": "Receive emails for important updates",
+    "documentApprovals": "Document Approvals",
+    "documentApprovalsDesc": "Notifications for documents requiring approval",
+    "enabled": "Enabled",
+    "legalDocuments": "Legal Documents",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "saving": "Saving...",
+    "errorSavingEmail": "Error saving email",
+    "errorSaving": "Error saving",
+    "profileUpdated": "Profile Updated",
+    "profileUpdatedDesc": "Your profile has been successfully updated",
+    "organizationUpdated": "Organization Updated",
+    "organizationUpdatedDesc": "Your organization information has been successfully updated"
   }
 }

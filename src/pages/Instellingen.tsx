@@ -348,7 +348,7 @@ const Instellingen = () => {
                     id="orgPostalCode"
                     value={organization.postalCode}
                     onChange={(e) => setOrganization({ ...organization, postalCode: e.target.value })}
-                    placeholder="1000"
+                    placeholder={t("placeholders.postalCode")}
                   />
                 </div>
                 <div className="space-y-2">

@@ -946,6 +946,11 @@
     "familyMortuariumRejected": "{{mortuarium_name}} kon de reservatie niet bevestigen",
     "familyDocumentRequested": "{{fd_name}} vraagt om een document op te laden voor {{deceased_name}}",
     "familyDocumentAvailable": "Er is een nieuw document toegevoegd aan het dossier",
-    "familyDossierCompleted": "Het dossier van {{deceased_name}} is afgerond"
+    "familyDossierCompleted": "Het dossier van {{deceased_name}} is afgerond",
+    "mortuariumNewReservation": "Er is een nieuwe reservatie voor {{deceased_name}}. Controleer beschikbaarheid",
+    "mortuariumReservationCancelled": "De reservatie voor {{deceased_name}} werd geannuleerd door {{fd_name}}",
+    "mortuariumReservationUpdated": "De reservatie voor {{deceased_name}} werd aangepast door {{fd_name}}",
+    "mortuariumConfirmationNeeded": "Bevestig of je de reservatie voor {{deceased_name}} kunt aannemen",
+    "mortuariumDossierCompleted": "Het dossier van {{deceased_name}} is afgerond"
   }
 }

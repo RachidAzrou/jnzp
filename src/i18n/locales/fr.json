@@ -2134,6 +2134,11 @@
     "familyMortuariumRejected": "{{mortuarium_name}} n'a pas pu confirmer la réservation",
     "familyDocumentRequested": "{{fd_name}} vous demande de télécharger un document pour {{deceased_name}}",
     "familyDocumentAvailable": "Un nouveau document a été ajouté au dossier",
-    "familyDossierCompleted": "Le dossier de {{deceased_name}} a été finalisé"
+    "familyDossierCompleted": "Le dossier de {{deceased_name}} a été finalisé",
+    "mortuariumNewReservation": "Une nouvelle réservation a été reçue pour {{deceased_name}}. Vérifiez la disponibilité",
+    "mortuariumReservationCancelled": "La réservation pour {{deceased_name}} a été annulée par {{fd_name}}",
+    "mortuariumReservationUpdated": "La réservation pour {{deceased_name}} a été modifiée par {{fd_name}}",
+    "mortuariumConfirmationNeeded": "Confirmez si vous pouvez accepter la réservation pour {{deceased_name}}",
+    "mortuariumDossierCompleted": "Le dossier de {{deceased_name}} a été finalisé"
   }
 }

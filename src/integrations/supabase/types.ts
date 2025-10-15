@@ -3976,6 +3976,12 @@ export type Database = {
         Args: { p_ip: string }
         Returns: unknown
       }
+      get_mortuarium_users_for_org: {
+        Args: { p_org_id: string }
+        Returns: {
+          user_id: string
+        }[]
+      }
       get_user_data_export: {
         Args: { p_user_id: string }
         Returns: Json

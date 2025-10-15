@@ -139,6 +139,8 @@ export function NotificationBell() {
         return t("notifications.commentReply");
       case 'DOSSIER_COMMENT':
         return t("notifications.dossierComment", { ref: notification.meta.ref || '' });
+      
+      // FD notifications
       case 'FD_ASSIGNED':
         return t("notifications.fdAssigned", { deceased_name: notification.meta.deceased_name || '' });
       case 'INSURANCE_APPROVED':
@@ -156,6 +158,7 @@ export function NotificationBell() {
           sender_name: notification.meta.sender_name || '',
           message_preview: notification.meta.message_preview || ''
         });
+      
       // Family notifications
       case 'FAMILY_FD_ACCEPTED':
         return t("notifications.familyFdAccepted", { fd_name: notification.meta.fd_name || '' });
@@ -180,6 +183,25 @@ export function NotificationBell() {
         return t("notifications.familyDocumentAvailable");
       case 'FAMILY_DOSSIER_COMPLETED':
         return t("notifications.familyDossierCompleted", { deceased_name: notification.meta.deceased_name || '' });
+      
+      // Mortuarium notifications
+      case 'MORTUARIUM_NEW_RESERVATION':
+        return t("notifications.mortuariumNewReservation", { deceased_name: notification.meta.deceased_name || '' });
+      case 'MORTUARIUM_RESERVATION_CANCELLED':
+        return t("notifications.mortuariumReservationCancelled", { 
+          deceased_name: notification.meta.deceased_name || '',
+          fd_name: notification.meta.fd_name || ''
+        });
+      case 'MORTUARIUM_RESERVATION_UPDATED':
+        return t("notifications.mortuariumReservationUpdated", { 
+          deceased_name: notification.meta.deceased_name || '',
+          fd_name: notification.meta.fd_name || ''
+        });
+      case 'MORTUARIUM_CONFIRMATION_NEEDED':
+        return t("notifications.mortuariumConfirmationNeeded", { deceased_name: notification.meta.deceased_name || '' });
+      case 'MORTUARIUM_DOSSIER_COMPLETED':
+        return t("notifications.mortuariumDossierCompleted", { deceased_name: notification.meta.deceased_name || '' });
+      
       default:
         return t("notifications.newNotification");
     }

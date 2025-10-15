@@ -929,6 +929,11 @@
     "familyDocumentRequested": "{{fd_name}} requests you to upload a document for {{deceased_name}}",
     "familyDocumentAvailable": "A new document has been added to the dossier",
     "familyDossierCompleted": "The dossier for {{deceased_name}} has been completed",
+    "mortuariumNewReservation": "A new reservation has been received for {{deceased_name}}. Check availability",
+    "mortuariumReservationCancelled": "The reservation for {{deceased_name}} was cancelled by {{fd_name}}",
+    "mortuariumReservationUpdated": "The reservation for {{deceased_name}} was modified by {{fd_name}}",
+    "mortuariumConfirmationNeeded": "Confirm whether you can accept the reservation for {{deceased_name}}",
+    "mortuariumDossierCompleted": "The dossier for {{deceased_name}} has been completed",
     "templates": {
       "title": "Notification Templates",
       "subtitle": "Manage templates for automated messages",

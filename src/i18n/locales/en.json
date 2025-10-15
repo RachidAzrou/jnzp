@@ -144,7 +144,8 @@
     "publicMosqueFeed": "Public Mosque Feed",
     "familyAppDownload": "Family App Download",
     "privacyPolicy": "Privacy Policy",
-    "termsOfService": "Terms of Service"
+    "termsOfService": "Terms of Service",
+    "logout": "Logout"
   },
   "rolePortals": {
     "mosque": "Mosque Portal",

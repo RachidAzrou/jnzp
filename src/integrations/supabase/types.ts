@@ -951,6 +951,7 @@ export type Database = {
           legal_hold_authority: string | null
           legal_hold_case_number: string | null
           legal_hold_prev_status: string | null
+          legal_hold_reason: string | null
           obituary: string | null
           place_of_death: string | null
           policy_document_url: string | null
@@ -996,6 +997,7 @@ export type Database = {
           legal_hold_authority?: string | null
           legal_hold_case_number?: string | null
           legal_hold_prev_status?: string | null
+          legal_hold_reason?: string | null
           obituary?: string | null
           place_of_death?: string | null
           policy_document_url?: string | null
@@ -1041,6 +1043,7 @@ export type Database = {
           legal_hold_authority?: string | null
           legal_hold_case_number?: string | null
           legal_hold_prev_status?: string | null
+          legal_hold_reason?: string | null
           obituary?: string | null
           place_of_death?: string | null
           policy_document_url?: string | null

@@ -959,12 +959,10 @@
     "feedback": "Feedback"
   },
   "rolePortals": {
-    "fd": "Portail EF",
+    "funeral_director": "Portail Directeur de Funérailles",
     "mosque": "Portail Mosquée",
     "mortuarium": "Portail Mortuarium",
-    "wasplaats": "Portail Lavage",
-    "insurer": "Portail Assureur",
-    "admin": "Portail Admin"
+    "insurer": "Portail Assureur"
   },
   "roles": {
     "funeral_director": "Entrepreneur de pompes funèbres",

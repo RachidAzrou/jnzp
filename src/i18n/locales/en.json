@@ -934,6 +934,10 @@
     "mortuariumReservationUpdated": "The reservation for {{deceased_name}} was modified by {{fd_name}}",
     "mortuariumConfirmationNeeded": "Confirm whether you can accept the reservation for {{deceased_name}}",
     "mortuariumDossierCompleted": "The dossier for {{deceased_name}} has been completed",
+    "insurerNewDossier": "A new dossier has been received for {{deceased_name}}. Check policy details",
+    "insurerVerificationRequested": "{{fd_name}} requests confirmation of the policy for {{deceased_name}}",
+    "insurerNewDocuments": "New documents have been added to the dossier for {{deceased_name}}",
+    "insurerDossierCompleted": "The dossier for {{deceased_name}} has been closed",
     "templates": {
       "title": "Notification Templates",
       "subtitle": "Manage templates for automated messages",

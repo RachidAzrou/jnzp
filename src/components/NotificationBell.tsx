@@ -202,6 +202,19 @@ export function NotificationBell() {
       case 'MORTUARIUM_DOSSIER_COMPLETED':
         return t("notifications.mortuariumDossierCompleted", { deceased_name: notification.meta.deceased_name || '' });
       
+      // Insurer notifications
+      case 'INSURER_NEW_DOSSIER':
+        return t("notifications.insurerNewDossier", { deceased_name: notification.meta.deceased_name || '' });
+      case 'INSURER_VERIFICATION_REQUESTED':
+        return t("notifications.insurerVerificationRequested", { 
+          fd_name: notification.meta.fd_name || '',
+          deceased_name: notification.meta.deceased_name || ''
+        });
+      case 'INSURER_NEW_DOCUMENTS':
+        return t("notifications.insurerNewDocuments", { deceased_name: notification.meta.deceased_name || '' });
+      case 'INSURER_DOSSIER_COMPLETED':
+        return t("notifications.insurerDossierCompleted", { deceased_name: notification.meta.deceased_name || '' });
+      
       default:
         return t("notifications.newNotification");
     }

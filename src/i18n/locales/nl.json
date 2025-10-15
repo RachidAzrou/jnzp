@@ -951,6 +951,10 @@
     "mortuariumReservationCancelled": "De reservatie voor {{deceased_name}} werd geannuleerd door {{fd_name}}",
     "mortuariumReservationUpdated": "De reservatie voor {{deceased_name}} werd aangepast door {{fd_name}}",
     "mortuariumConfirmationNeeded": "Bevestig of je de reservatie voor {{deceased_name}} kunt aannemen",
-    "mortuariumDossierCompleted": "Het dossier van {{deceased_name}} is afgerond"
+    "mortuariumDossierCompleted": "Het dossier van {{deceased_name}} is afgerond",
+    "insurerNewDossier": "Er is een nieuw dossier voor {{deceased_name}}. Controleer de polisgegevens",
+    "insurerVerificationRequested": "{{fd_name}} vraagt bevestiging van de polis voor {{deceased_name}}",
+    "insurerNewDocuments": "Er zijn nieuwe documenten toegevoegd aan het dossier van {{deceased_name}}",
+    "insurerDossierCompleted": "Het dossier van {{deceased_name}} is afgesloten"
   }
 }

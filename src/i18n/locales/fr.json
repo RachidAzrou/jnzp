@@ -2139,6 +2139,10 @@
     "mortuariumReservationCancelled": "La réservation pour {{deceased_name}} a été annulée par {{fd_name}}",
     "mortuariumReservationUpdated": "La réservation pour {{deceased_name}} a été modifiée par {{fd_name}}",
     "mortuariumConfirmationNeeded": "Confirmez si vous pouvez accepter la réservation pour {{deceased_name}}",
-    "mortuariumDossierCompleted": "Le dossier de {{deceased_name}} a été finalisé"
+    "mortuariumDossierCompleted": "Le dossier de {{deceased_name}} a été finalisé",
+    "insurerNewDossier": "Un nouveau dossier a été reçu pour {{deceased_name}}. Vérifiez les détails de la police",
+    "insurerVerificationRequested": "{{fd_name}} demande confirmation de la police pour {{deceased_name}}",
+    "insurerNewDocuments": "De nouveaux documents ont été ajoutés au dossier de {{deceased_name}}",
+    "insurerDossierCompleted": "Le dossier de {{deceased_name}} a été clôturé"
   }
 }

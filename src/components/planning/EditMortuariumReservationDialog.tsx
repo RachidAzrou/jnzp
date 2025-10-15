@@ -199,10 +199,10 @@ export function EditMortuariumReservationDialog({
             </Button>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Annuleren
+                {t("common.cancel")}
               </Button>
               <Button onClick={handleUpdate} disabled={loading}>
-                {loading ? "Bezig..." : "Opslaan"}
+                {loading ? t("common.loading") : t("common.save")}
               </Button>
             </div>
           </DialogFooter>
@@ -218,9 +218,9 @@ export function EditMortuariumReservationDialog({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={loading}>Annuleren</AlertDialogCancel>
+            <AlertDialogCancel disabled={loading}>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} disabled={loading} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {loading ? "Bezig..." : "Verwijderen"}
+              {loading ? t("common.loading") : t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -449,10 +449,10 @@ export function TaskDialog({ boardId, open, onOpenChange, task }: TaskDialogProp
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {t("tasks.cancel")}
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? t("tasks.updating") : task ? t("tasks.update") : t("tasks.create")}
+            {loading ? t("common.loading") : task ? t("common.update") : t("common.create")}
           </Button>
         </DialogFooter>
       </DialogContent>

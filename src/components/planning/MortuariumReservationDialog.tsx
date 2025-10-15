@@ -311,10 +311,10 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Annuleren
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? "Bezig..." : "Reserveren"}
+            {loading ? t("common.loading") : t("common.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

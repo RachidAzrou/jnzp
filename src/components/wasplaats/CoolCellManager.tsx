@@ -341,10 +341,10 @@ function CoolCellDialog({
 
       <DialogFooter>
         <Button variant="outline" onClick={onClose}>
-          {t("wasplaats.cancel")}
+          {t("common.cancel")}
         </Button>
         <Button onClick={() => onSave(formData)} disabled={!formData.label}>
-          {t("wasplaats.save")}
+          {t("common.save")}
         </Button>
       </DialogFooter>
     </DialogContent>

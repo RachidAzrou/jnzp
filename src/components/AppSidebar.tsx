@@ -15,8 +15,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useUserRole, UserRole, useRolePortalName } from "@/hooks/useUserRole";
+import { useUnreadNotificationsByPage } from "@/hooks/useUnreadNotificationsByPage";
 import logoHorizontal from "@/assets/logo-horizontal.png";
 import { useTranslation } from "react-i18next";
+import { Badge } from "@/components/ui/badge";
 
 type MenuItem = {
   titleKey: string;
@@ -31,6 +33,7 @@ export function AppSidebar() {
   const { t } = useTranslation();
   const defaultRolePortalName = useRolePortalName(role);
   const { state } = useSidebar();
+  const unreadCounts = useUnreadNotificationsByPage();
   
   // Determine portal name based on organization type for org_admin
   const rolePortalName = (() => {
@@ -211,6 +214,16 @@ export function AppSidebar() {
                 const translatedTitle = t(item.titleKey);
                 console.log(`[Sidebar] Translating ${item.titleKey} to:`, translatedTitle);
                 
+                // Determine unread count based on URL
+                let unreadCount = 0;
+                if (item.url.includes('/chat')) unreadCount = unreadCounts.chat;
+                else if (item.url.includes('/documenten') || item.url.includes('/documents')) unreadCount = unreadCounts.documents;
+                else if (item.url.includes('/dossiers')) unreadCount = unreadCounts.dossiers;
+                else if (item.url.includes('/planning')) unreadCount = unreadCounts.planning;
+                else if (item.url.includes('/claims')) unreadCount = unreadCounts.claims;
+                else if (item.url.includes('/directory')) unreadCount = unreadCounts.directory;
+                else if (item.url.includes('/notifications')) unreadCount = unreadCounts.notifications;
+                
                 return (
                   <SidebarMenuItem key={item.titleKey}>
                     <SidebarMenuButton asChild>
@@ -223,7 +236,22 @@ export function AppSidebar() {
                         } ${isCollapsed ? 'justify-center' : ''}`}
                       >
                         <item.icon className="h-5 w-5 sm:h-5 sm:w-5 flex-shrink-0" />
-                        {!isCollapsed && <span className="text-sm sm:text-sm">{translatedTitle}</span>}
+                        {!isCollapsed && (
+                          <span className="flex items-center gap-2 text-sm sm:text-sm flex-1">
+                            {translatedTitle}
+                            {unreadCount > 0 && (
+                              <Badge 
+                                variant="destructive" 
+                                className="h-5 min-w-5 px-1.5 flex items-center justify-center text-xs ml-auto"
+                              >
+                                {unreadCount > 9 ? '9+' : unreadCount}
+                              </Badge>
+                            )}
+                          </span>
+                        )}
+                        {isCollapsed && unreadCount > 0 && (
+                          <div className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full" />
+                        )}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

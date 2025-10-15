@@ -874,17 +874,17 @@ export default function FDFacturatie() {
               {/* Invoice Lines */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Factuurlijnen</CardTitle>
+                  <CardTitle>{t("invoicing.invoiceLines")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Code</TableHead>
-                        <TableHead>Omschrijving</TableHead>
-                        <TableHead>Qty</TableHead>
-                        <TableHead>Prijs</TableHead>
-                        <TableHead>Bedrag</TableHead>
+                        <TableHead>{t("invoicing.code")}</TableHead>
+                        <TableHead>{t("invoicing.description")}</TableHead>
+                        <TableHead>{t("invoicing.qty")}</TableHead>
+                        <TableHead>{t("common.price")}</TableHead>
+                        <TableHead>{t("invoicing.amount")}</TableHead>
                         <TableHead></TableHead>
                       </TableRow>
                     </TableHeader>
@@ -927,7 +927,7 @@ export default function FDFacturatie() {
                       {invoiceLines.length === 0 && (
                         <TableRow>
                           <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                            Geen regels toegevoegd
+                            {t("invoicing.noLinesAdded")}
                           </TableCell>
                         </TableRow>
                       )}
@@ -937,15 +937,15 @@ export default function FDFacturatie() {
                   {invoiceLines.length > 0 && (
                     <div className="mt-4 border-t pt-4 space-y-2">
                       <div className="flex justify-between">
-                        <span>Subtotaal:</span>
+                        <span>{t("invoicing.subtotal")}:</span>
                         <span>€{subtotal.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>BTW (21%):</span>
+                        <span>{t("invoicing.vatLabel")}:</span>
                         <span>€{vat.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between font-bold text-lg">
-                        <span>Totaal:</span>
+                        <span>{t("invoicing.total")}:</span>
                         <span>€{total.toFixed(2)}</span>
                       </div>
                     </div>
@@ -956,19 +956,19 @@ export default function FDFacturatie() {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowGenerator(false)}>
-                Annuleren
+                {t("common.cancel")}
               </Button>
               <Button variant="outline" onClick={handleDownloadPDF}>
                 <Download className="h-4 w-4 mr-2" />
-                Download PDF
+                {t("invoicing.downloadPDF")}
               </Button>
               <Button variant="outline" onClick={() => saveInvoice(true)}>
                 <Save className="h-4 w-4 mr-2" />
-                Opslaan als Concept
+                {t("invoicing.saveAsDraft")}
               </Button>
               <Button onClick={() => saveInvoice(false)}>
                 <Send className="h-4 w-4 mr-2" />
-                Uitgeven
+                {t("invoicing.issue")}
               </Button>
             </DialogFooter>
           </DialogContent>

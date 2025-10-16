@@ -472,40 +472,55 @@ export type Database = {
       }
       cool_cell_reservations: {
         Row: {
+          arrived_at: string | null
+          arrived_by_user_id: string | null
           cool_cell_id: string | null
           created_at: string
           created_by_user_id: string
+          departed_at: string | null
+          departed_by_user_id: string | null
           dossier_id: string
           end_at: string
           facility_org_id: string
           id: string
           note: string | null
+          rejection_reason: string | null
           start_at: string
           status: Database["public"]["Enums"]["reservation_status"]
           updated_at: string
         }
         Insert: {
+          arrived_at?: string | null
+          arrived_by_user_id?: string | null
           cool_cell_id?: string | null
           created_at?: string
           created_by_user_id: string
+          departed_at?: string | null
+          departed_by_user_id?: string | null
           dossier_id: string
           end_at: string
           facility_org_id: string
           id?: string
           note?: string | null
+          rejection_reason?: string | null
           start_at: string
           status?: Database["public"]["Enums"]["reservation_status"]
           updated_at?: string
         }
         Update: {
+          arrived_at?: string | null
+          arrived_by_user_id?: string | null
           cool_cell_id?: string | null
           created_at?: string
           created_by_user_id?: string
+          departed_at?: string | null
+          departed_by_user_id?: string | null
           dossier_id?: string
           end_at?: string
           facility_org_id?: string
           id?: string
           note?: string | null
+          rejection_reason?: string | null
           start_at?: string
           status?: Database["public"]["Enums"]["reservation_status"]
           updated_at?: string
@@ -4093,6 +4108,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      auto_release_cool_cell: {
+        Args: { p_reservation_id: string }
+        Returns: undefined
+      }
       calculate_device_risk: {
         Args: {
           p_current_ip: string
@@ -4474,6 +4493,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      mark_cool_cell_arrival: {
+        Args: { p_reservation_id: string; p_user_id: string }
+        Returns: undefined
+      }
+      mark_cool_cell_departure: {
+        Args: { p_reservation_id: string; p_user_id: string }
+        Returns: undefined
+      }
       mark_invoice_paid: {
         Args: { p_invoice_id: string; p_reason?: string }
         Returns: Json
@@ -4663,7 +4690,13 @@ export type Database = {
       prayer_type: "FAJR" | "DHUHR" | "ASR" | "MAGHRIB" | "ISHA" | "JUMUAH"
       priority: "HIGH" | "MEDIUM" | "LOW"
       priority_source: "AUTO" | "MANUAL"
-      reservation_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
+      reservation_status:
+        | "PENDING"
+        | "CONFIRMED"
+        | "CANCELLED"
+        | "COMPLETED"
+        | "REJECTED"
+        | "OCCUPIED"
       service_status: "PENDING" | "CONFIRMED" | "COMPLETED" | "FAILED"
       simple_dossier_status:
         | "CREATED"
@@ -4890,7 +4923,14 @@ export const Constants = {
       prayer_type: ["FAJR", "DHUHR", "ASR", "MAGHRIB", "ISHA", "JUMUAH"],
       priority: ["HIGH", "MEDIUM", "LOW"],
       priority_source: ["AUTO", "MANUAL"],
-      reservation_status: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],
+      reservation_status: [
+        "PENDING",
+        "CONFIRMED",
+        "CANCELLED",
+        "COMPLETED",
+        "REJECTED",
+        "OCCUPIED",
+      ],
       service_status: ["PENDING", "CONFIRMED", "COMPLETED", "FAILED"],
       simple_dossier_status: [
         "CREATED",

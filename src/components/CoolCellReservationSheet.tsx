@@ -1,11 +1,13 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "react-i18next";
+import { ReservationActionsDialog } from "./wasplaats/ReservationActionsDialog";
 
 type ReservationDetails = {
   id: string;
@@ -39,6 +41,7 @@ export function CoolCellReservationSheet({
   const { t } = useTranslation();
   const [reservation, setReservation] = useState<ReservationDetails | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showActionsDialog, setShowActionsDialog] = useState(false);
 
   useEffect(() => {
     if (reservationId && open) {
@@ -90,22 +93,25 @@ export function CoolCellReservationSheet({
         return "bg-primary text-primary-foreground";
       case "OCCUPIED":
         return "bg-destructive text-destructive-foreground";
+      case "COMPLETED":
+        return "bg-success text-success-foreground";
+      case "REJECTED":
+        return "bg-destructive text-destructive-foreground";
       default:
         return "bg-muted";
     }
   };
 
   const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return t("coolCell.statusPending");
-      case "CONFIRMED":
-        return t("coolCell.statusConfirmed");
-      case "OCCUPIED":
-        return t("coolCell.statusOccupied");
-      default:
-        return status;
-    }
+    const statusMap: Record<string, string> = {
+      PENDING: 'wasplaats.statusPending',
+      CONFIRMED: 'wasplaats.statusConfirmed',
+      OCCUPIED: 'wasplaats.statusOccupied',
+      COMPLETED: 'wasplaats.statusCompleted',
+      REJECTED: 'wasplaats.statusRejected',
+      CANCELLED: 'wasplaats.statusCancelled'
+    };
+    return t(statusMap[status] || status);
   };
 
   return (
@@ -177,9 +183,33 @@ export function CoolCellReservationSheet({
                 <p className="text-sm">{reservation.note}</p>
               </div>
             )}
+
+            {/* Action buttons for mortuarium */}
+            {reservation.status && ['PENDING', 'CONFIRMED', 'OCCUPIED'].includes(reservation.status) && (
+              <div className="border-t pt-4">
+                <Button 
+                  onClick={() => setShowActionsDialog(true)}
+                  className="w-full"
+                >
+                  {t("wasplaats.reservationActions")}
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <p className="text-sm text-muted-foreground mt-6">{t("coolCell.noDetails")}</p>
+        )}
+
+        {showActionsDialog && reservation && (
+          <ReservationActionsDialog
+            reservationId={reservation.id}
+            status={reservation.status}
+            onClose={() => setShowActionsDialog(false)}
+            onSuccess={() => {
+              setShowActionsDialog(false);
+              fetchReservationDetails();
+            }}
+          />
         )}
       </SheetContent>
     </Sheet>

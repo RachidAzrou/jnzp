@@ -108,8 +108,8 @@ export default function MoskeeBeschikbaarheid() {
     } catch (error) {
       console.error("Error fetching data:", error);
       toast({
-        title: "Fout",
-        description: "Kon beschikbaarheid niet laden",
+        title: t("mosque.availability.loadError"),
+        description: t("mosque.availability.loadErrorDesc"),
         variant: "destructive",
       });
     } finally {
@@ -178,14 +178,14 @@ export default function MoskeeBeschikbaarheid() {
       });
 
       toast({
-        title: "Opgeslagen",
-        description: "Wekelijkse beschikbaarheid is bijgewerkt",
+        title: t("mosque.availability.saved"),
+        description: t("mosque.availability.savedDesc"),
       });
     } catch (error: any) {
       console.error("Error saving availability:", error);
       toast({
-        title: "Fout",
-        description: error.message || "Kon beschikbaarheid niet opslaan",
+        title: t("mosque.availability.saveError"),
+        description: t("mosque.availability.saveErrorDesc"),
         variant: "destructive",
       });
     }
@@ -194,8 +194,8 @@ export default function MoskeeBeschikbaarheid() {
   const handleBlockDay = async () => {
     if (!blockDate || !blockReason || blockReason.trim().length < 8) {
       toast({
-        title: "Fout",
-        description: "Datum en reden (min. 8 tekens) zijn verplicht",
+        title: t("mosque.availability.blockError"),
+        description: t("mosque.availability.dateReasonRequired"),
         variant: "destructive",
       });
       return;
@@ -239,8 +239,8 @@ export default function MoskeeBeschikbaarheid() {
       });
 
       toast({
-        title: "Dag geblokkeerd",
-        description: `${format(new Date(blockDate), "d MMMM", { locale: nl })} is geblokkeerd`,
+        title: t("mosque.availability.dayBlocked"),
+        description: `${format(new Date(blockDate), "d MMMM", { locale: nl })} ${t("mosque.availability.dayBlockedDesc")}`,
       });
 
       setBlockDate("");
@@ -250,8 +250,8 @@ export default function MoskeeBeschikbaarheid() {
     } catch (error: any) {
       console.error("Error blocking day:", error);
       toast({
-        title: "Fout",
-        description: error.message || "Kon dag niet blokkeren",
+        title: t("mosque.availability.blockError"),
+        description: t("mosque.availability.blockErrorDesc"),
         variant: "destructive",
       });
     }
@@ -264,16 +264,16 @@ export default function MoskeeBeschikbaarheid() {
       if (error) throw error;
 
       toast({
-        title: "Blokkade verwijderd",
-        description: "Dag is weer beschikbaar",
+        title: t("mosque.availability.blockRemoved"),
+        description: t("mosque.availability.blockRemovedDesc"),
       });
 
       fetchData();
     } catch (error: any) {
       console.error("Error unblocking day:", error);
       toast({
-        title: "Fout",
-        description: error.message || "Kon blokkade niet verwijderen",
+        title: t("mosque.availability.unblockError"),
+        description: t("mosque.availability.unblockErrorDesc"),
         variant: "destructive",
       });
     }
@@ -282,7 +282,15 @@ export default function MoskeeBeschikbaarheid() {
   const getDayNames = () => {
     // Returns array of day objects: Sunday (0) to Saturday (6)
     // But we want to display Monday-Sunday, so we rotate
-    const dayNames = ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"];
+    const dayNames = [
+      t("mosque.availability.sunday"),
+      t("mosque.availability.monday"),
+      t("mosque.availability.tuesday"),
+      t("mosque.availability.wednesday"),
+      t("mosque.availability.thursday"),
+      t("mosque.availability.friday"),
+      t("mosque.availability.saturday")
+    ];
     return [1, 2, 3, 4, 5, 6, 0].map((dayOfWeek) => ({
       dayOfWeek,
       name: dayNames[dayOfWeek],
@@ -307,13 +315,13 @@ export default function MoskeeBeschikbaarheid() {
                 <Calendar className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground font-medium">Moskee</p>
-                <h1 className="text-2xl font-bold tracking-tight">Wekelijkse beschikbaarheid per gebed</h1>
+                <p className="text-sm text-muted-foreground font-medium">{t("mosque.label")}</p>
+                <h1 className="text-2xl font-bold tracking-tight">{t("mosque.availability.pageTitle")}</h1>
               </div>
             </div>
           </div>
           <p className="text-sm text-muted-foreground mt-3 pl-15">
-            Stel de standaard beschikbaarheid per dag van de week in. Dit geldt voor alle weken.
+            {t("mosque.availability.pageSubtitle")}
           </p>
         </CardContent>
       </Card>
@@ -321,7 +329,7 @@ export default function MoskeeBeschikbaarheid() {
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-lg font-medium">Standaard beschikbaarheid</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("mosque.availability.standardAvailability")}</CardTitle>
             <Button onClick={handleSave} size="sm">{t("common.save")}</Button>
           </div>
         </CardHeader>
@@ -330,12 +338,12 @@ export default function MoskeeBeschikbaarheid() {
             <table className="w-full">
               <thead>
                 <tr className="border-b-2 border-border">
-                  <th className="text-left px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Dag</th>
-                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Fajr</th>
-                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Dhuhr</th>
-                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Asr</th>
-                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Maghrib</th>
-                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">Isha</th>
+                  <th className="text-left px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">{t("mosque.availability.dayCol")}</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">{t("mosque.availability.prayers.fajr")}</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">{t("mosque.availability.prayers.dhuhr")}</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">{t("mosque.availability.prayers.asr")}</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">{t("mosque.availability.prayers.maghrib")}</th>
+                  <th className="text-center px-6 py-4 font-semibold text-sm text-foreground bg-muted/50">{t("mosque.availability.prayers.isha")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -404,8 +412,7 @@ export default function MoskeeBeschikbaarheid() {
 
           <div className="mt-6 p-4 bg-muted rounded-md">
             <p className="text-sm text-muted-foreground">
-              <strong>Uitleg:</strong> Vink aan bij welke gebeden janāza kan plaatsvinden. 
-              Op vrijdag vervangt Jumu'ah automatisch Dhuhr. Voor overmacht situaties (bijv. verbouwing, feestdag) kunt u specifieke dagen blokkeren.
+              {t("mosque.availability.explanation")}
             </p>
           </div>
         </CardContent>
@@ -415,24 +422,24 @@ export default function MoskeeBeschikbaarheid() {
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-lg font-medium">Dagen blokkeren (Overmacht)</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("mosque.availability.blockDaysTitle")}</CardTitle>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button size="sm">
                   <X className="mr-2 h-4 w-4" />
-                  Dag Blokkeren
+                  {t("mosque.availability.blockDayBtn")}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Dag blokkeren</DialogTitle>
+                  <DialogTitle>{t("mosque.availability.blockDialogTitle")}</DialogTitle>
                   <DialogDescription>
-                    Blokkeer een specifieke dag waarop geen janāza's mogelijk zijn (bijv. verbouwing, feestdag)
+                    {t("mosque.availability.blockDialogDesc")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Datum</label>
+                    <label className="text-sm font-medium mb-2 block">{t("mosque.availability.dateLabel")}</label>
                     <Input
                       type="date"
                       value={blockDate}
@@ -440,7 +447,7 @@ export default function MoskeeBeschikbaarheid() {
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Reden (min. 8 tekens)</label>
+                    <label className="text-sm font-medium mb-2 block">{t("mosque.availability.reasonLabel")}</label>
                     <Textarea
                       value={blockReason}
                       onChange={(e) => setBlockReason(e.target.value)}
@@ -450,9 +457,9 @@ export default function MoskeeBeschikbaarheid() {
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                      Annuleren
+                      {t("common.cancel")}
                     </Button>
-                    <Button onClick={handleBlockDay}>Blokkeren</Button>
+                    <Button onClick={handleBlockDay}>{t("mosque.availability.blockDayBtn")}</Button>
                   </div>
                 </div>
               </DialogContent>
@@ -482,7 +489,7 @@ export default function MoskeeBeschikbaarheid() {
                     className="text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900"
                   >
                     <X className="h-4 w-4 mr-1" />
-                    Verwijder
+                    {t("mosque.availability.removeBtn")}
                   </Button>
                 </div>
               ))}

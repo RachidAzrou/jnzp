@@ -200,6 +200,13 @@ export type Database = {
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "case_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
         ]
       }
       catalog_items: {
@@ -301,6 +308,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
           {
@@ -441,6 +455,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "claims_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: true
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "claims_insurer_org_id_fkey"
             columns: ["insurer_org_id"]
             isOneToOne: false
@@ -502,6 +523,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cool_cell_reservations_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
           {
@@ -668,6 +696,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "documents_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "documents_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
@@ -746,6 +781,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "dossier_claims_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "dossier_claims_requested_by_fkey"
             columns: ["requested_by"]
             isOneToOne: false
@@ -795,6 +837,13 @@ export type Database = {
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "dossier_communication_preferences_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: true
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
         ]
       }
       dossier_events: {
@@ -831,6 +880,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dossier_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
         ]
@@ -880,6 +936,13 @@ export type Database = {
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "dossier_hold_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
         ]
       }
       dossier_release_events: {
@@ -913,6 +976,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dossier_release_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
         ]
@@ -1154,6 +1224,13 @@ export type Database = {
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "family_contacts_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
         ]
       }
       fd_reviews: {
@@ -1190,6 +1267,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fd_reviews_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
           {
@@ -1265,6 +1349,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feedback_tokens_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
         ]
@@ -1657,6 +1748,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "invoices_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "invoices_facility_org_id_fkey"
             columns: ["facility_org_id"]
             isOneToOne: false
@@ -1712,6 +1810,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "janaz_services_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
           {
@@ -1813,6 +1918,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "kanban_tasks_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "kanban_tasks_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
@@ -1864,6 +1976,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_holds_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
           {
@@ -1956,6 +2075,13 @@ export type Database = {
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "manual_events_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
         ]
       }
       medical_docs: {
@@ -1992,6 +2118,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_docs_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
         ]
@@ -2204,6 +2337,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "notification_log_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "notification_log_template_id_fkey"
             columns: ["template_id"]
             isOneToOne: false
@@ -2297,6 +2437,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
           {
@@ -2810,6 +2957,13 @@ export type Database = {
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "polis_checks_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -2947,6 +3101,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "qr_tags_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "qr_tags_facility_org_id_fkey"
             columns: ["facility_org_id"]
             isOneToOne: false
@@ -3007,6 +3168,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qr_tokens_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
         ]
@@ -3072,6 +3240,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "repatriations_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
           {
@@ -3357,6 +3532,13 @@ export type Database = {
             referencedRelation: "dossiers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "tasks_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
         ]
       }
       thread_members: {
@@ -3440,6 +3622,13 @@ export type Database = {
             columns: ["dossier_id"]
             isOneToOne: false
             referencedRelation: "dossiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "threads_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
             referencedColumns: ["id"]
           },
           {
@@ -3703,6 +3892,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "wash_services_dossier_id_fkey"
+            columns: ["dossier_id"]
+            isOneToOne: false
+            referencedRelation: "vw_dossier_status_labels"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "wash_services_facility_org_id_fkey"
             columns: ["facility_org_id"]
             isOneToOne: false
@@ -3782,6 +3978,56 @@ export type Database = {
           user_id: string | null
         }
         Relationships: []
+      }
+      vw_dossier_status_labels: {
+        Row: {
+          assigned_fd_org_id: string | null
+          deceased_name: string | null
+          display_id: string | null
+          flow: Database["public"]["Enums"]["dossier_flow"] | null
+          id: string | null
+          legal_hold: boolean | null
+          legal_hold_active: boolean | null
+          status: Database["public"]["Enums"]["simple_dossier_status"] | null
+          status_description: string | null
+          status_label: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_fd_org_id?: string | null
+          deceased_name?: string | null
+          display_id?: string | null
+          flow?: Database["public"]["Enums"]["dossier_flow"] | null
+          id?: string | null
+          legal_hold?: boolean | null
+          legal_hold_active?: boolean | null
+          status?: Database["public"]["Enums"]["simple_dossier_status"] | null
+          status_description?: never
+          status_label?: never
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_fd_org_id?: string | null
+          deceased_name?: string | null
+          display_id?: string | null
+          flow?: Database["public"]["Enums"]["dossier_flow"] | null
+          id?: string | null
+          legal_hold?: boolean | null
+          legal_hold_active?: boolean | null
+          status?: Database["public"]["Enums"]["simple_dossier_status"] | null
+          status_description?: never
+          status_label?: never
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dossiers_assigned_fd_org_id_fkey"
+            columns: ["assigned_fd_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {

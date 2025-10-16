@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Calendar, Plus, CheckCircle2, XCircle, Unlock, AlertTriangle, Refrigerator } from "lucide-react";
+import { MortuariumCalendarView } from "@/components/wasplaats/MortuariumCalendarView";
 import { format, isToday, parseISO } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -382,7 +383,9 @@ export default function MortuariumDashboard() {
           </CardContent>
         </Card>}
 
-      {/* Today's Reservations */}
-      
+      {/* Calendar View */}
+      <div className="animate-fade-in">
+        <MortuariumCalendarView />
+      </div>
     </div>;
 }

@@ -93,24 +93,24 @@ export default function MoskeeTeam() {
                 <Users className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground font-medium">Moskee</p>
-                <h1 className="text-2xl font-bold tracking-tight">Teambeheer</h1>
+                <p className="text-sm text-muted-foreground font-medium">{t("mosque.label")}</p>
+                <h1 className="text-2xl font-bold tracking-tight">{t("mosque.team.pageTitle")}</h1>
               </div>
             </div>
             <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
               <DialogTrigger asChild>
                 <Button size="sm" className="h-9">
                   <UserPlus className="mr-2 h-4 w-4" />
-                  Lid Uitnodigen
+                  {t("mosque.team.inviteBtn")}
                 </Button>
               </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Teamlid uitnodigen</DialogTitle>
+              <DialogTitle>{t("mosque.team.inviteDialogTitle")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">E-mailadres</label>
+                <label className="text-sm font-medium mb-2 block">{t("mosque.team.emailLabel")}</label>
                 <Input
                   type="email"
                   value={inviteEmail}
@@ -120,27 +120,27 @@ export default function MoskeeTeam() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setInviteDialogOpen(false)}>
-                  Annuleren
+                  {t("common.cancel")}
                 </Button>
-                <Button onClick={handleInvite}>Uitnodiging Versturen</Button>
+                <Button onClick={handleInvite}>{t("mosque.team.inviteBtn")}</Button>
               </div>
             </div>
           </DialogContent>
         </Dialog>
           </div>
-          <p className="text-sm text-muted-foreground mt-3 pl-15">Beheer teamleden en toegangsrechten</p>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">{t("mosque.team.pageSubtitle")}</p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Teamleden ({members?.length || 0})</CardTitle>
+          <CardTitle>{t("mosque.team.teamMembersTitle")} ({members?.length || 0})</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-center py-8">Laden...</div>
+            <div className="text-center py-8">{t("common.loading")}</div>
           ) : !members?.length ? (
-            <div className="text-center py-8 text-muted-foreground">Geen teamleden gevonden</div>
+            <div className="text-center py-8 text-muted-foreground">{t("mosque.team.noMembers")}</div>
           ) : (
             <div className="space-y-3">
               {members.map((member) => (
@@ -150,9 +150,9 @@ export default function MoskeeTeam() {
                 >
                   <div>
                     <p className="font-medium">
-                      {member.profiles?.display_name || "Geen naam"}
+                      {member.profiles?.display_name || t("mosque.team.noName")}
                     </p>
-                    <p className="text-sm text-muted-foreground">Moskee medewerker</p>
+                    <p className="text-sm text-muted-foreground">{t("mosque.team.memberRole")}</p>
                   </div>
                   <Button variant="ghost" size="icon" disabled>
                     <Trash2 className="h-4 w-4 text-destructive" />

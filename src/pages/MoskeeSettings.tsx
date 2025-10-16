@@ -99,25 +99,25 @@ export default function MoskeeSettings() {
               <Building2 className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground font-medium">Moskee</p>
-              <h1 className="text-2xl font-bold tracking-tight">Instellingen</h1>
+              <p className="text-sm text-muted-foreground font-medium">{t("mosque.label")}</p>
+              <h1 className="text-2xl font-bold tracking-tight">{t("mosque.settings.pageTitle")}</h1>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground mt-3 pl-15">Beheer moskee-informatie en voorkeuren</p>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">{t("mosque.settings.pageSubtitle")}</p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Moskee Informatie</CardTitle>
+          <CardTitle>{t("mosque.settings.mosqueInfoTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {isLoading ? (
-            <div className="text-center py-8">Laden...</div>
+            <div className="text-center py-8">{t("common.loading")}</div>
           ) : (
             <>
               <div>
-                <label className="text-sm font-medium mb-2 block">Naam Moskee</label>
+                <label className="text-sm font-medium mb-2 block">{t("mosque.settings.nameLabel")}</label>
                 <Input
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
@@ -126,7 +126,7 @@ export default function MoskeeSettings() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Adres</label>
+                <label className="text-sm font-medium mb-2 block">{t("mosque.settings.addressLabel")}</label>
                 <Textarea
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
@@ -136,7 +136,7 @@ export default function MoskeeSettings() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Contact E-mail</label>
+                <label className="text-sm font-medium mb-2 block">{t("mosque.settings.emailLabel")}</label>
                 <Input
                   type="email"
                   value={contactEmail}
@@ -146,7 +146,7 @@ export default function MoskeeSettings() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Contact Telefoon</label>
+                <label className="text-sm font-medium mb-2 block">{t("mosque.settings.phoneLabel")}</label>
                 <Input
                   type="tel"
                   value={contactPhone}
@@ -156,7 +156,7 @@ export default function MoskeeSettings() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Naam Imam</label>
+                <label className="text-sm font-medium mb-2 block">{t("mosque.settings.imamLabel")}</label>
                 <Input
                   value={imamName}
                   onChange={(e) => setImamName(e.target.value)}

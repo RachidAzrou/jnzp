@@ -36,21 +36,7 @@ const statusColors: Record<string, string> = {
   PROPOSED: "bg-amber-500 text-white",
 };
 
-const statusLabels: Record<string, string> = {
-  OPEN: "Open",
-  CONFIRMED: "Bevestigd",
-  DECLINED: "Niet mogelijk",
-  PROPOSED: "Voorstel gedaan",
-};
-
-const prayerLabels: Record<string, string> = {
-  FAJR: "Fajr",
-  DHUHR: "Dhuhr",
-  ASR: "Asr",
-  MAGHRIB: "Maghrib",
-  ISHA: "Isha",
-  JUMUAH: "Jumu'ah",
-};
+// Moved to translation keys - prayers remain same (proper names)
 
 export default function MoskeeDashboard() {
   const { t } = useTranslation();
@@ -124,16 +110,16 @@ export default function MoskeeDashboard() {
       }
 
       toast({
-        title: "Bevestigd",
-        description: "Aanvraag is bevestigd",
+        title: t("mosque.dashboard.confirmed"),
+        description: t("mosque.dashboard.confirmedDesc"),
       });
 
       fetchServices();
     } catch (error) {
       console.error("Error confirming service:", error);
       toast({
-        title: "Fout",
-        description: "Kon aanvraag niet bevestigen",
+        title: t("mosque.dashboard.confirmError"),
+        description: t("mosque.dashboard.confirmError"),
         variant: "destructive",
       });
     }
@@ -142,8 +128,8 @@ export default function MoskeeDashboard() {
   const handleReject = async () => {
     if (!selectedService || !rejectReason.trim()) {
       toast({
-        title: "Fout",
-        description: "Geef een reden op voor weigering",
+        title: t("toast.error.generic"),
+        description: t("mosque.dashboard.rejectReasonRequired"),
         variant: "destructive",
       });
       return;
@@ -180,8 +166,8 @@ export default function MoskeeDashboard() {
       }
 
       toast({
-        title: "Geweigerd",
-        description: "Aanvraag is geweigerd",
+        title: t("mosque.dashboard.rejected"),
+        description: t("mosque.dashboard.rejectedDesc"),
       });
 
       setRejectDialogOpen(false);
@@ -191,8 +177,8 @@ export default function MoskeeDashboard() {
     } catch (error) {
       console.error("Error rejecting service:", error);
       toast({
-        title: "Fout",
-        description: "Kon aanvraag niet weigeren",
+        title: t("mosque.dashboard.rejectError"),
+        description: t("mosque.dashboard.rejectError"),
         variant: "destructive",
       });
     }
@@ -302,12 +288,12 @@ export default function MoskeeDashboard() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="font-medium text-sm">Dossier</TableHead>
-                  <TableHead className="font-medium text-sm">Overledene</TableHead>
-                  <TableHead className="font-medium text-sm">Gevraagd gebed</TableHead>
-                  <TableHead className="font-medium text-sm">Datum</TableHead>
-                  <TableHead className="font-medium text-sm">Status</TableHead>
-                  <TableHead className="text-right font-medium text-sm">Acties</TableHead>
+                  <TableHead className="font-medium text-sm">{t("mosque.dashboard.dossierCol")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("mosque.dashboard.deceasedCol")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("mosque.dashboard.requestedPrayerCol")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("mosque.dashboard.dateCol")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("mosque.dashboard.statusCol")}</TableHead>
+                  <TableHead className="text-right font-medium text-sm">{t("mosque.dashboard.actionsCol")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -320,7 +306,7 @@ export default function MoskeeDashboard() {
                       {service.dossiers.deceased_name}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {service.prayer ? prayerLabels[service.prayer] || service.prayer : "—"}
+                      {service.prayer || "—"}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {service.requested_date
@@ -329,7 +315,7 @@ export default function MoskeeDashboard() {
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-xs">
-                        Wachten
+                        {t("mosque.dashboard.waitingStatus")}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -340,7 +326,7 @@ export default function MoskeeDashboard() {
                           className="bg-green-600 hover:bg-green-700 h-8"
                         >
                           <Check className="h-3 w-3 mr-1" />
-                          Bevestig
+                          {t("mosque.dashboard.confirmBtn")}
                         </Button>
                         <Button
                           size="sm"
@@ -352,7 +338,7 @@ export default function MoskeeDashboard() {
                           className="h-8"
                         >
                           <X className="h-3 w-3 mr-1" />
-                          Weiger
+                          {t("mosque.dashboard.rejectBtn")}
                         </Button>
                       </div>
                     </TableCell>
@@ -361,7 +347,7 @@ export default function MoskeeDashboard() {
                 {activeRequests.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-sm text-muted-foreground">
-                      Geen openstaande aanvragen
+                      {t("mosque.dashboard.noOpenRequests")}
                     </TableCell>
                   </TableRow>
                 )}
@@ -374,17 +360,17 @@ export default function MoskeeDashboard() {
       {/* Planning - Upcoming Prayers */}
       <Card className="animate-fade-in">
         <CardHeader>
-          <CardTitle className="text-lg">Planning komende dagen</CardTitle>
+          <CardTitle className="text-lg">{t("mosque.dashboard.planningTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="font-medium text-sm">Datum</TableHead>
-                  <TableHead className="font-medium text-sm">Gebed</TableHead>
-                  <TableHead className="font-medium text-sm">Dossier</TableHead>
-                  <TableHead className="font-medium text-sm">Overledene</TableHead>
+                  <TableHead className="font-medium text-sm">{t("mosque.dashboard.dateCol")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("mosque.dashboard.prayerCol")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("mosque.dashboard.dossierCol")}</TableHead>
+                  <TableHead className="font-medium text-sm">{t("mosque.dashboard.deceasedCol")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -396,7 +382,7 @@ export default function MoskeeDashboard() {
                         : "—"}
                     </TableCell>
                     <TableCell className="text-sm font-medium">
-                      {service.prayer ? prayerLabels[service.prayer] || service.prayer : "—"}
+                      {service.prayer || "—"}
                     </TableCell>
                     <TableCell className="font-mono text-sm">
                       {service.dossiers.ref_number}
@@ -409,7 +395,7 @@ export default function MoskeeDashboard() {
                 {upcomingPrayers.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center py-8 text-sm text-muted-foreground">
-                      Geen geplande janāza's
+                      {t("mosque.dashboard.noPlannedServices")}
                     </TableCell>
                   </TableRow>
                 )}
@@ -424,7 +410,7 @@ export default function MoskeeDashboard() {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
-            Recente activiteit
+            {t("mosque.dashboard.recentActivityTitle")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -442,20 +428,20 @@ export default function MoskeeDashboard() {
                 </div>
                 <div className="flex-1 text-sm">
                   {service.status === "PLANNED" ? (
-                    <span>Gebed gepland voor dossier {service.dossiers.ref_number}</span>
+                    <span>{t("mosque.dashboard.prayerPlanned")} {service.dossiers.ref_number}</span>
                   ) : service.status === "DONE" ? (
-                    <span>Gebed voltooid voor dossier {service.dossiers.ref_number}</span>
+                    <span>{t("mosque.dashboard.prayerDone")} {service.dossiers.ref_number}</span>
                   ) : service.status === "CANCELLED" ? (
-                    <span>Gebed geannuleerd voor dossier {service.dossiers.ref_number}</span>
+                    <span>{t("mosque.dashboard.prayerCancelled")} {service.dossiers.ref_number}</span>
                   ) : (
-                    <span>Nieuwe aanvraag ontvangen ({service.dossiers.ref_number})</span>
+                    <span>{t("mosque.dashboard.newRequestReceived")} ({service.dossiers.ref_number})</span>
                   )}
                 </div>
               </div>
             ))}
             {services.length === 0 && (
               <p className="text-sm text-muted-foreground text-center py-8">
-                Geen recente activiteit
+                {t("mosque.dashboard.noActivity")}
               </p>
             )}
           </div>
@@ -466,9 +452,9 @@ export default function MoskeeDashboard() {
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Aanvraag weigeren</DialogTitle>
+            <DialogTitle>{t("mosque.dashboard.rejectDialogTitle")}</DialogTitle>
             <DialogDescription>
-              Geef een reden op waarom deze janāza-aanvraag niet mogelijk is.
+              {t("mosque.dashboard.rejectDialogDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -481,10 +467,10 @@ export default function MoskeeDashboard() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
-              Annuleren
+              {t("common.cancel")}
             </Button>
             <Button onClick={handleReject} variant="destructive">
-              Weigeren
+              {t("mosque.dashboard.rejectBtn")}
             </Button>
           </DialogFooter>
         </DialogContent>

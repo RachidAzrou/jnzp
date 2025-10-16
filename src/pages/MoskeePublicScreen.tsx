@@ -132,26 +132,26 @@ export default function MoskeePublicScreen() {
               <Monitor className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground font-medium">Moskee</p>
-              <h1 className="text-2xl font-bold tracking-tight">Publiek Scherm</h1>
+              <p className="text-sm text-muted-foreground font-medium">{t("mosque.label")}</p>
+              <h1 className="text-2xl font-bold tracking-tight">{t("mosque.publicScreen.pageTitle")}</h1>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground mt-3 pl-15">Beheer publieke mededelingen en TV-scherm instellingen</p>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">{t("mosque.publicScreen.pageSubtitle")}</p>
         </CardContent>
       </Card>
 
       {/* Token & URL */}
       <Card>
         <CardHeader>
-          <CardTitle>Publieke Feed URL</CardTitle>
+          <CardTitle>{t("mosque.publicScreen.urlTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {!publicFeed ? (
             <div className="text-center py-6">
-              <p className="text-muted-foreground mb-4">Geen publieke feed. Genereer een token om te starten.</p>
+              <p className="text-muted-foreground mb-4">{t("mosque.publicScreen.noFeed")}</p>
               <Button onClick={() => generateTokenMutation.mutate()}>
                 <Monitor className="mr-2 h-4 w-4" />
-                Token Aanmaken
+                {t("mosque.publicScreen.createTokenBtn")}
               </Button>
             </div>
           ) : (
@@ -166,7 +166,7 @@ export default function MoskeePublicScreen() {
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground">
-                Open deze URL op een TV/monitor om de publieke mededelingen weer te geven.
+                {t("mosque.publicScreen.urlDesc")}
               </p>
             </>
           )}
@@ -177,31 +177,31 @@ export default function MoskeePublicScreen() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Voorbeeld Mededelingen</CardTitle>
+            <CardTitle>{t("mosque.publicScreen.previewTitle")}</CardTitle>
             <div className="flex gap-2">
               <Button
                 variant={selectedLanguage === 'nl' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedLanguage('nl')}
               >
-                Nederlands
+                {t("mosque.publicScreen.dutch")}
               </Button>
               <Button
                 variant={selectedLanguage === 'ar' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedLanguage('ar')}
               >
-                العربية
+                {t("mosque.publicScreen.arabic")}
               </Button>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-center py-8">Laden...</div>
+            <div className="text-center py-8">{t("common.loading")}</div>
           ) : !visibleAnnouncements?.length ? (
             <div className="text-center py-8 text-muted-foreground">
-              Geen zichtbare mededelingen. Deze worden automatisch aangemaakt bij bevestiging janazah.
+              {t("mosque.publicScreen.noAnnouncements")}
             </div>
           ) : (
             <div className="space-y-4">
@@ -214,10 +214,10 @@ export default function MoskeePublicScreen() {
                     {selectedLanguage === 'nl' ? ann.body_nl : ann.body_ar}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Zichtbaar tot:{" "}
+                    {t("mosque.publicScreen.visibleUntil")}:{" "}
                     {ann.visible_until
                       ? format(new Date(ann.visible_until), "dd MMM yyyy HH:mm", { locale: nl })
-                      : "Onbeperkt"}
+                      : t("mosque.publicScreen.unlimited")}
                   </p>
                 </div>
               ))}

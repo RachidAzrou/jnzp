@@ -12,14 +12,7 @@ import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { X, Calendar, Clock } from "lucide-react";
 
-const prayerLabels: Record<string, string> = {
-  FAJR: "Fajr",
-  DHUHR: "Dhuhr", 
-  ASR: "Asr",
-  MAGHRIB: "Maghrib",
-  ISHA: "Isha",
-  JUMUAH: "Jumu'ah",
-};
+// Prayer names remain as proper nouns (not translated)
 
 type MosqueService = {
   id: string;
@@ -145,17 +138,17 @@ export default function MoskeePlanning() {
               <Calendar className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground font-medium">Moskee</p>
-              <h1 className="text-2xl font-bold tracking-tight">Planning</h1>
+              <p className="text-sm text-muted-foreground font-medium">{t("mosque.label")}</p>
+              <h1 className="text-2xl font-bold tracking-tight">{t("mosque.planning.pageTitle")}</h1>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground mt-3 pl-15">Overzicht geplande janazah-diensten</p>
+          <p className="text-sm text-muted-foreground mt-3 pl-15">{t("mosque.planning.pageSubtitle")}</p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Geplande diensten</CardTitle>
+          <CardTitle>{t("mosque.planning.plannedServices")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mb-4">
@@ -167,9 +160,9 @@ export default function MoskeePlanning() {
           </div>
 
           {isLoading ? (
-            <div className="text-center py-8">Laden...</div>
+            <div className="text-center py-8">{t("common.loading")}</div>
           ) : !filteredServices?.length ? (
-            <div className="text-center py-8 text-muted-foreground">Geen diensten gevonden</div>
+            <div className="text-center py-8 text-muted-foreground">{t("mosque.planning.noServices")}</div>
           ) : (
             <div className="space-y-4">
               {filteredServices.map((service) => (
@@ -192,38 +185,38 @@ export default function MoskeePlanning() {
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {service.status === "PLANNED" ? "Gepland" : service.status === "STARTED" ? "Bezig" : service.status === "DONE" ? "Voltooid" : "Geannuleerd"}
+                        {service.status === "PLANNED" ? t("mosque.planning.statusPlanned") : service.status === "STARTED" ? t("mosque.planning.statusStarted") : service.status === "DONE" ? t("mosque.planning.statusDone") : t("mosque.planning.statusCancelled")}
                       </span>
                     </div>
                     <div className="text-sm text-muted-foreground space-y-1">
                       <p>
-                        <strong>Datum:</strong>{" "}
+                        <strong>{t("mosque.planning.dateLabel")}:</strong>{" "}
                         {format(new Date(service.scheduled_at), "EEEE d MMMM yyyy", {
                           locale: nl,
                         })}
                       </p>
                       {(service.metadata as any)?.prayer_time && (
                         <p>
-                          <strong>Gebed:</strong> {prayerLabels[(service.metadata as any).prayer_time] || (service.metadata as any).prayer_time}
+                          <strong>{t("mosque.planning.prayerLabel")}:</strong> {(service.metadata as any).prayer_time}
                         </p>
                       )}
                       {!(service.metadata as any)?.prayer_time && (
                         <p>
-                          <strong>Tijd:</strong>{" "}
+                          <strong>{t("mosque.planning.timeLabel")}:</strong>{" "}
                           {format(new Date(service.scheduled_at), "HH:mm", { locale: nl })}
                         </p>
                       )}
                       {service.location_text && (
                         <p>
-                          <strong>Locatie:</strong> {service.location_text}
+                          <strong>{t("mosque.planning.locationLabel")}:</strong> {service.location_text}
                         </p>
                       )}
                       <p>
-                        <strong>Uitvaartondernemer:</strong> {service.dossiers?.organizations?.name}
+                        <strong>{t("mosque.planning.fdLabel")}:</strong> {service.dossiers?.organizations?.name}
                       </p>
                       {service.notes && service.status === "CANCELLED" && (
                         <p className="text-red-600">
-                          <strong>Reden annulering:</strong> {service.notes}
+                          <strong>{t("mosque.planning.cancelReasonLabel")}:</strong> {service.notes}
                         </p>
                       )}
                     </div>
@@ -249,12 +242,12 @@ export default function MoskeePlanning() {
       <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Janazah annuleren</DialogTitle>
+            <DialogTitle>{t("mosque.planning.cancelDialogTitle")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground mb-2">
-                Janazah voor <strong>{selectedService?.dossiers?.deceased_name}</strong> op{" "}
+                {t("mosque.planning.cancelDialogJanazahFor")} <strong>{selectedService?.dossiers?.deceased_name}</strong> {t("mosque.planning.cancelDialogOn")}{" "}
                 {selectedService &&
                   format(new Date(selectedService.scheduled_at), "EEEE d MMMM yyyy 'om' HH:mm", {
                     locale: nl,
@@ -262,7 +255,7 @@ export default function MoskeePlanning() {
               </p>
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Reden annulering (verplicht)</label>
+              <label className="text-sm font-medium mb-2 block">{t("mosque.planning.cancelDialogReason")}</label>
               <Textarea
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}

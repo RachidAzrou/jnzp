@@ -1120,5 +1120,46 @@
   "mortuariumAdHoc": {
     "adHocTag": "Ad-hoc Intake",
     "backToDashboard": "Terug naar dashboard"
+  },
+  "mortuarium": {
+    "adHoc": {
+      "title": "Ad-hoc Intake",
+      "description": "Registreer een overledene die rechtstreeks bij het mortuarium is aangekomen"
+    },
+    "adHocWizard": {
+      "basicInfo": "Basis informatie",
+      "coolCell": "Koelcel",
+      "fdAssignment": "FD Toewijzing",
+      "basicInfoTitle": "Basis informatie",
+      "basicInfoDesc": "Vul de basisgegevens in van de overledene",
+      "deceasedName": "Naam overledene",
+      "fullNamePlaceholder": "Volledige naam",
+      "min3Chars": "Minimaal 3 tekens vereist",
+      "receivedDateTime": "Ontvangst datum en tijd",
+      "selectDate": "Selecteer datum",
+      "notes": "Opmerkingen",
+      "notesPlaceholder": "Bijv. Staat van het lichaam, bijzonderheden...",
+      "next": "Volgende",
+      "previous": "Vorige",
+      "coolCellTitle": "Koelcel reservering (optioneel)",
+      "coolCellDesc": "Reserveer direct een koelcel voor deze overledene",
+      "reserveCell": "Reserveer een koelcel",
+      "coolCell": "Koelcel",
+      "selectCoolCell": "Selecteer koelcel",
+      "noFreeCells": "Geen vrije koelcellen beschikbaar",
+      "startDateTime": "Start datum en tijd",
+      "endDateTime": "Eind datum en tijd",
+      "fdAssignmentTitle": "FD Toewijzing (optioneel)",
+      "fdAssignmentDesc": "Wijs optioneel direct een uitvaartondernemer toe",
+      "assignFD": "Wijs een uitvaartondernemer toe",
+      "funeralDirector": "Uitvaartondernemer",
+      "selectFD": "Selecteer uitvaartondernemer",
+      "provisional": "Voorlopig",
+      "noFDsFound": "Geen uitvaartondernemers gevonden. Maak eerst een nieuwe aan.",
+      "provisionalAlert": "Let op: Deze uitvaartondernemer is voorlopig geregistreerd en nog niet volledig geverifieerd",
+      "creating": "Aanmaken...",
+      "createDossier": "Dossier aanmaken",
+      "dossierCreated": "Ad-hoc dossier succesvol aangemaakt"
+    }
   }
 }

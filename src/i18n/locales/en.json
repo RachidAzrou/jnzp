@@ -1855,5 +1855,46 @@
   "mortuariumAdHoc": {
     "adHocTag": "Ad-hoc Intake",
     "backToDashboard": "Back to dashboard"
+  },
+  "mortuarium": {
+    "adHoc": {
+      "title": "Ad-hoc Intake",
+      "description": "Register a deceased who arrived directly at the mortuary"
+    },
+    "adHocWizard": {
+      "basicInfo": "Basic information",
+      "coolCell": "Cool cell",
+      "fdAssignment": "FD Assignment",
+      "basicInfoTitle": "Basic information",
+      "basicInfoDesc": "Fill in the basic information of the deceased",
+      "deceasedName": "Name of deceased",
+      "fullNamePlaceholder": "Full name",
+      "min3Chars": "Minimum 3 characters required",
+      "receivedDateTime": "Received date and time",
+      "selectDate": "Select date",
+      "notes": "Notes",
+      "notesPlaceholder": "E.g. Condition of the body, special circumstances...",
+      "next": "Next",
+      "previous": "Previous",
+      "coolCellTitle": "Cool cell reservation (optional)",
+      "coolCellDesc": "Reserve a cool cell directly for this deceased",
+      "reserveCell": "Reserve a cool cell",
+      "coolCell": "Cool cell",
+      "selectCoolCell": "Select cool cell",
+      "noFreeCells": "No free cool cells available",
+      "startDateTime": "Start date and time",
+      "endDateTime": "End date and time",
+      "fdAssignmentTitle": "FD Assignment (optional)",
+      "fdAssignmentDesc": "Optionally assign a funeral director directly",
+      "assignFD": "Assign a funeral director",
+      "funeralDirector": "Funeral director",
+      "selectFD": "Select funeral director",
+      "provisional": "Provisional",
+      "noFDsFound": "No funeral directors found. Create a new one first.",
+      "provisionalAlert": "Note: This funeral director is provisionally registered and not yet fully verified",
+      "creating": "Creating...",
+      "createDossier": "Create dossier",
+      "dossierCreated": "Ad-hoc dossier successfully created"
+    }
   }
 }

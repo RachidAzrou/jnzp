@@ -2346,5 +2346,46 @@
   "mortuariumAdHoc": {
     "adHocTag": "Admission ad-hoc",
     "backToDashboard": "Retour au tableau de bord"
+  },
+  "mortuarium": {
+    "adHoc": {
+      "title": "Admission ad-hoc",
+      "description": "Enregistrez un défunt arrivé directement au mortuaire"
+    },
+    "adHocWizard": {
+      "basicInfo": "Informations de base",
+      "coolCell": "Cellule froide",
+      "fdAssignment": "Assignation FD",
+      "basicInfoTitle": "Informations de base",
+      "basicInfoDesc": "Remplissez les informations de base du défunt",
+      "deceasedName": "Nom du défunt",
+      "fullNamePlaceholder": "Nom complet",
+      "min3Chars": "Minimum 3 caractères requis",
+      "receivedDateTime": "Date et heure de réception",
+      "selectDate": "Sélectionner la date",
+      "notes": "Remarques",
+      "notesPlaceholder": "Par ex. État du corps, particularités...",
+      "next": "Suivant",
+      "previous": "Précédent",
+      "coolCellTitle": "Réservation de cellule froide (optionnel)",
+      "coolCellDesc": "Réservez directement une cellule froide pour ce défunt",
+      "reserveCell": "Réserver une cellule froide",
+      "coolCell": "Cellule froide",
+      "selectCoolCell": "Sélectionner une cellule froide",
+      "noFreeCells": "Aucune cellule froide disponible",
+      "startDateTime": "Date et heure de début",
+      "endDateTime": "Date et heure de fin",
+      "fdAssignmentTitle": "Assignation FD (optionnel)",
+      "fdAssignmentDesc": "Assignez optionnellement un directeur de funérailles directement",
+      "assignFD": "Assigner un directeur de funérailles",
+      "funeralDirector": "Directeur de funérailles",
+      "selectFD": "Sélectionner un directeur de funérailles",
+      "provisional": "Provisoire",
+      "noFDsFound": "Aucun directeur de funérailles trouvé. Créez-en un nouveau d'abord.",
+      "provisionalAlert": "Attention: Ce directeur de funérailles est enregistré provisoirement et n'est pas encore entièrement vérifié",
+      "creating": "Création...",
+      "createDossier": "Créer le dossier",
+      "dossierCreated": "Dossier ad-hoc créé avec succès"
+    }
   }
 }

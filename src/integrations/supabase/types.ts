@@ -3733,6 +3733,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          meta: Json | null
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          meta?: Json | null
+          type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          meta?: Json | null
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -4173,6 +4203,10 @@ export type Database = {
       }
       create_2fa_nonce: {
         Args: { p_ip?: string; p_user_agent?: string; p_user_id: string }
+        Returns: string
+      }
+      create_user_notification: {
+        Args: { p_meta?: Json; p_type: string; p_user_id: string }
         Returns: string
       }
       dearmor: {

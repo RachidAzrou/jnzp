@@ -64,13 +64,13 @@ export function NotificationBell() {
 
     // Subscribe to realtime notifications
     const channel = supabase
-      .channel(`notifications-${userId}`)
+      .channel(`user-notifications-${userId}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'notifications',
+          table: 'user_notifications',
           filter: `user_id=eq.${userId}`
         },
         () => {
@@ -93,7 +93,7 @@ export function NotificationBell() {
     if (!userId) return;
 
     const { data, error } = await supabase
-      .from('notifications' as any)
+      .from('user_notifications')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
@@ -110,7 +110,7 @@ export function NotificationBell() {
 
     // Update notifications directly
     await supabase
-      .from('notifications' as any)
+      .from('user_notifications')
       .update({ is_read: true })
       .in('id', notificationIds);
 

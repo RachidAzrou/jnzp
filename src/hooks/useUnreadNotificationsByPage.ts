@@ -34,13 +34,13 @@ export function useUnreadNotificationsByPage() {
 
     // Subscribe to realtime notifications
     const channel = supabase
-      .channel(`notifications-counts-${userId}`)
+      .channel(`user-notifications-counts-${userId}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'notifications',
+          table: 'user_notifications',
           filter: `user_id=eq.${userId}`
         },
         () => {
@@ -63,7 +63,7 @@ export function useUnreadNotificationsByPage() {
     if (!userId) return;
 
     const { data, error } = await supabase
-      .from('notifications' as any)
+      .from('user_notifications')
       .select('type, is_read')
       .eq('user_id', userId)
       .eq('is_read', false);

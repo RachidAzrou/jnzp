@@ -4143,6 +4143,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: boolean
       }
+      check_active_reservations_for_dossier: {
+        Args: { p_dossier_id: string }
+        Returns: boolean
+      }
       check_and_progress_dossier: {
         Args: { p_dossier_id: string }
         Returns: Json

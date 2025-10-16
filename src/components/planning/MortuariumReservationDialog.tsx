@@ -71,6 +71,17 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
     setDossiers(data || []);
   };
 
+  const checkActiveReservation = async (dossierId: string) => {
+    const { data, error } = await supabase
+      .from("cool_cell_reservations")
+      .select("id, status")
+      .eq("dossier_id", dossierId)
+      .in("status", ["PENDING", "CONFIRMED", "OCCUPIED"])
+      .maybeSingle();
+
+    return data !== null;
+  };
+
   const fetchMortuariums = async () => {
     const { data } = await supabase
       .from("organizations")
@@ -125,6 +136,18 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Niet ingelogd");
 
+      // Check of dossier al een actieve reservatie heeft
+      const hasActiveReservation = await checkActiveReservation(selectedDossier);
+      if (hasActiveReservation) {
+        toast({
+          title: "Reservatie niet mogelijk",
+          description: "Dit dossier heeft al een actieve koelcelreservatie. Annuleer eerst de bestaande reservatie.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
+
       const [startHour, startMinute] = startTime.split(':');
       const [endHour, endMinute] = endTime.split(':');
       
@@ -147,7 +170,13 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
           created_by_user_id: user.id
         });
 
-      if (error) throw error;
+      if (error) {
+        // Check voor database constraint error
+        if (error.code === '23505' || error.message.includes('actieve reservatie')) {
+          throw new Error("Dit dossier heeft al een actieve koelcelreservatie. Annuleer eerst de bestaande reservatie.");
+        }
+        throw error;
+      }
 
       toast({
         title: "Reservering aangemaakt",

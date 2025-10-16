@@ -243,7 +243,10 @@
     "coolCell": "Koelcel",
     "note": "Notitie (optioneel)",
     "cancel": "Annuleren",
-    "save": "Opslaan"
+    "save": "Opslaan",
+    "selectMortuariumFirst": "Selecteer eerst een mortuarium",
+    "selectDateFirst": "Selecteer eerst een datum",
+    "noCoolCells": "Geen koelcellen beschikbaar"
   },
   "moskeeService": {
     "title": "Nieuwe Moskee Afspraak",

@@ -12,6 +12,7 @@ import { format, addHours, startOfDay, endOfDay } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 interface MortuariumReservationDialogProps {
   open: boolean;
@@ -179,12 +180,12 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh]">
+      <DialogContent className="max-w-4xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>{t("mortuariumReservation.title")}</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="max-h-[60vh] pr-4">
+        <ScrollArea className="max-h-[65vh] pr-4">
           <div className="space-y-4">
             {/* Dossier selectie */}
             <div className="space-y-2">
@@ -220,16 +221,67 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
               </Select>
             </div>
 
-            {/* Datum selectie */}
-            <div className="space-y-2">
-              <Label>{t("mortuariumReservation.date")}</Label>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                locale={nl}
-                className="rounded-md border"
-              />
+            {/* Datum en Koelcel selectie - naast elkaar */}
+            <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6">
+              {/* Datum selectie */}
+              <div className="space-y-2">
+                <Label>{t("mortuariumReservation.date")}</Label>
+                <div className="flex justify-center">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    locale={nl}
+                    className={cn("rounded-md border pointer-events-auto")}
+                  />
+                </div>
+              </div>
+
+              {/* Koelcel selectie */}
+              <div className="space-y-2">
+                <Label>{t("mortuariumReservation.coolCell")}</Label>
+                {!selectedMortuarium || !selectedDate ? (
+                  <div className="flex items-center justify-center h-[320px] border rounded-md bg-muted/30">
+                    <p className="text-sm text-muted-foreground text-center px-4">
+                      {!selectedMortuarium 
+                        ? t("mortuariumReservation.selectMortuariumFirst")
+                        : t("mortuariumReservation.selectDateFirst")}
+                    </p>
+                  </div>
+                ) : coolCells.length === 0 ? (
+                  <div className="flex items-center justify-center h-[320px] border rounded-md bg-muted/30">
+                    <p className="text-sm text-muted-foreground">
+                      {t("mortuariumReservation.noCoolCells")}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="border rounded-md p-4 h-[320px] overflow-y-auto bg-background">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {coolCells.map(cell => (
+                        <Button
+                          key={cell.id}
+                          variant={selectedCoolCell === cell.id ? "default" : "outline"}
+                          className="h-auto py-3 flex-col gap-1"
+                          disabled={!cell.available}
+                          onClick={() => setSelectedCoolCell(cell.id)}
+                        >
+                          <span className="font-medium">{cell.label}</span>
+                          {!cell.available && (
+                            <Badge variant="destructive" className="text-xs">
+                              Bezet
+                            </Badge>
+                          )}
+                          {cell.available && (
+                            <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                              Beschikbaar
+                            </Badge>
+                          )}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Tijd selectie */}
@@ -271,31 +323,6 @@ export function MortuariumReservationDialog({ open, onOpenChange, onSuccess }: M
                 </Select>
               </div>
             </div>
-
-            {/* Koelcel selectie */}
-            {coolCells.length > 0 && (
-              <div className="space-y-2">
-                <Label>{t("mortuariumReservation.coolCell")}</Label>
-                <div className="grid grid-cols-3 gap-2">
-                  {coolCells.map(cell => (
-                    <Button
-                      key={cell.id}
-                      variant={selectedCoolCell === cell.id ? "default" : "outline"}
-                      className="relative"
-                      disabled={!cell.available}
-                      onClick={() => setSelectedCoolCell(cell.id)}
-                    >
-                      {cell.label}
-                      {!cell.available && (
-                        <Badge variant="destructive" className="ml-2">
-                          Bezet
-                        </Badge>
-                      )}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Notitie */}
             <div className="space-y-2">

@@ -74,8 +74,8 @@ export default function MortuariumTeam() {
     },
     onSuccess: () => {
       toast({
-        title: "Uitnodiging verstuurd",
-        description: "De teamuitnodiging is verzonden per e-mail.",
+        title: t("common.success"),
+        description: t("mortuarium.team.invitationSent"),
       });
       setEmail("");
       setIsAdmin(false);
@@ -104,8 +104,8 @@ export default function MortuariumTeam() {
     },
     onSuccess: () => {
       toast({
-        title: "Teamlid verwijderd",
-        description: "Het teamlid is succesvol verwijderd.",
+        title: t("common.success"),
+        description: t("mortuarium.team.memberRemoved"),
       });
       queryClient.invalidateQueries({ queryKey: ["teamMembers"] });
     },
@@ -130,12 +130,12 @@ export default function MortuariumTeam() {
                     <UserPlus className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium">Organisatie</p>
-                    <h1 className="text-2xl font-bold tracking-tight">Teambeheer</h1>
+                    <p className="text-sm text-muted-foreground font-medium">{t("mortuarium.team.organization")}</p>
+                    <h1 className="text-2xl font-bold tracking-tight">{t("mortuarium.team.title")}</h1>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground pl-15">
-                  Beheer teamleden van {userOrg?.organizations?.name}
+                  {t("mortuarium.team.subtitle", { name: userOrg?.organizations?.name })}
                 </p>
               </div>
             </div>
@@ -144,9 +144,9 @@ export default function MortuariumTeam() {
 
         <Card>
         <CardHeader>
-          <CardTitle>Teamlid uitnodigen</CardTitle>
+          <CardTitle>{t("mortuarium.team.inviteTitle")}</CardTitle>
           <CardDescription>
-            Nodig een nieuw teamlid uit via e-mail
+            {t("mortuarium.team.inviteDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -178,13 +178,13 @@ export default function MortuariumTeam() {
                 className="rounded"
               />
               <Label htmlFor="isAdmin" className="cursor-pointer">
-                Administrator-rechten toekennen
+                {t("mortuarium.team.grantAdmin")}
               </Label>
             </div>
 
             <Button type="submit" disabled={inviteMutation.isPending}>
               <UserPlus className="mr-2 h-4 w-4" />
-              {inviteMutation.isPending ? "Uitnodigen..." : "Uitnodiging versturen"}
+              {inviteMutation.isPending ? t("mortuarium.team.inviting") : t("mortuarium.team.sendInvitation")}
             </Button>
           </form>
         </CardContent>
@@ -192,23 +192,23 @@ export default function MortuariumTeam() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Teamleden</CardTitle>
-          <CardDescription>Huidige teamleden van de organisatie</CardDescription>
+          <CardTitle>{t("mortuarium.team.members")}</CardTitle>
+          <CardDescription>{t("mortuarium.team.currentMembers")}</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="text-muted-foreground">Laden...</p>
+            <p className="text-muted-foreground">{t("common.loading")}</p>
           ) : !teamMembers?.length ? (
-            <p className="text-muted-foreground">Nog geen teamleden</p>
+            <p className="text-muted-foreground">{t("mortuarium.team.noMembers")}</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Naam</TableHead>
-                  <TableHead>E-mail</TableHead>
-                  <TableHead>Rol</TableHead>
-                  <TableHead>Toegevoegd</TableHead>
-                  <TableHead className="text-right">Acties</TableHead>
+                  <TableHead>{t("mortuarium.team.name")}</TableHead>
+                  <TableHead>{t("mortuarium.team.email")}</TableHead>
+                  <TableHead>{t("mortuarium.team.role")}</TableHead>
+                  <TableHead>{t("mortuarium.team.added")}</TableHead>
+                  <TableHead className="text-right">{t("mortuarium.team.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -222,10 +222,10 @@ export default function MortuariumTeam() {
                       {member.is_admin ? (
                         <Badge variant="default" className="gap-1">
                           <Shield className="h-3 w-3" />
-                          Administrator
+                          {t("mortuarium.team.administrator")}
                         </Badge>
                       ) : (
-                        <Badge variant="secondary">Medewerker</Badge>
+                        <Badge variant="secondary">{t("mortuarium.team.employee")}</Badge>
                       )}
                     </TableCell>
                     <TableCell>
@@ -238,15 +238,13 @@ export default function MortuariumTeam() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent>
+                          <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              Teamlid verwijderen?
+                              {t("mortuarium.team.removeMember")}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              Weet je zeker dat je {member.profiles?.email} wilt
-                              verwijderen? Deze actie kan niet ongedaan worden
-                              gemaakt.
+                              {t("mortuarium.team.confirmRemove", { email: member.profiles?.email })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>

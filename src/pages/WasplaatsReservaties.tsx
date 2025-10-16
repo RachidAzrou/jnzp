@@ -17,12 +17,12 @@ export default function WasplaatsReservaties() {
                   <Calendar className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Boekingen</p>
-                  <h1 className="text-2xl font-bold tracking-tight">Reservaties</h1>
+                  <p className="text-sm text-muted-foreground font-medium">{t("mortuarium.reservations.bookings")}</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t("mortuarium.reservations.title")}</h1>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground pl-15">
-                Bekijk alle koelcel reservaties in één oogopslag
+                {t("mortuarium.reservations.subtitle")}
               </p>
             </div>
           </CardContent>

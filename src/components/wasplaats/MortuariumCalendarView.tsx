@@ -44,13 +44,7 @@ const statusColors: Record<string, string> = {
   OUT_OF_SERVICE: "bg-gradient-to-br from-muted to-muted/50 border-border opacity-75",
 };
 
-const statusLabels: Record<string, string> = {
-  FREE: "Beschikbaar",
-  PENDING: "In afwachting",
-  CONFIRMED: "Gereserveerd",
-  OCCUPIED: "Bezet",
-  OUT_OF_SERVICE: "Buiten dienst",
-};
+// Status labels will be translated inline
 
 const HOURS = Array.from({ length: 18 }, (_, i) => i + 6); // 06:00 - 23:00
 
@@ -204,7 +198,7 @@ export function MortuariumCalendarView() {
               <th className="border-r border-border/50 p-4 font-semibold text-sm text-left min-w-[100px] sticky left-0 z-10 bg-muted/90 backdrop-blur-sm">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  Tijd
+                  {t("mortuarium.calendar.time")}
                 </div>
               </th>
               {filteredCells.map((cell, index) => (
@@ -257,14 +251,14 @@ export function MortuariumCalendarView() {
                       {reservation && isVisible && (
                         <div className="flex flex-col gap-2 animate-fade-in">
                           <Badge className="text-xs font-semibold bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg w-fit">
-                            {statusLabels[reservation.status]}
+                            {t(`mortuarium.status.${reservation.status.toLowerCase()}`)}
                           </Badge>
                           <div className="space-y-1">
                             <div className="text-sm font-semibold text-foreground">
                               {reservation.organization?.name}
                             </div>
                             <div className="text-xs text-muted-foreground truncate font-medium">
-                              {reservation.dossier?.deceased_name || "Onbekend"}
+                              {reservation.dossier?.deceased_name || t("common.unknown")}
                             </div>
                             <div className="text-xs text-muted-foreground font-mono bg-background/50 px-2 py-1 rounded w-fit">
                               {format(new Date(reservation.start_at), "HH:mm")} -{" "}
@@ -275,7 +269,7 @@ export function MortuariumCalendarView() {
                       )}
                       {cell.status === "OUT_OF_SERVICE" && !reservation && (
                         <Badge className="text-xs bg-gradient-to-r from-gray-600 to-gray-700 text-white border-0 shadow-md">
-                          Buiten dienst
+                          {t("mortuarium.status.out_of_service")}
                         </Badge>
                       )}
                     </td>
@@ -301,7 +295,7 @@ export function MortuariumCalendarView() {
               <th className="border-r border-border/50 p-4 font-semibold text-sm text-left min-w-[120px] sticky left-0 z-10 bg-muted/90 backdrop-blur-sm">
                 <div className="flex items-center gap-2">
                   <Refrigerator className="h-4 w-4 text-muted-foreground" />
-                  Koelcel
+                  {t("mortuarium.calendar.coolCell")}
                 </div>
               </th>
               {weekDays.map((day, index) => (
@@ -361,14 +355,14 @@ export function MortuariumCalendarView() {
                       {reservation ? (
                         <div className="flex flex-col gap-2 animate-fade-in">
                           <Badge className="text-xs font-semibold bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg w-fit">
-                            {statusLabels[reservation.status]}
+                            {t(`mortuarium.status.${reservation.status.toLowerCase()}`)}
                           </Badge>
                           <div className="space-y-1">
                             <div className="text-sm font-semibold text-foreground truncate">
                               {reservation.organization?.name}
                             </div>
                             <div className="text-xs text-muted-foreground truncate font-medium">
-                              {reservation.dossier?.deceased_name || "Onbekend"}
+                              {reservation.dossier?.deceased_name || t("common.unknown")}
                             </div>
                             <div className="text-xs text-muted-foreground font-mono bg-background/50 px-2 py-1 rounded w-fit">
                               {format(new Date(reservation.start_at), "HH:mm")} -{" "}
@@ -378,7 +372,7 @@ export function MortuariumCalendarView() {
                         </div>
                       ) : cell.status === "OUT_OF_SERVICE" ? (
                         <Badge className="text-xs bg-gradient-to-r from-gray-600 to-gray-700 text-white border-0 shadow-md">
-                          Buiten dienst
+                          {t("mortuarium.status.out_of_service")}
                         </Badge>
                       ) : null}
                     </td>
@@ -401,7 +395,7 @@ export function MortuariumCalendarView() {
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Calendar className="h-5 w-5 text-primary" />
               </div>
-              <span>Kalenderweergave</span>
+              <span>{t("mortuarium.calendar.title")}</span>
             </CardTitle>
 
             <div className="flex flex-wrap items-center gap-3">
@@ -413,7 +407,7 @@ export function MortuariumCalendarView() {
                   onClick={() => setViewMode("day")}
                   className="font-medium transition-all duration-200"
                 >
-                  Dag
+                  {t("mortuarium.calendar.day")}
                 </Button>
                 <Button
                   size="sm"
@@ -421,7 +415,7 @@ export function MortuariumCalendarView() {
                   onClick={() => setViewMode("week")}
                   className="font-medium transition-all duration-200"
                 >
-                  Week
+                  {t("mortuarium.calendar.week")}
                 </Button>
               </div>
 
@@ -440,7 +434,7 @@ export function MortuariumCalendarView() {
                   <ChevronRight className="h-4 w-4" />
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => setCurrentDate(new Date())} className="ml-2 font-medium">
-                  Vandaag
+                  {t("mortuarium.calendar.today")}
                 </Button>
               </div>
             </div>
@@ -452,7 +446,7 @@ export function MortuariumCalendarView() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Zoek op naam of dossiernummer..."
+                  placeholder={t("mortuarium.calendar.searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 bg-background/50 border-border/50 focus:bg-background transition-colors"
@@ -462,10 +456,10 @@ export function MortuariumCalendarView() {
 
             <Select value={selectedCellFilter} onValueChange={setSelectedCellFilter}>
               <SelectTrigger className="w-[200px] bg-background/50 border-border/50">
-                <SelectValue placeholder="Alle koelcellen" />
+                <SelectValue placeholder={t("mortuarium.calendar.allCells")} />
               </SelectTrigger>
               <SelectContent className="bg-background border-border">
-                <SelectItem value="all">Alle koelcellen</SelectItem>
+                <SelectItem value="all">{t("mortuarium.calendar.allCells")}</SelectItem>
                 {coolCells.map((cell) => (
                   <SelectItem key={cell.id} value={cell.id}>
                     {cell.label}
@@ -476,10 +470,10 @@ export function MortuariumCalendarView() {
 
             <Select value={selectedFDFilter} onValueChange={setSelectedFDFilter}>
               <SelectTrigger className="w-[220px] bg-background/50 border-border/50">
-                <SelectValue placeholder="Alle uitvaartverzorgers" />
+                <SelectValue placeholder={t("mortuarium.calendar.allFDs")} />
               </SelectTrigger>
               <SelectContent className="bg-background border-border">
-                <SelectItem value="all">Alle uitvaartverzorgers</SelectItem>
+                <SelectItem value="all">{t("mortuarium.calendar.allFDs")}</SelectItem>
                 {fdOrganizations.map((org) => (
                   <SelectItem key={org.id} value={org.name}>
                     {org.name}
@@ -509,23 +503,23 @@ export function MortuariumCalendarView() {
           <div className="flex flex-wrap gap-6 text-sm">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-md bg-gradient-to-br from-green-50 to-green-100/50 border-2 border-green-200 shadow-sm"></div>
-              <span className="font-medium">Beschikbaar</span>
+              <span className="font-medium">{t("mortuarium.status.free")}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-md bg-gradient-to-br from-orange-50 to-orange-100/50 border-2 border-orange-200 shadow-sm"></div>
-              <span className="font-medium">In afwachting</span>
+              <span className="font-medium">{t("mortuarium.status.pending")}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-md bg-gradient-to-br from-red-50 to-red-100/50 border-2 border-red-200 shadow-sm"></div>
-              <span className="font-medium">Gereserveerd</span>
+              <span className="font-medium">{t("mortuarium.status.confirmed")}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-md bg-gradient-to-br from-red-100 to-red-200/50 border-2 border-red-300 shadow-sm"></div>
-              <span className="font-medium">Bezet</span>
+              <span className="font-medium">{t("mortuarium.status.occupied")}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-md bg-gradient-to-br from-gray-100 to-gray-200/50 border-2 border-gray-300 shadow-sm"></div>
-              <span className="font-medium">Buiten dienst</span>
+              <span className="font-medium">{t("mortuarium.status.out_of_service")}</span>
             </div>
           </div>
         </CardContent>

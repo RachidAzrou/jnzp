@@ -108,8 +108,8 @@ export default function MortuariumDashboard() {
     } catch (error) {
       console.error("Error fetching data:", error);
       toast({
-        title: "Fout bij laden",
-        description: "Kon dashboard gegevens niet laden",
+        title: t("common.error"),
+        description: t("mortuarium.errors.loadDashboard"),
         variant: "destructive"
       });
     } finally {
@@ -125,15 +125,15 @@ export default function MortuariumDashboard() {
       }).eq("id", reservationId);
       if (error) throw error;
       toast({
-        title: "Bevestigd",
-        description: "Reservering is bevestigd"
+        title: t("common.success"),
+        description: t("mortuarium.dashboard.reservationConfirmed")
       });
       fetchData();
     } catch (error) {
       console.error("Error confirming reservation:", error);
       toast({
-        title: "Fout",
-        description: "Kon reservering niet bevestigen",
+        title: t("common.error"),
+        description: t("mortuarium.errors.confirmError"),
         variant: "destructive"
       });
     }
@@ -148,15 +148,15 @@ export default function MortuariumDashboard() {
       }).eq("id", reservationId);
       if (error) throw error;
       toast({
-        title: "Vrijgegeven",
-        description: "Koelcel is vrijgegeven"
+        title: t("common.success"),
+        description: t("mortuarium.dashboard.cellReleased")
       });
       fetchData();
     } catch (error) {
       console.error("Error releasing reservation:", error);
       toast({
-        title: "Fout",
-        description: "Kon reservering niet vrijgeven",
+        title: t("common.error"),
+        description: t("mortuarium.errors.releaseError"),
         variant: "destructive"
       });
     }
@@ -164,8 +164,8 @@ export default function MortuariumDashboard() {
   const cancelReservation = async () => {
     if (!cancelReason.trim()) {
       toast({
-        title: "Reden vereist",
-        description: "Geef een reden op voor annulering",
+        title: t("mortuarium.dashboard.reasonRequired"),
+        description: t("mortuarium.dashboard.provideReason"),
         variant: "destructive"
       });
       return;
@@ -179,8 +179,8 @@ export default function MortuariumDashboard() {
       }).eq("id", selectedReservationId);
       if (error) throw error;
       toast({
-        title: "Geannuleerd",
-        description: "Reservering is geannuleerd"
+        title: t("common.success"),
+        description: t("mortuarium.dashboard.reservationCancelled")
       });
       setCancelReason("");
       setSelectedReservationId("");
@@ -188,8 +188,8 @@ export default function MortuariumDashboard() {
     } catch (error) {
       console.error("Error cancelling reservation:", error);
       toast({
-        title: "Fout",
-        description: "Kon reservering niet annuleren",
+        title: t("common.error"),
+        description: t("mortuarium.errors.cancelError"),
         variant: "destructive"
       });
     }
@@ -201,7 +201,7 @@ export default function MortuariumDashboard() {
     outOfService: coolCells.filter(c => c.status === "OUT_OF_SERVICE").length
   };
   if (loading) {
-    return <div className="p-6">Laden...</div>;
+    return <div className="p-6">{t("common.loading")}</div>;
   }
   const getCurrentDate = () => {
     return new Date().toLocaleDateString('nl-NL', {
@@ -217,7 +217,7 @@ export default function MortuariumDashboard() {
         <CardContent className="p-6">
           <div className="flex-1">
             <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Mortuarium Dashboard</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{t("mortuarium.dashboard.title")}</h1>
           </div>
         </CardContent>
       </Card>
@@ -227,7 +227,7 @@ export default function MortuariumDashboard() {
         <Card className="hover:shadow-sm transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Totaal Cellen
+              {t("mortuarium.dashboard.totalCells")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -238,7 +238,7 @@ export default function MortuariumDashboard() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-success"></div>
-              Vrij
+              {t("mortuarium.status.free")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -251,7 +251,7 @@ export default function MortuariumDashboard() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-destructive"></div>
-              Bezet
+              {t("mortuarium.status.occupied")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -264,7 +264,7 @@ export default function MortuariumDashboard() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-muted-foreground"></div>
-              Buiten Dienst
+              {t("mortuarium.status.out_of_service")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -280,7 +280,7 @@ export default function MortuariumDashboard() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-warning" />
-              Inkomende Aanvragen ({pendingRequests.length})
+              {t("mortuarium.dashboard.incomingRequests")} ({pendingRequests.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -288,11 +288,11 @@ export default function MortuariumDashboard() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Datum & Tijd</TableHead>
-                    <TableHead>Dossier</TableHead>
-                    <TableHead>Koelcel</TableHead>
-                    <TableHead>Notitie</TableHead>
-                    <TableHead className="text-right">Acties</TableHead>
+                    <TableHead>{t("mortuarium.dashboard.dateTime")}</TableHead>
+                    <TableHead>{t("mortuarium.dashboard.dossier")}</TableHead>
+                    <TableHead>{t("mortuarium.dashboard.coolCell")}</TableHead>
+                    <TableHead>{t("mortuarium.dashboard.note")}</TableHead>
+                    <TableHead className="text-right">{t("mortuarium.dashboard.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -315,7 +315,7 @@ export default function MortuariumDashboard() {
                       <TableCell>
                         <div>
                           <div className="font-medium">
-                            {request.dossiers?.deceased_name || "Onbekend"}
+                            {request.dossiers?.deceased_name || t("common.unknown")}
                           </div>
                           <div className="text-sm text-muted-foreground">
                             {request.dossiers?.display_id || "-"}
@@ -332,24 +332,24 @@ export default function MortuariumDashboard() {
                         <div className="flex justify-end gap-2">
                           <Button size="sm" onClick={() => confirmReservation(request.id)} className="gap-1 h-8">
                             <CheckCircle2 className="h-3.5 w-3.5" />
-                            Bevestigen
+                            {t("mortuarium.dashboard.confirm")}
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button size="sm" variant="destructive" onClick={() => setSelectedReservationId(request.id)} className="gap-1 h-8">
                                 <XCircle className="h-3.5 w-3.5" />
-                                Weigeren
+                                {t("mortuarium.dashboard.reject")}
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Aanvraag weigeren</AlertDialogTitle>
+                                <AlertDialogTitle>{t("mortuarium.dashboard.rejectRequest")}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Geef een reden op voor de weigering
+                                  {t("mortuarium.dashboard.provideRejectionReason")}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <div className="space-y-2 py-4">
-                                <Label htmlFor="reason">Reden *</Label>
+                                <Label htmlFor="reason">{t("mortuarium.dashboard.reason")} *</Label>
                                 <Textarea id="reason" value={cancelReason} onChange={e => setCancelReason(e.target.value)} placeholder={t("placeholders.cancelReason")} rows={3} />
                               </div>
                               <AlertDialogFooter>
@@ -357,10 +357,10 @@ export default function MortuariumDashboard() {
                             setCancelReason("");
                             setSelectedReservationId("");
                           }}>
-                                  Terug
+                                  {t("common.cancel")}
                                 </AlertDialogCancel>
                                 <AlertDialogAction onClick={cancelReservation}>
-                                  Weigeren
+                                  {t("mortuarium.dashboard.reject")}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>

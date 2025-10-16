@@ -93,7 +93,7 @@ export default function MortuariumFacturatie() {
     onSuccess: () => {
       toast({
         title: t("common.success"),
-        description: "Factuur verzonden",
+        description: t("mortuarium.invoicing.invoiceSent"),
       });
       queryClient.invalidateQueries({ queryKey: ["mortuarium-invoices"] });
       setSendDialogOpen(false);
@@ -121,7 +121,7 @@ export default function MortuariumFacturatie() {
     onSuccess: () => {
       toast({
         title: t("common.success"),
-        description: "Factuur gemarkeerd als betaald",
+        description: t("mortuarium.invoicing.invoiceMarkedPaid"),
       });
       queryClient.invalidateQueries({ queryKey: ["mortuarium-invoices"] });
       setPaidDialogOpen(false);
@@ -170,7 +170,7 @@ export default function MortuariumFacturatie() {
   if (isLoading) {
     return (
       <div className="container mx-auto py-8">
-        <p className="text-muted-foreground">Laden...</p>
+        <p className="text-muted-foreground">{t("common.loading")}</p>
       </div>
     );
   }
@@ -186,12 +186,12 @@ export default function MortuariumFacturatie() {
                   <FileText className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Financieel</p>
-                  <h1 className="text-2xl font-bold tracking-tight">Facturatie</h1>
+                  <p className="text-sm text-muted-foreground font-medium">{t("mortuarium.invoicing.financial")}</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t("mortuarium.invoicing.title")}</h1>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground pl-15">
-                Beheer mortuarium facturen
+                {t("mortuarium.invoicing.subtitle")}
               </p>
             </div>
           </CardContent>
@@ -202,7 +202,7 @@ export default function MortuariumFacturatie() {
             <div className="flex justify-end">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Nieuwe factuur
+                {t("mortuarium.invoicing.newInvoice")}
               </Button>
             </div>
           </CardContent>
@@ -211,17 +211,17 @@ export default function MortuariumFacturatie() {
         <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Facturen</CardTitle>
+            <CardTitle>{t("mortuarium.invoicing.invoices")}</CardTitle>
             <Select value={filter} onValueChange={setFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={t("placeholders.filterStatus")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">Alle</SelectItem>
-                <SelectItem value="DRAFT">Concept</SelectItem>
-                <SelectItem value="SENT">Verzonden</SelectItem>
-                <SelectItem value="PAID">Betaald</SelectItem>
-                <SelectItem value="OVERDUE">Achterstallig</SelectItem>
+                <SelectItem value="ALL">{t("mortuarium.invoicing.all")}</SelectItem>
+                <SelectItem value="DRAFT">{t("mortuarium.invoicing.draft")}</SelectItem>
+                <SelectItem value="SENT">{t("mortuarium.invoicing.sent")}</SelectItem>
+                <SelectItem value="PAID">{t("mortuarium.invoicing.paid")}</SelectItem>
+                <SelectItem value="OVERDUE">{t("mortuarium.invoicing.overdue")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -229,19 +229,19 @@ export default function MortuariumFacturatie() {
         <CardContent>
           {!invoices || invoices.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
-              Geen facturen gevonden
+              {t("mortuarium.invoicing.noInvoices")}
             </p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nummer</TableHead>
-                  <TableHead>Dossier</TableHead>
-                  <TableHead>FD Organisatie</TableHead>
-                  <TableHead>Bedrag</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Datum</TableHead>
-                  <TableHead className="text-right">Acties</TableHead>
+                  <TableHead>{t("mortuarium.invoicing.number")}</TableHead>
+                  <TableHead>{t("mortuarium.invoicing.dossier")}</TableHead>
+                  <TableHead>{t("mortuarium.invoicing.fdOrganization")}</TableHead>
+                  <TableHead>{t("mortuarium.invoicing.amount")}</TableHead>
+                  <TableHead>{t("mortuarium.invoicing.status")}</TableHead>
+                  <TableHead>{t("mortuarium.invoicing.date")}</TableHead>
+                  <TableHead className="text-right">{t("mortuarium.invoicing.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -276,7 +276,7 @@ export default function MortuariumFacturatie() {
                           onClick={() => handleSend(invoice)}
                         >
                           <Send className="h-4 w-4 mr-1" />
-                          Verzenden
+                          {t("mortuarium.invoicing.send")}
                         </Button>
                       )}
                       {invoice.status === "SENT" && (
@@ -286,7 +286,7 @@ export default function MortuariumFacturatie() {
                           onClick={() => handleMarkPaid(invoice)}
                         >
                           <CheckCircle className="h-4 w-4 mr-1" />
-                          Betaald
+                          {t("mortuarium.invoicing.paid")}
                         </Button>
                       )}
                     </TableCell>
@@ -302,15 +302,14 @@ export default function MortuariumFacturatie() {
       <Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Factuur verzenden</DialogTitle>
+            <DialogTitle>{t("mortuarium.invoicing.sendInvoice")}</DialogTitle>
             <DialogDescription>
-              Verstuur factuur {selectedInvoice?.invoice_number} naar{" "}
-              {selectedInvoice?.fd_organization?.name}
+              {t("mortuarium.invoicing.sendInvoiceDesc", { number: selectedInvoice?.invoice_number, name: selectedInvoice?.fd_organization?.name })}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="message">Bericht (optioneel)</Label>
+              <Label htmlFor="message">{t("mortuarium.invoicing.message")}</Label>
               <Textarea
                 id="message"
                 value={message}
@@ -325,13 +324,13 @@ export default function MortuariumFacturatie() {
               variant="outline"
               onClick={() => setSendDialogOpen(false)}
             >
-              Annuleren
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={confirmSend}
               disabled={sendMutation.isPending}
             >
-              {sendMutation.isPending ? "Verzenden..." : "Verzenden"}
+              {sendMutation.isPending ? t("mortuarium.invoicing.sending") : t("mortuarium.invoicing.send")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -341,14 +340,14 @@ export default function MortuariumFacturatie() {
       <Dialog open={paidDialogOpen} onOpenChange={setPaidDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Factuur betaald markeren</DialogTitle>
+            <DialogTitle>{t("mortuarium.invoicing.markPaid")}</DialogTitle>
             <DialogDescription>
-              Markeer factuur {selectedInvoice?.invoice_number} als betaald
+              {t("mortuarium.invoicing.markPaidDesc", { number: selectedInvoice?.invoice_number })}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="note">Notitie (optioneel)</Label>
+              <Label htmlFor="note">{t("mortuarium.invoicing.note")}</Label>
               <Textarea
                 id="note"
                 value={note}

@@ -81,14 +81,14 @@ export default function MortuariumInstellingen() {
     },
     onSuccess: () => {
       toast({
-        title: "Instellingen opgeslagen",
-        description: "Organisatie-instellingen zijn bijgewerkt.",
+        title: t("common.success"),
+        description: t("mortuarium.settings.settingsSaved"),
       });
       queryClient.invalidateQueries({ queryKey: ["userOrganization"] });
     },
     onError: (error: Error) => {
       toast({
-        title: "Fout bij opslaan",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -116,8 +116,8 @@ export default function MortuariumInstellingen() {
     },
     onSuccess: () => {
       toast({
-        title: "Sluitingsdag toegevoegd",
-        description: "De dag is gemarkeerd als gesloten.",
+        title: t("common.success"),
+        description: t("mortuarium.settings.closedDayAdded"),
       });
       setSelectedDate(undefined);
       setBlockReason("");
@@ -125,7 +125,7 @@ export default function MortuariumInstellingen() {
     },
     onError: (error: Error) => {
       toast({
-        title: "Fout bij toevoegen",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -144,14 +144,14 @@ export default function MortuariumInstellingen() {
     },
     onSuccess: () => {
       toast({
-        title: "Sluitingsdag verwijderd",
-        description: "De dag is niet meer gemarkeerd als gesloten.",
+        title: t("common.success"),
+        description: t("mortuarium.settings.closedDayRemoved"),
       });
       queryClient.invalidateQueries({ queryKey: ["dayBlocks"] });
     },
     onError: (error: Error) => {
       toast({
-        title: "Fout bij verwijderen",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -172,12 +172,12 @@ export default function MortuariumInstellingen() {
                     <Building2 className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground font-medium">Configuratie</p>
-                    <h1 className="text-2xl font-bold tracking-tight">Instellingen</h1>
+                    <p className="text-sm text-muted-foreground font-medium">{t("mortuarium.settings.configuration")}</p>
+                    <h1 className="text-2xl font-bold tracking-tight">{t("mortuarium.settings.title")}</h1>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground pl-15">
-                  Beheer organisatie-instellingen en sluitingsdagen
+                  {t("mortuarium.settings.subtitle")}
                 </p>
               </div>
             </div>
@@ -188,10 +188,10 @@ export default function MortuariumInstellingen() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building2 className="h-5 w-5" />
-            Organisatiegegevens
+            {t("mortuarium.settings.organizationDetails")}
           </CardTitle>
           <CardDescription>
-            Basisinformatie van het mortuarium
+            {t("mortuarium.settings.basicInformation")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -203,7 +203,7 @@ export default function MortuariumInstellingen() {
             className="space-y-4"
           >
             <div className="space-y-2">
-              <Label htmlFor="orgName">Naam</Label>
+              <Label htmlFor="orgName">{t("mortuarium.settings.name")}</Label>
               <Input
                 id="orgName"
                 value={orgName}
@@ -213,7 +213,7 @@ export default function MortuariumInstellingen() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="orgAddress">Adres</Label>
+              <Label htmlFor="orgAddress">{t("mortuarium.settings.address")}</Label>
               <Textarea
                 id="orgAddress"
                 value={orgAddress}
@@ -223,7 +223,7 @@ export default function MortuariumInstellingen() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="orgPhone">Telefoonnummer</Label>
+              <Label htmlFor="orgPhone">{t("mortuarium.settings.phone")}</Label>
               <Input
                 id="orgPhone"
                 type="tel"
@@ -244,10 +244,10 @@ export default function MortuariumInstellingen() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CalendarOff className="h-5 w-5" />
-              Sluitingsdagen toevoegen
+              {t("mortuarium.settings.addClosedDays")}
             </CardTitle>
             <CardDescription>
-              Selecteer dagen waarop het mortuarium gesloten is
+              {t("mortuarium.settings.selectClosedDays")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -267,7 +267,7 @@ export default function MortuariumInstellingen() {
             />
 
             <div className="space-y-2">
-              <Label htmlFor="reason">Reden (optioneel)</Label>
+              <Label htmlFor="reason">{t("mortuarium.settings.reason")}</Label>
               <Input
                 id="reason"
                 placeholder={t("placeholders.holidayMaintenance")}
@@ -289,23 +289,23 @@ export default function MortuariumInstellingen() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Geplande sluitingsdagen</CardTitle>
+            <CardTitle>{t("mortuarium.settings.scheduledClosedDays")}</CardTitle>
             <CardDescription>
-              Overzicht van alle gemarkeerde sluitingsdagen
+              {t("mortuarium.settings.overviewClosedDays")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {loadingBlocks ? (
-              <p className="text-muted-foreground">Laden...</p>
+              <p className="text-muted-foreground">{t("common.loading")}</p>
             ) : !dayBlocks?.length ? (
-              <p className="text-muted-foreground">Geen sluitingsdagen gepland</p>
+              <p className="text-muted-foreground">{t("mortuarium.settings.noClosedDays")}</p>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Datum</TableHead>
-                    <TableHead>Reden</TableHead>
-                    <TableHead className="text-right">Actie</TableHead>
+                    <TableHead>{t("mortuarium.settings.date")}</TableHead>
+                    <TableHead>{t("mortuarium.settings.reason")}</TableHead>
+                    <TableHead className="text-right">{t("mortuarium.settings.action")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

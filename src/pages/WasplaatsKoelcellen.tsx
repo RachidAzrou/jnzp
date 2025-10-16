@@ -35,12 +35,7 @@ const statusColors: Record<string, string> = {
   OUT_OF_SERVICE: "bg-gray-600 text-white border-0",
 };
 
-const statusLabels: Record<string, string> = {
-  FREE: "Vrij",
-  RESERVED: "Gereserveerd",
-  OCCUPIED: "Bezet",
-  OUT_OF_SERVICE: "Buiten Dienst",
-};
+// Status labels will be translated inline
 
 export default function WasplaatsKoelcellen() {
   const { t } = useTranslation();
@@ -69,8 +64,8 @@ export default function WasplaatsKoelcellen() {
     } catch (error) {
       console.error("Error fetching cool cells:", error);
       toast({
-        title: "Fout",
-        description: "Kon koelcellen niet laden",
+        title: t("common.error"),
+        description: t("mortuarium.errors.loadCellsError"),
         variant: "destructive",
       });
     } finally {
@@ -88,16 +83,16 @@ export default function WasplaatsKoelcellen() {
       if (error) throw error;
 
       toast({
-        title: "Succes",
-        description: "Status bijgewerkt",
+        title: t("common.success"),
+        description: t("mortuarium.coolCells.statusUpdated"),
       });
 
       fetchCoolCells();
     } catch (error) {
       console.error("Error updating cell status:", error);
       toast({
-        title: "Fout",
-        description: "Kon status niet bijwerken",
+        title: t("common.error"),
+        description: t("mortuarium.errors.updateStatusError"),
         variant: "destructive",
       });
     }
@@ -108,8 +103,8 @@ export default function WasplaatsKoelcellen() {
     
     if (count < 1 || count > 50) {
       toast({
-        title: "Fout",
-        description: "Aantal moet tussen 1 en 50 zijn",
+        title: t("common.error"),
+        description: t("mortuarium.coolCells.countError"),
         variant: "destructive",
       });
       return;
@@ -117,8 +112,8 @@ export default function WasplaatsKoelcellen() {
 
     if (!bulkPrefix.trim() && count > 1) {
       toast({
-        title: "Fout",
-        description: "Voer een prefix in voor bulk toevoegen",
+        title: t("common.error"),
+        description: t("mortuarium.coolCells.prefixRequired"),
         variant: "destructive",
       });
       return;
@@ -126,8 +121,8 @@ export default function WasplaatsKoelcellen() {
 
     if (count === 1 && !newCellLabel.trim() && !bulkPrefix.trim()) {
       toast({
-        title: "Fout",
-        description: "Voer een label in",
+        title: t("common.error"),
+        description: t("mortuarium.coolCells.labelRequired"),
         variant: "destructive",
       });
       return;
@@ -144,7 +139,7 @@ export default function WasplaatsKoelcellen() {
         .eq("role", "mortuarium")
         .single();
 
-      if (!userRole?.organization_id) throw new Error("Geen organisatie gevonden");
+      if (!userRole?.organization_id) throw new Error(t("mortuarium.errors.noOrganization"));
 
       const cellsToInsert = [];
       
@@ -171,8 +166,8 @@ export default function WasplaatsKoelcellen() {
       if (error) throw error;
 
       toast({
-        title: "Succes",
-        description: count === 1 ? "Koelcel toegevoegd" : `${count} koelcellen toegevoegd`,
+        title: t("common.success"),
+        description: count === 1 ? t("mortuarium.coolCells.cellAdded") : t("mortuarium.coolCells.cellsAdded", { count }),
       });
 
       setNewCellLabel("");
@@ -183,15 +178,15 @@ export default function WasplaatsKoelcellen() {
     } catch (error) {
       console.error("Error adding cool cell:", error);
       toast({
-        title: "Fout",
-        description: "Kon koelcel(len) niet toevoegen",
+        title: t("common.error"),
+        description: t("mortuarium.errors.addCellError"),
         variant: "destructive",
       });
     }
   };
 
   const deleteCoolCell = async (cellId: string) => {
-    if (!confirm("Weet u zeker dat u deze koelcel wilt verwijderen?")) return;
+    if (!confirm(t("mortuarium.coolCells.confirmDelete"))) return;
 
     try {
       const { error } = await supabase
@@ -202,23 +197,23 @@ export default function WasplaatsKoelcellen() {
       if (error) throw error;
 
       toast({
-        title: "Succes",
-        description: "Koelcel verwijderd",
+        title: t("common.success"),
+        description: t("mortuarium.coolCells.cellDeleted"),
       });
 
       fetchCoolCells();
     } catch (error) {
       console.error("Error deleting cool cell:", error);
       toast({
-        title: "Fout",
-        description: "Kon koelcel niet verwijderen",
+        title: t("common.error"),
+        description: t("mortuarium.errors.deleteCellError"),
         variant: "destructive",
       });
     }
   };
 
   if (loading) {
-    return <div className="p-6">Laden...</div>;
+    return <div className="p-6">{t("common.loading")}</div>;
   }
 
   return (
@@ -232,12 +227,12 @@ export default function WasplaatsKoelcellen() {
                   <Refrigerator className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Faciliteiten</p>
-                  <h1 className="text-2xl font-bold tracking-tight">Koelcellen Beheer</h1>
+                  <p className="text-sm text-muted-foreground font-medium">{t("mortuarium.coolCells.facilities")}</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t("mortuarium.coolCells.title")}</h1>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground pl-15">
-                Beheer koelcellen en hun status
+                {t("mortuarium.coolCells.subtitle")}
               </p>
             </div>
           </CardContent>
@@ -248,11 +243,11 @@ export default function WasplaatsKoelcellen() {
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="calendar" className="gap-2">
               <CalendarIcon className="h-4 w-4" />
-              Kalender Weergave
+              {t("mortuarium.coolCells.calendarView")}
             </TabsTrigger>
             <TabsTrigger value="list" className="gap-2">
               <Refrigerator className="h-4 w-4" />
-              Lijst Weergave
+              {t("mortuarium.coolCells.listView")}
             </TabsTrigger>
           </TabsList>
           
@@ -263,17 +258,17 @@ export default function WasplaatsKoelcellen() {
           <TabsContent value="list" className="mt-6">
             <Card className="border-0 shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-medium">Overzicht</CardTitle>
+                <CardTitle className="text-lg font-medium">{t("mortuarium.coolCells.overview")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left p-3 font-medium text-sm">Cel</th>
-                        <th className="text-left p-3 font-medium text-sm">Status</th>
-                        <th className="text-left p-3 font-medium text-sm">Notitie</th>
-                        <th className="text-left p-3 font-medium text-sm">Acties</th>
+                        <th className="text-left p-3 font-medium text-sm">{t("mortuarium.coolCells.cell")}</th>
+                        <th className="text-left p-3 font-medium text-sm">{t("mortuarium.coolCells.status")}</th>
+                        <th className="text-left p-3 font-medium text-sm">{t("mortuarium.coolCells.note")}</th>
+                        <th className="text-left p-3 font-medium text-sm">{t("mortuarium.coolCells.actions")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -282,7 +277,7 @@ export default function WasplaatsKoelcellen() {
                           <td className="p-3 font-medium text-sm">{cell.label}</td>
                           <td className="p-3">
                             <Badge className={statusColors[cell.status] || ""}>
-                              {statusLabels[cell.status] || cell.status}
+                              {t(`mortuarium.status.${cell.status.toLowerCase()}`)}
                             </Badge>
                           </td>
                           <td className="p-3 text-sm text-muted-foreground">
@@ -298,7 +293,7 @@ export default function WasplaatsKoelcellen() {
                                 className="gap-1"
                               >
                                 <CheckCircle2 className="h-4 w-4" />
-                                <span className="text-xs">Vrij</span>
+                                <span className="text-xs">{t("mortuarium.status.free")}</span>
                               </Button>
                               <Button
                                 size="sm"
@@ -308,7 +303,7 @@ export default function WasplaatsKoelcellen() {
                                 className="gap-1"
                               >
                                 <Unlock className="h-4 w-4" />
-                                <span className="text-xs">Bezet</span>
+                                <span className="text-xs">{t("mortuarium.status.occupied")}</span>
                               </Button>
                               <Button
                                 size="sm"
@@ -318,7 +313,7 @@ export default function WasplaatsKoelcellen() {
                                 className="gap-1"
                               >
                                 <XCircle className="h-4 w-4" />
-                                <span className="text-xs">Buiten Dienst</span>
+                                <span className="text-xs">{t("mortuarium.status.out_of_service")}</span>
                               </Button>
                               <Button
                                 size="sm"
@@ -327,7 +322,7 @@ export default function WasplaatsKoelcellen() {
                                 className="gap-1 text-destructive hover:text-destructive"
                               >
                                 <Trash2 className="h-4 w-4" />
-                                <span className="text-xs">Verwijder</span>
+                                <span className="text-xs">{t("common.delete")}</span>
                               </Button>
                             </div>
                           </td>

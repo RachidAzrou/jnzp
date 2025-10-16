@@ -115,7 +115,7 @@ export default function WasplaatsDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Totaal Cellen</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("wasplaats.dashboard.totalCells")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{capacityStats.total}</div>
@@ -123,7 +123,7 @@ export default function WasplaatsDashboard() {
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Vrij</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("wasplaats.dashboard.free")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-success">{capacityStats.free}</div>
@@ -131,7 +131,7 @@ export default function WasplaatsDashboard() {
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Gereserveerd</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("wasplaats.dashboard.reserved")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-warning">{capacityStats.reserved}</div>
@@ -139,7 +139,7 @@ export default function WasplaatsDashboard() {
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Bezet</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("wasplaats.dashboard.occupied")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">{capacityStats.occupied}</div>
@@ -147,7 +147,7 @@ export default function WasplaatsDashboard() {
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-medium">Buiten Dienst</CardTitle>
+            <CardTitle className="text-lg font-medium">{t("wasplaats.dashboard.outOfService")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-destructive">{capacityStats.outOfService}</div>
@@ -158,15 +158,15 @@ export default function WasplaatsDashboard() {
       <Tabs defaultValue="week" className="w-full">
         <div className="flex items-center justify-between mb-4">
           <TabsList>
-            <TabsTrigger value="week">Weekoverzicht</TabsTrigger>
-            <TabsTrigger value="day">Dag-detail</TabsTrigger>
+            <TabsTrigger value="week">{t("wasplaats.dashboard.weekOverview")}</TabsTrigger>
+            <TabsTrigger value="day">{t("wasplaats.dashboard.dayDetail")}</TabsTrigger>
           </TabsList>
         </div>
 
         <TabsContent value="week" className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">
-              Week van {format(currentWeek, "d MMMM yyyy", { locale: nl })}
+              {t("wasplaats.dashboard.weekOf")} {format(currentWeek, "d MMMM yyyy", { locale: nl })}
             </h2>
             <div className="flex gap-2">
               <Button
@@ -181,7 +181,7 @@ export default function WasplaatsDashboard() {
                 size="sm"
                 onClick={() => setCurrentWeek(new Date())}
               >
-                Vandaag
+                {t("wasplaats.dashboard.today")}
               </Button>
               <Button
                 variant="outline"
@@ -218,7 +218,7 @@ export default function WasplaatsDashboard() {
                 size="sm"
                 onClick={() => setSelectedDate(new Date())}
               >
-                Vandaag
+                {t("wasplaats.dashboard.today")}
               </Button>
               <Button
                 variant="outline"

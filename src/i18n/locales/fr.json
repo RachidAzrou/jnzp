@@ -2735,7 +2735,115 @@
       "creating": "Création...",
       "createDossier": "Créer le dossier",
       "dossierCreated": "Dossier ad-hoc créé avec succès",
-      "adHocIntakeEvent": "Admission ad-hoc de la morgue"
+      "adHocIntakeEvent": "Admission ad-hoc de la morgue",
+      "mortuaryIntake": "Admission mortuaire"
+    },
+    "coolCells": {
+      "facilities": "Installations",
+      "title": "Gestion des Chambres Froides",
+      "subtitle": "Gérer et surveiller les chambres froides",
+      "calendarView": "Vue Calendrier",
+      "listView": "Vue Liste",
+      "overview": "Aperçu",
+      "cell": "Cellule",
+      "status": "Statut",
+      "note": "Note",
+      "actions": "Actions",
+      "statusUpdated": "Statut mis à jour",
+      "countError": "Le nombre doit être entre 1 et 50",
+      "prefixRequired": "Le préfixe est requis pour plusieurs cellules",
+      "labelRequired": "L'étiquette est requise",
+      "cellAdded": "Chambre froide ajoutée",
+      "cellsAdded": "{{count}} chambres froides ajoutées",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette chambre froide?",
+      "cellDeleted": "Chambre froide supprimée"
+    },
+    "dashboard": {
+      "provideRejectionReason": "Fournir une raison pour le refus",
+      "reservationConfirmed": "Réservation confirmée",
+      "cellReleased": "Cellule froide libérée",
+      "releasedByMortuarium": "Libéré par la morgue",
+      "provideReason": "Veuillez fournir une raison d'annulation",
+      "reservationCancelled": "Réservation annulée"
+    },
+    "invoicing": {
+      "financial": "Financier",
+      "subtitle": "Gérer les factures du lieu de lavage",
+      "message": "Message (facultatif)",
+      "note": "Note (facultatif)",
+      "createInvoice": "Créer une nouvelle facture",
+      "createInvoiceDesc": "Rechercher un dossier ou un entrepreneur de pompes funèbres pour créer une facture",
+      "searchByDossier": "Rechercher par Dossier",
+      "searchByFD": "Rechercher par Entrepreneur",
+      "noFDAssigned": "Aucun EF assigné",
+      "noDossiersFound": "Aucun dossier trouvé",
+      "noFDsFound": "Aucun entrepreneur de pompes funèbres trouvé",
+      "startTyping": "Commencez à taper pour rechercher"
+    },
+    "status": {
+      "free": "Libre",
+      "reserved": "Réservé",
+      "occupied": "Occupé",
+      "out_of_service": "Hors Service",
+      "pending": "En attente",
+      "confirmed": "Confirmé"
+    },
+    "errors": {
+      "loadCellsError": "Impossible de charger les chambres froides",
+      "updateStatusError": "Impossible de mettre à jour le statut",
+      "addCellError": "Impossible d'ajouter la chambre froide",
+      "deleteCellError": "Impossible de supprimer la chambre froide",
+      "loadDashboard": "Impossible de charger le tableau de bord",
+      "noOrganization": "Aucune organisation trouvée"
+    },
+    "reservations": {
+      "bookings": "Réservations",
+      "title": "Réservations",
+      "subtitle": "Gérer les réservations de chambres froides"
+    },
+    "newFD": {
+      "title": "Créer un nouveau directeur de funérailles",
+      "description": "Créer un compte provisoire pour un nouveau directeur de funérailles",
+      "fdName": "Nom de l'entreprise funéraire",
+      "fdNamePlaceholder": "par ex. Services Funéraires Van den Berg",
+      "contactName": "Personne de contact",
+      "contactNamePlaceholder": "Prénom et nom",
+      "contactEmail": "Adresse e-mail",
+      "contactEmailPlaceholder": "contact@funeraire.fr",
+      "contactPhone": "Numéro de téléphone",
+      "contactPhonePlaceholder": "+32 xxx xx xx xx",
+      "cancel": "Annuler",
+      "create": "Créer",
+      "fdCreated": "Directeur de funérailles créé avec succès",
+      "createError": "Impossible de créer le directeur de funérailles"
     }
+  },
+  "wasplaats": {
+    "dashboard": {
+      "title": "Tableau de bord Lieu de Lavage",
+      "coolCells": "Chambres Froides",
+      "newReservation": "Nouvelle Réservation",
+      "totalCells": "Total de Cellules",
+      "free": "Libre",
+      "reserved": "Réservé",
+      "occupied": "Occupé",
+      "outOfService": "Hors Service",
+      "weekOverview": "Vue Semaine",
+      "dayDetail": "Détail du Jour",
+      "weekOf": "Semaine du",
+      "today": "Aujourd'hui"
+    },
+    "errorLoadCells": "Impossible de charger les chambres froides",
+    "cellUpdated": "Chambre froide mise à jour",
+    "cellUpdatedDesc": "La chambre froide {{label}} a été mise à jour",
+    "reservationConfirmed": "Réservation confirmée",
+    "reservationConfirmedDesc": "La réservation a été confirmée avec succès",
+    "reservationRejected": "Réservation rejetée",
+    "reservationRejectedDesc": "La réservation a été rejetée",
+    "rejectionReasonRequired": "La raison du rejet est requise",
+    "arrivalMarked": "Arrivée marquée",
+    "arrivalMarkedDesc": "L'arrivée a été enregistrée avec succès",
+    "departureMarked": "Départ marqué",
+    "departureMarkedDesc": "Le départ a été enregistré avec succès"
   }
 }

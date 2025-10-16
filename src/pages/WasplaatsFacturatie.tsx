@@ -52,13 +52,6 @@ const statusColors: Record<string, string> = {
   CANCELLED: "bg-red-600 text-white border-0",
 };
 
-const statusLabels: Record<string, string> = {
-  DRAFT: "Concept",
-  ISSUED: "Uitgegeven",
-  PAID: "Betaald",
-  NEEDS_INFO: "Info Nodig",
-  CANCELLED: "Geannuleerd",
-};
 
 export default function WasplaatsFacturatie() {
   const { t } = useTranslation();
@@ -79,7 +72,7 @@ export default function WasplaatsFacturatie() {
   const fetchInvoices = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Niet ingelogd");
+      if (!user) throw new Error(t("common.notAuthenticated"));
 
       const { data: userRole } = await supabase
         .from("user_roles")
@@ -88,7 +81,7 @@ export default function WasplaatsFacturatie() {
         .eq("role", "mortuarium")
         .single();
 
-      if (!userRole?.organization_id) throw new Error("Geen organisatie gevonden");
+      if (!userRole?.organization_id) throw new Error(t("mortuarium.errors.noOrganization"));
 
       const { data, error } = await supabase
         .from("invoices")
@@ -192,7 +185,7 @@ export default function WasplaatsFacturatie() {
   };
 
   if (loading) {
-    return <div className="p-6">Laden...</div>;
+    return <div className="p-6">{t("common.loading")}</div>;
   }
 
   return (
@@ -206,12 +199,12 @@ export default function WasplaatsFacturatie() {
                   <FileText className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Financieel</p>
-                  <h1 className="text-2xl font-bold tracking-tight">Facturatie</h1>
+                  <p className="text-sm text-muted-foreground font-medium">{t("mortuarium.invoicing.financial")}</p>
+                  <h1 className="text-2xl font-bold tracking-tight">{t("mortuarium.invoicing.title")}</h1>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground pl-15">
-                Beheer facturen voor wasplaatsdiensten
+                {t("mortuarium.invoicing.subtitle")}
               </p>
             </div>
           </CardContent>
@@ -222,7 +215,7 @@ export default function WasplaatsFacturatie() {
             <div className="flex justify-end">
               <Button onClick={() => setIsNewInvoiceDialogOpen(true)} size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Nieuwe Factuur
+                {t("mortuarium.invoicing.newInvoice")}
               </Button>
             </div>
           </CardContent>
@@ -231,16 +224,16 @@ export default function WasplaatsFacturatie() {
       <Dialog open={isNewInvoiceDialogOpen} onOpenChange={setIsNewInvoiceDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Nieuwe Factuur Aanmaken</DialogTitle>
+            <DialogTitle>{t("mortuarium.invoicing.createInvoice")}</DialogTitle>
             <DialogDescription>
-              Zoek een dossier of uitvaartonderneming om een factuur voor aan te maken
+              {t("mortuarium.invoicing.createInvoiceDesc")}
             </DialogDescription>
           </DialogHeader>
 
           <Tabs defaultValue="dossier" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="dossier">Zoek op Dossier</TabsTrigger>
-              <TabsTrigger value="fd">Zoek op Uitvaartonderneming</TabsTrigger>
+              <TabsTrigger value="dossier">{t("mortuarium.invoicing.searchByDossier")}</TabsTrigger>
+              <TabsTrigger value="fd">{t("mortuarium.invoicing.searchByFD")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dossier" className="space-y-4">
@@ -270,22 +263,22 @@ export default function WasplaatsFacturatie() {
                           <p className="font-medium">{dossier.display_id || dossier.ref_number}</p>
                           <p className="text-sm text-muted-foreground">{dossier.deceased_name}</p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {dossier.fd_organization?.name || 'Geen FD toegewezen'}
+                            {dossier.fd_organization?.name || t("mortuarium.invoicing.noFDAssigned")}
                           </p>
                         </div>
                         <Button size="sm" variant="outline">
-                          Selecteer
+                          {t("common.select")}
                         </Button>
                       </div>
                     </Card>
                   ))
                 ) : dossierSearchTerm ? (
                   <p className="text-center text-muted-foreground py-8">
-                    Geen dossiers gevonden
+                    {t("mortuarium.invoicing.noDossiersFound")}
                   </p>
                 ) : (
                   <p className="text-center text-muted-foreground py-8">
-                    Begin met typen om te zoeken
+                    {t("mortuarium.invoicing.startTyping")}
                   </p>
                 )}
               </div>
@@ -324,18 +317,18 @@ export default function WasplaatsFacturatie() {
                           )}
                         </div>
                         <Button size="sm" variant="outline">
-                          Selecteer
+                          {t("common.select")}
                         </Button>
                       </div>
                     </Card>
                   ))
                 ) : fdSearchTerm ? (
                   <p className="text-center text-muted-foreground py-8">
-                    Geen uitvaartondernemingen gevonden
+                    {t("mortuarium.invoicing.noFDsFound")}
                   </p>
                 ) : (
                   <p className="text-center text-muted-foreground py-8">
-                    Begin met typen om te zoeken
+                    {t("mortuarium.invoicing.startTyping")}
                   </p>
                 )}
               </div>
@@ -346,7 +339,7 @@ export default function WasplaatsFacturatie() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Facturen</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("mortuarium.invoicing.invoices")}</CardTitle>
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -363,20 +356,20 @@ export default function WasplaatsFacturatie() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="font-medium text-sm">Nummer</TableHead>
-                <TableHead className="font-medium text-sm">Dossier</TableHead>
-                <TableHead className="font-medium text-sm">Uitvaartondernemer</TableHead>
-                <TableHead className="font-medium text-sm">Datum</TableHead>
-                <TableHead className="text-right font-medium text-sm">Bedrag</TableHead>
-                <TableHead className="font-medium text-sm">Status</TableHead>
-                <TableHead className="text-right font-medium text-sm">Acties</TableHead>
+                <TableHead className="font-medium text-sm">{t("mortuarium.invoicing.number")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("mortuarium.invoicing.dossier")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("mortuarium.invoicing.fdOrganization")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("mortuarium.invoicing.date")}</TableHead>
+                <TableHead className="text-right font-medium text-sm">{t("mortuarium.invoicing.amount")}</TableHead>
+                <TableHead className="font-medium text-sm">{t("mortuarium.invoicing.status")}</TableHead>
+                <TableHead className="text-right font-medium text-sm">{t("mortuarium.invoicing.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredInvoices.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-muted-foreground py-8 text-sm">
-                    Geen facturen gevonden
+                    {t("mortuarium.invoicing.noInvoices")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -396,8 +389,8 @@ export default function WasplaatsFacturatie() {
                       €{invoice.total.toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      <Badge className={`text-xs ${statusColors[invoice.status] || ""}`}>
-                        {statusLabels[invoice.status] || invoice.status}
+                    <Badge className={`text-xs ${statusColors[invoice.status] || ""}`}>
+                        {t(`mortuarium.invoicing.status.${invoice.status.toLowerCase()}`)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -407,7 +400,7 @@ export default function WasplaatsFacturatie() {
                         onClick={() => navigate(`/wasplaats/facturatie/${invoice.id}`)}
                       >
                         <FileText className="h-4 w-4 mr-1" />
-                        Open
+                        {t("common.open")}
                       </Button>
                     </TableCell>
                   </TableRow>

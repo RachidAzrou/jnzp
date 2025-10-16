@@ -106,7 +106,7 @@ export function ReservationActionsDialog({
     setIsSubmitting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
+      if (!user) throw new Error(t("common.notAuthenticated"));
 
       const { error } = await supabase.rpc('mark_cool_cell_arrival', {
         p_reservation_id: reservationId,
@@ -137,7 +137,7 @@ export function ReservationActionsDialog({
     setIsSubmitting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
+      if (!user) throw new Error(t("common.notAuthenticated"));
 
       const { error } = await supabase.rpc('mark_cool_cell_departure', {
         p_reservation_id: reservationId,

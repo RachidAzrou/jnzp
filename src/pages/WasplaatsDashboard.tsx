@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { format, addWeeks, subWeeks, addDays, subDays } from "date-fns";
-import { nl } from "date-fns/locale";
+import { nl, enGB, fr } from "date-fns/locale";
 import { WasplaatsWeekView } from "@/components/WasplaatsWeekView";
 import { WasplaatsDayView } from "@/components/WasplaatsDayView";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -167,7 +167,7 @@ export default function WasplaatsDashboard() {
         <TabsContent value="week" className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">
-              {t("wasplaats.dashboard.weekOf")} {format(currentWeek, "d MMMM yyyy", { locale: nl })}
+              {t("wasplaats.dashboard.weekOf")} {format(currentWeek, "d MMMM yyyy", { locale: i18n.language === 'fr' ? fr : i18n.language === 'en' ? enGB : nl })}
             </h2>
             <div className="flex gap-2">
               <Button
@@ -204,7 +204,7 @@ export default function WasplaatsDashboard() {
         <TabsContent value="day" className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">
-              {format(selectedDate, "EEEE d MMMM yyyy", { locale: nl })}
+              {format(selectedDate, "EEEE d MMMM yyyy", { locale: i18n.language === 'fr' ? fr : i18n.language === 'en' ? enGB : nl })}
             </h2>
             <div className="flex gap-2">
               <Button

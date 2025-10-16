@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Calendar, Plus, CheckCircle2, XCircle, Unlock, AlertTriangle, Refrigerator } from "lucide-react";
 import { MortuariumCalendarView } from "@/components/wasplaats/MortuariumCalendarView";
 import { format, isToday, parseISO } from "date-fns";
-import { nl } from "date-fns/locale";
+import { nl, enGB, fr } from "date-fns/locale";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -166,7 +166,7 @@ export default function MortuariumDashboard() {
         error
       } = await supabase.from("cool_cell_reservations").update({
         status: "CANCELLED",
-        note: "Vrijgegeven door mortuarium"
+        note: t("mortuarium.dashboard.releasedByMortuarium")
       }).eq("id", reservationId);
       if (error) throw error;
       toast({
@@ -197,7 +197,7 @@ export default function MortuariumDashboard() {
         error
       } = await supabase.from("cool_cell_reservations").update({
         status: "CANCELLED",
-        note: `Geannuleerd: ${cancelReason}`
+        note: `${t("mortuarium.dashboard.cancelled")}: ${cancelReason}`
       }).eq("id", selectedReservationId);
       if (error) throw error;
       toast({
@@ -230,6 +230,14 @@ export default function MortuariumDashboard() {
       </div>
     </div>;
   }
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'fr': return fr;
+      case 'en': return enGB;
+      default: return nl;
+    }
+  };
+
   const getCurrentDate = () => {
     const locale = i18n.language || 'nl';
     const localeMap: { [key: string]: string } = {
@@ -337,14 +345,14 @@ export default function MortuariumDashboard() {
                       <TableCell className="font-medium">
                         <div>
                           <div>{format(parseISO(request.start_at), "EEE d MMM yyyy", {
-                        locale: nl
+                        locale: getDateLocale()
                       })}</div>
                           <div className="text-sm text-muted-foreground">
                             {format(parseISO(request.start_at), "HH:mm", {
-                        locale: nl
+                        locale: getDateLocale()
                       })} -{" "}
                             {format(parseISO(request.end_at), "HH:mm", {
-                        locale: nl
+                        locale: getDateLocale()
                       })}
                           </div>
                         </div>

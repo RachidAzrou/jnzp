@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { format, addDays, startOfWeek, startOfDay, endOfDay, isSameDay } from "date-fns";
 import { nl } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Calendar, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Search, Refrigerator } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CoolCellReservationSheet } from "../CoolCellReservationSheet";
 
@@ -37,11 +37,11 @@ type Reservation = {
 type ViewMode = "day" | "week";
 
 const statusColors: Record<string, string> = {
-  FREE: "bg-green-100 dark:bg-green-950/30 border-green-300 dark:border-green-800",
-  PENDING: "bg-orange-100 dark:bg-orange-950/30 border-orange-300 dark:border-orange-800 cursor-pointer hover:bg-orange-200",
-  CONFIRMED: "bg-red-100 dark:bg-red-950/30 border-red-300 dark:border-red-800 cursor-pointer hover:bg-red-200",
-  OCCUPIED: "bg-red-200 dark:bg-red-950/50 border-red-400 dark:border-red-700 cursor-pointer hover:bg-red-300",
-  OUT_OF_SERVICE: "bg-gray-200 dark:bg-gray-800 border-gray-400 dark:border-gray-600",
+  FREE: "bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/20 dark:to-green-900/10 border-green-200 dark:border-green-800/50 hover:shadow-md transition-all duration-300",
+  PENDING: "bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-orange-200 dark:border-orange-800/50 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300",
+  CONFIRMED: "bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/20 dark:to-red-900/10 border-red-200 dark:border-red-800/50 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300",
+  OCCUPIED: "bg-gradient-to-br from-red-100 to-red-200/50 dark:from-red-950/40 dark:to-red-900/20 border-red-300 dark:border-red-700/50 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300",
+  OUT_OF_SERVICE: "bg-gradient-to-br from-gray-100 to-gray-200/50 dark:from-gray-800 dark:to-gray-700/50 border-gray-300 dark:border-gray-600 opacity-75",
 };
 
 const statusLabels: Record<string, string> = {
@@ -197,34 +197,42 @@ export function MortuariumCalendarView() {
 
   const renderDayView = () => {
     return (
-      <div className="overflow-auto">
+      <div className="overflow-auto rounded-lg border border-border/50">
         <table className="w-full border-collapse">
           <thead>
-            <tr>
-              <th className="border border-border p-3 bg-muted/50 font-medium text-sm text-left min-w-[80px] sticky left-0 z-10 rounded-tl-lg">
-                Tijd
+            <tr className="bg-gradient-to-r from-muted/80 to-muted/40">
+              <th className="border-r border-border/50 p-4 font-semibold text-sm text-left min-w-[100px] sticky left-0 z-10 bg-muted/90 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  Tijd
+                </div>
               </th>
               {filteredCells.map((cell, index) => (
                 <th
                   key={cell.id}
                   className={cn(
-                    "border border-border p-3 bg-muted/50 font-medium text-sm text-center min-w-[200px]",
-                    index === filteredCells.length - 1 && "rounded-tr-lg"
+                    "border-r border-border/50 p-4 font-semibold text-sm text-center min-w-[200px] bg-muted/50 backdrop-blur-sm",
+                    index === filteredCells.length - 1 && "border-r-0"
                   )}
                 >
-                  {cell.label}
+                  <div className="flex items-center justify-center gap-2">
+                    <Refrigerator className="h-4 w-4 text-primary" />
+                    {cell.label}
+                  </div>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {HOURS.map((hour, hourIndex) => (
-              <tr key={hour} className="hover:bg-muted/30 transition-colors">
+              <tr key={hour} className="group hover:bg-muted/20 transition-colors duration-200">
                 <td className={cn(
-                  "border border-border p-3 font-medium text-sm bg-muted/30 sticky left-0 z-10",
-                  hourIndex === HOURS.length - 1 && "rounded-bl-lg"
+                  "border-r border-b border-border/50 p-4 font-medium text-sm bg-muted/30 sticky left-0 z-10 group-hover:bg-muted/50 transition-colors duration-200"
                 )}>
-                  {String(hour).padStart(2, "0")}:00
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-1 bg-primary/20 rounded-full group-hover:bg-primary/40 transition-colors duration-200"></div>
+                    <span className="text-muted-foreground">{String(hour).padStart(2, "0")}:00</span>
+                  </div>
                 </td>
                 {filteredCells.map((cell, cellIndex) => {
                   const reservation = getReservationForCellAndTime(cell.id, currentDate, hour);
@@ -235,9 +243,9 @@ export function MortuariumCalendarView() {
                     <td
                       key={cell.id}
                       className={cn(
-                        "border border-border p-2 transition-all min-h-[60px]",
+                        "border-r border-b border-border/50 p-3 min-h-[80px] align-top",
                         statusColors[status],
-                        cellIndex === filteredCells.length - 1 && hourIndex === HOURS.length - 1 && "rounded-br-lg"
+                        cellIndex === filteredCells.length - 1 && "border-r-0"
                       )}
                       onClick={() => {
                         if (reservation && isVisible) {
@@ -247,24 +255,26 @@ export function MortuariumCalendarView() {
                       }}
                     >
                       {reservation && isVisible && (
-                        <div className="flex flex-col gap-1">
-                          <Badge className="text-xs bg-primary text-primary-foreground border-0 shadow-sm">
+                        <div className="flex flex-col gap-2 animate-fade-in">
+                          <Badge className="text-xs font-semibold bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg w-fit">
                             {statusLabels[reservation.status]}
                           </Badge>
-                          <div className="text-xs font-medium">
-                            {reservation.organization?.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground truncate">
-                            {reservation.dossier?.deceased_name || "Onbekend"}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {format(new Date(reservation.start_at), "HH:mm")} -{" "}
-                            {format(new Date(reservation.end_at), "HH:mm")}
+                          <div className="space-y-1">
+                            <div className="text-sm font-semibold text-foreground">
+                              {reservation.organization?.name}
+                            </div>
+                            <div className="text-xs text-muted-foreground truncate font-medium">
+                              {reservation.dossier?.deceased_name || "Onbekend"}
+                            </div>
+                            <div className="text-xs text-muted-foreground font-mono bg-background/50 px-2 py-1 rounded w-fit">
+                              {format(new Date(reservation.start_at), "HH:mm")} -{" "}
+                              {format(new Date(reservation.end_at), "HH:mm")}
+                            </div>
                           </div>
                         </div>
                       )}
                       {cell.status === "OUT_OF_SERVICE" && !reservation && (
-                        <Badge className="text-xs bg-gray-600 text-white border-0">
+                        <Badge className="text-xs bg-gradient-to-r from-gray-600 to-gray-700 text-white border-0 shadow-md">
                           Buiten dienst
                         </Badge>
                       )}
@@ -284,26 +294,29 @@ export function MortuariumCalendarView() {
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(startDate, i));
 
     return (
-      <div className="overflow-auto">
+      <div className="overflow-auto rounded-lg border border-border/50">
         <table className="w-full border-collapse">
           <thead>
-            <tr>
-              <th className="border border-border p-3 bg-muted/50 font-medium text-sm text-left min-w-[100px] sticky left-0 z-10 rounded-tl-lg">
-                Koelcel
+            <tr className="bg-gradient-to-r from-muted/80 to-muted/40">
+              <th className="border-r border-border/50 p-4 font-semibold text-sm text-left min-w-[120px] sticky left-0 z-10 bg-muted/90 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <Refrigerator className="h-4 w-4 text-muted-foreground" />
+                  Koelcel
+                </div>
               </th>
               {weekDays.map((day, index) => (
                 <th
                   key={day.toISOString()}
                   className={cn(
-                    "border border-border p-3 bg-muted/50 font-medium text-center min-w-[150px]",
-                    index === weekDays.length - 1 && "rounded-tr-lg"
+                    "border-r border-border/50 p-4 font-semibold text-center min-w-[160px] bg-muted/50 backdrop-blur-sm",
+                    index === weekDays.length - 1 && "border-r-0"
                   )}
                 >
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm font-semibold">
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-sm font-bold text-foreground">
                       {format(day, "EEEE", { locale: nl })}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground font-medium">
                       {format(day, "d MMM", { locale: nl })}
                     </span>
                   </div>
@@ -313,12 +326,14 @@ export function MortuariumCalendarView() {
           </thead>
           <tbody>
             {filteredCells.map((cell, cellIndex) => (
-              <tr key={cell.id} className="hover:bg-muted/30 transition-colors">
+              <tr key={cell.id} className="group hover:bg-muted/20 transition-colors duration-200">
                 <td className={cn(
-                  "border border-border p-3 font-medium text-sm bg-muted/30 sticky left-0 z-10",
-                  cellIndex === filteredCells.length - 1 && "rounded-bl-lg"
+                  "border-r border-b border-border/50 p-4 font-semibold text-sm bg-muted/30 sticky left-0 z-10 group-hover:bg-muted/50 transition-colors duration-200"
                 )}>
-                  {cell.label}
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-1 bg-primary/20 rounded-full group-hover:bg-primary/40 transition-colors duration-200"></div>
+                    {cell.label}
+                  </div>
                 </td>
                 {weekDays.map((day, dayIndex) => {
                   const dayReservations = filteredReservations.filter((r) =>
@@ -332,9 +347,9 @@ export function MortuariumCalendarView() {
                     <td
                       key={day.toISOString()}
                       className={cn(
-                        "border border-border p-2 transition-all align-top",
+                        "border-r border-b border-border/50 p-3 align-top min-h-[100px]",
                         statusColors[status],
-                        cellIndex === filteredCells.length - 1 && dayIndex === weekDays.length - 1 && "rounded-br-lg"
+                        dayIndex === weekDays.length - 1 && "border-r-0"
                       )}
                       onClick={() => {
                         if (reservation) {
@@ -344,23 +359,25 @@ export function MortuariumCalendarView() {
                       }}
                     >
                       {reservation ? (
-                        <div className="flex flex-col gap-1">
-                          <Badge className="text-xs bg-primary text-primary-foreground border-0 shadow-sm w-fit">
+                        <div className="flex flex-col gap-2 animate-fade-in">
+                          <Badge className="text-xs font-semibold bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-0 shadow-lg w-fit">
                             {statusLabels[reservation.status]}
                           </Badge>
-                          <div className="text-xs font-medium truncate">
-                            {reservation.organization?.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground truncate">
-                            {reservation.dossier?.deceased_name || "Onbekend"}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {format(new Date(reservation.start_at), "HH:mm")} -{" "}
-                            {format(new Date(reservation.end_at), "HH:mm")}
+                          <div className="space-y-1">
+                            <div className="text-sm font-semibold text-foreground truncate">
+                              {reservation.organization?.name}
+                            </div>
+                            <div className="text-xs text-muted-foreground truncate font-medium">
+                              {reservation.dossier?.deceased_name || "Onbekend"}
+                            </div>
+                            <div className="text-xs text-muted-foreground font-mono bg-background/50 px-2 py-1 rounded w-fit">
+                              {format(new Date(reservation.start_at), "HH:mm")} -{" "}
+                              {format(new Date(reservation.end_at), "HH:mm")}
+                            </div>
                           </div>
                         </div>
                       ) : cell.status === "OUT_OF_SERVICE" ? (
-                        <Badge className="text-xs bg-gray-600 text-white border-0">
+                        <Badge className="text-xs bg-gradient-to-r from-gray-600 to-gray-700 text-white border-0 shadow-md">
                           Buiten dienst
                         </Badge>
                       ) : null}
@@ -377,21 +394,24 @@ export function MortuariumCalendarView() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-4">
+      <Card className="border-0 shadow-xl bg-gradient-to-br from-card via-card to-muted/20">
+        <CardHeader className="pb-4 border-b border-border/50">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <CardTitle className="text-lg font-medium flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-muted-foreground" />
-              Kalenderweergave
+            <CardTitle className="text-xl font-bold flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-primary" />
+              </div>
+              <span>Kalenderweergave</span>
             </CardTitle>
 
             <div className="flex flex-wrap items-center gap-3">
               {/* View Mode Toggle */}
-              <div className="flex gap-1 bg-muted p-1 rounded-lg">
+              <div className="flex gap-1 bg-muted/50 p-1 rounded-lg border border-border/50 shadow-sm">
                 <Button
                   size="sm"
                   variant={viewMode === "day" ? "default" : "ghost"}
                   onClick={() => setViewMode("day")}
+                  className="font-medium transition-all duration-200"
                 >
                   Dag
                 </Button>
@@ -399,26 +419,27 @@ export function MortuariumCalendarView() {
                   size="sm"
                   variant={viewMode === "week" ? "default" : "ghost"}
                   onClick={() => setViewMode("week")}
+                  className="font-medium transition-all duration-200"
                 >
                   Week
                 </Button>
               </div>
 
               {/* Date Navigation */}
-              <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" onClick={() => navigateDate("prev")}>
+              <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg border border-border/50 shadow-sm">
+                <Button size="sm" variant="ghost" onClick={() => navigateDate("prev")} className="hover:bg-background">
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <span className="text-sm font-medium min-w-[200px] text-center">
+                <span className="text-sm font-semibold min-w-[220px] text-center px-2">
                   {viewMode === "day"
                     ? format(currentDate, "d MMMM yyyy", { locale: nl })
                     : `Week ${format(startOfWeek(currentDate, { weekStartsOn: 1 }), "d MMM", { locale: nl })} - ${format(addDays(startOfWeek(currentDate, { weekStartsOn: 1 }), 6), "d MMM yyyy", { locale: nl })}`
                   }
                 </span>
-                <Button size="sm" variant="outline" onClick={() => navigateDate("next")}>
+                <Button size="sm" variant="ghost" onClick={() => navigateDate("next")} className="hover:bg-background">
                   <ChevronRight className="h-4 w-4" />
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setCurrentDate(new Date())}>
+                <Button size="sm" variant="outline" onClick={() => setCurrentDate(new Date())} className="ml-2 font-medium">
                   Vandaag
                 </Button>
               </div>
@@ -434,16 +455,16 @@ export function MortuariumCalendarView() {
                   placeholder="Zoek op naam of dossiernummer..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
+                  className="pl-9 bg-background/50 border-border/50 focus:bg-background transition-colors"
                 />
               </div>
             </div>
 
             <Select value={selectedCellFilter} onValueChange={setSelectedCellFilter}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[200px] bg-background/50 border-border/50">
                 <SelectValue placeholder="Alle koelcellen" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background border-border">
                 <SelectItem value="all">Alle koelcellen</SelectItem>
                 {coolCells.map((cell) => (
                   <SelectItem key={cell.id} value={cell.id}>
@@ -454,10 +475,10 @@ export function MortuariumCalendarView() {
             </Select>
 
             <Select value={selectedFDFilter} onValueChange={setSelectedFDFilter}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-[220px] bg-background/50 border-border/50">
                 <SelectValue placeholder="Alle uitvaartverzorgers" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background border-border">
                 <SelectItem value="all">Alle uitvaartverzorgers</SelectItem>
                 {fdOrganizations.map((org) => (
                   <SelectItem key={org.id} value={org.name}>
@@ -470,11 +491,11 @@ export function MortuariumCalendarView() {
         </CardHeader>
       </Card>
 
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-xl overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center p-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
             </div>
           ) : (
             viewMode === "day" ? renderDayView() : renderWeekView()
@@ -483,28 +504,28 @@ export function MortuariumCalendarView() {
       </Card>
 
       {/* Legend */}
-      <Card className="border-0 shadow-sm">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-4 text-sm">
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-card to-muted/20">
+        <CardContent className="p-5">
+          <div className="flex flex-wrap gap-6 text-sm">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-green-100 dark:bg-green-950/30 border border-green-300 dark:border-green-800"></div>
-              <span>Beschikbaar</span>
+              <div className="w-5 h-5 rounded-md bg-gradient-to-br from-green-50 to-green-100/50 border-2 border-green-200 shadow-sm"></div>
+              <span className="font-medium">Beschikbaar</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-orange-100 dark:bg-orange-950/30 border border-orange-300 dark:border-orange-800"></div>
-              <span>In afwachting</span>
+              <div className="w-5 h-5 rounded-md bg-gradient-to-br from-orange-50 to-orange-100/50 border-2 border-orange-200 shadow-sm"></div>
+              <span className="font-medium">In afwachting</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-800"></div>
-              <span>Gereserveerd</span>
+              <div className="w-5 h-5 rounded-md bg-gradient-to-br from-red-50 to-red-100/50 border-2 border-red-200 shadow-sm"></div>
+              <span className="font-medium">Gereserveerd</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-red-200 dark:bg-red-950/50 border border-red-400 dark:border-red-700"></div>
-              <span>Bezet</span>
+              <div className="w-5 h-5 rounded-md bg-gradient-to-br from-red-100 to-red-200/50 border-2 border-red-300 shadow-sm"></div>
+              <span className="font-medium">Bezet</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-gray-200 dark:bg-gray-800 border border-gray-400 dark:border-gray-600"></div>
-              <span>Buiten dienst</span>
+              <div className="w-5 h-5 rounded-md bg-gradient-to-br from-gray-100 to-gray-200/50 border-2 border-gray-300 shadow-sm"></div>
+              <span className="font-medium">Buiten dienst</span>
             </div>
           </div>
         </CardContent>

@@ -2314,5 +2314,37 @@
     "adminNoFdAvailable": "Aucun directeur de funérailles disponible pour le dossier {{dossier_ref}}",
     "adminInsuranceRejected": "L'assureur {{insurer_name}} a refusé la police pour {{deceased_name}}",
     "adminMortuariumRejected": "{{mortuarium_name}} n'a pas pu confirmer la réservation pour {{deceased_name}}"
+  },
+  "feedback": {
+    "requestFeedback": "Demander un retour",
+    "requestFeedbackTitle": "Créer un lien de retour",
+    "requestFeedbackDesc": "Créer un lien pour demander un retour à la famille",
+    "generatedLink": "Lien généré",
+    "chooseMethod": "Choisissez comment partager le lien de retour",
+    "createLinkOnly": "Créer le lien",
+    "linkCreated": "Lien créé",
+    "linkCreatedDesc": "Le lien de retour a été créé avec succès",
+    "linkCopied": "Lien copié",
+    "linkCopiedDesc": "Le lien a été copié dans votre presse-papiers",
+    "createError": "Erreur lors de la création",
+    "loading": "Chargement..."
+  },
+  "checkEmail": {
+    "title": "Vérifiez votre email",
+    "description": "Nous avons envoyé un lien de vérification à votre adresse email. Cliquez sur le lien pour activer votre compte.",
+    "spamNotice": "Vérifiez également votre dossier spam/courrier indésirable si vous ne voyez pas l'email.",
+    "backToLogin": "Retour à la connexion"
+  },
+  "notFound": {
+    "title": "404 - Page non trouvée",
+    "message": "La page que vous recherchez n'existe pas.",
+    "returnHome": "Retour à l'accueil"
+  },
+  "circularProgress": {
+    "complete": "Complété"
+  },
+  "mortuariumAdHoc": {
+    "adHocTag": "Admission ad-hoc",
+    "backToDashboard": "Retour au tableau de bord"
   }
 }

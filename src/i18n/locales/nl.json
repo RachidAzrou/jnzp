@@ -1088,5 +1088,37 @@
     "adminNoFdAvailable": "Er is geen FD beschikbaar voor dossier {{dossier_ref}}",
     "adminInsuranceRejected": "Verzekeraar {{insurer_name}} weigerde de polis voor {{deceased_name}}",
     "adminMortuariumRejected": "{{mortuarium_name}} kon reservatie niet bevestigen voor {{deceased_name}}"
+  },
+  "feedback": {
+    "requestFeedback": "Feedback vragen",
+    "requestFeedbackTitle": "Feedback link aanmaken",
+    "requestFeedbackDesc": "Maak een link om feedback te vragen aan de familie",
+    "generatedLink": "Gegenereerde link",
+    "chooseMethod": "Kies hoe u de feedback link wilt delen",
+    "createLinkOnly": "Link aanmaken",
+    "linkCreated": "Link aangemaakt",
+    "linkCreatedDesc": "De feedback link is succesvol aangemaakt",
+    "linkCopied": "Link gekopieerd",
+    "linkCopiedDesc": "De link is gekopieerd naar uw klembord",
+    "createError": "Fout bij aanmaken",
+    "loading": "Laden..."
+  },
+  "checkEmail": {
+    "title": "Controleer uw e-mail",
+    "description": "We hebben een verificatielink naar uw e-mailadres gestuurd. Klik op de link om uw account te activeren.",
+    "spamNotice": "Controleer ook uw spam/ongewenste e-mail map als u de e-mail niet ziet.",
+    "backToLogin": "Terug naar inloggen"
+  },
+  "notFound": {
+    "title": "404 - Pagina niet gevonden",
+    "message": "De pagina die u zoekt bestaat niet.",
+    "returnHome": "Terug naar home"
+  },
+  "circularProgress": {
+    "complete": "Compleet"
+  },
+  "mortuariumAdHoc": {
+    "adHocTag": "Ad-hoc Intake",
+    "backToDashboard": "Terug naar dashboard"
   }
 }

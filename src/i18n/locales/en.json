@@ -1823,5 +1823,37 @@
     "profileUpdatedDesc": "Your profile has been successfully updated",
     "organizationUpdated": "Organization Updated",
     "organizationUpdatedDesc": "Your organization information has been successfully updated"
+  },
+  "feedback": {
+    "requestFeedback": "Request Feedback",
+    "requestFeedbackTitle": "Create feedback link",
+    "requestFeedbackDesc": "Create a link to request feedback from the family",
+    "generatedLink": "Generated link",
+    "chooseMethod": "Choose how to share the feedback link",
+    "createLinkOnly": "Create link",
+    "linkCreated": "Link created",
+    "linkCreatedDesc": "The feedback link has been successfully created",
+    "linkCopied": "Link copied",
+    "linkCopiedDesc": "The link has been copied to your clipboard",
+    "createError": "Error creating",
+    "loading": "Loading..."
+  },
+  "checkEmail": {
+    "title": "Check your email",
+    "description": "We've sent a verification link to your email address. Click on the link to activate your account.",
+    "spamNotice": "Also check your spam/junk folder if you don't see the email.",
+    "backToLogin": "Back to login"
+  },
+  "notFound": {
+    "title": "404 - Page not found",
+    "message": "The page you're looking for doesn't exist.",
+    "returnHome": "Return home"
+  },
+  "circularProgress": {
+    "complete": "Complete"
+  },
+  "mortuariumAdHoc": {
+    "adHocTag": "Ad-hoc Intake",
+    "backToDashboard": "Back to dashboard"
   }
 }

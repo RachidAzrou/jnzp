@@ -1212,7 +1212,7 @@
       "removeClosedDayTitle": "Sluitingsdag verwijderen?",
       "removeClosedDayDesc": "Weet je zeker dat je deze sluitingsdag wilt verwijderen? Reserveringen op deze dag worden weer mogelijk.",
       "closed": "Gesloten"
-    },
+    }
   },
   "wasplaats": {
     "statusFree": "Vrij",

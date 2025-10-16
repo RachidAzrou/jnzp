@@ -1126,6 +1126,7 @@
     "backToDashboard": "Terug naar dashboard"
   },
   "mortuarium": {
+    "label": "Mortuarium",
     "adHoc": {
       "title": "Ad-hoc Intake",
       "description": "Registreer een overledene die rechtstreeks bij het mortuarium is aangekomen"
@@ -1212,6 +1213,18 @@
       "removeClosedDayTitle": "Sluitingsdag verwijderen?",
       "removeClosedDayDesc": "Weet je zeker dat je deze sluitingsdag wilt verwijderen? Reserveringen op deze dag worden weer mogelijk.",
       "closed": "Gesloten"
+    },
+    "calendar": {
+      "title": "Koelcellen Agenda",
+      "time": "Tijd",
+      "coolCell": "Koelcel",
+      "day": "Dag",
+      "week": "Week",
+      "today": "Vandaag",
+      "weekOf": "Week van",
+      "searchPlaceholder": "Zoek op dossier of naam...",
+      "allCells": "Alle koelcellen",
+      "allFDs": "Alle uitvaartondernemingen"
     }
   },
   "wasplaats": {
@@ -1418,10 +1431,7 @@
       "rejectedService": "Moskee weigerde janāza-gebed voor",
       "updatedAvailability": "Moskee wekelijkse beschikbaarheid bijgewerkt",
       "blockedDay": "Moskee dag geblokkeerd"
-    }
-  },
-  "mortuarium": {
-    "label": "Mortuarium",
+    },
     "calendar": {
       "title": "Koelcellen Agenda",
       "time": "Tijd",

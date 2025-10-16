@@ -31,17 +31,4 @@ i18n
     },
   });
 
-// Debug: log when language changes
-i18n.on('languageChanged', (lng) => {
-  console.log('[i18n] Language changed to:', lng);
-  console.log('[i18n] Has mortuarium keys:', !!i18n.t('mortuarium.team.title', { returnObjects: false, defaultValue: 'MISSING' }));
-  console.log('[i18n] Test translation mortuarium.team.title:', i18n.t('mortuarium.team.title'));
-  console.log('[i18n] Test translation mortuarium.adHocWizard.basicInfo:', i18n.t('mortuarium.adHocWizard.basicInfo'));
-});
-
-// Log initial state
-console.log('[i18n] Initial language:', i18n.language);
-console.log('[i18n] Available languages:', Object.keys(resources));
-console.log('[i18n] Test mortuarium.team.title:', i18n.t('mortuarium.team.title'));
-
 export default i18n;

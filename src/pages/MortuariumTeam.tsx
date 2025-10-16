@@ -83,7 +83,7 @@ export default function MortuariumTeam() {
     },
     onError: (error: Error) => {
       toast({
-        title: "Fout bij uitnodigen",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -111,7 +111,7 @@ export default function MortuariumTeam() {
     },
     onError: (error: Error) => {
       toast({
-        title: "Fout bij verwijderen",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -158,7 +158,7 @@ export default function MortuariumTeam() {
             className="space-y-4"
           >
             <div className="space-y-2">
-              <Label htmlFor="email">E-mailadres</Label>
+              <Label htmlFor="email">{t("common.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -229,7 +229,7 @@ export default function MortuariumTeam() {
                       )}
                     </TableCell>
                     <TableCell>
-                      {new Date(member.created_at).toLocaleDateString("nl-NL")}
+                      {new Date(member.created_at).toLocaleDateString(t("common.locale"))}
                     </TableCell>
                     <TableCell className="text-right">
                       <AlertDialog>

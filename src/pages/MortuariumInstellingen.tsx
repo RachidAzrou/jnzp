@@ -11,11 +11,11 @@ import { Calendar } from "@/components/ui/calendar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { CalendarOff, Plus, Trash2, Building2 } from "lucide-react";
-import { nl } from "date-fns/locale";
+import { nl, enGB, fr } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 
 export default function MortuariumInstellingen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date>();
@@ -108,7 +108,7 @@ export default function MortuariumInstellingen() {
         .insert({
           facility_org_id: userOrg.organization_id,
           date: selectedDate.toISOString().split("T")[0],
-          reason: blockReason || "Gesloten",
+          reason: blockReason || t("mortuarium.settings.closed"),
           created_by_user_id: user.id,
         });
 
@@ -159,6 +159,8 @@ export default function MortuariumInstellingen() {
   });
 
   const blockedDates = dayBlocks?.map((b: any) => new Date(b.date)) || [];
+
+  const dateLocale = i18n.language === 'en' ? enGB : i18n.language === 'fr' ? fr : nl;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
@@ -255,7 +257,7 @@ export default function MortuariumInstellingen() {
               mode="single"
               selected={selectedDate}
               onSelect={setSelectedDate}
-              locale={nl}
+              locale={dateLocale}
               className="rounded-md border pointer-events-auto"
               disabled={(date) =>
                 blockedDates.some(
@@ -312,7 +314,7 @@ export default function MortuariumInstellingen() {
                   {dayBlocks.map((block: any) => (
                     <TableRow key={block.id}>
                       <TableCell className="font-medium">
-                        {new Date(block.date).toLocaleDateString("nl-NL", {
+                        {new Date(block.date).toLocaleDateString(t("common.locale"), {
                           weekday: "short",
                           day: "numeric",
                           month: "long",
@@ -330,20 +332,18 @@ export default function MortuariumInstellingen() {
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>
-                                Sluitingsdag verwijderen?
+                                {t("mortuarium.settings.removeClosedDayTitle")}
                               </AlertDialogTitle>
                               <AlertDialogDescription>
-                                Weet je zeker dat je deze sluitingsdag wilt
-                                verwijderen? Reserveringen op deze dag worden weer
-                                mogelijk.
+                                {t("mortuarium.settings.removeClosedDayDesc")}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                              <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => removeBlockMutation.mutate(block.id)}
                               >
-                                Verwijderen
+                                {t("common.delete")}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

@@ -314,12 +314,15 @@ export default function MortuariumInstellingen() {
                   {dayBlocks.map((block: any) => (
                     <TableRow key={block.id}>
                       <TableCell className="font-medium">
-                        {new Date(block.date).toLocaleDateString(t("common.locale"), {
-                          weekday: "short",
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
+                        {new Date(block.date).toLocaleDateString(
+                          i18n.language === 'en' ? 'en-GB' : i18n.language === 'fr' ? 'fr-FR' : 'nl-NL',
+                          {
+                            weekday: "short",
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          }
+                        )}
                       </TableCell>
                       <TableCell>{block.reason}</TableCell>
                       <TableCell className="text-right">

@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, XCircle, CheckCircle2, Unlock, Refrigerator } from "lucide-react";
+import { Plus, Trash2, XCircle, CheckCircle2, Unlock, Refrigerator, Calendar as CalendarIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CoolCellCalendarView } from "@/components/wasplaats/CoolCellCalendarView";
 
 type CoolCell = {
   id: string;
@@ -265,83 +267,103 @@ export default function WasplaatsKoelcellen() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-medium">Overzicht</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-3 font-medium text-sm">Cel</th>
-                  <th className="text-left p-3 font-medium text-sm">Status</th>
-                  <th className="text-left p-3 font-medium text-sm">Notitie</th>
-                  <th className="text-left p-3 font-medium text-sm">Acties</th>
-                </tr>
-              </thead>
-              <tbody>
-                {coolCells.map((cell) => (
-                  <tr key={cell.id} className="border-b hover:bg-muted/30">
-                    <td className="p-3 font-medium text-sm">{cell.label}</td>
-                    <td className="p-3">
-                      <Badge className={statusColors[cell.status] || ""}>
-                        {statusLabels[cell.status] || cell.status}
-                      </Badge>
-                    </td>
-                    <td className="p-3 text-sm text-muted-foreground">
-                      {cell.out_of_service_note || "—"}
-                    </td>
-                    <td className="p-3">
-                      <div className="flex gap-2 flex-wrap">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => updateCellStatus(cell.id, "FREE")}
-                          disabled={cell.status === "FREE"}
-                          className="gap-1"
-                        >
-                          <CheckCircle2 className="h-4 w-4" />
-                          <span className="text-xs">Vrij</span>
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => updateCellStatus(cell.id, "OCCUPIED")}
-                          disabled={cell.status === "OCCUPIED"}
-                          className="gap-1"
-                        >
-                          <Unlock className="h-4 w-4" />
-                          <span className="text-xs">Bezet</span>
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => updateCellStatus(cell.id, "OUT_OF_SERVICE")}
-                          disabled={cell.status === "OUT_OF_SERVICE"}
-                          className="gap-1"
-                        >
-                          <XCircle className="h-4 w-4" />
-                          <span className="text-xs">Buiten Dienst</span>
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => deleteCoolCell(cell.id)}
-                          className="gap-1 text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          <span className="text-xs">Verwijder</span>
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-        </Card>
+
+        <Tabs defaultValue="calendar" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="calendar" className="gap-2">
+              <CalendarIcon className="h-4 w-4" />
+              Kalender Weergave
+            </TabsTrigger>
+            <TabsTrigger value="list" className="gap-2">
+              <Refrigerator className="h-4 w-4" />
+              Lijst Weergave
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="calendar" className="mt-6">
+            <CoolCellCalendarView />
+          </TabsContent>
+          
+          <TabsContent value="list" className="mt-6">
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-medium">Overzicht</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left p-3 font-medium text-sm">Cel</th>
+                        <th className="text-left p-3 font-medium text-sm">Status</th>
+                        <th className="text-left p-3 font-medium text-sm">Notitie</th>
+                        <th className="text-left p-3 font-medium text-sm">Acties</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {coolCells.map((cell) => (
+                        <tr key={cell.id} className="border-b hover:bg-muted/30">
+                          <td className="p-3 font-medium text-sm">{cell.label}</td>
+                          <td className="p-3">
+                            <Badge className={statusColors[cell.status] || ""}>
+                              {statusLabels[cell.status] || cell.status}
+                            </Badge>
+                          </td>
+                          <td className="p-3 text-sm text-muted-foreground">
+                            {cell.out_of_service_note || "—"}
+                          </td>
+                          <td className="p-3">
+                            <div className="flex gap-2 flex-wrap">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateCellStatus(cell.id, "FREE")}
+                                disabled={cell.status === "FREE"}
+                                className="gap-1"
+                              >
+                                <CheckCircle2 className="h-4 w-4" />
+                                <span className="text-xs">Vrij</span>
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateCellStatus(cell.id, "OCCUPIED")}
+                                disabled={cell.status === "OCCUPIED"}
+                                className="gap-1"
+                              >
+                                <Unlock className="h-4 w-4" />
+                                <span className="text-xs">Bezet</span>
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateCellStatus(cell.id, "OUT_OF_SERVICE")}
+                                disabled={cell.status === "OUT_OF_SERVICE"}
+                                className="gap-1"
+                              >
+                                <XCircle className="h-4 w-4" />
+                                <span className="text-xs">Buiten Dienst</span>
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => deleteCoolCell(cell.id)}
+                                className="gap-1 text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                <span className="text-xs">Verwijder</span>
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

@@ -210,6 +210,7 @@
     "rememberMe": "Se souvenir de moi",
     "loginButton": "Se connecter",
     "signIn": "Se connecter",
+    "notAuthenticated": "Non authentifié",
     "noAccount": "Pas encore de compte?",
     "alreadyHaveAccount": "Vous avez déjà un compte?",
     "loginHere": "Connectez-vous ici",
@@ -2385,7 +2386,8 @@
       "provisionalAlert": "Attention: Ce directeur de funérailles est enregistré provisoirement et n'est pas encore entièrement vérifié",
       "creating": "Création...",
       "createDossier": "Créer le dossier",
-      "dossierCreated": "Dossier ad-hoc créé avec succès"
+      "dossierCreated": "Dossier ad-hoc créé avec succès",
+      "mortuaryIntake": "Admission mortuaire ad-hoc"
     }
   },
   "mosque": {

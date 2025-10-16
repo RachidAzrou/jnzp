@@ -130,7 +130,7 @@ export default function WasplaatsKoelcellen() {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Niet ingelogd");
+      if (!user) throw new Error(t("common.notAuthenticated"));
 
       const { data: userRole } = await supabase
         .from("user_roles")

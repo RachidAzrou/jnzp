@@ -14,7 +14,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from "date-fns";
-import { nl } from "date-fns/locale";
+import { nl, enGB, fr } from "date-fns/locale";
 import { CalendarIcon, Loader2, CheckCircle, ArrowLeft, ArrowRight, UserPlus, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -27,7 +27,15 @@ interface CoolCell {
 }
 
 export function AdHocDossierWizard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'fr': return fr;
+      case 'en': return enGB;
+      default: return nl;
+    }
+  };
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -135,7 +143,7 @@ export function AdHocDossierWizard() {
       await supabase.from("dossier_events").insert({
         dossier_id: dossier.id,
         event_type: "MORTUARY_INTAKE",
-        event_description: "Ad-hoc ontvangst mortuarium",
+        event_description: t("mortuarium.adHocWizard.mortuaryIntake"),
         created_by: user.id,
         metadata: {
           note: note.trim() || null,
@@ -294,7 +302,7 @@ export function AdHocDossierWizard() {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {receivedAt ? format(receivedAt, "PPP HH:mm", { locale: nl }) : t("mortuarium.adHocWizard.selectDate")}
+                    {receivedAt ? format(receivedAt, "PPP HH:mm", { locale: getDateLocale() }) : t("mortuarium.adHocWizard.selectDate")}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -302,7 +310,7 @@ export function AdHocDossierWizard() {
                     mode="single"
                     selected={receivedAt}
                     onSelect={(date) => date && setReceivedAt(date)}
-                    locale={nl}
+                    locale={getDateLocale()}
                   />
                   <div className="p-3 border-t">
                     <Input
@@ -396,7 +404,7 @@ export function AdHocDossierWizard() {
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full justify-start">
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {format(startAt, "PPP HH:mm", { locale: nl })}
+                          {format(startAt, "PPP HH:mm", { locale: getDateLocale() })}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -404,7 +412,7 @@ export function AdHocDossierWizard() {
                           mode="single"
                           selected={startAt}
                           onSelect={(date) => date && setStartAt(date)}
-                          locale={nl}
+                          locale={getDateLocale()}
                         />
                         <div className="p-3 border-t">
                           <Input
@@ -428,7 +436,7 @@ export function AdHocDossierWizard() {
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full justify-start">
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {format(endAt, "PPP HH:mm", { locale: nl })}
+                          {format(endAt, "PPP HH:mm", { locale: getDateLocale() })}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -436,7 +444,7 @@ export function AdHocDossierWizard() {
                           mode="single"
                           selected={endAt}
                           onSelect={(date) => date && setEndAt(date)}
-                          locale={nl}
+                          locale={getDateLocale()}
                         />
                         <div className="p-3 border-t">
                           <Input

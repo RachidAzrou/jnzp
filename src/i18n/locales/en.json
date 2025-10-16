@@ -230,6 +230,7 @@
     "noAccount": "Don't have an account yet?",
     "hasAccount": "Already have an account?",
     "signIn": "Sign in",
+    "notAuthenticated": "Not authenticated",
     "signUp": "Create account",
     "search": "Search...",
     "continueWithGoogle": "Continue with Google",
@@ -1894,7 +1895,8 @@
       "provisionalAlert": "Note: This funeral director is provisionally registered and not yet fully verified",
       "creating": "Creating...",
       "createDossier": "Create dossier",
-      "dossierCreated": "Ad-hoc dossier successfully created"
+      "dossierCreated": "Ad-hoc dossier successfully created",
+      "mortuaryIntake": "Ad-hoc mortuary intake"
     }
   },
   "mosque": {

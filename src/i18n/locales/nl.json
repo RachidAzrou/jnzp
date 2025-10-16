@@ -97,7 +97,8 @@
     "teamManagement": "Teambeheer",
     "adHocIntake": "Ad-hoc Intake",
     "invoicing": "Facturatie",
-    "logout": "Uitloggen"
+    "logout": "Uitloggen",
+    "notAuthenticated": "Niet ingelogd"
   },
   "rolePortals": {
     "funeral_director": "Uitvaartondernemer Portaal",
@@ -1130,6 +1131,10 @@
       "description": "Registreer een overledene die rechtstreeks bij het mortuarium is aangekomen"
     },
     "adHocWizard": {
+      "title": "Ad-hoc Intake",
+      "description": "Registreer een overledene die rechtstreeks bij het mortuarium is aangekomen"
+    },
+    "adHocWizard": {
       "basicInfo": "Basis informatie",
       "coolCell": "Koelcel",
       "fdAssignment": "FD Toewijzing",
@@ -1162,7 +1167,8 @@
       "provisionalAlert": "Let op: Deze uitvaartondernemer is voorlopig geregistreerd en nog niet volledig geverifieerd",
       "creating": "Aanmaken...",
       "createDossier": "Dossier aanmaken",
-      "dossierCreated": "Ad-hoc dossier succesvol aangemaakt"
+      "dossierCreated": "Ad-hoc dossier succesvol aangemaakt",
+      "mortuaryIntake": "Ad-hoc ontvangst mortuarium"
     }
   },
   "wasplaats": {

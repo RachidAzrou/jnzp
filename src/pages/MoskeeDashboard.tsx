@@ -39,9 +39,10 @@ const statusColors: Record<string, string> = {
 // Moved to translation keys - prayers remain same (proper names)
 
 export default function MoskeeDashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [userName, setUserName] = useState<string>("");
   const [services, setServices] = useState<MosqueService[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -51,7 +52,27 @@ export default function MoskeeDashboard() {
 
   useEffect(() => {
     fetchServices();
+    fetchUserName();
   }, []);
+
+  const fetchUserName = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("first_name, last_name")
+          .eq("id", user.id)
+          .single();
+        
+        if (profile) {
+          setUserName(`${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user.email || '');
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user name:", error);
+    }
+  };
 
   const fetchServices = async () => {
     try {
@@ -228,11 +249,23 @@ export default function MoskeeDashboard() {
     });
 
   if (loading) {
-    return <div className="p-6">{t("common.loading")}</div>;
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center gap-3">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+      </div>
+    </div>;
   }
 
   const getCurrentDate = () => {
-    return new Date().toLocaleDateString('nl-NL', {
+    const locale = i18n.language || 'nl';
+    const localeMap: { [key: string]: string } = {
+      'nl': 'nl-NL',
+      'fr': 'fr-FR',
+      'en': 'en-GB'
+    };
+    
+    return new Date().toLocaleDateString(localeMap[locale] || 'nl-NL', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -249,7 +282,7 @@ export default function MoskeeDashboard() {
             <div className="flex-1">
               <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
-                {t("mosque.dashboard.title")}
+                {t("dashboard.welcomeBack")}, {userName}
               </h1>
             </div>
             <Button onClick={() => navigate("/moskee/beschikbaarheid")} variant="outline" size="sm" className="h-9">

@@ -33,7 +33,7 @@ type DayBlock = {
 };
 
 export default function WasplaatsDashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [coolCells, setCoolCells] = useState<CoolCell[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -81,12 +81,13 @@ export default function WasplaatsDashboard() {
   }
 
   const getCurrentDate = () => {
-    return new Date().toLocaleDateString('nl-NL', {
+    const now = new Date();
+    return new Intl.DateTimeFormat(i18n.language, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
-    });
+    }).format(now);
   };
 
   return (

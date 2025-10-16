@@ -49,11 +49,12 @@ type PendingRequest = {
   } | null;
 };
 export default function MortuariumDashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const {
     toast
   } = useToast();
+  const [userName, setUserName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [coolCells, setCoolCells] = useState<CoolCell[]>([]);
   const [todayReservations, setTodayReservations] = useState<Reservation[]>([]);
@@ -62,7 +63,28 @@ export default function MortuariumDashboard() {
   const [selectedReservationId, setSelectedReservationId] = useState<string>("");
   useEffect(() => {
     fetchData();
+    fetchUserName();
   }, []);
+
+  const fetchUserName = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("first_name, last_name")
+          .eq("id", user.id)
+          .single();
+        
+        if (profile) {
+          setUserName(`${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user.email || '');
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user name:", error);
+    }
+  };
+
   const fetchData = async () => {
     try {
       const {
@@ -201,23 +223,38 @@ export default function MortuariumDashboard() {
     outOfService: coolCells.filter(c => c.status === "OUT_OF_SERVICE").length
   };
   if (loading) {
-    return <div className="p-6">{t("common.loading")}</div>;
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center gap-3">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+      </div>
+    </div>;
   }
   const getCurrentDate = () => {
-    return new Date().toLocaleDateString('nl-NL', {
+    const locale = i18n.language || 'nl';
+    const localeMap: { [key: string]: string } = {
+      'nl': 'nl-NL',
+      'fr': 'fr-FR',
+      'en': 'en-GB'
+    };
+    
+    return new Date().toLocaleDateString(localeMap[locale] || 'nl-NL', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
   };
+
   return <div className="space-y-6 pb-8">
       {/* Professional Header */}
       <Card className="border-none shadow-sm bg-gradient-to-r from-card to-muted/30 animate-fade-in">
         <CardContent className="p-6">
           <div className="flex-1">
             <p className="text-xs sm:text-sm text-muted-foreground">{getCurrentDate()}</p>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{t("mortuarium.dashboard.title")}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+              {t("dashboard.welcomeBack")}, {userName}
+            </h1>
           </div>
         </CardContent>
       </Card>

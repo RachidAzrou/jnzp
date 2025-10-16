@@ -37,11 +37,11 @@ type Reservation = {
 type ViewMode = "day" | "week";
 
 const statusColors: Record<string, string> = {
-  FREE: "bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/20 dark:to-green-900/10 border-green-200 dark:border-green-800/50 hover:shadow-md transition-all duration-300",
-  PENDING: "bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 border-orange-200 dark:border-orange-800/50 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300",
-  CONFIRMED: "bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/20 dark:to-red-900/10 border-red-200 dark:border-red-800/50 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300",
-  OCCUPIED: "bg-gradient-to-br from-red-100 to-red-200/50 dark:from-red-950/40 dark:to-red-900/20 border-red-300 dark:border-red-700/50 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300",
-  OUT_OF_SERVICE: "bg-gradient-to-br from-gray-100 to-gray-200/50 dark:from-gray-800 dark:to-gray-700/50 border-gray-300 dark:border-gray-600 opacity-75",
+  FREE: "bg-gradient-to-br from-success/5 to-success/10 border-success/20 hover:shadow-md transition-all duration-300",
+  PENDING: "bg-gradient-to-br from-warning/5 to-warning/15 border-warning/30 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300",
+  CONFIRMED: "bg-gradient-to-br from-info/5 to-info/15 border-info/30 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300",
+  OCCUPIED: "bg-gradient-to-br from-primary/10 to-primary/20 border-primary/30 cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300",
+  OUT_OF_SERVICE: "bg-gradient-to-br from-muted to-muted/50 border-border opacity-75",
 };
 
 const statusLabels: Record<string, string> = {

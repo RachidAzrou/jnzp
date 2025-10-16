@@ -246,38 +246,41 @@ export default function MortuariumDashboard() {
             <div className="text-2xl font-bold">{capacityStats.total}</div>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-sm transition-shadow">
+        <Card className="hover:shadow-sm transition-shadow border-success/20">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-success"></div>
               Vrij
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-success">
               {capacityStats.free}
             </div>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-sm transition-shadow">
+        <Card className="hover:shadow-sm transition-shadow border-destructive/20">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-destructive"></div>
               Bezet
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-destructive">
               {capacityStats.occupied}
             </div>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-sm transition-shadow">
+        <Card className="hover:shadow-sm transition-shadow border-muted">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-muted-foreground"></div>
               Buiten Dienst
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-600">
+            <div className="text-2xl font-bold text-muted-foreground">
               {capacityStats.outOfService}
             </div>
           </CardContent>
@@ -285,10 +288,10 @@ export default function MortuariumDashboard() {
       </div>
 
       {/* Pending Requests */}
-      {pendingRequests.length > 0 && <Card className="animate-fade-in">
+      {pendingRequests.length > 0 && <Card className="animate-fade-in border-warning/30 bg-gradient-to-r from-card to-warning/5">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-yellow-600" />
+              <AlertTriangle className="h-5 w-5 text-warning" />
               Inkomende Aanvragen ({pendingRequests.length})
             </CardTitle>
           </CardHeader>

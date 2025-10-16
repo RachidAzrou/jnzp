@@ -1356,6 +1356,19 @@
       "tokenRenewed": "Token vernieuwd",
       "tokenCreated": "Token aangemaakt",
       "copiedToClipboard": "Gekopieerd naar klembord"
+    },
+    "errors": {
+      "noOrganization": "Geen moskee organisatie gevonden",
+      "loadFailed": "Kon beschikbaarheid niet laden",
+      "saveFailed": "Kon beschikbaarheid niet opslaan",
+      "blockFailed": "Kon dag niet blokkeren",
+      "unblockFailed": "Kon blokkade niet verwijderen"
+    },
+    "audit": {
+      "confirmedService": "Moskee bevestigde janāza-gebed voor",
+      "rejectedService": "Moskee weigerde janāza-gebed voor",
+      "updatedAvailability": "Moskee wekelijkse beschikbaarheid bijgewerkt",
+      "blockedDay": "Moskee dag geblokkeerd"
     }
   }
 }

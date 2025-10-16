@@ -2035,6 +2035,19 @@
       "tokenRenewed": "Token renewed",
       "tokenCreated": "Token created",
       "copiedToClipboard": "Copied to clipboard"
+    },
+    "errors": {
+      "noOrganization": "No mosque organization found",
+      "loadFailed": "Could not load availability",
+      "saveFailed": "Could not save availability",
+      "blockFailed": "Could not block day",
+      "unblockFailed": "Could not remove block"
+    },
+    "audit": {
+      "confirmedService": "Mosque confirmed janazah prayer for",
+      "rejectedService": "Mosque rejected janazah prayer for",
+      "updatedAvailability": "Mosque weekly availability updated",
+      "blockedDay": "Mosque day blocked"
     }
   }
 }

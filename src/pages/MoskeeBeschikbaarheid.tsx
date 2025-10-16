@@ -66,7 +66,7 @@ export default function MoskeeBeschikbaarheid() {
         .maybeSingle();
 
       if (!roleData?.organization_id) {
-        throw new Error("Geen moskee organisatie gevonden");
+        throw new Error(t("mosque.errors.noOrganization"));
       }
 
       // Fetch weekly availability
@@ -146,7 +146,7 @@ export default function MoskeeBeschikbaarheid() {
         .maybeSingle();
 
       if (!roleData?.organization_id) {
-        throw new Error("Geen moskee organisatie gevonden");
+        throw new Error(t("mosque.errors.noOrganization"));
       }
 
       const updates = Object.values(availability).map((day) => ({
@@ -170,7 +170,7 @@ export default function MoskeeBeschikbaarheid() {
       await supabase.from("audit_events").insert({
         event_type: "mosque.availability.update",
         user_id: sessionData.session.user.id,
-        description: "Moskee wekelijkse beschikbaarheid bijgewerkt",
+        description: t("mosque.audit.updatedAvailability"),
         metadata: {
           updates: updates.length,
           days: updates.map(u => u.day_of_week),
@@ -215,7 +215,7 @@ export default function MoskeeBeschikbaarheid() {
         .maybeSingle();
 
       if (!roleData?.organization_id) {
-        throw new Error("Geen moskee organisatie gevonden");
+        throw new Error(t("mosque.errors.noOrganization"));
       }
 
       const { error } = await supabase.from("mosque_day_blocks").insert({
@@ -231,7 +231,7 @@ export default function MoskeeBeschikbaarheid() {
       await supabase.from("audit_events").insert({
         event_type: "mosque.dayclosure.create",
         user_id: sessionData.session.user.id,
-        description: `Moskee dag geblokkeerd: ${format(new Date(blockDate), "d MMMM", { locale: nl })}`,
+        description: `${t("mosque.audit.blockedDay")}: ${format(new Date(blockDate), "d MMMM", { locale: nl })}`,
         metadata: {
           date: blockDate,
           reason: blockReason.trim(),

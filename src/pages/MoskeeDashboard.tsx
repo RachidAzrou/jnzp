@@ -101,7 +101,7 @@ export default function MoskeeDashboard() {
           event_type: "mosque.confirm",
           user_id: session.user.id,
           dossier_id: service.dossier_id,
-          description: `Moskee bevestigde janāza-gebed voor ${service.dossiers.deceased_name}`,
+          description: `${t("mosque.audit.confirmedService")} ${service.dossiers.deceased_name}`,
           metadata: {
             case_event_id: serviceId,
             scheduled_at: service.requested_date,
@@ -156,7 +156,7 @@ export default function MoskeeDashboard() {
           event_type: "mosque.decline",
           user_id: session.user.id,
           dossier_id: service.dossier_id,
-          description: `Moskee weigerde janāza-gebed voor ${service.dossiers.deceased_name}`,
+          description: `${t("mosque.audit.rejectedService")} ${service.dossiers.deceased_name}`,
           metadata: {
             case_event_id: selectedService,
             scheduled_at: service.requested_date,

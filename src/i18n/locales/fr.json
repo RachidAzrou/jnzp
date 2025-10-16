@@ -2526,6 +2526,19 @@
       "tokenRenewed": "Jeton renouvelé",
       "tokenCreated": "Jeton créé",
       "copiedToClipboard": "Copié dans le presse-papiers"
+    },
+    "errors": {
+      "noOrganization": "Aucune organisation de mosquée trouvée",
+      "loadFailed": "Impossible de charger la disponibilité",
+      "saveFailed": "Impossible d'enregistrer la disponibilité",
+      "blockFailed": "Impossible de bloquer le jour",
+      "unblockFailed": "Impossible de supprimer le blocage"
+    },
+    "audit": {
+      "confirmedService": "La mosquée a confirmé la prière janazah pour",
+      "rejectedService": "La mosquée a refusé la prière janazah pour",
+      "updatedAvailability": "Disponibilité hebdomadaire de la mosquée mise à jour",
+      "blockedDay": "Jour de mosquée bloqué"
     }
   }
 }

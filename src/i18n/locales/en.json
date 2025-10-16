@@ -2052,6 +2052,18 @@
   },
   "mortuarium": {
     "label": "Mortuary",
+    "calendar": {
+      "title": "Cool Cell Calendar",
+      "time": "Time",
+      "coolCell": "Cool Cell",
+      "day": "Day",
+      "week": "Week",
+      "today": "Today",
+      "weekOf": "Week of",
+      "searchPlaceholder": "Search by dossier or name...",
+      "allCells": "All cool cells",
+      "allFDs": "All funeral directors"
+    },
     "dashboard": {
       "title": "Mortuary Dashboard",
       "totalCells": "Total Cells",

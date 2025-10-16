@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { format, addDays, startOfWeek, startOfDay, endOfDay, isSameDay } from "date-fns";
-import { nl } from "date-fns/locale";
+import { nl, enGB, fr } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, Calendar, Search, Refrigerator } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CoolCellReservationSheet } from "../CoolCellReservationSheet";
@@ -49,7 +49,15 @@ const statusColors: Record<string, string> = {
 const HOURS = Array.from({ length: 18 }, (_, i) => i + 6); // 06:00 - 23:00
 
 export function MortuariumCalendarView() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'fr': return fr;
+      case 'en': return enGB;
+      default: return nl;
+    }
+  };
   const { toast } = useToast();
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
@@ -308,10 +316,10 @@ export function MortuariumCalendarView() {
                 >
                   <div className="flex flex-col gap-1.5">
                     <span className="text-sm font-bold text-foreground">
-                      {format(day, "EEEE", { locale: nl })}
+                      {format(day, "EEEE", { locale: getDateLocale() })}
                     </span>
                     <span className="text-xs text-muted-foreground font-medium">
-                      {format(day, "d MMM", { locale: nl })}
+                      {format(day, "d MMM", { locale: getDateLocale() })}
                     </span>
                   </div>
                 </th>
@@ -426,8 +434,8 @@ export function MortuariumCalendarView() {
                 </Button>
                 <span className="text-sm font-semibold min-w-[220px] text-center px-2">
                   {viewMode === "day"
-                    ? format(currentDate, "d MMMM yyyy", { locale: nl })
-                    : `Week ${format(startOfWeek(currentDate, { weekStartsOn: 1 }), "d MMM", { locale: nl })} - ${format(addDays(startOfWeek(currentDate, { weekStartsOn: 1 }), 6), "d MMM yyyy", { locale: nl })}`
+                    ? format(currentDate, "d MMMM yyyy", { locale: getDateLocale() })
+                    : `${t("mortuarium.calendar.week")} ${format(startOfWeek(currentDate, { weekStartsOn: 1 }), "d MMM", { locale: getDateLocale() })} - ${format(addDays(startOfWeek(currentDate, { weekStartsOn: 1 }), 6), "d MMM yyyy", { locale: getDateLocale() })}`
                   }
                 </span>
                 <Button size="sm" variant="ghost" onClick={() => navigateDate("next")} className="hover:bg-background">

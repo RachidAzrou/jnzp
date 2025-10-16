@@ -1373,6 +1373,18 @@
   },
   "mortuarium": {
     "label": "Mortuarium",
+    "calendar": {
+      "title": "Koelcellen Agenda",
+      "time": "Tijd",
+      "coolCell": "Koelcel",
+      "day": "Dag",
+      "week": "Week",
+      "today": "Vandaag",
+      "weekOf": "Week van",
+      "searchPlaceholder": "Zoek op dossier of naam...",
+      "allCells": "Alle koelcellen",
+      "allFDs": "Alle uitvaartondernemingen"
+    },
     "dashboard": {
       "title": "Mortuarium Dashboard",
       "totalCells": "Totaal Cellen",

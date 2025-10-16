@@ -2543,6 +2543,18 @@
   },
   "mortuarium": {
     "label": "Mortuaire",
+    "calendar": {
+      "title": "Calendrier des chambres froides",
+      "time": "Heure",
+      "coolCell": "Chambre froide",
+      "day": "Jour",
+      "week": "Semaine",
+      "today": "Aujourd'hui",
+      "weekOf": "Semaine du",
+      "searchPlaceholder": "Rechercher par dossier ou nom...",
+      "allCells": "Toutes les chambres froides",
+      "allFDs": "Toutes les entreprises funéraires"
+    },
     "dashboard": {
       "title": "Tableau de bord Mortuaire",
       "totalCells": "Total de Cellules",

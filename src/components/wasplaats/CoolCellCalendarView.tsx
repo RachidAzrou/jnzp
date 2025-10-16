@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
-import { nl } from "date-fns/locale";
+import { nl, enGB, fr } from "date-fns/locale";
 import { format, startOfDay, endOfDay } from "date-fns";
 import { Refrigerator, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -37,15 +37,16 @@ const statusColors: Record<string, string> = {
   OUT_OF_SERVICE: "bg-gray-600 text-white border-0",
 };
 
-const statusLabels: Record<string, string> = {
-  FREE: "Vrij",
-  RESERVED: "Gereserveerd",
-  OCCUPIED: "Bezet",
-  OUT_OF_SERVICE: "Buiten Dienst",
-};
-
 export function CoolCellCalendarView() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'fr': return fr;
+      case 'en': return enGB;
+      default: return nl;
+    }
+  };
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [coolCells, setCoolCells] = useState<CoolCell[]>([]);
@@ -99,7 +100,7 @@ export function CoolCellCalendarView() {
       console.error("Error fetching cool cells:", error);
       toast({
         title: t("toasts.errors.loadError"),
-        description: "Kon koelcellen niet laden",
+        description: t("mortuarium.coolCells.loadError"),
         variant: "destructive",
       });
     } finally {
@@ -131,12 +132,12 @@ export function CoolCellCalendarView() {
 
   const getCellAvailability = (cellId: string) => {
     const cell = coolCells.find(c => c.id === cellId);
-    if (!cell) return { available: false, reason: "Onbekend" };
+    if (!cell) return { available: false, reason: t("common.unknown") };
 
     if (cell.status === "OUT_OF_SERVICE") {
       return { 
         available: false, 
-        reason: cell.out_of_service_note || "Buiten dienst"
+        reason: cell.out_of_service_note || t("mortuarium.status.out_of_service")
       };
     }
 
@@ -144,12 +145,12 @@ export function CoolCellCalendarView() {
     if (reservation) {
       return {
         available: false,
-        reason: `Gereserveerd - ${reservation.dossier?.deceased_name || "Onbekend"}`,
+        reason: `${t("mortuarium.coolCells.reserved")} - ${reservation.dossier?.deceased_name || t("common.unknown")}`,
         reservation
       };
     }
 
-    return { available: true, reason: "Beschikbaar" };
+    return { available: true, reason: t("mortuarium.coolCells.available") };
   };
 
   const availableCells = coolCells.filter(cell => {
@@ -169,7 +170,7 @@ export function CoolCellCalendarView() {
         <CardHeader className="pb-4">
           <CardTitle className="text-lg font-medium flex items-center gap-2">
             <Refrigerator className="h-5 w-5 text-muted-foreground" />
-            Selecteer Datum
+            {t("mortuarium.coolCells.selectDate")}
           </CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center">
@@ -177,7 +178,7 @@ export function CoolCellCalendarView() {
             mode="single"
             selected={selectedDate}
             onSelect={(date) => date && setSelectedDate(date)}
-            locale={nl}
+            locale={getDateLocale()}
             className={cn("rounded-md border pointer-events-auto")}
           />
         </CardContent>
@@ -188,19 +189,19 @@ export function CoolCellCalendarView() {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-medium">
-              Beschikbaarheid - {format(selectedDate, "d MMMM yyyy", { locale: nl })}
+              {t("mortuarium.coolCells.availability")} - {format(selectedDate, "d MMMM yyyy", { locale: getDateLocale() })}
             </CardTitle>
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
                 <span className="text-muted-foreground">
-                  {availableCells.length} beschikbaar
+                  {availableCells.length} {t("mortuarium.coolCells.available")}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <XCircle className="h-4 w-4 text-red-600" />
                 <span className="text-muted-foreground">
-                  {unavailableCells.length} bezet
+                  {unavailableCells.length} {t("mortuarium.coolCells.occupied")}
                 </span>
               </div>
             </div>
@@ -213,7 +214,7 @@ export function CoolCellCalendarView() {
             </div>
           ) : coolCells.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">Geen koelcellen gevonden</p>
+              <p className="text-muted-foreground">{t("mortuarium.coolCells.noCellsFound")}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -222,7 +223,7 @@ export function CoolCellCalendarView() {
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-green-600 flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4" />
-                    Beschikbaar
+                    {t("mortuarium.coolCells.available")}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
                     {availableCells.map((cell) => (
@@ -233,7 +234,7 @@ export function CoolCellCalendarView() {
                         <div className="flex items-center justify-between">
                           <span className="font-medium">{cell.label}</span>
                           <Badge className="bg-green-600 text-white border-0">
-                            Vrij
+                            {t("mortuarium.status.free")}
                           </Badge>
                         </div>
                       </div>
@@ -247,7 +248,7 @@ export function CoolCellCalendarView() {
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-red-600 flex items-center gap-2">
                     <XCircle className="h-4 w-4" />
-                    Niet beschikbaar
+                    {t("mortuarium.coolCells.unavailable")}
                   </h3>
                   <div className="space-y-2">
                     {unavailableCells.map((cell) => {
@@ -262,7 +263,7 @@ export function CoolCellCalendarView() {
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="font-medium">{cell.label}</span>
                                 <Badge className={statusColors[cell.status]}>
-                                  {statusLabels[cell.status]}
+                                  {t(`mortuarium.status.${cell.status.toLowerCase()}`)}
                                 </Badge>
                               </div>
                               <p className="text-xs text-muted-foreground truncate">
@@ -272,9 +273,9 @@ export function CoolCellCalendarView() {
                                 <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                                   <Clock className="h-3 w-3" />
                                   <span>
-                                    {format(new Date(availability.reservation.start_at), "HH:mm", { locale: nl })}
+                                    {format(new Date(availability.reservation.start_at), "HH:mm", { locale: getDateLocale() })}
                                     {" - "}
-                                    {format(new Date(availability.reservation.end_at), "HH:mm", { locale: nl })}
+                                    {format(new Date(availability.reservation.end_at), "HH:mm", { locale: getDateLocale() })}
                                   </span>
                                 </div>
                               )}

@@ -1385,6 +1385,16 @@
       "allCells": "Alle koelcellen",
       "allFDs": "Alle uitvaartondernemingen"
     },
+    "coolCells": {
+      "selectDate": "Selecteer Datum",
+      "availability": "Beschikbaarheid",
+      "available": "Beschikbaar",
+      "occupied": "Bezet",
+      "unavailable": "Niet beschikbaar",
+      "reserved": "Gereserveerd",
+      "noCellsFound": "Geen koelcellen gevonden",
+      "loadError": "Kon koelcellen niet laden"
+    },
     "dashboard": {
       "title": "Mortuarium Dashboard",
       "totalCells": "Totaal Cellen",

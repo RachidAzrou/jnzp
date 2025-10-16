@@ -2555,6 +2555,16 @@
       "allCells": "Toutes les chambres froides",
       "allFDs": "Toutes les entreprises funéraires"
     },
+    "coolCells": {
+      "selectDate": "Sélectionner une date",
+      "availability": "Disponibilité",
+      "available": "Disponible",
+      "occupied": "Occupé",
+      "unavailable": "Indisponible",
+      "reserved": "Réservé",
+      "noCellsFound": "Aucune chambre froide trouvée",
+      "loadError": "Impossible de charger les chambres froides"
+    },
     "dashboard": {
       "title": "Tableau de bord Mortuaire",
       "totalCells": "Total de Cellules",

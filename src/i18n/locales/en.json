@@ -2064,6 +2064,16 @@
       "allCells": "All cool cells",
       "allFDs": "All funeral directors"
     },
+    "coolCells": {
+      "selectDate": "Select Date",
+      "availability": "Availability",
+      "available": "Available",
+      "occupied": "Occupied",
+      "unavailable": "Unavailable",
+      "reserved": "Reserved",
+      "noCellsFound": "No cool cells found",
+      "loadError": "Could not load cool cells"
+    },
     "dashboard": {
       "title": "Mortuary Dashboard",
       "totalCells": "Total Cells",
